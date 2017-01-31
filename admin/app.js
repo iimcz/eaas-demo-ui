@@ -53,6 +53,37 @@
 		}
 	})
 
+	.controller('settingsDialogController', function($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl) {		
+		var vm = this;
+
+		vm.importEnvs = function() {
+			$scope.$close();
+
+			$http.get(localConfig.data.eaasBackendURL + initEmilEnvironmentsURL).then(function(response) {
+				if (response.data.status === "0") {
+					$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+						growl.success(response.data.message);
+					} else {
+						growl.error(response.data.message, {title: 'Error ' + response.data.status});
+					}
+				}
+			);
+		};
+
+		vm.showSetKeyboardLayoutDialog = function() {
+			$uibModal.open({
+				animation: true,
+				templateUrl: 'partials/set-keyboard-layout-dialog.html',
+				resolve: {
+					kbLayouts: function() {
+						return kbLayouts; // refers to outer kbLayouts variable
+					}
+				},
+				controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
+			});
+		};
+	})
+
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
 		this.kbLayouts = kbLayouts.data;
 
@@ -140,7 +171,7 @@
 						return $http.get("kbLayouts.json");
 					}
 				},
-				controller: function($uibModal, kbLayouts) {
+				controller: function($uibModal, localConfig, kbLayouts) {
 					var vm = this;
 
 					vm.open = function() {
@@ -148,20 +179,23 @@
 							animation: true,
 							templateUrl: 'partials/wf-s/help-emil-dialog.html'
 						});
-					}
+					};
 
-					vm.showSetKeyboardLayoutDialog = function() {
+					vm.showSettingsDialog = function() {
 						$uibModal.open({
 							animation: true,
-							templateUrl: 'partials/set-keyboard-layout-dialog.html',
+							templateUrl: 'partials/settings-dialog.html',
 							resolve: {
+								localConfig: function() {
+									return localConfig;
+								},
 								kbLayouts: function() {
-									return kbLayouts; // refers to outer kbLayouts variable
+									return kbLayouts;
 								}
 							},
-							controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
+							controller: "settingsDialogController as settingsDialogCtrl"
 						});
-					};					
+					};
 				},
 				controllerAs: "baseCtrl"
 			})
@@ -369,27 +403,19 @@
 						});
 					}
 					
-					vm.importEnvs = function() {
-						$http.get(localConfig.data.eaasBackendURL + initEmilEnvironmentsURL).then(function(response) {
-							if (response.data.status === "0") {
-								$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-								growl.success(response.data.message);
-							} else {
-								growl.error(response.data.message, {title: 'Error ' + response.data.status});
-							}
-						});
-					}
-
-					vm.showSetKeyboardLayoutDialog = function() {
+					vm.showSettingsDialog = function() {
 						$uibModal.open({
 							animation: true,
-							templateUrl: 'partials/set-keyboard-layout-dialog.html',
+							templateUrl: 'partials/settings-dialog.html',
 							resolve: {
+								localConfig: function() {
+									return localConfig;
+								},
 								kbLayouts: function() {
-									return kbLayouts; // refers to outer kbLayouts variable
+									return kbLayouts;
 								}
 							},
-							controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
+							controller: "settingsDialogController as settingsDialogCtrl"
 						});
 					};
 				},
