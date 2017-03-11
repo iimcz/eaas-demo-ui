@@ -321,9 +321,10 @@
 								showHelpDialog(chosenEnv.data.helpText);
 							};
 							
-							vm.driveId = -2; // TODO: get drive id
+							vm.driveId = -2; // TODO get drive id
 
 							vm.restartEmulator = function() {
+								// TODO stop the emulator instance, it is still running in the background!
 								$state.reload();
 							};
 						
