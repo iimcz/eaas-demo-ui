@@ -269,13 +269,6 @@
 			.state('wf-b.emulator', {
 				url: "/emulator?envId",
 				resolve: {
-					initData: function($http, $stateParams, $cookies, localConfig) {
-						// fallback to defaults when no cookie is found
-						var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
-
-						return $http.get(localConfig.data.eaasBackendURL + formatStr(startEnvWithDigitalObjectUrl, $stateParams.objectId, $stateParams.envId,
-							     kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name));
-					},
 					chosenEnv: function($http, $stateParams, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
 					},
@@ -286,19 +279,31 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
-						controller: function ($scope, $sce, $state, initData, growl) {
-							if (initData.data.status !== "0") {
-								$state.go('error', {errorMsg: {title: "Emulation Error " + initData.data.status, message: initData.data.message}});
-								return;
-							}
+						controller: function ($scope, $sce, $state, $stateParams, $cookies, growl, localConfig) {
+              var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
-							this.iframeurl = $sce.trustAsResourceUrl(initData.data.iframeurl);
+              window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+
+              eaasClient.onConnect = function() {
+                $("#emulator-loading-container").hide();
+                $("#emulator-container").show();
+              }
+
+              eaasClient.onError = function(message) {
+                $state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
+              }
+
+              eaasClient.startEnvironment($stateParams.envId, {
+                keyboardLayout: kbLayoutPrefs.language.name,
+                keyboardModel: kbLayoutPrefs.layout.name,
+                object: $stateParams.objectId
+							});
 						},
 						controllerAs: "startEmuCtrl"
 					},
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
-						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams, initData, mediaCollection, growl, localConfig, $translate, $pageVisibility, chosenEnv) {
+						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams, mediaCollection, growl, localConfig, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
 							
 							function showHelpDialog(helpText) {
@@ -316,26 +321,19 @@
 								showHelpDialog(chosenEnv.data.helpText);
 							};
 							
-							vm.driveId = initData.data.driveId;
-							
-							vm.stopEmulator = function() {
-								$http.get(localConfig.data.eaasBackendURL + formatStr(stopUrl, initData.data.id))['finally'](function() {
-									window.location = localConfig.data.stopEmulatorRedirectURL;
-								});
-							};
-							
+							vm.driveId = -2; // TODO: get drive id
+
 							vm.restartEmulator = function() {
-								$http.get(localConfig.data.eaasBackendURL + formatStr(stopUrl, initData.data.id))['finally'](function() {
-									$state.reload();
-								});
+								$state.reload();
 							};
 						
 							vm.screenshot = function() {
-								 window.open(localConfig.data.eaasBackendURL + formatStr(screenshotUrl, initData.data.id), '_blank', ''); 
+								 alert("NOT YET IMPLEMENTED");
 							};
 							
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
-							
+
+							/*
 							vm.openChangeMediaDialog = function() {
 								$uibModal.open({
 									animation: true,
@@ -365,7 +363,8 @@
 												$("html, body").removeClass("wait");
 											});
 										};
-									},
+									}
+									,
 									controllerAs: "openChangeMediaDialogCtrl"
 								});
 							}
@@ -380,8 +379,7 @@
 									controllerAs: "openChangeMediaNativeDialogCtrl"
 								});
 							}
-							
-							vm.sessionId = initData.data.id;
+							*/
 							
 						//	var closeEmulatorOnTabLeaveTimer = null;
 						//	var leaveWarningShownBefore = false;
