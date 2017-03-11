@@ -320,8 +320,6 @@
 							vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
 							};
-							
-							vm.driveId = window.eaasClient.driveId;
 
 							vm.restartEmulator = function() {
 								// TODO stop the emulator instance, it is still running in the background!
@@ -329,7 +327,7 @@
 							};
 						
 							vm.screenshot = function() {
-								 alert("NOT YET IMPLEMENTED");
+								 window.open(window.eaasClient.getScreenshotUrl());
 							};
 							
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
