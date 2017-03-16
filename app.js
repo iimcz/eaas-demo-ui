@@ -193,7 +193,7 @@
 					
 					vm.open = function() {
 						showHelpDialog("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor " +
-									     "invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.");
+									   "invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.");
 					};
 											   
 					vm.showObjectHelpDialog = function() {
@@ -280,23 +280,23 @@
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
 						controller: function ($scope, $sce, $state, $stateParams, $cookies, growl, localConfig) {
-              var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
+							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
-              window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
-              eaasClient.onConnect = function() {
-                $("#emulator-loading-container").hide();
-                $("#emulator-container").show();
-              }
+							eaasClient.addOnConnectListener(function () {
+								$("#emulator-loading-container").hide();
+								$("#emulator-container").show();
+							});
 
-              eaasClient.onError = function(message) {
-                $state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
-              }
+							eaasClient.onError = function(message) {
+								$state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
+							};
 
-              eaasClient.startEnvironment($stateParams.envId, {
-                keyboardLayout: kbLayoutPrefs.language.name,
-                keyboardModel: kbLayoutPrefs.layout.name,
-                object: $stateParams.objectId
+							eaasClient.startEnvironment($stateParams.envId, {
+								keyboardLayout: kbLayoutPrefs.language.name,
+								keyboardModel: kbLayoutPrefs.layout.name,
+								object: $stateParams.objectId
 							});
 						},
 						controllerAs: "startEmuCtrl"
@@ -321,15 +321,20 @@
 								showHelpDialog(chosenEnv.data.helpText);
 							};
 
-							vm.restartEmulator = function() {
-								// TODO stop the emulator instance, it is still running in the background!
-								$state.reload();
-							};
-						
 							vm.screenshot = function() {
 								 window.open(window.eaasClient.getScreenshotUrl());
 							};
-							
+
+							vm.restartEmulator = function() {
+								window.eaasClient.stopEnvironment();
+								$state.reload();
+							};
+
+							vm.stopEmulator = function () {
+								window.eaasClient.stopEnvironment();
+								$('#emulator-stopped-container').show();
+							};
+
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
 
 							/*
@@ -367,7 +372,7 @@
 									controllerAs: "openChangeMediaDialogCtrl"
 								});
 							}
-							
+
 							vm.openChangeMediaNativeDialog = function() {
 								$uibModal.open({
 									animation: true,

@@ -44,6 +44,7 @@
   "CHANGEM_CANCEL" : "Abbrechen",
 
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
+  "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
   "METADATA_L" : "Metadaten",
   
   "JS_ENV_ERROR" : "Leider konnten keine Umgebungen zu diesem Objekt gefunden werden.",

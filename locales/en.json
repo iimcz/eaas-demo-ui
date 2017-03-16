@@ -44,6 +44,7 @@
   "CHANGEM_CANCEL" : "Cancel",
 
   "EMU_TITLE" : "Preparing emulation session",
+  "EMU_STOPPED" : "Emulation session was stopped.",
   "METADATA_L" : "Metadata",
   
   "JS_ENV_ERROR" : "No environments found.",
