@@ -195,7 +195,7 @@
 						showHelpDialog("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor " +
 									   "invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.");
 					};
-											   
+
 					vm.showObjectHelpDialog = function() {
 						showHelpDialog(objMetadata.help);
 					};
@@ -245,7 +245,7 @@
 									vm.environments = allEnvironments.data.environments;
 								} else {
 									$state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
-								}									
+								}
 							} else {
 								vm.environments = objEnvironments.data.environments;
 							}
@@ -303,7 +303,7 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
-						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams, mediaCollection, growl, localConfig, $translate, $pageVisibility, chosenEnv) {
+						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams, $timeout, mediaCollection, growl, localConfig, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
 							
 							function showHelpDialog(helpText) {
@@ -337,7 +337,17 @@
 
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
 
-							/*
+							var eaasClientReadyTimer = function() {
+								if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
+									vm.driveId = window.eaasClient.driveId;
+									console.log(vm.driveId);
+									return;
+								}
+
+                                $timeout(eaasClientReadyTimer, 100);
+							};
+                            $timeout(eaasClientReadyTimer);
+
 							vm.openChangeMediaDialog = function() {
 								$uibModal.open({
 									animation: true,
@@ -355,7 +365,7 @@
 											
 											this.isChangeMediaSubmitting = true;
 											$("html, body").addClass("wait");
-											$http.get(localConfig.data.eaasBackendURL + formatStr(changeMediaURL, initData.data.id, $stateParams.objectId, initData.data.driveId, newMediumLabel)).then(function(resp) {
+											$http.get(localConfig.data.eaasBackendURL + formatStr(changeMediaURL, window.eaasClient.componentId, $stateParams.objectId, window.eaasClient.driveId, newMediumLabel)).then(function(resp) {
 												if (resp.data.status === "0") {
 													growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
 													currentMediumLabel = newMediumLabel;
@@ -371,8 +381,9 @@
 									,
 									controllerAs: "openChangeMediaDialogCtrl"
 								});
-							}
+							};
 
+							/*
 							vm.openChangeMediaNativeDialog = function() {
 								$uibModal.open({
 									animation: true,
@@ -419,7 +430,7 @@
 					}
 				}
 			});
-			
+
 		growlProvider.globalTimeToLive(5000);
 	});
 })();
