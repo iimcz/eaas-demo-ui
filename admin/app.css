@@ -78,9 +78,8 @@ html.wait, body.wait {
 	cursor: progress !important;
 }
 
-#emulator-iframe {	
+#emulator-stopped-container {
 	display: none;
-	background-color: black;
 }
 
 #emulator-loading-spinner {

@@ -28,7 +28,7 @@
   "BASE_MENU_ENVS" : "Umgebungen",
   "BASE_MENU_OBJENVS": "Objektumgebungen",
   "BASE_MENU_SW" : "Software",  
-  "BASE_MENU_SHOW_SETTINGS_DLG": "Settings",
+  "BASE_MENU_SHOW_SETTINGS_DLG": "Einstellungen",
   "BASE_MENU_NEW_ENV" : "Basisumgebung erstellen",
   
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
@@ -107,6 +107,7 @@
   "CHAR_CANCEL" : "Abbrechen",
   
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
+  "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
   
   "NEWENV_L" : "Standardumgebung erstellen",
   "NEWENV_BASE" : "Basisumgebung",

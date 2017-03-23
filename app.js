@@ -8,9 +8,6 @@
 	
 	
 	// EMIL core api
-	var startEnvWithDigitalObjectUrl = "Emil/startEnvWithDigitalObject?objectId={0}&envId={1}&language={2}&layout={3}";
-	var stopUrl = "Emil/stop?sessionId={0}";
-	var screenshotUrl = "Emil/screenshot?sessionId={0}";
 	var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
 	
 	// object data connector
@@ -340,7 +337,6 @@
 							var eaasClientReadyTimer = function() {
 								if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
 									vm.driveId = window.eaasClient.driveId;
-									console.log(vm.driveId);
 									return;
 								}
 

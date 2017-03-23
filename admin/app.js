@@ -18,12 +18,7 @@
 	var getEnvironmentTemplates = "EmilEnvironmentData/templates";
 	var createImageUrl = "EmilEnvironmentData/createImage?size={0}";
 	var prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
-	
-	var configureEnv = "Emil/configureEnv?envId={0}&language={1}&layout={2}";
-	var startEnvWithSoftwarePackage = "Emil/startEnvWithSoftwarePackage?envId={0}&softwareId={1}&language={2}&layout={3}";
-	var startEnvWithDigitalObjectUrl = "Emil/startEnvWithDigitalObject?objectId={0}&envId={1}&language={2}&layout={3}";
-	var stopUrl = "Emil/stop?sessionId={0}";
-	var screenshotUrl = "Emil/screenshot?sessionId={0}";
+
 	var saveNewEnvironment = "Emil/saveNewEnvironment";
 	var saveNewObjectEnvironmentUrl = "Emil/saveObjectConfiguration";
 	var saveEnvConfiguration = "Emil/saveEnvConfiguration";
@@ -40,7 +35,7 @@
 	
 	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 
 								   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
-	                               'angular-page-visibility', 'textAngular'])
+								   'angular-page-visibility', 'textAngular'])
 
 	.component('inputList', {
 		templateUrl: 'partials/components/inputList.html',
@@ -49,7 +44,7 @@
 			heading: '@',
 			listEmptyNote: '@',
 			inputPlaceholder: '@',
-			addButtonText: '@',
+			addButtonText: '@'
 		}
 	})
 
@@ -252,7 +247,7 @@
 							};
 						}
 
-					    return $http.get(localConfig.data.eaasBackendURL + formatStr(getSoftwareObjectURL, $stateParams.swId));
+						return $http.get(localConfig.data.eaasBackendURL + formatStr(getSoftwareObjectURL, $stateParams.swId));
 					},
 				},
 				views: {
@@ -552,72 +547,59 @@
 					isNewObjectEnv: false,
 					objectId: null
 				},
-				resolve: {
-					configureEnv: function($http, $stateParams, $cookies, localConfig) {
-						var result = null;
-
-						// fallback to defaults when no cookie is found
-						var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
-						
-						if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
-							result = $http.get(localConfig.data.eaasBackendURL + formatStr(startEnvWithSoftwarePackage, $stateParams.envId, $stateParams.softwareId,
-									   kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name))
-						} else if ($stateParams.isNewObjectEnv) {
-							result = $http.get(localConfig.data.eaasBackendURL + formatStr(startEnvWithDigitalObjectUrl, $stateParams.objectId, $stateParams.envId,
-									   kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name))
-						}
-						else {
-							result = $http.get(localConfig.data.eaasBackendURL + formatStr(configureEnv, $stateParams.envId,
-									   kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name));
-						}
-						
-						return result;
-					}
-				},
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-s/emulator.html",
-						controller: function ($scope, $sce, $state, configureEnv, growl) {
-							if (configureEnv.data.status === "1") {
-								$state.go('error', {errorMsg: {title: "Emulation Error " + configureEnv.data.status, message: configureEnv.data.message}});
-								return;
+						controller: function ($scope, $sce, $state, $stateParams, $cookies, localConfig, growl) {
+							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+
+							eaasClient.addOnConnectListener(function () {
+								$("#emulator-loading-container").hide();
+								$("#emulator-container").show();
+							});
+
+							eaasClient.onError = function(message) {
+								$state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
+							};
+
+							// fallback to defaults when no cookie is found
+							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
+
+							var params = {
+								keyboardLayout: kbLayoutPrefs.language.name,
+								keyboardModel: kbLayoutPrefs.layout.name
+							};
+
+							if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
+								params.software = $stateParams.softwareId;
+							} else if ($stateParams.isNewObjectEnv) {
+								params.object = $stateParams.objectId;
 							}
 
-							BWFLA.attachEmulator('#emulator-container', configureEnv.data.iframeurl);
-							
-							//this.iframeurl = $sce.trustAsResourceUrl(configureEnv.data.iframeurl);
-							this.iframeurl = "emulator-iframe.html?controlurl=" + encodeURIComponent(configureEnv.data.iframeurl);
+							eaasClient.startEnvironment($stateParams.envId, params);
 						},
 						controllerAs: "startEmuCtrl"
 					},
 					'actions': {
 						templateUrl: 'partials/wf-s/actions.html',
-						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, configureEnv, growl, localConfig, $timeout, $translate, $pageVisibility) {
+						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, $timeout, $translate, $pageVisibility) {
 							var vm = this;
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
 							vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
-							
-							vm.stopEmulator = function () {
-								$http.get(localConfig.data.eaasBackendURL + formatStr(stopUrl, configureEnv.data.id)).then(function(response) {
-									if (response.data.status === "0") {
-										growl.success(response.data.message, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-									} else {
-										growl.error(response.data.message, {title: 'Error ' + response.data.status});
-									}
-									
-									$state.go('wf-s.standard-envs-overview');
-								});
-							};
-							
-							vm.restartEmulator = function() {
-								$http.get(localConfig.data.eaasBackendURL + formatStr(stopUrl, configureEnv.data.id))['finally'](function() {
-									$state.reload();
-								});
-							};
-						
+
 							vm.screenshot = function() {
-								 window.open(localConfig.data.eaasBackendURL + formatStr(screenshotUrl, configureEnv.data.id), '_blank', ''); 
+								window.open(window.eaasClient.getScreenshotUrl());
+							};
+
+							vm.restartEmulator = function() {
+								window.eaasClient.stopEnvironment();
+								$state.reload();
+							};
+
+							vm.stopEmulator = function () {
+								window.eaasClient.stopEnvironment();
+								$('#emulator-stopped-container').show();
 							};
 							
 							vm.openSaveEnvironmentDialog = function() {
@@ -628,11 +610,13 @@
 										this.isNewEnv = $stateParams.isNewEnv;
 										this.isNewObjectEnv = $stateParams.isNewObjectEnv;	
 										this.saveEnvironment = function() {
+                                            vm.stopEmulator();
+
 											var postResult = null;											
 											
 											if ($stateParams.isNewEnv) {
 												postResult = $http.post(localConfig.data.eaasBackendURL + saveNewEnvironment, {
-													sessionId: configureEnv.data.id,
+													sessionId: window.eaasClient.componentId,
 													envId: $stateParams.envId,
 													title: this.envName,
 													description: this.envDescription,
@@ -641,7 +625,7 @@
 												});
 											} else if ($stateParams.isNewObjectEnv) {
 												postResult = $http.post(localConfig.data.eaasBackendURL + saveNewObjectEnvironmentUrl, {
-													sessionId: configureEnv.data.id,
+													sessionId: window.eaasClient.componentId,
 													envId: $stateParams.envId,
 													objectId: $stateParams.objectId,
 													title: this.envName,
@@ -649,7 +633,7 @@
 												});
 											} else {
 												postResult = $http.post(localConfig.data.eaasBackendURL + saveEnvConfiguration, {
-													sessionId: configureEnv.data.id,
+													sessionId: window.eaasClient.componentId,
 													envId: $stateParams.envId,
 													message: this.envDescription
 												});
@@ -671,12 +655,10 @@
 								});
 							}
 							
-							vm.sessionId = configureEnv.data.id;
-							
+							/*
 							var closeEmulatorOnTabLeaveTimer = null;
 							var leaveWarningShownBefore = false;
-							/*
-							var deregisterOnPageFocused = $pageVisibility.$on('pageFocused', function() {								
+							var deregisterOnPageFocused = $pageVisibility.$on('pageFocused', function() {
 								$timeout.cancel(closeEmulatorOnTabLeaveTimer);
 							});
 
