@@ -15,7 +15,7 @@
 	var updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
 	var deleteEnvironmentUrl = "EmilEnvironmentData/delete";
 	var initEmilEnvironmentsURL = "EmilEnvironmentData/init";
-	var getEnvironmentTemplates = "EmilEnvironmentData/templates";
+	var getEnvironmentTemplates = "EmilEnvironmentData/getEnvironmentTemplates";
 	var createImageUrl = "EmilEnvironmentData/createImage?size={0}";
 	var prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
 
