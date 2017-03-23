@@ -27,6 +27,32 @@
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
 				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility'])
 
+	.directive('eaasEmulator', function() {
+		return {
+			scope: {
+                backendUrl: '@',
+				environmentId: '@',
+				params: '@'
+			},
+			template: '<div class="eaas-emulator-container-transcursor"></div>',
+            link: function(scope, element, attrs) {
+                var backendUrl = attrs.backendUrl;
+                var environmentId = attrs.environmentId;
+                var params = angular.fromJson(attrs.params);
+
+                console.log(element.children().first());
+
+				var eaasClient = new EaasClient.Client(backendUrl, element.children().first()[0]);
+
+                eaasClient.startEnvironment(environmentId, params);
+
+                element.on('$destroy', function() {
+                    window.alert("Die!");
+                });
+			}
+		};
+	})
+
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
 		this.kbLayouts = kbLayouts.data;
 
@@ -282,6 +308,7 @@
 						controller: function ($scope, $sce, $state, $stateParams, $cookies, growl, localConfig) {
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
+							/*
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
 							eaasClient.addOnConnectListener(function () {
@@ -298,6 +325,15 @@
 								keyboardModel: kbLayoutPrefs.layout.name,
 								object: $stateParams.objectId
 							});
+							*/
+
+							this.eaasBackendURL = localConfig.data.eaasBackendURL;
+							this.envId = $stateParams.envId;
+							this.emulatorParams = {
+                                keyboardLayout: kbLayoutPrefs.language.name,
+                                keyboardModel: kbLayoutPrefs.layout.name,
+                                object: $stateParams.objectId
+                            };
 						},
 						controllerAs: "startEmuCtrl"
 					},
@@ -336,6 +372,8 @@
 							};
 
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
+
+							// dom ready + event listern => gogo
 
 							/*
 							vm.openChangeMediaDialog = function() {
