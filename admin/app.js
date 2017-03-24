@@ -556,6 +556,11 @@
 							eaasClient.addOnConnectListener(function () {
 								$("#emulator-loading-container").hide();
 								$("#emulator-container").show();
+								
+								// Fix to close emulator on page leave
+								$scope.$on('$locationChangeStart', function(event) {
+									eaasClient.stopEnvironment();							
+								});
 							});
 
 							eaasClient.onError = function(message) {
