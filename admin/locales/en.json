@@ -34,6 +34,7 @@
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
   "SETTINGS_DLG_CLOSE_DLG" : "Close",
+  "SETTINGS_DLG_SYNC_OBJECTS" : "Sync Object Archives",
 
   "SET_KEYBOARD_DLG_TITLE" : "Set local keyboard layout and language",
   "SET_KEYBOARD_DLG_HELP" : "In order to map between user and emulator keys, we need to know the local keyboard model and language settings. Please select the language of your keyboard input and the keyboard model. If unsure select pc-105 (a standard windows keyboard).",

@@ -9,6 +9,8 @@
 	// object data api
 	var loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
 	var getObjectListURL = "EmilObjectData/list";
+	var getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
+	var syncObjectsUrl = "EmilObjectData/sync";
 	
 	// environment data api
 	var getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
@@ -64,7 +66,21 @@
 				}
 			);
 		};
-
+	   
+		vm.syncObjects = function() {
+	    	$scope.$close();
+			
+			$http.get(localConfig.data.eaasBackendURL + syncObjectsUrl).then(function(response) {
+				if (response.data.status === "0") {
+					$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+			        	growl.success(response.data.message);
+			        } else {
+			        	growl.error(response.data.message, {title: 'Error ' + response.data.status});
+			        }
+			    }
+		    );
+		};
+			
 		vm.showSetKeyboardLayoutDialog = function() {
 			$uibModal.open({
 				animation: true,
@@ -229,8 +245,14 @@
 						if ($stateParams.swId != "-1") {
 							return null;
 						}
-
-						return $http.get(localConfig.data.eaasBackendURL + getObjectListURL);
+						if("softwareArchiveId" in localConfig.data)
+						{
+							return $http.get(localConfig.data.eaasBackendURL + 
+									formatStr(getSoftwareListURL, localConfig.data.softwareArchiveId));
+						}
+						else {
+							return $http.get(localConfig.data.eaasBackendURL + getObjectListURL);
+						}
 					},
 					softwareObj: function($stateParams, $http, localConfig) {
 						// return empty object for new software
@@ -269,7 +291,11 @@
 							vm.softwareObj = softwareObj.data;
 
 							vm.save = function() {
+								if("softwareArchiveId" in localConfig.data)
+									 vm.softwareObj.archiveId = localConfig.data.softwareArchiveId;
+								
 								vm.softwareObj.objectId = vm.selectedObject.id;
+								vm.softwareObj.label = vm.selectedObject.title;
 								console.log(JSON.stringify(vm.softwareObj));
 								
 								$http.post(localConfig.data.eaasBackendURL + saveSoftwareUrl, vm.softwareObj).then(function(response) {
