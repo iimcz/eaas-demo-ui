@@ -631,6 +631,7 @@
 							vm.stopEmulator = function () {
 								window.eaasClient.stopEnvironment();
 								$('#emulator-stopped-container').show();
+								$state.go('wf-s.standard-envs-overview');
 							};
 							
 							vm.openSaveEnvironmentDialog = function() {

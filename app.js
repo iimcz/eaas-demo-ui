@@ -329,7 +329,8 @@
 
 							vm.stopEmulator = function () {
 								window.eaasClient.stopEnvironment();
-								$('#emulator-stopped-container').show();
+								$('#emulator-stopped-container').show();	
+								window.location = localConfig.data.stopEmulatorRedirectURL;
 							};
 
 							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
