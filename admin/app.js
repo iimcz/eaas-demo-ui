@@ -590,7 +590,7 @@
 							});
 
 							eaasClient.onError = function(message) {
-								$state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
+								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
 							// fallback to defaults when no cookie is found

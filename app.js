@@ -287,7 +287,7 @@
 							});
 
 							eaasClient.onError = function(message) {
-								$state.go('error', {errorMsg: {title: "Emulation Error", message: message}});
+								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
 							eaasClient.startEnvironment($stateParams.envId, {
