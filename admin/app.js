@@ -640,8 +640,11 @@
 									templateUrl: 'partials/wf-s/save-environment-dialog.html',
 									controller: function($scope) {
 										this.isNewEnv = $stateParams.isNewEnv;
-										this.isNewObjectEnv = $stateParams.isNewObjectEnv;	
+										this.isNewObjectEnv = $stateParams.isNewObjectEnv;
+
+										this.isSavingEnvironment = false;
 										this.saveEnvironment = function() {
+                                            this.isSavingEnvironment = true;
                                             vm.stopEmulator();
 
 											var postResult = null;											
