@@ -585,7 +585,7 @@
 								
 								// Fix to close emulator on page leave
 								$scope.$on('$locationChangeStart', function(event) {
-									eaasClient.stopEnvironment();							
+									eaasClient.release();
 								});
 							});
 
@@ -624,12 +624,12 @@
 							};
 
 							vm.restartEmulator = function() {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$state.reload();
 							};
 
 							vm.stopEmulator = function () {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$('#emulator-stopped-container').show();
 								$state.go('wf-s.standard-envs-overview');
 							};
