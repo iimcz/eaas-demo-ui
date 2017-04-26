@@ -323,12 +323,12 @@
 							};
 
 							vm.restartEmulator = function() {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$state.reload();
 							};
 
 							vm.stopEmulator = function () {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$('#emulator-stopped-container').show();	
 								window.location = localConfig.data.stopEmulatorRedirectURL;
 							};

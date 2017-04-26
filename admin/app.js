@@ -629,7 +629,7 @@
 								
 								// Fix to close emulator on page leave
 								$scope.$on('$locationChangeStart', function(event) {
-									eaasClient.stopEnvironment();							
+									eaasClient.release();
 								});
 							});
 
@@ -668,12 +668,12 @@
 							};
 
 							vm.restartEmulator = function() {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$state.reload();
 							};
 
 							vm.stopEmulator = function () {
-								window.eaasClient.stopEnvironment();
+								window.eaasClient.release();
 								$('#emulator-stopped-container').show();
 								$state.go('wf-s.standard-envs-overview');
 							};
@@ -684,8 +684,11 @@
 									templateUrl: 'partials/wf-s/save-environment-dialog.html',
 									controller: function($scope) {
 										this.isNewEnv = $stateParams.isNewEnv;
-										this.isNewObjectEnv = $stateParams.isNewObjectEnv;	
+										this.isNewObjectEnv = $stateParams.isNewObjectEnv;
+
+										this.isSavingEnvironment = false;
 										this.saveEnvironment = function() {
+                                            this.isSavingEnvironment = true;
                                             vm.stopEmulator();
 
 											var postResult = null;											

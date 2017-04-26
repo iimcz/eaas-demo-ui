@@ -17,6 +17,6 @@
 </div>
 
 <div class="modal-footer">
-	<button class="btn btn-primary" type="button" ng-click="openSaveEnvironmentDialogCtrl.saveEnvironment()" ng-disabled="!openSaveEnvironmentDialogCtrl.editEnvForm.$valid">{{'SAVEENV_SAVE' | translate}}</button>
-	<button class="btn btn-default" type="button" ng-click="$close()">{{'SAVEENV_CANCEL' | translate}}</button>
+	<button class="btn btn-primary" type="button" ng-click="openSaveEnvironmentDialogCtrl.saveEnvironment()" ng-disabled="!openSaveEnvironmentDialogCtrl.editEnvForm.$valid || openSaveEnvironmentDialogCtrl.isSavingEnvironment">{{'SAVEENV_SAVE' | translate}}</button>
+	<button class="btn btn-default" type="button" ng-click="$close()" ng-disabled="openSaveEnvironmentDialogCtrl.isSavingEnvironment">{{'SAVEENV_CANCEL' | translate}}</button>
 </div>
