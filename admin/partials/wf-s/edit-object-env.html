@@ -1,0 +1,29 @@
+<h1 class="m-t-0">{{'EDITENV_L' | translate}}</h1>
+
+<form id="editEnvForm" name="editObjectEnvCtrl.editEnvForm">
+	<div class="form-group">
+		<label>{{'EDITENV_NAME' | translate}}</label>
+		<input type="text" class="form-control" ng-model="editObjectEnvCtrl.envName" placeholder="{{'EDITENV_NAME_PH' | translate}}" required>
+	</div>
+
+	<div class="form-group">
+		<label>{{'EDITENV_DESC' | translate}}</label>
+		<textarea class="form-control" rows="3" ng-model="editObjectEnvCtrl.envDescription" placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
+	</div>
+
+	<p><b>Environment ID:</b> {{editObjectEnvCtrl.env.envId}} </p>
+	<p><b>{{'EDITENV_EMULATOR' | translate}}:</b> {{editObjectEnvCtrl.env.emulator}} </p>
+	<p><b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br/> <text-angular ng-model="editObjectEnvCtrl.helpText"/></p>
+	<p><b>{{'EDITENV_OS' | translate}}:</b> {{editObjectEnvCtrl.env.os}} </p>
+	<div ng-show="editObjectEnvCtrl.env.installedSoftwareIds.length > 0">
+		<p id="editObjectEnvSoftwareListLabel"><b>{{'EDITENV_SW' | translate}}:</b></p>
+		<ul id="editObjectEnvSoftwareList">
+			<li ng-repeat="softwareId in editObjectEnvCtrl.env.installedSoftwareIds">{{softwareId}}</li>
+		</ul>
+	</div>
+
+	<div style="text-align: right;">
+		<button type="submit" class="btn btn-default" ui-sref="wf-s.standard-envs-overview">{{'EDITENV_CANCEL' | translate}}</button>
+		<button type="submit" class="btn btn-primary" ng-click="editObjectEnvCtrl.saveEdit()" ui-sref="wf-s.standard-envs-overview" ng-disabled="!editObjectEnvCtrl.editEnvForm.$valid">{{'EDITENV_SAVE' | translate}}</button>
+	</div>
+</form>
