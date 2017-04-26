@@ -144,7 +144,7 @@
 						}],
 						null, // Dividier
 						[$translate.instant('JS_MENU_EDIT'), function ($itemScope) {
-							window.location.href = "/emil-admin-ui/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
+							window.location.href = "admin/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
 						}],
 						[$translate.instant('JS_MENU_DETAILS'), function ($itemScope) {
 							alert("TBD");

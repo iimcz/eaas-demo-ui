@@ -20,6 +20,7 @@
 	var getEnvironmentTemplates = "EmilEnvironmentData/getEnvironmentTemplates";
 	var createImageUrl = "EmilEnvironmentData/createImage?size={0}";
 	var prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
+	var importImageUrl = "EmilEnvironmentData/importImage";
 
 	var saveNewEnvironment = "Emil/saveNewEnvironment";
 	var saveNewObjectEnvironmentUrl = "Emil/saveObjectConfiguration";
@@ -33,7 +34,7 @@
 	var saveSoftwareUrl = "EmilSoftareData/saveSoftwareObject";
 	var getSoftwareObjectURL = "EmilSoftareData/getSoftwareObject?softwareId={0}";
 	
-	var importImageUrl = "importImage";
+	
 	
 	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 
 								   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
@@ -348,47 +349,41 @@
 								console.log(vm.name);
 
 								// please refactor!
-								if (vm.hdtype == 'new') {
-									// console.log(vm.hdsize);
-									// console.log(vm.selectedSoftware);
-									$http.get(localConfig.data.eaasBackendURL + formatStr(createImageUrl, vm.hdsize + 'M')).then(function(response) {
-										if (response.data.status !== "0") 
-											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-										
-										vm.imageId = response.data.id;
-										var postObj = {
-												label: vm.name,
-												templateId: vm.selectedSystem.id,								
-												imageId: vm.imageId,
-												nativeConfig: vm.native_config
-												};
-										$http.post(localConfig.data.eaasBackendURL + prepareEnvironmentUrl, postObj).then(function(response) {
-												if (response.data.status !== "0") 
-													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-												$state.go('wf-s.emulator', {envId: vm.imageId, isNewEnv: false, softwareId: vm.selectedSoftware.id});
-											});
-									});
-								} else {
+//								if (vm.hdtype == 'new') {
+//									// console.log(vm.hdsize);
+//									// console.log(vm.selectedSoftware);
+//									$http.get(localConfig.data.eaasBackendURL + formatStr(createImageUrl, vm.hdsize + 'M')).then(function(response) {
+//										if (response.data.status !== "0") 
+//											growl.error(response.data.message, {title: 'Error ' + response.data.status});
+//										
+//										vm.imageId = response.data.id;
+//										var postObj = {
+//												label: vm.name,
+//												templateId: vm.selectedSystem.id,								
+//												imageId: vm.imageId,
+//												nativeConfig: vm.native_config
+//												};
+//										$http.post(localConfig.data.eaasBackendURL + prepareEnvironmentUrl, postObj).then(function(response) {
+//												if (response.data.status !== "0") 
+//													growl.error(response.data.message, {title: 'Error ' + response.data.status});
+//												$state.go('wf-s.emulator', {envId: vm.imageId, isNewEnv: false, softwareId: vm.selectedSoftware.id});
+//											});
+//									});
+//								} else {
 									console.log(vm.hdurl);
-									$http.post(localConfig.data.eaasBackendURL + importImageUrl, {url: vm.hdurl}).then(function(response) {
+									$http.post(localConfig.data.eaasBackendURL + importImageUrl, 
+											{
+												urlString: vm.hdurl, 
+												templateId: vm.selectedSystem.id, 
+												label: vm.name, urlString: vm.hdurl, 
+												nativeConfig: vm.nativeConfig
+											}).then(function(response) {
 										if (response.data.status !== "0") 
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-										
-										vm.imageId = response.data.id;
-										var postObj = {
-												label: vm.name,
-												templateId: vm.selectedSystem.id,								
-												imageId: vm.imageId,
-												nativeConfig: vm.native_config
-												};
-										$http.post(localConfig.data.eaasBackendURL + prepareEnvironmentUrl, postObj).then(function(response) {
-												if (response.data.status !== "0") 
-													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-												$state.go('wf-s.emulator', {envId: vm.imageId, isNewEnv: false});
-											});
+										$state.go('wf-s.standard-envs-overview', {envId: vm.imageId, isNewEnv: false});
 									});
 									
-								}
+								// }
 								
 							};
 						},
@@ -561,6 +556,55 @@
 							};
 						},
 						controllerAs: "editEnvCtrl"
+					}
+				}
+			})
+			.state('wf-s.edit-object-env', {
+				url: "/edit-object-env",
+				params: {
+					envId: "-1"
+				},
+				views: {
+					'wizard': {
+						templateUrl: 'partials/wf-s/edit-object-env.html',
+						controller: function ($http, $scope, $state, $stateParams, objectEnvironmentList, localConfig, growl, $translate) {
+							var envIndex = -1;
+							for(var i = 0; i < objectEnvironmentList.data.environments.length; i++) {
+								if (objectEnvironmentList.data.environments[i].envId === $stateParams.envId) {
+									envIndex = i;
+									break;
+								}
+							}
+							
+							// for readonly
+							this.env = objectEnvironmentList.data.environments[envIndex];
+							this.envId = objectEnvironmentList.data.environments[envIndex].envId;
+							this.envName = objectEnvironmentList.data.environments[envIndex].title;
+							this.envDescription = objectEnvironmentList.data.environments[envIndex].description;
+							this.helpText = objectEnvironmentList.data.environments[envIndex].helpText;
+							
+							this.saveEdit = function() {
+								objectEnvironmentList.data.environments[envIndex].title = this.envName;
+								objectEnvironmentList.data.environments[envIndex].description = this.envDescription;
+								objectEnvironmentList.data.environments[envIndex].helpText = this.helpText;
+							
+								$http.post(localConfig.data.eaasBackendURL + updateDescriptionUrl, {
+									envId: $stateParams.envId,
+									title: this.envName,
+									description: this.envDescription,
+									helpText: this.helpText
+								}).then(function(response) {
+									if (response.data.status === "0") {
+										growl.success($translate.instant('JS_ENV_UPDATE'));
+									} else {
+										growl.error(response.data.message, {title: 'Error ' + response.data.status});
+									}
+									
+									$state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+								});
+							};
+						},
+						controllerAs: "editObjectEnvCtrl"
 					}
 				}
 			})
