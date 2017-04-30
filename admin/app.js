@@ -576,13 +576,18 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-s/emulator.html",
-						controller: function ($scope, $sce, $state, $stateParams, $cookies, localConfig, growl) {
+						controller: function ($scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
 							eaasClient.addOnConnectListener(function () {
 								$("#emulator-loading-container").hide();
 								$("#emulator-container").show();
-								
+
+                                if (eaasClient.params.pointerLock) {
+                                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                    BWFLA.requestPointerLock($("#emulator-container")[0], 'click');
+                                }
+
 								// Fix to close emulator on page leave
 								$scope.$on('$locationChangeStart', function(event) {
 									eaasClient.release();

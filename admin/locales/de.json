@@ -109,6 +109,7 @@
   
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
+  "EMU_POINTER_LOCK_AVAILABLE" : "Klicken sie auf den Emulator für die Maussteuerung.",
   
   "NEWENV_L" : "Standardumgebung erstellen",
   "NEWENV_BASE" : "Basisumgebung",
