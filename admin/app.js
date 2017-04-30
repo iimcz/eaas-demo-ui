@@ -618,7 +618,7 @@
 
                                 if (eaasClient.params.pointerLock) {
                                     growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                                    BWFLA.requestPointerLock($("#emulator-container")[0], 'click');
+                                    BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
                                 }
 
 								// Fix to close emulator on page leave
