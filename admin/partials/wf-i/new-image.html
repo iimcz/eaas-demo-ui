@@ -52,7 +52,7 @@
 							<ui-select ng-model="newImageCtrl.selectedSoftware" theme="bootstrap" title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
 							  ng-disabled="newImageCtrl.hdtype != 'new'" ng-required="newImageCtrl.hdtype == 'new'">
 								<ui-select-match placeholder="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}">{{$select.selected.label}}</ui-select-match>
-								<ui-select-choices repeat="obj in newImageCtrl.softwareList | filter: $select.search">
+								<ui-select-choices repeat="obj in newImageCtrl.softwareList | filter: {isOperatingSystem:true}| filter: $select.search">
 									<span ng-bind-html="obj.label | highlight: $select.search"></span>
 								</ui-select-choices>
 							</ui-select>

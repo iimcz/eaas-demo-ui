@@ -21,6 +21,7 @@
 <label>{{'SW_INGEST_NO_INSTANCES_LBL' | translate}}</label>
 <input type="number" class="form-control" ng-model="swIngestCtrl.softwareObj.allowedInstances">
 
+<label>{{'SW_INGEST_OS_LBL' | translate}}<input type="checkbox" class="form-control" ng-model="swIngestCtrl.softwareObj.isOperatingSystem"></label>
 <br>
 
 <input-list list="swIngestCtrl.softwareObj.nativeFMTs" heading="{{'SW_INGEST_FMT_NATIVE_HEADER' | translate}}" list-empty-note="{{'SW_INGEST_FMT_NATIVE_EMPTY' | translate}}"

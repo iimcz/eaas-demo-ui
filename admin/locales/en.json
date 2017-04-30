@@ -49,6 +49,7 @@
   "SW_INGEST_HEADER" : "Software Ingest",
   "SW_INGEST_CHOOSE_OBJECT" : "Choose Object",
   "SW_INGEST_CHOOSE_OBJECT_PH" : "Search or choose an object...",
+  "SW_INGEST_OS_LBL" : "Operating System",
   "SW_INGEST_LICENSE_LBL" : "License information",
   "SW_INGEST_LICENSE_PH" : "Enter license information...",
   "SW_INGEST_NO_INSTANCES_LBL" : "Allowed number of instances (for unlimited choose -1):",
@@ -124,6 +125,11 @@
   "SAVEENV_DESC_PH" : "Description of changes..",
   "SAVEENV_SAVE" : "Save",
   "SAVEENV_CANCEL" : "Cancel",
+  
+  "SAVETESTENV_SAVE" : "Save",
+  "SAVETESTENV_L" : "Import successful?",
+  "SAVETESTENV_KEEP" : "Add imported environment to environments list?",
+  "SAVETESTENV_CANCEL" : "Discard",  
   
   "JS_DELENV_OK" : "Do you really want to delete this environment",
   "JS_DELENV_SUCCESS" : "Environment has been deleted",

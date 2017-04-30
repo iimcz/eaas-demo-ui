@@ -21,6 +21,7 @@
 	var createImageUrl = "EmilEnvironmentData/createImage?size={0}";
 	var prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
 	var importImageUrl = "EmilEnvironmentData/importImage";
+	var createEnvironmentUrl = "EmilEnvironmentData/createEnvironment";
 
 	var saveNewEnvironment = "Emil/saveNewEnvironment";
 	var saveNewObjectEnvironmentUrl = "Emil/saveObjectConfiguration";
@@ -263,6 +264,7 @@
 									objectId: null,
 									licenseInformation: "",
 									allowedInstances: -1,
+									isOperatingSystem: false,
 									nativeFMTs: [],
 									importFMTs: [],
 									exportFMTs: [],
@@ -278,7 +280,7 @@
 						templateUrl: 'partials/wf-i/sw-ingest.html',
 						controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj) {
 							var vm = this;
-
+							
 							vm.isNewSoftware = $stateParams.swId === "-1";
 
 							if (vm.isNewSoftware) {
@@ -297,6 +299,7 @@
 								
 								vm.softwareObj.objectId = vm.selectedObject.id;
 								vm.softwareObj.label = vm.selectedObject.title;
+								vm.softwareObj.isOperatingSystem = vm.selectedObject.isOperatingSystem;
 								console.log(JSON.stringify(vm.softwareObj));
 								
 								$http.post(localConfig.data.eaasBackendURL + saveSoftwareUrl, vm.softwareObj).then(function(response) {
@@ -343,48 +346,32 @@
 							vm.onSelectSystem = function(item, model) {
 								vm.native_config = item.native_config;
 							};
-
+							
 							vm.start = function() {
-								console.log(vm.selectedSystem);
-								console.log(vm.name);
-
-								// please refactor!
-//								if (vm.hdtype == 'new') {
-//									// console.log(vm.hdsize);
-//									// console.log(vm.selectedSoftware);
-//									$http.get(localConfig.data.eaasBackendURL + formatStr(createImageUrl, vm.hdsize + 'M')).then(function(response) {
-//										if (response.data.status !== "0") 
-//											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-//										
-//										vm.imageId = response.data.id;
-//										var postObj = {
-//												label: vm.name,
-//												templateId: vm.selectedSystem.id,								
-//												imageId: vm.imageId,
-//												nativeConfig: vm.native_config
-//												};
-//										$http.post(localConfig.data.eaasBackendURL + prepareEnvironmentUrl, postObj).then(function(response) {
-//												if (response.data.status !== "0") 
-//													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-//												$state.go('wf-s.emulator', {envId: vm.imageId, isNewEnv: false, softwareId: vm.selectedSoftware.id});
-//											});
-//									});
-//								} else {
-									console.log(vm.hdurl);
+								if (vm.hdtype == 'new') {
+									$http.post(localConfig.data.eaasBackendURL + createEnvironmentUrl, {
+										size: vm.hdsize + 'M',
+										templateId: vm.selectedSystem.id, 
+										label: vm.name, urlString: vm.hdurl, 
+										nativeConfig: vm.native_config
+									}).then(function(response) {
+										if (response.data.status !== "0") 
+											growl.error(response.data.message, {title: 'Error ' + response.data.status});
+										$state.go('wf-s.emulator', {envId: response.data.id, isTestEnv: true, softwareId: vm.selectedSoftware.id});
+									});
+								} else {
 									$http.post(localConfig.data.eaasBackendURL + importImageUrl, 
 											{
 												urlString: vm.hdurl, 
 												templateId: vm.selectedSystem.id, 
 												label: vm.name, urlString: vm.hdurl, 
-												nativeConfig: vm.nativeConfig
+												nativeConfig: vm.native_config
 											}).then(function(response) {
 										if (response.data.status !== "0") 
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-										$state.go('wf-s.standard-envs-overview', {envId: vm.imageId, isNewEnv: false});
-									});
-									
-								// }
-								
+										$state.go('wf-s.emulator', {envId: response.data.id, isTestEnv: true });
+									});	
+								}
 							};
 						},
 						controllerAs: "newImageCtrl"
@@ -469,7 +456,8 @@
 							vm.deleteEnvironment = function(envId) {
 								if (window.confirm($translate.instant('JS_DELENV_OK'))) {
 									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
-										envId: envId
+										envId: envId,
+										deleteMetaData: true
 									}).then(function(response) {
 										if (response.data.status === "0") {
 											// remove env locally
@@ -613,6 +601,7 @@
 				params: {
 					envId: "-1",
 					isNewEnv: false,
+					isTestEnv: false,
 					softwareId: null,
 					isNewObjectEnv: false,
 					objectId: null
@@ -675,10 +664,78 @@
 							vm.stopEmulator = function () {
 								window.eaasClient.release();
 								$('#emulator-stopped-container').show();
-								$state.go('wf-s.standard-envs-overview');
+								
+								if($stateParams.isTestEnv)
+								{
+									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
+										envId: $stateParams.envId,
+										deleteMetaData: true,
+										deleteImage: true
+									}).then(function(response) {
+										if (response.data.status === "0") {		
+											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+										}
+									});
+								}
+								else
+									$state.go('wf-s.standard-envs-overview');
 							};
 							
 							vm.openSaveEnvironmentDialog = function() {
+								
+								if($stateParams.isTestEnv)
+									{
+									$uibModal.open({
+										animation: true,
+										templateUrl: 'partials/wf-s/save-test-environment-dialog.html',
+										controller: function($scope) {
+											this.isSavingEnvironment = false;
+											
+											this.saveEnvironment = function() {
+												this.isSavingEnvironment = true;
+												
+												window.eaasClient.release();
+												$('#emulator-stopped-container').show();
+												
+	                                            $scope.$close();
+	                                            $http.get(localConfig.data.eaasBackendURL + initEmilEnvironmentsURL).then(function(response) {
+	                                				if (response.data.status === "0") {
+	                                						$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+	                                					} else {
+	                                						$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+	                                						growl.error(response.data.message, {title: 'Error ' + response.data.status});
+	                                					}
+	                                				}
+	                                			);			
+											};
+											this.deleteEnvironment = function() {
+												this.isSavingEnvironment = true;
+												window.eaasClient.release();
+												$('#emulator-stopped-container').show();
+												
+												$scope.$close();
+												
+												$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
+													envId: $stateParams.envId,
+													deleteMetaData: true,
+													deleteImage: true
+												}).then(function(response) {
+													if (response.data.status === "0") {		
+														$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+													} else {
+											
+														growl.error(response.data.message, {title: 'Error ' + response.data.status});
+														$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+													}
+												});                         
+											};
+										},
+									controllerAs: "openTestEnvironmentDialogCtrl"
+								});
+									}
+								else
+									{
+								
 								$uibModal.open({
 									animation: true,
 									templateUrl: 'partials/wf-s/save-environment-dialog.html',
@@ -732,6 +789,7 @@
 									},
 									controllerAs: "openSaveEnvironmentDialogCtrl"
 								});
+									}
 							}
 							
 							/*
