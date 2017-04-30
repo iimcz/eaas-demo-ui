@@ -276,7 +276,7 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
-						controller: function ($scope, $sce, $state, $stateParams, $cookies, growl, localConfig) {
+						controller: function ($scope, $sce, $state, $stateParams, $cookies, $translate, growl, localConfig) {
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
@@ -284,6 +284,11 @@
 							eaasClient.addOnConnectListener(function () {
 								$("#emulator-loading-container").hide();
 								$("#emulator-container").show();
+
+								if (eaasClient.params.pointerLock) {
+                                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+									BWFLA.requestPointerLock($("#emulator-container")[0], 'click');
+								}
 							});
 
 							eaasClient.onError = function(message) {
