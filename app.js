@@ -285,7 +285,7 @@
 								$("#emulator-loading-container").hide();
 								$("#emulator-container").show();
 
-								if (eaasClient.params.pointerLock) {
+								if (eaasClient.params.pointerLock === 'true') {
                                     growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
 									BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
 								}
