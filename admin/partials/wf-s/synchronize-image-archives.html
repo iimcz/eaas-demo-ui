@@ -1,0 +1,54 @@
+<h1 class="m-t-0">{{'SYNC_ARCHIVES_L' | translate}}</h1>
+
+<wizard hide-indicators="true">
+	<wz-step>
+		<div class="form-group">
+			<label>{{'SYNC_REMOTE_ARCHIVE_URI_LBL' | translate}}</label>
+			<input type="text" class="form-control" ng-model="synchronizeImageArchivesCtrl.remoteArchiveURI" placeholder="{{'SYNC_REMOTE_ARCHIVE_URI_PH' | translate}}" required>
+		</div>
+
+		<button class="btn btn-default" style="min-width: 300px;" type="button"
+		  ng-click="synchronizeImageArchivesCtrl.fetchArchivesFromRemote(synchronizeImageArchivesCtrl.remoteArchiveURI)">{{'SYNC_SET_URI_BTN' | translate}}</button>
+	</wz-step>
+
+	<wz-step>
+		<table id="standard-envs-overview-table" st-table="displayEnvs" st-safe-src="synchronizeImageArchivesCtrl.envList" class="table">
+			<thead>
+			<tr>
+				<th colspan="3">
+					<input st-search="" style="max-width: 300px;" class="form-control pull-right" placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
+				</th>
+			</tr>
+			<tr>
+				<th>Name</th>
+				<th>In local archive</th>
+				<th>In remote archive</th>
+			</tr>
+			</thead>
+
+			<tbody>
+			<tr ng-repeat="row in displayEnvs">
+				<td>{{row.title}} ({{row.envId}})</td>
+				<td><input type="checkbox" ng-model="row.isAvailableLocal" ng-disabled="row.isAvailableLocalInitial"></td>
+				<td><input type="checkbox" ng-model="row.isAvailableRemote" ng-disabled="row.isAvailableRemoteInitial"></td>
+			</tr>
+			</tbody>
+
+			<tfoot>
+			<tr>
+				<td colspan="3">
+					<div style="text-align: center; margin-top: 10px;">
+						<button class="btn btn-default" style="min-width: 300px;" type="button" ng-disabled="synchronizeImageArchivesCtrl.isSyncing"
+								ng-click="synchronizeImageArchivesCtrl.syncArchives(displayEnvs)">
+							<span class="glyphicon glyphicon-sort"></span>
+							<span>{{'SYNC_ARCHIVES_BTN' | translate}}</span>
+						</button>
+					</div>
+				</td>
+			</tr>
+			</tfoot>
+		</table>
+	</wz-step>
+</wizard>
+
+

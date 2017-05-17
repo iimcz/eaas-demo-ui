@@ -41,7 +41,7 @@
 	
 	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 
 								   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
-								   'angular-page-visibility', 'textAngular'])
+								   'angular-page-visibility', 'textAngular', 'mgo-angular-wizard'])
 
 	.component('inputList', {
 		templateUrl: 'partials/components/inputList.html',
@@ -438,6 +438,77 @@
 					};
 				},
 				controllerAs: "baseCtrl"
+			})
+			.state('wf-s.synchronize-image-archives', {
+			  url: "/synchronize-image-archives",
+			  views: {
+				  'wizard': {
+					  templateUrl: 'partials/wf-s/synchronize-image-archives.html',
+					  controller: function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler) {
+						  var vm = this;
+
+						  var setEnvList = function (localEnvironmentList, remoteEnvironmentList) {
+                              var envMap = {};
+
+                              localEnvironmentList.forEach(function (env) {
+                                  env.isAvailableLocal = true;
+                                  env.isAvailableRemote = false; // init with false, may be switched, if found in remote
+                                  envMap[env.envId] = env;
+                              });
+
+                              remoteEnvironmentList.forEach(function (env) {
+                                  // environment is in the local archive, switch the isAvailableRemote flag
+                                  if (envMap[env.envId]) {
+                                      envMap[env.envId].isAvailableRemote = true;
+                                      return;
+                                  }
+
+                                  env.isAvailableLocal = false;
+                                  env.isAvailableRemote = true;
+                                  envMap[env.envId] = env;
+                              });
+
+                              vm.envList = Object.keys(envMap).map(function(key) {
+                                  envMap[key].isAvailableLocalInitial = envMap[key].isAvailableLocal;
+                                  envMap[key].isAvailableRemoteInitial = envMap[key].isAvailableRemote;
+
+                                  return envMap[key];
+                              });
+                          };
+
+						  vm.fetchArchivesFromRemote = function (URI) {
+							  // TODO fetch real data from URI
+							  if (!URI) {
+							  	growl.error('Please enter a valid URI');
+							  	return;
+							  }
+
+                              var MOCK_REMOTE_BASE = [{"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"cbb628fb-f300-443f-87aa-0d831a879d6414","os":"n.a.","title":"DooM","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}, {"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"848b8mj","os":"n.a.","title":"FakeDooM2000","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
+                              // var MOCK_REMOTE_OBJ = [{"parentEnvId":null,"envId":"7022","os":"n.a.","title":"Hatari TOS 2.06 US","description":"n.a.","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
+
+                              setEnvList(environmentList.data.environments, MOCK_REMOTE_BASE);
+                              WizardHandler.wizard().next();
+                          };
+
+                          vm.isSyncing = false;
+                          vm.syncArchives = function (envs) {
+                              vm.isSyncing = true;
+
+                              growl.info($translate.instant('SYNC_START_INFO'));
+
+                              // fake rest post
+                              setTimeout(function () {
+                                  vm.isSyncing = false;
+
+                                  // TODO call setEnvList with updated lists
+
+                                  growl.success($translate.instant('SYNC_SUCCESS_INFO'));
+                              }, 7000);
+                          };
+					  },
+					  controllerAs: "synchronizeImageArchivesCtrl"
+				  }
+			  }
 			})
 			.state('wf-s.standard-envs-overview', {
 				url: "/standard-envs-overview",

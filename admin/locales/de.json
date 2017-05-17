@@ -134,8 +134,16 @@
   "SAVETESTENV_SAVE" : "Speichern",
   "SAVETESTENV_L" : "Import erfolgreich?",
   "SAVETESTENV_KEEP" : "Importierte Umgebung hinzufügen?",
-  "SAVETESTENV_CANCEL" : "Verwerfen", 
-  
+  "SAVETESTENV_CANCEL" : "Verwerfen",
+
+  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "URI des nicht-lokalen Archives",
+  "SYNC_REMOTE_ARCHIVE_URI_PH" : "Archiv URI eingeben..",
+  "SYNC_SET_URI_BTN" : "Archiv URI auswählen",
+  "SYNC_ARCHIVES_L" : "Archivsynchronisierung",
+  "SYNC_ARCHIVES_BTN" : "Archive synchronisieren",
+  "SYNC_START_INFO" : "Archive werden synchronisiert..",
+  "SYNC_SUCCESS_INFO" : "Archive wurden erfolgreich synchronisiert",
+
   "JS_DELENV_OK" : "Dies löscht die Umgebung unwiderruflich. Wollen sie wirklich fortfahren?",
   "JS_DELENV_SUCCESS" : "Umgebung wurde erfolgreich gelöscht",
   "JS_ENV_UPDATE" : "Daten erfolgreich gespeichert",

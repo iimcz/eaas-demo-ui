@@ -133,7 +133,15 @@
   "SAVETESTENV_SAVE" : "Save",
   "SAVETESTENV_L" : "Import successful?",
   "SAVETESTENV_KEEP" : "Add imported environment to environments list?",
-  "SAVETESTENV_CANCEL" : "Discard",  
+  "SAVETESTENV_CANCEL" : "Discard",
+
+  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "Enter the Remote archive URI",
+  "SYNC_REMOTE_ARCHIVE_URI_PH" : "Remote archive URI..",
+  "SYNC_SET_URI_BTN" : "Select URI",
+  "SYNC_ARCHIVES_L" : "Sync Archives",
+  "SYNC_ARCHIVES_BTN" : "Synchronize archives",
+  "SYNC_START_INFO" : "Syncing archives..",
+  "SYNC_SUCCESS_INFO" : "Archives synced successfully",
   
   "JS_DELENV_OK" : "Do you really want to delete this environment",
   "JS_DELENV_SUCCESS" : "Environment has been deleted",
