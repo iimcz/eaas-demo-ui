@@ -90,6 +90,9 @@
   "SW_OVERVIEW_SEARCH" : "Search...",
   "SW_OVERVIEW_SW_EDIT" : "[edit]",
   "SW_OVERVIEW_SW_DEL" : "[delete]",
+
+  "ERROR_MODAL_TITLE": "Information",
+  "ERROR_MODAL_TEXT": "The EAAS service is currently not ready. As soon as it becomes ready you can automatically resume.",
   
   "EDITENV_L" : "Edit Environment",
   "EDITENV_ID": "ID",

@@ -156,16 +156,41 @@
 		// automatically choose best language for user
 		$translateProvider.determinePreferredLanguage();
 		// $translateProvider.preferredLanguage('en');
-		
-		// Add a global AJAX error handler
-		$httpProvider.interceptors.push(function($q, $injector) {
-			return {
-				responseError: function(rejection) {
-					$injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
-					return $q.reject(rejection);
-				}
-			};
-		});
+
+        var httpResponseErrorModal = null;
+
+        // Add a global AJAX error handler
+        $httpProvider.interceptors.push(function($q, $injector, $timeout) {
+            return {
+                responseError: function(rejection) {
+                    if (((rejection || {}).config || {}).method !== 'GET') {
+                        $injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
+                        return $q.reject(rejection);
+                    }
+
+                    if (httpResponseErrorModal === null) {
+                        httpResponseErrorModal = $injector.get('$uibModal').open({
+                            animation: true,
+                            backdrop: 'static',
+                            templateUrl: 'partials/server-error-dialog.html'
+                        });
+                    }
+
+                    return $timeout(function() {
+                        var $http = $injector.get('$http');
+
+                        var req = $http(rejection.config);
+                        req.then(function() {
+                            if (httpResponseErrorModal !== null) {
+                                httpResponseErrorModal.close();
+                                httpResponseErrorModal = null;
+                            }
+                        });
+                        return req;
+                    }, 5000);
+                }
+            };
+        });
 
 		// For any unmatched url
 		$urlRouterProvider.otherwise("/wf-s/standard-envs-overview");
