@@ -188,3 +188,11 @@ html.wait, body.wait {
   cursor: -webkit-grabbing;
   margin-right: 10px;
 }
+
+/* ==========================================================================
+		Datetime Picker
+   ========================================================================== */
+
+.uib-daypicker {
+	outline: none !important;
+}

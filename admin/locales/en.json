@@ -107,6 +107,7 @@
   "EDITENV_HELPTEXT" : "Environment Help Text:",
   "EDITENV_CANCEL" : "Cancel",
   "EDITENV_REVS" : "Revisions",
+  "EDITENV_DATE_CONTEXT": "Date",
   
   "CHAR_L" : "Characterize object",
   "CHAR_AUT" : "Automated characterization",

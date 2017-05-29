@@ -39,9 +39,9 @@
 	var getSoftwareObjectURL = "EmilSoftareData/getSoftwareObject?softwareId={0}";
 	
 	
-	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 
+	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
 								   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
-								   'angular-page-visibility', 'textAngular', 'mgo-angular-wizard'])
+								   'angular-page-visibility', 'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker'])
 
 	.component('inputList', {
 		templateUrl: 'partials/components/inputList.html',
@@ -619,7 +619,10 @@
 					'wizard': {
 						templateUrl: 'partials/wf-s/edit-env.html',
 						controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate) {
-							
+							var vm = this;
+
+                            vm.showDateContextPicker = false;
+
 							var envList = null;
 							console.log($stateParams.objEnv);
 							if($stateParams.objEnv)
@@ -643,6 +646,8 @@
 							}
 							
 							this.saveEdit = function() {
+								console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+
 								$http.post(localConfig.data.eaasBackendURL + updateDescriptionUrl, {
 									envId: $stateParams.envId,
 									title: this.envName,
@@ -690,6 +695,60 @@
 									$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 								});
 							};
+
+                            vm.isOpen = false;
+
+                            vm.datetimePicker = {
+                            	date: new Date(),
+                                datepickerOptions: { },
+                                timepickerOptions: {
+                                    showMeridian: false
+								},
+                                buttonBar: {
+                                    show: true,
+                                    now: {},
+                                    today: {},
+                                    clear: {
+                                        show: false
+                                    },
+                                    date: {},
+                                    time: {},
+                                    close: {},
+                                    cancel: {}
+								}
+							};
+
+                            if ($translate.use() === 'de') {
+                                vm.datetimePicker.buttonBar = {
+                                    show: true,
+									now: {
+										text: 'Jetzt'
+									},
+									today: {
+										text: 'Heute'
+									},
+									clear: {
+										show: false
+									},
+									date: {
+										text: 'Datum'
+									},
+									time: {
+										text: 'Zeit'
+									},
+									close: {
+										text: 'Schließen'
+									},
+									cancel: {}
+                                }
+							}
+
+                            vm.openCalendar = function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                vm.isOpen = true;
+                            };
 						},
 						controllerAs: "editEnvCtrl"
 					}

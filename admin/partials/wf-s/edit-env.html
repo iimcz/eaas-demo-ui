@@ -15,8 +15,30 @@
 	<div class="form-group">
 		<label>{{'EDITENV_DESC' | translate}}</label>
 		<textarea class="form-control" rows="3"
-			ng-model="editEnvCtrl.env.description"
-			placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
+				  ng-model="editEnvCtrl.env.description"
+				  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
+	</div>
+
+	<div class="form-group">
+		<label>{{'EDITENV_DATE_CONTEXT' | translate}}</label>
+		<div>
+			<div style="float: left; margin: 6px;">
+				<input type="checkbox" ng-model="editEnvCtrl.showDateContextPicker">
+			</div>
+
+			<div>
+				<p class="input-group">
+					<input type="text" class="form-control" datetime-picker="dd.MM.yyyy HH:mm" ng-model="editEnvCtrl.datetimePicker.date" is-open="editEnvCtrl.isOpen"
+						   timepicker-options="editEnvCtrl.datetimePicker.timepickerOptions" datepicker-options="editEnvCtrl.datetimePicker.datepickerOptions"
+						   button-bar="editEnvCtrl.datetimePicker.buttonBar"
+						   ng-disabled="!editEnvCtrl.showDateContextPicker" />
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-disabled="!editEnvCtrl.showDateContextPicker"
+								ng-click="editEnvCtrl.openCalendar($event, prop)"><i class="fa fa-calendar"></i></button>
+					</span>
+				</p>
+			</div>
+		</div>
 	</div>
 	
 	<p>

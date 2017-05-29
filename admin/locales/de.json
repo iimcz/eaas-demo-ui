@@ -106,7 +106,8 @@
   "EDITENV_SAVE" : "Speichern",
   "EDITENV_HELPTEXT": "Hilfetext zur Umgebung",
   "EDITENV_CANCEL" : "Abbrechen",
-  "EDITENV_REVS" : "Revisionen", 
+  "EDITENV_REVS" : "Revisionen",
+  "EDITENV_DATE_CONTEXT": "Datum",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_AUT" : "Automatische Charakterisierung",
