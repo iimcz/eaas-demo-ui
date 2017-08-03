@@ -1,28 +1,93 @@
 <h1 class="m-t-0">{{'EDITENV_L' | translate}}</h1>
 
 <form id="editEnvForm" name="editEnvCtrl.editEnvForm">
+	<p>
+		<b>{{'EDITENV_ID' | translate}}:</b>
+		{{editEnvCtrl.env.envId}}
+	</p>
+	
 	<div class="form-group">
-		<label>{{'EDITENV_NAME' | translate}}</label>
-		<input type="text" class="form-control" ng-model="editEnvCtrl.envName" placeholder="{{'EDITENV_NAME_PH' | translate}}" required>
+		<label>{{'EDITENV_NAME' | translate}}</label> <input type="text"
+			class="form-control" ng-model="editEnvCtrl.env.title"
+			placeholder="{{'EDITENV_NAME_PH' | translate}}" required>
 	</div>
 
 	<div class="form-group">
 		<label>{{'EDITENV_DESC' | translate}}</label>
-		<textarea class="form-control" rows="3" ng-model="editEnvCtrl.envDescription" placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
+		<textarea class="form-control" rows="3"
+				  ng-model="editEnvCtrl.env.description"
+				  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
 	</div>
 
-	<p><b>{{'EDITENV_EMULATOR' | translate}}:</b> {{editEnvCtrl.env.emulator}} </p>
-	<p><b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br/> <text-angular ng-model="editEnvCtrl.helpText"/></p>
-	<p><b>{{'EDITENV_OS' | translate}}:</b> {{editEnvCtrl.env.os}} </p>
+	<div class="form-group">
+		<label>{{'EDITENV_DATE_CONTEXT' | translate}}</label>
+		<div>
+			<div style="float: left; margin: 6px;">
+				<input type="checkbox" ng-model="editEnvCtrl.showDateContextPicker">
+			</div>
+
+			<div>
+				<p class="input-group">
+					<input type="text" class="form-control" datetime-picker="dd.MM.yyyy HH:mm" ng-model="editEnvCtrl.datetimePicker.date" is-open="editEnvCtrl.isOpen"
+						   timepicker-options="editEnvCtrl.datetimePicker.timepickerOptions" datepicker-options="editEnvCtrl.datetimePicker.datepickerOptions"
+						   button-bar="editEnvCtrl.datetimePicker.buttonBar"
+						   ng-disabled="!editEnvCtrl.showDateContextPicker" />
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-default" ng-disabled="!editEnvCtrl.showDateContextPicker"
+								ng-click="editEnvCtrl.openCalendar($event, prop)"><i class="fa fa-calendar"></i></button>
+					</span>
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	<p>
+		<b>{{'EDITENV_OS' | translate}}:</b> {{editEnvCtrl.env.os}}
+	</p>
+	
+	<div ng-show="editEnvCtrl.env.revisions.length > 0">
+		<p id="editEnvSoftwareListLabel">
+			<b>{{'EDITENV_REVS' | translate}}:</b>
+		</p>
+		<ul id="editEnvSoftwareList">
+			<li ng-repeat="revision in editEnvCtrl.env.revisions">{{revision.text}}
+			<a href="#"
+				ng-click="editEnvCtrl.fork(revision.id)"> [ fork ] </a>
+				
+			<a href="#"
+				ng-click="editEnvCtrl.revert(editEnvCtrl.env.envId, revision.id)"> [ revert to this version ] </a>
+				
+			</li>
+		</ul>
+	</div>
+	
 	<div ng-show="editEnvCtrl.env.installedSoftwareIds.length > 0">
-		<p id="editEnvSoftwareListLabel"><b>{{'EDITENV_SW' | translate}}:</b></p>
+		<p id="editEnvSoftwareListLabel">
+			<b>{{'EDITENV_SW' | translate}}:</b>
+		</p>
 		<ul id="editEnvSoftwareList">
 			<li ng-repeat="softwareId in editEnvCtrl.env.installedSoftwareIds">{{softwareId}}</li>
 		</ul>
 	</div>
 
+	<p>
+		<b>{{'EDITENV_EMULATOR' | translate}}:</b>
+		{{editEnvCtrl.env.emulator}}
+	</p>
+	<p>
+		<b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br />
+		<text-angular ng-model="editEnvCtrl.env.helpText" />
+	</p>
+	
+
 	<div style="text-align: right;">
-		<button type="submit" class="btn btn-default" ui-sref="wf-s.standard-envs-overview">{{'EDITENV_CANCEL' | translate}}</button>
-		<button type="submit" class="btn btn-primary" ng-click="editEnvCtrl.saveEdit()" ui-sref="wf-s.standard-envs-overview" ng-disabled="!editEnvCtrl.editEnvForm.$valid">{{'EDITENV_SAVE' | translate}}</button>
+		<button type="submit" class="btn btn-default"
+			ui-sref="wf-s.standard-envs-overview">{{'EDITENV_CANCEL' |
+			translate}}</button>
+		<button type="submit" class="btn btn-primary"
+			ng-click="editEnvCtrl.saveEdit()"
+			ui-sref="wf-s.standard-envs-overview"
+			ng-disabled="!editEnvCtrl.editEnvForm.$valid">{{'EDITENV_SAVE'
+			| translate}}</button>
 	</div>
 </form>

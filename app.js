@@ -73,14 +73,14 @@
 		// Add a global AJAX error handler
 		$httpProvider.interceptors.push(function($q, $injector, $timeout) {
 			return {
-				responseError: function(rejection) {					
+				responseError: function(rejection) {
 					if (httpResponseErrorModal === null) {
 						httpResponseErrorModal = $injector.get('$uibModal').open({
 							animation: true,
 							backdrop: 'static',
 							templateUrl: 'partials/server-error-dialog.html'
 						});
-					}					
+					}
 
 					return $timeout(function() {
 						var $http = $injector.get('$http');
@@ -144,7 +144,7 @@
 						}],
 						null, // Dividier
 						[$translate.instant('JS_MENU_EDIT'), function ($itemScope) {
-							window.location.href = "/emil-admin-ui/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
+							window.location.href = "admin/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
 						}],
 						[$translate.instant('JS_MENU_DETAILS'), function ($itemScope) {
 							alert("TBD");
@@ -285,7 +285,7 @@
 								$("#emulator-loading-container").hide();
 								$("#emulator-container").show();
 
-								if (eaasClient.params.pointerLock) {
+								if (eaasClient.params.pointerLock === 'true') {
                                     growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
 									BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
 								}

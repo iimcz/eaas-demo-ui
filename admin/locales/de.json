@@ -34,7 +34,8 @@
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
   "SETTINGS_DLG_CLOSE_DLG" : "Schließen",
-  "SETTINGS_DLG_SYNC_OBJECTS" : "Objektarchive Synchronisieren",
+  "SETTINGS_DLG_SYNC_OBJECTS" : "Objektarchive synchronisieren",
+  "SETTINGS_DLG_SYNC_IMAGES" : "Umgebungen sychronisieren",
 
   "SET_KEYBOARD_DLG_TITLE" : "Lokale Tastaturlayout ändern",
   "SET_KEYBOARD_DLG_HELP" : "Um die Tasten Ihres Computers auf die richten Tasten des Emulators zu legen, wählen Sie bitte Ihre lokale Spracheinstellung und ihr Tastaturmodell. Wenn Sie bzgl. Ihres Tastaturmodells unsicher sind wählen Sie pc-105 (eine standard Windows tastatur).",
@@ -51,12 +52,16 @@
   "SW_OVERVIEW_SEARCH" : "Eintippen zum Suchen...",
   "SW_OVERVIEW_SW_EDIT" : "[Bearbeiten]",
   "SW_OVERVIEW_SW_DEL" : "[Löschen]",
+
+  "ERROR_MODAL_TITLE": "Information",
+  "ERROR_MODAL_TEXT": "Momentan ist der EAAS Dienst nicht bereit. Sobald der Dienst bereit ist können sie automatisch fortfahren.",
   
   "SW_INGEST_HEADER" : "Software Ingest",
   "SW_INGEST_CHOOSE_OBJECT" : "Objekt auswählen",
   "SW_INGEST_CHOOSE_OBJECT_PH" : "Wählen oder suchen sie ein Objekt...",
   "SW_INGEST_LICENSE_LBL" : "Lizenzinformationen",
   "SW_INGEST_LICENSE_PH" : "Lizenzinformationen eingeben...",
+  "SW_INGEST_OS_LBL" : "Betriebssystem",
   "SW_INGEST_NO_INSTANCES_LBL" : "Erlaubte Instanzanzahl (-1 für unbegrenzt)",
   "SW_INGEST_FMT_NATIVE_HEADER" : "Rendering Capabilites: Native FMTs",
   "SW_INGEST_FMT_NATIVE_EMPTY" : "No Native FMTs added yet.",
@@ -90,6 +95,7 @@
   "SW_NEW_IMAGE_START_BUTTON" : "Starten",
   
   "EDITENV_L" : "Umgebung bearbeiten",
+  "EDITENV_ID" : "ID",
   "EDITENV_NAME" : "Name",
   "EDITENV_NAME_PH" : "Name der Umgebung..",
   "EDITENV_DESC" : "Beschreibung",
@@ -100,6 +106,8 @@
   "EDITENV_SAVE" : "Speichern",
   "EDITENV_HELPTEXT": "Hilfetext zur Umgebung",
   "EDITENV_CANCEL" : "Abbrechen",
+  "EDITENV_REVS" : "Revisionen",
+  "EDITENV_DATE_CONTEXT": "Datum",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_AUT" : "Automatische Charakterisierung",
@@ -127,6 +135,19 @@
   "SAVEENV_SAVE" : "Speichern",
   "SAVEENV_CANCEL" : "Abbrechen",
   
+  "SAVETESTENV_SAVE" : "Speichern",
+  "SAVETESTENV_L" : "Import erfolgreich?",
+  "SAVETESTENV_KEEP" : "Importierte Umgebung hinzufügen?",
+  "SAVETESTENV_CANCEL" : "Verwerfen",
+
+  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "URI des nicht-lokalen Archives",
+  "SYNC_REMOTE_ARCHIVE_URI_PH" : "Archiv URI eingeben..",
+  "SYNC_SET_URI_BTN" : "Archiv URI auswählen",
+  "SYNC_ARCHIVES_L" : "Archivsynchronisierung",
+  "SYNC_ARCHIVES_BTN" : "Archive synchronisieren",
+  "SYNC_START_INFO" : "Archive werden synchronisiert..",
+  "SYNC_SUCCESS_INFO" : "Archive wurden erfolgreich synchronisiert",
+
   "JS_DELENV_OK" : "Dies löscht die Umgebung unwiderruflich. Wollen sie wirklich fortfahren?",
   "JS_DELENV_SUCCESS" : "Umgebung wurde erfolgreich gelöscht",
   "JS_ENV_UPDATE" : "Daten erfolgreich gespeichert",

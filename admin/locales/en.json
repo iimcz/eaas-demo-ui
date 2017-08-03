@@ -35,6 +35,7 @@
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
   "SETTINGS_DLG_CLOSE_DLG" : "Close",
   "SETTINGS_DLG_SYNC_OBJECTS" : "Sync Object Archives",
+  "SETTINGS_DLG_SYNC_IMAGES" : "Sync Image Archive",
 
   "SET_KEYBOARD_DLG_TITLE" : "Set local keyboard layout and language",
   "SET_KEYBOARD_DLG_HELP" : "In order to map between user and emulator keys, we need to know the local keyboard model and language settings. Please select the language of your keyboard input and the keyboard model. If unsure select pc-105 (a standard windows keyboard).",
@@ -49,6 +50,7 @@
   "SW_INGEST_HEADER" : "Software Ingest",
   "SW_INGEST_CHOOSE_OBJECT" : "Choose Object",
   "SW_INGEST_CHOOSE_OBJECT_PH" : "Search or choose an object...",
+  "SW_INGEST_OS_LBL" : "Operating System",
   "SW_INGEST_LICENSE_LBL" : "License information",
   "SW_INGEST_LICENSE_PH" : "Enter license information...",
   "SW_INGEST_NO_INSTANCES_LBL" : "Allowed number of instances (for unlimited choose -1):",
@@ -88,8 +90,12 @@
   "SW_OVERVIEW_SEARCH" : "Search...",
   "SW_OVERVIEW_SW_EDIT" : "[edit]",
   "SW_OVERVIEW_SW_DEL" : "[delete]",
+
+  "ERROR_MODAL_TITLE": "Information",
+  "ERROR_MODAL_TEXT": "The EAAS service is currently not ready. As soon as it becomes ready you can automatically resume.",
   
   "EDITENV_L" : "Edit Environment",
+  "EDITENV_ID": "ID",
   "EDITENV_NAME" : "Name",
   "EDITENV_NAME_PH" : "Environment name",
   "EDITENV_DESC" : "Description",
@@ -100,6 +106,8 @@
   "EDITENV_SAVE" : "Save",
   "EDITENV_HELPTEXT" : "Environment Help Text:",
   "EDITENV_CANCEL" : "Cancel",
+  "EDITENV_REVS" : "Revisions",
+  "EDITENV_DATE_CONTEXT": "Date",
   
   "CHAR_L" : "Characterize object",
   "CHAR_AUT" : "Automated characterization",
@@ -125,6 +133,19 @@
   "SAVEENV_DESC_PH" : "Description of changes..",
   "SAVEENV_SAVE" : "Save",
   "SAVEENV_CANCEL" : "Cancel",
+  
+  "SAVETESTENV_SAVE" : "Save",
+  "SAVETESTENV_L" : "Import successful?",
+  "SAVETESTENV_KEEP" : "Add imported environment to environments list?",
+  "SAVETESTENV_CANCEL" : "Discard",
+
+  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "Enter the Remote archive URI",
+  "SYNC_REMOTE_ARCHIVE_URI_PH" : "Remote archive URI..",
+  "SYNC_SET_URI_BTN" : "Select URI",
+  "SYNC_ARCHIVES_L" : "Sync Archives",
+  "SYNC_ARCHIVES_BTN" : "Synchronize archives",
+  "SYNC_START_INFO" : "Syncing archives..",
+  "SYNC_SUCCESS_INFO" : "Archives synced successfully",
   
   "JS_DELENV_OK" : "Do you really want to delete this environment",
   "JS_DELENV_SUCCESS" : "Environment has been deleted",
