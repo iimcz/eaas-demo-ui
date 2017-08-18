@@ -196,3 +196,69 @@ html.wait, body.wait {
 .uib-daypicker {
 	outline: none !important;
 }
+
+/* ==========================================================================
+		Dashboard
+   ========================================================================== */
+
+.dashboard-heading {
+	margin: 0 0 20px 0;
+}
+
+.dashboard-panel-body {
+	background: #F7F7F7
+}
+
+.dashboard-entry-metric-outer {
+	padding: 0 10px 0 20px;
+}
+
+.dashboard-entry-metric-outer + .dashboard-entry-metric-outer:before {
+	content: "";
+	position: absolute;
+	left: 0;
+	height: 65px;
+	border-left: 2px solid #adb2b5;
+	margin-top: 10px;
+}
+
+.dashboard-entry-metric-label {
+	font-size: 13px;
+}
+
+.dashboard-entry-metric-value {
+	color: #73879C;
+	font-size: 40px;
+	font-weight: bold
+}
+
+.dashboard-node-panel {
+	margin-top: 15px;
+	margin-bottom: 0;
+}
+
+.dashboard-node-panel-body {
+	background: white;
+}
+
+.dashboard-entry-chart-label {
+	text-align: center;
+	font-size: 16px;
+	margin-bottom: 4px;
+	margin-top: 0;
+}
+
+.dashboard-entry-title {
+	border-bottom: 1px solid #e6e9ed;
+	padding: 1px 5px 6px;
+	margin-bottom: 10px;
+}
+
+.dashboard-entry-title-header {
+	font-size: 18px;
+	margin: 0;
+}
+
+.dashboard-entry-title-header small {
+	margin-left: 3px;
+}
