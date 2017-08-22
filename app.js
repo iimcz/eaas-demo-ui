@@ -327,6 +327,10 @@
 								 window.open(window.eaasClient.getScreenshotUrl());
 							};
 
+							vm.printEnvOut = function() {
+								 window.open(window.eaasClient.getPrintUrl());
+							};
+
 							vm.restartEmulator = function() {
 								window.eaasClient.release();
 								$state.reload();

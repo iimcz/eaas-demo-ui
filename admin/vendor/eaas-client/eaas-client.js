@@ -202,10 +202,16 @@ EaasClient.Client = function(api_entrypoint, container) {
     });
   };
   
-  this.getScreenshotUrl = function() {  
-    return API_URL + formatStr("/components/{0}/screenshot", _this.componentId);
+  this.getScreenshotUrl = function() {
+      console.log("pressed getScreenshotUrl");
+      return API_URL + formatStr("/components/{0}/screenshot", _this.componentId);
   };
-  
+
+  this.getPrintUrl = function() {
+    console.log("pressed print");
+    return API_URL + formatStr("/components/{0}/print", _this.componentId);
+  };
+
   this.stopEnvironment = function() {
     this.guac.disconnect();
     $(container).empty();

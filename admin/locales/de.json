@@ -13,6 +13,8 @@
   "ACTIONS_RESTART" : "Neustarten",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Beenden",
+  "ACTIONS_PRINT" : "Print",
+
   "ACTIONS_ENV" : "Umgebung speichern",
   "ACTIONS_CHANGES" : "Änderungen speichern",
   "ACTIONS_OBJ_ENV" : "Neue Objekt Umgebung",
