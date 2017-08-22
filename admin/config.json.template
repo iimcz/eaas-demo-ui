@@ -1,0 +1,5 @@
+{
+  "eaasBackendURL": "http://localhost:8080/emil/",
+  "dashboardAccessToken": "",
+  "dashboardClusterAPIBaseURL" : ""
+}
