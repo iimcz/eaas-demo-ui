@@ -21,7 +21,7 @@
   "ACTIONS_RESTART" : "Restart",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Stop",
-  "ACTIONS_PRINT" : "Print",
+  "ACTIONS_PRINT" : "Retrieve Printouts",
 
 
   "BASE_SHOW_MENU" : "Show menu",

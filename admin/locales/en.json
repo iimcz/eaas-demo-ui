@@ -13,7 +13,7 @@
   "ACTIONS_RESTART" : "Restart",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Stop",
-  "ACTIONS_PRINT" : "Print",
+  "ACTIONS_PRINT" : "Download Print Jobs",
   "ACTIONS_ENV" : "Save Environment",
   "ACTIONS_CHANGES" : "Save Changes",
   "ACTIONS_OBJ_ENV" : "Create Object Environment",

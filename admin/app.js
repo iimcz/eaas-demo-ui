@@ -35,6 +35,7 @@
 
 	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
 	var characterizeObjectUrl = "Emil/characterizeObject?objectId={0}";
+	var buildVersionUrl = "Emil/buildInfo";
 	
 	
 	// Software archive api
@@ -227,11 +228,14 @@
 					},
 					kbLayouts: function($http) {
 						return $http.get("kbLayouts.json");
-					}
+					},
+					buildInfo: function($http, localConfig) {
+                    	return $http.get(localConfig.data.eaasBackendURL + buildVersionUrl);
+                    }
 				},
-				controller: function($uibModal, localConfig, kbLayouts) {
+				controller: function($uibModal, localConfig, kbLayouts, buildInfo) {
 					var vm = this;
-
+                    this.buildInfo = buildInfo.data.version;
 					vm.open = function() {
 						$uibModal.open({
 							animation: true,
@@ -257,6 +261,7 @@
 				},
 				controllerAs: "baseCtrl"
 			})
+
 			.state('wf-i.dashboard', {
 				url: "/dashboard",
                 resolve: {
@@ -637,11 +642,16 @@
 					},
 					kbLayouts: function($http) {
 						return $http.get("kbLayouts.json");
+					},
+					buildInfo: function($http, localConfig) {
+					    return $http.get(localConfig.data.eaasBackendURL + buildVersionUrl);
 					}
 				},
-				controller: function($state, $uibModal, $http, localConfig, kbLayouts, growl) {
+				controller: function($state, $uibModal, $http, localConfig, kbLayouts, growl, buildInfo) {
 					var vm = this;
-					
+
+					this.buildInfo = buildInfo.data.version;
+
 					vm.open = function() {
 						$uibModal.open({
 							animation: true,
