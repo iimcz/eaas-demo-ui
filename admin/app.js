@@ -198,7 +198,7 @@
         });
 
 		// For any unmatched url
-		$urlRouterProvider.otherwise("/wf-s/standard-envs-overview");
+		$urlRouterProvider.otherwise("/wf-i/dashboard");
 
 		// Now set up the states
 		$stateProvider

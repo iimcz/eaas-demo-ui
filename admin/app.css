@@ -46,6 +46,7 @@
         position: fixed;
         height: 30px;
         bottom: 0;
+        font-size: x-small;
 }
 
 #header {
