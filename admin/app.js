@@ -851,21 +851,28 @@
 									break;
 								}
 							}
-							
+
 							if(this.env === null)
 							{
 								growl.error("Environment not found");
 								$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 							}
-							
-							this.saveEdit = function() {
-								console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
 
+							this.envTitle = this.env.title;
+							this.envDescription = this.env.description;
+							this.envHelpText = this.env.helpText;
+
+							this.saveEdit = function() {
+						//		console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+                                this.env.title = this.envTitle;
+                                this.env.description = this.envDescription;
+                                this.env.helpText = this.envHelpText;
 								$http.post(localConfig.data.eaasBackendURL + updateDescriptionUrl, {
 									envId: $stateParams.envId,
-									title: this.envName,
+									title: this.envTitle,
 									description: this.envDescription,
-									helpText: this.helpText
+									helpText: this.envHelpText,
+									time: vm.datetimePicker.date.getTime()
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));

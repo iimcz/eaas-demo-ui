@@ -8,14 +8,14 @@
 	
 	<div class="form-group">
 		<label>{{'EDITENV_NAME' | translate}}</label> <input type="text"
-			class="form-control" ng-model="editEnvCtrl.env.title"
+			class="form-control" ng-model="editEnvCtrl.envTitle"
 			placeholder="{{'EDITENV_NAME_PH' | translate}}" required>
 	</div>
 
 	<div class="form-group">
 		<label>{{'EDITENV_DESC' | translate}}</label>
 		<textarea class="form-control" rows="3"
-				  ng-model="editEnvCtrl.env.description"
+				  ng-model="editEnvCtrl.envDescription"
 				  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
 	</div>
 
@@ -76,7 +76,7 @@
 	</p>
 	<p>
 		<b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br />
-		<text-angular ng-model="editEnvCtrl.env.helpText" />
+		<text-angular ng-model="editEnvCtrl.envHelpText" />
 	</p>
 	
 
