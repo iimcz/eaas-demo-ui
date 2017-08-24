@@ -39,9 +39,9 @@
 	
 	
 	// Software archive api
-	var getSoftwarePackageDescriptions = "EmilSoftareData/getSoftwarePackageDescriptions";
-	var saveSoftwareUrl = "EmilSoftareData/saveSoftwareObject";
-	var getSoftwareObjectURL = "EmilSoftareData/getSoftwareObject?softwareId={0}";
+	var getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";
+	var saveSoftwareUrl = "EmilSoftwareData/saveSoftwareObject";
+	var getSoftwareObjectURL = "EmilSoftwareData/getSoftwareObject?softwareId={0}";
 	
 	
 	angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
@@ -863,7 +863,10 @@
 							this.envHelpText = this.env.helpText;
 
 							this.saveEdit = function() {
-						//		console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+							    console.log("save time: " + this.showDateContextPicker);
+							    if(this.showDateContextPicker)
+								    console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+
                                 this.env.title = this.envTitle;
                                 this.env.description = this.envDescription;
                                 this.env.helpText = this.envHelpText;
