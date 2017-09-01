@@ -36,7 +36,7 @@
 	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
 	var characterizeObjectUrl = "Emil/characterizeObject?objectId={0}";
 	var buildVersionUrl = "Emil/buildInfo";
-	
+	var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
 	
 	// Software archive api
 	var getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";
@@ -1070,7 +1070,42 @@
 								else
 									$state.go('wf-s.standard-envs-overview');
 							};
-							
+
+							vm.openChangeMediaDialog = function() {
+                            	$uibModal.open({
+                            		animation: true,
+                            		templateUrl: 'partials/wf-s/change-media-dialog.html',
+                            				controller: function($scope) {
+                            				this.chosen_medium_label = currentMediumLabel;
+                            				this.media = mediaCollection.data.media;
+                            				this.isChangeMediaSubmitting = false;
+
+                            				this.changeMedium = function(newMediumLabel) {
+                            				if (newMediumLabel == null) {
+                            				    growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
+                            				    return;
+                            				}
+
+                            											this.isChangeMediaSubmitting = true;
+                            											$("html, body").addClass("wait");
+                            											$http.get(localConfig.data.eaasBackendURL + formatStr(changeMediaURL, window.eaasClient.componentId, $stateParams.objectId, window.eaasClient.driveId, newMediumLabel)).then(function(resp) {
+                            												if (resp.data.status === "0") {
+                            													growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
+                            													currentMediumLabel = newMediumLabel;
+                            													$scope.$close();
+                            												} else {
+                            													growl.error($translate.instant('JS_MEDIA_CHANGE_ERR'), {title: "Error"});
+                            												}
+                            											})['finally'](function() {
+                            												$("html, body").removeClass("wait");
+                            											});
+                            										};
+                            									}
+                            									,
+                            									controllerAs: "openChangeMediaDialogCtrl"
+                            								});
+                            							};
+
 							vm.openSaveEnvironmentDialog = function() {	
 								$uibModal.open({
 									animation: true,
