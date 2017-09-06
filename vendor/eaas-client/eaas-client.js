@@ -176,17 +176,17 @@ EaasClient.Client = function(api_entrypoint, container) {
     var data = {};
     data.type = "machine";
     data.environment = environmentId;
-    
+
     if (typeof args !== "undefined") {
       data.keyboardLayout = args.keyboardLayout;
       data.keyboardModel = args.keyboardModel;
       data.object = args.object;
-      
+
       if (args.object == null) {
         data.software = args.software;
       }
     }
-    
+
     $.ajax({
       type: "POST",
       url: API_URL + "/components",
@@ -201,7 +201,7 @@ EaasClient.Client = function(api_entrypoint, container) {
       _this._onError($.parseJSON(xhr.responseText))
     });
   };
-  
+
   this.getScreenshotUrl = function() {
       return API_URL + formatStr("/components/{0}/screenshot", _this.componentId);
   };
@@ -212,6 +212,11 @@ EaasClient.Client = function(api_entrypoint, container) {
 
   this.stopEnvironment = function() {
     this.guac.disconnect();
+    $.ajax({
+          type: "GET",
+          url: API_URL + formatStr("/components/{0}/stop", _this.componentId),
+          async: false,
+        });
     $(container).empty();
   };
 
@@ -223,30 +228,20 @@ EaasClient.Client = function(api_entrypoint, container) {
       this.stopEnvironment();
       this.clearTimer();
   };
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+  this.changeMedia = function(postObj, onChangeDone)
+      {
+          $.ajax({
+              type: "POST",
+              url: API_URL + formatStr("/components/{0}/changeMedia", _this.componentId),
+              data: JSON.stringify(postObj),
+              contentType: "application/json"
+          })
+          .then(function (data, status, xhr) {
+              onChangeDone(data, status);
+          });
+      };
+
 
   this.startEnvironmentWithInternet = function(environmentId, kbLanguage,
       kbLayout) {
