@@ -53,7 +53,7 @@
   "JS_ENV_ERROR" : "No environments found.",
   "JS_MEDIA_NO_MEDIA" : "No medium chosen.",
   "JS_MEDIA_CHANGETO" : "Changing to: ",
-  "JS_MEDIA_CHANGE_ERR" : "Failed changeing medium.",
+  "JS_MEDIA_CHANGE_ERR" : "Failed changing medium.",
   "JS_MENU_RENDER" : "Render",
   "JS_MENU_EDIT" : "Edit",
   "JS_MENU_DETAILS" : "Details",

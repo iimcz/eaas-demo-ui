@@ -14,7 +14,7 @@
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Beenden",
   "ACTIONS_PRINT" : "Druckaufträge",
-
+  "ACTIONS_CHANGE_MEDIA" : "Medienwechsel",
   "ACTIONS_ENV" : "Umgebung speichern",
   "ACTIONS_CHANGES" : "Änderungen speichern",
   "ACTIONS_OBJ_ENV" : "Neue Objekt Umgebung",
@@ -157,5 +157,11 @@
   "JS_START_CHAR" : "Die automatische Charakterisierung ersetzt ihre aktuelle Zuordnung und dauert bis zu mehreren Minuten. Fortfahren?",
   "JS_ENV_ERR_DUP" : "Diese Umgebung ist bereits hinzugefügt..",
   "JS_ENV_ERR_ZERO" : "Es muss mindestens eine Umgebung zugeordnet werden.",
-  "JS_EMU_LEAVE_PAGE" : "Wenn sie nicht innerhalb der nächsten 3 Minuten auf diese Seite zurückkehren, wird der Emulator automatisch geschlossen."
+  "JS_EMU_LEAVE_PAGE" : "Wenn sie nicht innerhalb der nächsten 3 Minuten auf diese Seite zurückkehren, wird der Emulator automatisch geschlossen.",
+  "JS_MEDIA_CHANGETO" : "Neues Medium: ",
+  "JS_MEDIA_CHANGE_ERR" : "Das Medium konnte nicht gewechselt werden.",
+
+  "CHANGEM_TITLE" : "Medienwechsel",
+  "CHANGEM_OK" : "Medium wechseln",
+  "CHANGEM_CANCEL" : "Abbrechen"
 }

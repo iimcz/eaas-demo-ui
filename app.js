@@ -342,7 +342,7 @@
 								window.location = localConfig.data.stopEmulatorRedirectURL;
 							};
 
-							var currentMediumLabel = mediaCollection.data.media.length > 0 ? mediaCollection.data.media[0].labels[0] : null;
+							var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
 
 							var eaasClientReadyTimer = function() {
 								if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
@@ -360,7 +360,7 @@
 									templateUrl: 'partials/wf-b/change-media-dialog.html',
 									controller: function($scope) {
 										this.chosen_medium_label = currentMediumLabel;
-										this.media = mediaCollection.data.media;
+                                        this.media = mediaCollection.data.medium;
 										this.isChangeMediaSubmitting = false;
 
 										this.changeMedium = function(newMediumLabel) {
@@ -368,20 +368,21 @@
 												growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
 												return;
 											}
-											
-											this.isChangeMediaSubmitting = true;
-											$("html, body").addClass("wait");
-											$http.get(localConfig.data.eaasBackendURL + formatStr(changeMediaURL, window.eaasClient.componentId, $stateParams.objectId, window.eaasClient.driveId, newMediumLabel)).then(function(resp) {
-												if (resp.data.status === "0") {
-													growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
-													currentMediumLabel = newMediumLabel;
-													$scope.$close();
-												} else {
-													growl.error($translate.instant('JS_MEDIA_CHANGE_ERR'), {title: "Error"});
-												}
-											})['finally'](function() {
-												$("html, body").removeClass("wait");
-											});
+
+											postObj = {};
+                                            postObj.objectId = $stateParams.objectId;
+                                            postObj.driveId = window.eaasClient.driveId;
+                                            postObj.label = newMediumLabel;
+
+                                            changeSuccsessFunc = function(data, status) {
+                                                growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
+                                                currentMediumLabel = newMediumLabel;
+                                                $scope.$close();
+                                                $("html, body").removeClass("wait");
+                                            };
+
+                                            $("html, body").addClass("wait");
+                                            eaasClient.changeMedia(postObj, changeSuccsessFunc);
 										};
 									}
 									,

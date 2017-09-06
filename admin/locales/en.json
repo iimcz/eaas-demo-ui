@@ -16,6 +16,7 @@
   "ACTIONS_PRINT" : "Download Print Jobs",
   "ACTIONS_ENV" : "Save Environment",
   "ACTIONS_CHANGES" : "Save Changes",
+  "ACTIONS_CHANGE_MEDIA" : "Change media",
   "ACTIONS_OBJ_ENV" : "Create Object Environment",
   
   "ADDENV_L" : "Add environment",
@@ -155,5 +156,12 @@
   "JS_START_CHAR" : "Automated characterization may take some time. Continue?",
   "JS_ENV_ERR_DUP" : "Environment already selected",
   "JS_ENV_ERR_ZERO" : "At least one environment has to be selected",
-  "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically."
+  "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically.",
+  "JS_MEDIA_CHANGETO" : "Changing to: ",
+  "JS_MEDIA_CHANGE_ERR" : "Failed changing medium.",
+
+  "CHANGEM_TITLE" : "Change media",
+  "CHANGEM_OK" : "OK",
+  "CHANGEM_CANCEL" : "Cancel"
+
 }

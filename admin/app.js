@@ -15,7 +15,8 @@
 	var getObjectListURL = "EmilObjectData/list";
 	var getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
 	var syncObjectsUrl = "EmilObjectData/sync";
-	
+	var mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
+
 	// environment data api
 	var getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
 	var updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
@@ -36,7 +37,6 @@
 	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
 	var characterizeObjectUrl = "Emil/characterizeObject?objectId={0}";
 	var buildVersionUrl = "Emil/buildInfo";
-	var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
 	
 	// Software archive api
 	var getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";
@@ -777,7 +777,7 @@
 								
 							};
 							
-							vm.deleteEnvironment = function(envId) {
+                                vm.deleteEnvironment = function(envId) {
 								if (window.confirm($translate.instant('JS_DELENV_OK'))) {
 									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
 										envId: envId,
@@ -790,8 +790,11 @@
 											});
 											
 											growl.success($translate.instant('JS_DELENV_SUCCESS'));
+											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 										} else {
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
+											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+
 										}
 									});
 								}
@@ -979,6 +982,12 @@
 			})
 			.state('wf-s.emulator', {
 				url: "/emulator",
+				resolve: {
+                	mediaCollection: function($http, $stateParams, localConfig) {
+                			return $http.get(localConfig.data.eaasBackendURL +
+                			formatStr(mediaCollectionURL, $stateParams.softwareId));
+                		}
+                },
 				params: {
 					envId: "-1",
 					isNewEnv: false,
@@ -1033,7 +1042,7 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-s/actions.html',
-						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, $timeout, $translate, $pageVisibility) {
+						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, $pageVisibility) {
 							var vm = this;
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
@@ -1067,44 +1076,59 @@
 										}
 									});
 								}
+								else if ($stateParams.isNewObjectEn)
+								    $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
 								else
-									$state.go('wf-s.standard-envs-overview');
+									$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 							};
+
+							var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
+
+                            var eaasClientReadyTimer = function() {
+       							if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
+       								vm.driveId = window.eaasClient.driveId;
+        								return;
+        						}
+        						$timeout(eaasClientReadyTimer, 100);
+                            };
+                            $timeout(eaasClientReadyTimer);
 
 							vm.openChangeMediaDialog = function() {
                             	$uibModal.open({
                             		animation: true,
                             		templateUrl: 'partials/wf-s/change-media-dialog.html',
-                            				controller: function($scope) {
-                            				this.chosen_medium_label = currentMediumLabel;
-                            				this.media = mediaCollection.data.media;
-                            				this.isChangeMediaSubmitting = false;
+                            		controller: function($scope) {
+                            			this.chosen_medium_label = currentMediumLabel;
+                            			this.media = mediaCollection.data.medium;
+                            			this.isChangeMediaSubmitting = false;
 
-                            				this.changeMedium = function(newMediumLabel) {
-                            				if (newMediumLabel == null) {
-                            				    growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
-                            				    return;
-                            				}
+                            			this.changeMedium = function(newMediumLabel) {
+                                            if (newMediumLabel == null) {
+                                                growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
+                                                return;
+                                            }
 
-                            											this.isChangeMediaSubmitting = true;
-                            											$("html, body").addClass("wait");
-                            											$http.get(localConfig.data.eaasBackendURL + formatStr(changeMediaURL, window.eaasClient.componentId, $stateParams.objectId, window.eaasClient.driveId, newMediumLabel)).then(function(resp) {
-                            												if (resp.data.status === "0") {
-                            													growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
-                            													currentMediumLabel = newMediumLabel;
-                            													$scope.$close();
-                            												} else {
-                            													growl.error($translate.instant('JS_MEDIA_CHANGE_ERR'), {title: "Error"});
-                            												}
-                            											})['finally'](function() {
-                            												$("html, body").removeClass("wait");
-                            											});
-                            										};
-                            									}
-                            									,
-                            									controllerAs: "openChangeMediaDialogCtrl"
-                            								});
-                            							};
+                                            this.isChangeMediaSubmitting = true;
+
+                                            postObj = {};
+                                            postObj.objectId = $stateParams.softwareId;
+                                            postObj.driveId = window.eaasClient.driveId;
+                                            postObj.label = newMediumLabel;
+
+                                            changeSuccsessFunc = function(data, status) {
+                                                growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
+                                                currentMediumLabel = newMediumLabel;
+                                                $scope.$close();
+                                                $("html, body").removeClass("wait");
+                                            };
+
+                                            $("html, body").addClass("wait");
+                                            eaasClient.changeMedia(postObj, changeSuccsessFunc);
+             							};
+                            	    },
+                            		controllerAs: "openChangeMediaDialogCtrl"
+           						});
+                			};
 
 							vm.openSaveEnvironmentDialog = function() {	
 								$uibModal.open({
@@ -1142,12 +1166,13 @@
 												{
 													console.log("is import env");
 													postReq.commit = true;
-													__saveSessionUrl = commitUrl; 
+													__saveSessionUrl = commitUrl;
 												}
 												else if ($stateParams.isCreateEnv)
 													{
 													postReq.commit = true;
 													console.log("is create env");
+													// __saveSessionUrl = commitUrl;
 													}
 												else 
 													postReq.commit = false;
@@ -1183,7 +1208,6 @@
 												if (response.data.status === "0") {		
 													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 												} else {
-										
 													growl.error(response.data.message, {title: 'Error ' + response.data.status});
 													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
 												}

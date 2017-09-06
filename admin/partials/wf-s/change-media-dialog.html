@@ -4,13 +4,14 @@
 
 <div class="modal-body">
 	<uib-tabset id="change-media-tabhost">
-		<uib-tab ng-repeat="medium in openChangeMediaDialogCtrl.media" heading="{{medium.mediumtype}}">
+		<uib-tab ng-repeat="medium in openChangeMediaDialogCtrl.media" heading="{{media.mediumType}}">
 			<form>
-				<div ng-repeat="label in medium.labels">
+				<div ng-repeat="item in medium.items">
 					<label>
-						<input type="radio" ng-model="openChangeMediaDialogCtrl.chosen_medium_label" value="{{label}}"> {{label}}
+						<input type="radio" ng-model="openChangeMediaDialogCtrl.chosen_medium_label" value="{{item.id}}"> {{item.label}}
 					</label>
 				</div>
+				<input type="radio" ng-model="openChangeMediaDialogCtrl.chosen_medium_label" value=""> <b>* Empty Drive *</b>
 			</form>
 		</uib-tab>
 	</uib-tabset>
