@@ -4,7 +4,7 @@
 
 <div class="modal-body">
 	<uib-tabset id="change-media-tabhost">
-		<uib-tab ng-repeat="medium in openChangeMediaDialogCtrl.media" heading="{{media.mediumType}}">
+		<uib-tab ng-repeat="medium in openChangeMediaDialogCtrl.media" heading="{{medium.mediumType}}">
 			<form>
 				<div ng-repeat="item in medium.items">
 					<label>

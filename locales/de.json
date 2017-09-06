@@ -18,10 +18,11 @@
   "ACTIONS_L" : "Aktionen",
   "ACTIONS_HELP" : "Hilfe",
   "ACTIONS_CHANGE_MEDIA" : "Medienwechsel",
-  "ACTIONS_RESTART" : "Neustarten",
+  "ACTIONS_RESTART" : "Sitzung Zurücksetzen",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Beenden",
   "ACTIONS_PRINT" : "Gedruckte Dokumente",
+  "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
 
 
   "BASE_SHOW_MENU" : "Menu anzeigen",

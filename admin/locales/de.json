@@ -10,7 +10,7 @@
   "ERROR_RETURN_BTN" : "Zurück zur Übersicht",
   
   "ACTIONS_L" : "Aktionen",
-  "ACTIONS_RESTART" : "Neustarten",
+  "ACTIONS_RESTART" : "Sitzung Zurücksetzen",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Beenden",
   "ACTIONS_PRINT" : "Druckaufträge",
@@ -18,6 +18,7 @@
   "ACTIONS_ENV" : "Umgebung speichern",
   "ACTIONS_CHANGES" : "Änderungen speichern",
   "ACTIONS_OBJ_ENV" : "Neue Objekt Umgebung",
+  "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   
   "ADDENV_L" : "Umgebung hinzufügen",
   "ADDENV_SEARCH" : "Wählen oder suchen sie eine Umgebung...",

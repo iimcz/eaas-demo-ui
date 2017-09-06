@@ -18,10 +18,11 @@
   "ACTIONS_L" : "Actions",
   "ACTIONS_HELP" : "Help",
   "ACTIONS_CHANGE_MEDIA" : "Change media",
-  "ACTIONS_RESTART" : "Restart",
+  "ACTIONS_RESTART" : "Restart Session",
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Stop",
   "ACTIONS_PRINT" : "Retrieve Printouts",
+  "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
 
 
   "BASE_SHOW_MENU" : "Show menu",

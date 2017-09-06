@@ -1061,6 +1061,10 @@
 								$state.reload();
 							};
 
+							vm.sendCtrlAltDel = function() {
+                            	window.eaasClient.sendCtrlAltDel();
+                            };
+
 							vm.stopEmulator = function () {
 								window.eaasClient.release();
 								$('#emulator-stopped-container').show();

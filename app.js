@@ -331,6 +331,10 @@
 								 window.open(window.eaasClient.getPrintUrl());
 							};
 
+                            vm.sendCtrlAltDel = function() {
+                            	window.eaasClient.sendCtrlAltDel();
+                            };
+
 							vm.restartEmulator = function() {
 								window.eaasClient.release();
 								$state.reload();
