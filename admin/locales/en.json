@@ -110,7 +110,9 @@
   "EDITENV_CANCEL" : "Cancel",
   "EDITENV_REVS" : "Revisions",
   "EDITENV_DATE_CONTEXT": "Date",
-  
+  "EDITENV_RELMOUSE": "Relative Mouse (Pointerlock)",
+
+
   "CHAR_L" : "Characterize object",
   "CHAR_AUT" : "Automated characterization",
   "CHAR_ADD" : "Add environment",

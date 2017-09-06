@@ -110,6 +110,7 @@
   "EDITENV_CANCEL" : "Abbrechen",
   "EDITENV_REVS" : "Revisionen",
   "EDITENV_DATE_CONTEXT": "Datum",
+  "EDITENV_RELMOUSE": "Relative Maus (Pointerlock)",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_AUT" : "Automatische Charakterisierung",

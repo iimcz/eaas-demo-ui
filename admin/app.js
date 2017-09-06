@@ -864,6 +864,7 @@
 							this.envTitle = this.env.title;
 							this.envDescription = this.env.description;
 							this.envHelpText = this.env.helpText;
+							this.enableRelativeMouse = this.env.enableRelativeMouse;
 
 							this.saveEdit = function() {
 							    console.log("save time: " + this.showDateContextPicker);
