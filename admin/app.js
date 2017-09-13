@@ -579,7 +579,7 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-i/new-image.html',
-						controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig) {
+						controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal) {
 							var vm = this;
 
 							vm.systems = systemList.data.systems;
@@ -608,15 +608,27 @@
 										$state.go('wf-s.emulator', {envId: response.data.id, isCreateEnv: true, softwareId: vm.selectedSoftware.id});
 									});
 								} else {
+								     modal = $uibModal.open({
+                                        animation: true,
+                                        backdrop: 'static',
+                                        templateUrl: 'partials/import-wait.html'
+                                     });
+
 									$http.post(localConfig.data.eaasBackendURL + importImageUrl, 
 											{
 												urlString: vm.hdurl, 
 												templateId: vm.selectedSystem.id, 
 												label: vm.name, urlString: vm.hdurl, 
 												nativeConfig: vm.native_config
-											}).then(function(response) {
+											},
+											{
+											    timeout: "6000000"
+											}
+											).then(function(response) {
 										if (response.data.status !== "0") 
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
+
+										modal.close();
 										$state.go('wf-s.emulator', {envId: response.data.id, isImportEnv: true });
 									});	
 								}

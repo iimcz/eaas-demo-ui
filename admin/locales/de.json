@@ -165,5 +165,8 @@
 
   "CHANGEM_TITLE" : "Medienwechsel",
   "CHANGEM_OK" : "Medium wechseln",
-  "CHANGEM_CANCEL" : "Abbrechen"
+  "CHANGEM_CANCEL" : "Abbrechen",
+
+  "IMPORT_WAIT_TITLE" : "Importiere Image",
+  "IMPORT_WAIT_MSG" : "Der Import eines Images kann mehrere Minuten dauert, abhängig von Größe des Images und der Leistungsfähigkeit des Servers"
 }

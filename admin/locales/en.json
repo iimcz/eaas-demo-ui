@@ -165,6 +165,8 @@
 
   "CHANGEM_TITLE" : "Change media",
   "CHANGEM_OK" : "OK",
-  "CHANGEM_CANCEL" : "Cancel"
+  "CHANGEM_CANCEL" : "Cancel",
 
+  "IMPORT_WAIT_TITLE" : "Importing Image",
+  "IMPORT_WAIT_MSG" : "Depending on the file size and server/network performance, image import may take several minutes."
 }
