@@ -505,6 +505,9 @@
 							return $http.get(localConfig.data.eaasBackendURL + getObjectListURL);
 						}
 					},
+					osList : function($http) {
+					    return $http.get("osList.json");
+					},
 					softwareObj: function($stateParams, $http, localConfig) {
 						// return empty object for new software
 						if ($stateParams.swId === "-1") {
@@ -527,7 +530,7 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-i/sw-ingest.html',
-						controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj) {
+						controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj, osList) {
 							var vm = this;
 							
 							vm.isNewSoftware = $stateParams.swId === "-1";
@@ -539,6 +542,8 @@
 								vm.selectedObject = {id: $stateParams.swId, title: $stateParams.swId};
 								vm.objectList = [vm.selectedObject];
 							}
+                            vm.osList = osList;
+                            console.log(vm.osList);
 
 							vm.softwareObj = softwareObj.data;
 
@@ -548,8 +553,15 @@
 								
 								vm.softwareObj.objectId = vm.selectedObject.id;
 								vm.softwareObj.label = vm.selectedObject.title;
-								console.log(JSON.stringify(vm.softwareObj));
-								
+
+								if(vm.softwareObj.isOperatingSystem)
+								{
+								    vm.operatingSystemId.puids.forEach(function(puid) {
+                                       vm.softwareObj.nativeFMTs.push(puid.puid);
+                                    });
+
+								}
+                                console.log(JSON.stringify(vm.softwareObj));
 								$http.post(localConfig.data.eaasBackendURL + saveSoftwareUrl, vm.softwareObj).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success(response.data.message);

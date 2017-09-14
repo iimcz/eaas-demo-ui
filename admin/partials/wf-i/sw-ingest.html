@@ -30,7 +30,24 @@
 	ng-model="swIngestCtrl.softwareObj.allowedInstances">
 	<br/>
 
-<label>{{'SW_INGEST_OS_LBL' | translate}} <input type="checkbox" ng-model="swIngestCtrl.softwareObj.isOperatingSystem"> </label>
+<div class="form-group">
+<label>{{'SW_INGEST_OS_ID' | translate}} <input type="checkbox" ng-model="swIngestCtrl.softwareObj.isOperatingSystem"> </label>
+<div style="max-width: 450px;">
+	<ui-select id="chosenOs" ng-model="swIngestCtrl.operatingSystemId"
+			   ng-disabled="!swIngestCtrl.softwareObj.isOperatingSystem" theme="bootstrap"
+			   title="{{'SW_INGEST_CHOOSE_OS_PH' | translate}}" >
+		<ui-select-match
+				placeholder="{{'SW_INGEST_CHOOSE_OS_PH' | translate}}">{{$select.selected.id}}</ui-select-match>
+		<ui-select-choices
+				repeat="os in swIngestCtrl.osList.data.operatingSystems | filter: $select.search">
+			<b><span ng-bind-html="os.id | highlight: $select.search"></span></b>
+			<br>
+			<span ng-bind-html="os.id | highlight: $select.search"></span>
+		</ui-select-choices> </ui-select>
+</div>
+</div>
+
+
 <br/><br/>
 
 <input-list list="swIngestCtrl.softwareObj.nativeFMTs"

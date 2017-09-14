@@ -71,6 +71,8 @@
   "SW_INGEST_FMT_EXPORT_BUTTON" : "Add export PUID",
   "SW_INGEST_SAVE_BUTTON" : "Save",
   "SW_INGEST_CANCEL_BUTTON" : "Cancel",
+  "SW_INGEST_CHOOSE_OS_PH" : "Search and choose an operating system preset...",
+  "SW_INGEST_OS_ID" : "Is an operation system",
 
   "SW_NEW_IMAGE_HEADER" : "Create Base Environment",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM" : "Choose System",

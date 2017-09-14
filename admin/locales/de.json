@@ -80,6 +80,8 @@
   "SW_INGEST_FMT_EXPORT_BUTTON" : "Add export PUID",
   "SW_INGEST_CANCEL_BUTTON" : "Abbrechen",
   "SW_INGEST_SAVE_BUTTON" : "Speichern",
+  "SW_INGEST_CHOOSE_OS_PH" : "Wählen oder suchen sie nach Voreinstellungen...",
+  "SW_INGEST_OS_ID" : "Ist ein Betriebssystem",
 
   "SW_NEW_IMAGE_HEADER" : "Neue Basisumgebung erstellen",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM" : "System auswählen",
