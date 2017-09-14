@@ -1201,6 +1201,7 @@
 													{
 													postReq.commit = true;
 													console.log("is create env");
+													postReq.softwareId = $stateParams.softwareId;
 													// __saveSessionUrl = commitUrl;
 													}
 												else 
