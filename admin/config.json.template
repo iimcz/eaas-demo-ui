@@ -1,5 +1,6 @@
 {
-  "eaasBackendURL": "http://localhost:8080/emil/",
-  "dashboardAccessToken": "",
-  "dashboardClusterAPIBaseURL" : ""
+  "eaasBackendURL": "http://127.0.0.1:8080/emil/",
+  "stopEmulatorRedirectURL":"http://127.0.0.1:8080/demo-ui",
+  "dashboardClusterAPIBaseURL" : "http://127.0.0.1:8080/eaas/api/v1/clusters/",
+  "dashboardAccessToken": "secret"
 }
