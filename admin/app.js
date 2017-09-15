@@ -543,7 +543,7 @@
 								vm.objectList = [vm.selectedObject];
 							}
                             vm.osList = osList;
-                            console.log(vm.osList);
+                         //   console.log(vm.osList);
 
 							vm.softwareObj = softwareObj.data;
 
@@ -554,14 +554,18 @@
 								vm.softwareObj.objectId = vm.selectedObject.id;
 								vm.softwareObj.label = vm.selectedObject.title;
 
-								if(vm.softwareObj.isOperatingSystem)
+								if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)
 								{
+								    console.log("add presets")
 								    vm.operatingSystemId.puids.forEach(function(puid) {
-                                       vm.softwareObj.nativeFMTs.push(puid.puid);
+                                       if(!vm.softwareObj.nativeFMTs.includes(puid.puid))
+                                       {
+                                           vm.softwareObj.nativeFMTs.push(puid.puid);
+                                       }
                                     });
 
 								}
-                                console.log(JSON.stringify(vm.softwareObj));
+                                // console.log(JSON.stringify(vm.softwareObj));
 								$http.post(localConfig.data.eaasBackendURL + saveSoftwareUrl, vm.softwareObj).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success(response.data.message);
