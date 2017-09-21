@@ -30,6 +30,11 @@
 	ng-model="swIngestCtrl.softwareObj.allowedInstances">
 	<br/>
 
+<label>{{'SW_INGEST_QID' | translate}}</label>
+<input type="text" class="form-control"
+	   ng-model="swIngestCtrl.softwareObj.qid">
+<br/>
+
 <div class="form-group">
 <label>{{'SW_INGEST_OS_ID' | translate}} <input type="checkbox" ng-model="swIngestCtrl.softwareObj.isOperatingSystem"> </label>
 <div style="max-width: 450px;">

@@ -66,6 +66,7 @@
   "SW_INGEST_LICENSE_PH" : "Lizenzinformationen eingeben...",
   "SW_INGEST_OS_LBL" : "Betriebssystem",
   "SW_INGEST_NO_INSTANCES_LBL" : "Erlaubte Instanzanzahl (-1 für unbegrenzt)",
+  "SW_INGEST_QID" : "QID",
   "SW_INGEST_FMT_NATIVE_HEADER" : "Rendering Capabilites: Native FMTs",
   "SW_INGEST_FMT_NATIVE_EMPTY" : "No Native FMTs added yet.",
   "SW_INGEST_FMT_NATIVE_PH" : "Native PUID...",
