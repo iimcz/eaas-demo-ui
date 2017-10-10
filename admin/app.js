@@ -1014,7 +1014,9 @@
 				resolve: {
                 	mediaCollection: function($http, $stateParams, localConfig) {
                 			return $http.get(localConfig.data.eaasBackendURL +
-                			formatStr(mediaCollectionURL, $stateParams.softwareId));
+                			(($stateParams.softwareId != null) ?
+                			    formatStr(mediaCollectionURL, $stateParams.softwareId) :
+                			    formatStr(mediaCollectionURL, $stateParams.objectId)));
                 		}
                 },
 				params: {
@@ -1296,7 +1298,7 @@
 							
 							vm.objEnvironments = objEnvironments.data.environments;
 							vm.objectId = $stateParams.objectId;
-							
+							console.log("editObjectCharacterizationCtrl.objId: " + vm.objectId);
 							vm.automaticCharacterization = function() {
 								if (window.confirm($translate.instant('JS_START_CHAR'))) {
 									$("html, body").addClass("wait");
