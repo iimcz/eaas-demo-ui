@@ -133,7 +133,7 @@
 						return $http.get(localConfig.data.eaasBackendURL + getAllEnvsUrl);
 					}*/
 				},
-				controller: function($state, $stateParams, objectList, $translate) {
+				controller: function($state, $stateParams, objectList, $translate, $uibModal) {
 					var vm = this;
 					
 					vm.objectList = objectList.data.objects;
@@ -147,7 +147,15 @@
 							window.location.href = "admin/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
 						}],
 						[$translate.instant('JS_MENU_DETAILS'), function ($itemScope) {
-							alert("TBD");
+							   $uibModal.open({
+                               		animation: true,
+                               		templateUrl: 'partials/wf-b/help-emil-dialog.html',
+                               		controller: function($scope) {
+                                  		this.helpTitle = "Object Details " + $itemScope.object.title;
+                                  		this.helpText = $itemScope.object.summary;
+                 					},
+                                    controllerAs: "helpDialogCtrl"
+                                });
 						}]
 					];
 				},
