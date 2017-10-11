@@ -16,6 +16,7 @@
 	var getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
 	var syncObjectsUrl = "EmilObjectData/sync";
 	var mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
+	var metadataUrl = "EmilObjectData/metadata?objectId={0}";
 
 	// environment data api
 	var getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
@@ -776,6 +777,28 @@
 				  }
 			  }
 			})
+			.state('wf-s.object-overview', {
+                url: "/objects",
+                resolve: {
+                    localConfig: function($http) {
+                        return $http.get("config.json");
+                    },
+                    objectList: function($http, localConfig) {
+                        return $http.get(localConfig.data.eaasBackendURL + getObjectListURL);
+                    }
+                },
+                views: {
+                	'wizard': {
+                        templateUrl: "partials/wf-s/objects.html",
+
+                        controller: function($state, $stateParams, objectList) {
+                            var vm = this;
+                            vm.objectList = objectList.data.objects;
+                        },
+                        controllerAs: "objectOverviewCtrl"
+                    }
+                }
+            })
 			.state('wf-s.standard-envs-overview', {
 				url: "/standard-envs-overview",
 				params: {
@@ -1288,17 +1311,34 @@
 				resolve: {
 					objEnvironments: function($stateParams, $http, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(loadEnvsUrl, $stateParams.objectId));
+					},
+					metadata : function($stateParams, $http, localConfig) {
+					    return $http.get(localConfig.data.eaasBackendURL + formatStr(metadataUrl, $stateParams.objectId));
 					}
 				},
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-s/edit-object-characterization.html',
-						controller: function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate) {
+						controller: function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata) {
 							var vm = this;
-							
-							vm.objEnvironments = objEnvironments.data.environments;
+
+
+
+							vm.objEnvironments = objEnvironments.data.environmentList;
+							console.log(vm.objEnvironments);
 							vm.objectId = $stateParams.objectId;
-							console.log("editObjectCharacterizationCtrl.objId: " + vm.objectId);
+							vm.metadata = metadata.data;
+							console.log(metadata);
+							vm.missing = objEnvironments.data.missingOs;
+							console.log(vm.missing);
+							vm.fileFormats = objEnvironments.data.fileFormats;
+							console.log(vm.fileFormats);
+
+							vm.hasEnvironments = false;
+							if(objEnvironments && objEnvironments.length > 0)
+							    vm.hasEnvironments = false;
+
+
 							vm.automaticCharacterization = function() {
 								if (window.confirm($translate.instant('JS_START_CHAR'))) {
 									$("html, body").addClass("wait");
@@ -1310,7 +1350,7 @@
 										}
 										
 										vm.objEnvironments.length = 0;
-										vm.objEnvironments.push.apply(vm.objEnvironments, response.data.environments);
+										vm.objEnvironments.push.apply(vm.objEnvironments, response.data.environmentList);
 									})['finally'](function() {
 										$("html, body").removeClass("wait");
 										$(".fullscreen-overlay-spinner").hide();

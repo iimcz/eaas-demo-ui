@@ -33,6 +33,7 @@
   "BASE_MENU_SW" : "Software",  
   "BASE_MENU_SHOW_SETTINGS_DLG": "Einstellungen",
   "BASE_MENU_NEW_ENV" : "Basisumgebung erstellen",
+  "BASE_MENU_OBJECTS" : "Objekte",
   
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -121,6 +122,8 @@
   "CHAR_ADD" : "Umgebung hinzufügen",
   "CHAR_SAVE" : "Speichern",
   "CHAR_CANCEL" : "Abbrechen",
+  "CHAR_FORMATS" : "Dateiformate",
+  "CHAR_MISSING": "Empfohlene Umgebungen (derzeit nicht verfügbar)",
   
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
@@ -171,5 +174,8 @@
   "CHANGEM_CANCEL" : "Abbrechen",
 
   "IMPORT_WAIT_TITLE" : "Importiere Image",
-  "IMPORT_WAIT_MSG" : "Der Import eines Images kann mehrere Minuten dauert, abhängig von Größe des Images und der Leistungsfähigkeit des Servers"
+  "IMPORT_WAIT_MSG" : "Der Import eines Images kann mehrere Minuten dauert, abhängig von Größe des Images und der Leistungsfähigkeit des Servers",
+
+  "OBJECTS_L" : "Objekte",
+  "OBJECTS_SEARCH" : "Eintippen zum Suchen..."
 }

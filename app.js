@@ -234,7 +234,7 @@
 
 							vm.noSuggestion = false;
 							
-							if (objEnvironments.data.status !== "0" || objEnvironments.data.environments.length === 0) {
+							if (objEnvironments.data.status !== "0" || objEnvironments.data.environmentList.length === 0) {
 								vm.noSuggestion = true;
 							}
 							
@@ -252,7 +252,7 @@
 									$state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
 								}
 							} else {
-								vm.environments = objEnvironments.data.environments;
+								vm.environments = objEnvironments.data.environmentList;
 							}
 
 							if (!$cookies.getObject('kbLayoutPrefs')) {
