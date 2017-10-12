@@ -1398,7 +1398,7 @@
 									objectId: $stateParams.objectId,
 									environments: vm.objEnvironments
 								}).then(function() {
-									$state.go('wf-s.standard-envs-overview');
+									$state.go('wf-s.object-overview');
 								});
 							};
 						},

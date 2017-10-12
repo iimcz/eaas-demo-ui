@@ -125,6 +125,9 @@
   "CHAR_CANCEL" : "Cancel",
   "CHAR_FORMATS" : "File formats",
   "CHAR_MISSING": "Suggested environments (currently not available)",
+  "CHAR_OBJ_INFORMATION": "Object Details",
+  "CHAR_ENV_LIST": "Configured Environments",
+  "CHAR_CLASS_INFORMATION": "Classification Details",
   
   "EMU_TITLE" : "Preparing emulation session",
   "EMU_POINTER_LOCK_AVAILABLE" : "Click on the emulator for mouse control.",

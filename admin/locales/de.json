@@ -124,6 +124,10 @@
   "CHAR_CANCEL" : "Abbrechen",
   "CHAR_FORMATS" : "Dateiformate",
   "CHAR_MISSING": "Empfohlene Umgebungen (derzeit nicht verfügbar)",
+  "CHAR_OBJ_INFORMATION": "Objektdetails",
+  "CHAR_ENV_LIST": "Konfigurierte Umgebungen",
+  "CHAR_CLASS_INFORMATION": "Klassifikationsdetails",
+
   
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
