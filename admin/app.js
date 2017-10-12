@@ -1357,18 +1357,17 @@
 									templateUrl: 'partials/wf-s/add-environment-dialog.html',
 									controller: function($scope) {
 										this.newEnv = null;
-										this.environments = environmentList.data.environments;
-										
+
 										this.addEnvironment = function() {
 											// check if environment was already added
-											for (var i = 0; i < objEnvironments.data.environments.length; i++) {
-												if (objEnvironments.data.environments[i].id === this.newEnv.envId) {
+											for (var i = 0; i < vm.objEnvironments.length; i++) {
+												if (vm.objEnvironments[i].id === this.newEnv.envId) {
 													growl.warning($translate.instant('JS_ENV_ERR_DUP'));
 													return;
 												}
 											}
 											
-											objEnvironments.data.environments.push({
+											vm.objEnvironments.push({
 												"id": this.newEnv.envId,
 												"label": this.newEnv.title											
 											});											
@@ -1380,7 +1379,7 @@
 							};
 							
 							vm.removeEnvironment = function(env) {
-								if (objEnvironments.data.environments.length === 1) {
+								if (vm.objEnvironments.length === 1) {
 									growl.error($translate.instant('JS_ENV_ERR_ZERO'));
 									return;
 								}
