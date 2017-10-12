@@ -1322,22 +1322,15 @@
 						controller: function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata) {
 							var vm = this;
 
-
-
 							vm.objEnvironments = objEnvironments.data.environmentList;
-							console.log(vm.objEnvironments);
 							vm.objectId = $stateParams.objectId;
 							vm.metadata = metadata.data;
-							console.log(metadata);
 							vm.missing = objEnvironments.data.missingOs;
-							console.log(vm.missing);
 							vm.fileFormats = objEnvironments.data.fileFormats;
-							console.log(vm.fileFormats);
 
 							vm.hasEnvironments = false;
 							if(objEnvironments && objEnvironments.length > 0)
 							    vm.hasEnvironments = false;
-
 
 							vm.automaticCharacterization = function() {
 								if (window.confirm($translate.instant('JS_START_CHAR'))) {
@@ -1393,19 +1386,18 @@
 								}
 								
 								var i;
-								for (i = 0; i < objEnvironments.data.environments.length; i++) {
-									if (objEnvironments.data.environments[i].id === env.id) {
+								for (i = 0; i < vm.objEnvironments.length; i++) {
+									if (vm.objEnvironments[i].id === env.id) {
 										break;
 									}
 								}
-								
-								objEnvironments.data.environments.splice(i, 1);
+								vm.objEnvironments.splice(i, 1);
 							};
 							
 							vm.saveCharacterization = function() {
 								$http.post(localConfig.data.eaasBackendURL + overrideObjectCharacterizationUrl, {
 									objectId: $stateParams.objectId,
-									environments: objEnvironments.data.environments
+									environments: vm.objEnvironments
 								}).then(function() {
 									$state.go('wf-s.standard-envs-overview');
 								});
