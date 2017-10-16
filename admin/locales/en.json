@@ -124,7 +124,7 @@
   "CHAR_SAVE" : "Save",
   "CHAR_CANCEL" : "Cancel",
   "CHAR_FORMATS" : "File formats",
-  "CHAR_MISSING": "Suggested environments (currently not available)",
+  "CHAR_MISSING": "Suggested environments",
   "CHAR_OBJ_INFORMATION": "Object Details",
   "CHAR_ENV_LIST": "Configured Environments",
   "CHAR_CLASS_INFORMATION": "Classification Details",
@@ -180,5 +180,11 @@
   "IMPORT_WAIT_MSG" : "Depending on the file size and server/network performance, image import may take several minutes.",
 
   "OBJECTS_L" : "Objects",
-  "OBJECTS_SEARCH" : "Search..."
+  "OBJECTS_SEARCH" : "Search...",
+
+  "DEFAULTENV_L" : "Set default environment",
+  "DEFAULTENV_ID_L" : "System: ",
+  "DEFAULTENV_SEARCH" : "Select an environment...",
+  "DEFAULTENV_SAVE" : "Save",
+  "DEFAULTENV_CANCEL" : "Cancel"
 }

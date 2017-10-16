@@ -2,7 +2,7 @@
 
 <div style="text-align: right;">
 	<button class="btn btn-primary" type="button" ng-click="editObjectCharacterizationCtrl.saveCharacterization()">{{'CHAR_SAVE' | translate}}</button>
-	<button class="btn btn-default" type="button" ui-sref="wf-s.object-overview>">{{'CHAR_CANCEL' | translate}}"></button>
+	<button class="btn btn-default" type="button" ui-sref="wf-s.object-overview>">{{'CHAR_CANCEL' | translate}}</button>
 </div>
 <br>
 <div class="panel panel-default">
@@ -60,12 +60,18 @@
 	</div>
 	<div class="panel-body">
 
-		<div ng-show="editObjectCharacterizationCtrl.missing.length > 0">
+		<div ng-show="editObjectCharacterizationCtrl.suggested.length > 0">
 			<p >
 				<b>{{'CHAR_MISSING' | translate}}:</b>
 			</p>
 			<ul>
-				<li ng-repeat="env in editObjectCharacterizationCtrl.missing">{{env}}</li>
+				<li ng-repeat="env in editObjectCharacterizationCtrl.suggested">{{env.label}}
+				<ul>
+					<li><b>Default Environment:</b> {{env.defaultEnvironment.label}}
+						<a ng-click="editObjectCharacterizationCtrl.openDefaultEnvDialog(env.id, env.label)">Edit/Assign</a>
+					</li>
+				</ul>
+				</li>
 			</ul>
 		</div>
 
@@ -74,7 +80,13 @@
 				<b>{{'CHAR_FORMATS' | translate}}:</b>
 			</p>
 			<ul>
-				<li ng-repeat="fmt in editObjectCharacterizationCtrl.fileFormats">{{fmt.name}} ({{fmt.puid}}) count: {{fmt.count}}</li>
+				<li ng-repeat="fmt in editObjectCharacterizationCtrl.fileFormats">
+					<b>{{fmt.name}}</b> ({{fmt.puid}})
+					<ul>
+						<li><b>File count:</b> {{fmt.count}}</li>
+						<li><b>File dates:</b> {{fmt.fromDate | date:'medium'}} - {{fmt.toDate | date:'medium'}}</li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 

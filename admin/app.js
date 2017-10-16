@@ -11,7 +11,7 @@
     }
 	
 	// object data api
-	var loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
+	var objectEnvironmentsUrl = "EmilObjectData/environments?objectId={0}&update={1}";
 	var getObjectListURL = "EmilObjectData/list";
 	var getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
 	var syncObjectsUrl = "EmilObjectData/sync";
@@ -34,9 +34,9 @@
 	var saveSessionUrl = "EmilEnvironmentData/saveSession";
 	var syncImagesUrl = "EmilEnvironmentData/sync";
 	var exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
+	var setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
 
 	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
-	var characterizeObjectUrl = "Emil/characterizeObject?objectId={0}";
 	var buildVersionUrl = "Emil/buildInfo";
 	
 	// Software archive api
@@ -1310,7 +1310,7 @@
 				url: "/edit-object-characterization?objectId",
 				resolve: {
 					objEnvironments: function($stateParams, $http, localConfig) {
-						return $http.get(localConfig.data.eaasBackendURL + formatStr(loadEnvsUrl, $stateParams.objectId));
+						return $http.get(localConfig.data.eaasBackendURL + formatStr(objectEnvironmentsUrl, $stateParams.objectId, "false"));
 					},
 					metadata : function($stateParams, $http, localConfig) {
 					    return $http.get(localConfig.data.eaasBackendURL + formatStr(metadataUrl, $stateParams.objectId));
@@ -1325,7 +1325,7 @@
 							vm.objEnvironments = objEnvironments.data.environmentList;
 							vm.objectId = $stateParams.objectId;
 							vm.metadata = metadata.data;
-							vm.missing = objEnvironments.data.missingOs;
+							vm.suggested = objEnvironments.data.suggested;
 							vm.fileFormats = objEnvironments.data.fileFormats;
 
 							vm.hasEnvironments = false;
@@ -1336,28 +1336,64 @@
 								if (window.confirm($translate.instant('JS_START_CHAR'))) {
 									$("html, body").addClass("wait");
 									$(".fullscreen-overlay-spinner").show();
-									$http.get(localConfig.data.eaasBackendURL + formatStr(characterizeObjectUrl, $stateParams.objectId)).then(function(response) {
+
+									$http.get(localConfig.data.eaasBackendURL + formatStr(objectEnvironmentsUrl, $stateParams.objectId, "true"))
+									    .then(function(response) {
 										if (response.data.status !== "0") {
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
 											return;
 										}
-										
 										vm.objEnvironments.length = 0;
 										vm.objEnvironments.push.apply(vm.objEnvironments, response.data.environmentList);
 									})['finally'](function() {
 										$("html, body").removeClass("wait");
 										$(".fullscreen-overlay-spinner").hide();
+										$state.reload();
 									});
 								}
 							};
-							
+
+							vm.openDefaultEnvDialog = function(osId, osLabel) {
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-s/set-default-environment-dialog.html',
+
+                                    controller: function($scope) {
+                                        this.defaultEnv = null;
+                                        this.environments = environmentList.data.environments;
+                                        this.osId = osId;
+                                        this.osLabel = osLabel;
+
+                                        this.setEnvironment = function() {
+                                            $http.get(localConfig.data.eaasBackendURL + formatStr(setDefaultEnvironmentUrl,
+                                                this.osId, this.defaultEnv.envId))
+                                                .then(function(response) {
+                                                    if (response.data.status !== "0") {
+                                                        growl.error(response.data.message, {title: 'Error ' + response.data.message});
+                                                        $scope.$close();
+                                                    }
+                                                    else
+                                                        console.log("set default env for " + osId + " defaultEnv " + this.defaultEnv.envId);
+
+                                            })['finally'](function() {
+                                                $scope.$close();
+                                                $state.reload();
+                                            });
+
+                                        };
+                                    },
+                                    controllerAs: "setDefaultEnvDialogCtrl"
+                                });
+
+							};
+
 							vm.openAddEnvDialog = function() {
 								$uibModal.open({
 									animation: true,
 									templateUrl: 'partials/wf-s/add-environment-dialog.html',
 									controller: function($scope) {
 										this.newEnv = null;
-
+                                        this.environments = environmentList.data.environments;
 										this.addEnvironment = function() {
 											// check if environment was already added
 											for (var i = 0; i < vm.objEnvironments.length; i++) {
@@ -1366,7 +1402,7 @@
 													return;
 												}
 											}
-											
+
 											vm.objEnvironments.push({
 												"id": this.newEnv.envId,
 												"label": this.newEnv.title											

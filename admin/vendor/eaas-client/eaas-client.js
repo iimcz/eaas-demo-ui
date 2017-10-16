@@ -43,7 +43,6 @@ EaasClient.Client = function (api_entrypoint, container) {
             var item = part.split("=");
             result[item[0]] = decodeURIComponent(item[1]);
         });
-        return result;
     }
 
 
@@ -56,11 +55,27 @@ EaasClient.Client = function (api_entrypoint, container) {
 
                     $.get(API_URL + formatStr("/components/{0}/controlurls", _this.componentId))
                         .then(function (data, status, xhr) {
+                            if (data.webemulator) {
+                                var iframe = document.createElement("iframe");
+                                iframe.setAttribute("style", "width: 100%; height: 600px;");
+                                iframe.src = getEaasClientDirectory() + "webemulator/#" + data.webemulator;
+                                iframe.src = "https://ca5.de/webemulator/#controlurls=" + encodeURIComponent(JSON.stringify(data));
+                                container.appendChild(iframe);
 
-                            /**
+                                hasConnected = true;
+				for (var i = 0; i < listeners.length; i++) {
+                                    // don't call removed listeners..
+                                    if (listeners[i]) {
+                                        listeners[i]();
+                                    }
+                                }
+
+                            
+			   }  
+			   /**
                              * XPRA Section
                              */
-                            if (typeof data.xpra !== "undefined") {
+			   else if (typeof data.xpra !== "undefined") {
                                 _this.params = strParamsToObject(data.xpra.substring(data.xpra.indexOf("#") + 1));
 
                                 /**
@@ -124,8 +139,8 @@ EaasClient.Client = function (api_entrypoint, container) {
     };
 
     this._onError = function (msg) {
-        if (this.pollStateInterval)
-            clearInterval(this.pollStateInterval);
+        if (this.keepaliveIntervalId)
+            clearInterval(this.keepaliveIntervalId);
         if (this.guac)
             this.guac.disconnect();
         if (this.onError) {
@@ -264,10 +279,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     };
 
     this.stopEnvironment = function () {
-        if (typeof this.guac !== "undefined")
-            this.guac.disconnect()
-        if (this.pollStateInterval)
-            clearInterval(this.pollStateInterval);
+        this.guac.disconnect();
         $.ajax({
             type: "GET",
             url: API_URL + formatStr("/components/{0}/stop", _this.componentId),
@@ -305,31 +317,34 @@ EaasClient.Client = function (api_entrypoint, container) {
         });
     };
 
-    function prepareAndLoadXpra(xpraUrl) {
-        /*
-         search for xpra path, in order to include it to filePath
-         */
-        var scripts = document.getElementsByTagName("script");
+    function getEaasClientDirectory() {
+	var scripts = document.getElementsByTagName("script");
         for (var prop in scripts) {
             var searchingAim = "eaas-client.js";
             if (typeof(scripts[prop].src) != "undefined" && scripts[prop].src.indexOf(searchingAim) != -1) {
                 var eaasClientPath = scripts[prop].src;
             }
         }
-        var xpraPath = eaasClientPath.substring(0, eaasClientPath.indexOf(searchingAim)) + "xpra/";
+
+	return eaasClientPath.substring(0, eaasClientPath.indexOf(searchingAim));
+    }
+    
+    function prepareAndLoadXpra(xpraUrl) {
+        /*
+         search for xpra path, in order to include it to filePath
+         */
+        var xpraPath = getEaasClientDirectory() + "xpra/";
 
         $.when(
+            $.getScript(xpraPath + '/eaas-xpra.js'),
             $.getScript(xpraPath + '/js/lib/jquery-ui.js'),
             $.getScript(xpraPath + '/js/lib/jquery.ba-throttle-debounce.js'),
-
             $.getScript(xpraPath + '/js/lib/bencode.js'),
             $.getScript(xpraPath + '/js/lib/zlib.js'),
             $.getScript(xpraPath + '/js/lib/lz4.js'),
             $.getScript(xpraPath + '/js/lib/forge.js'),
-
             $.getScript(xpraPath + '/js/lib/broadway/Decoder.js'),
             $.getScript(xpraPath + '/js/lib/aurora/aurora-xpra.js'),
-
             $.getScript(xpraPath + '/js/Utilities.js'),
             $.getScript(xpraPath + '/js/Keycodes.js'),
             $.getScript(xpraPath + '/js/Notifications.js'),
@@ -337,7 +352,7 @@ EaasClient.Client = function (api_entrypoint, container) {
             $.getScript(xpraPath + '/js/Window.js'),
             $.getScript(xpraPath + '/js/Protocol.js'),
             $.getScript(xpraPath + '/js/Client.js'),
-            // loadScript(xpraUrl + '/js/Protocol.js'),
+            $.getScript(xpraPath + '/js/Client.js'),
 
             $.Deferred(function (deferred) {
                 $(deferred.resolve);
@@ -361,7 +376,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         if (!window.location.getParameter) {
             window.location.getParameter = function (key) {
                 function parseParams() {
-                    var params1 = {},
+                    var params = {},
                         e,
                         a = /\+/g,	// Regex for replacing addition symbol with a space
                         r = /([^&=]+)=?([^&]*)/g,
@@ -371,9 +386,9 @@ EaasClient.Client = function (api_entrypoint, container) {
                         q = window.location.search.substring(1);
 
                     while (e = r.exec(q))
-                        params1[d(e[1])] = d(e[2]);
+                        params[d(e[1])] = d(e[2]);
 
-                    return params1;
+                    return params;
                 }
 
                 if (!this.queryStringParams)
@@ -511,6 +526,48 @@ EaasClient.Client = function (api_entrypoint, container) {
                 }
             }
 
+            // attach a callback for when client closes
+            if (!debug) {
+                client.callback_close = function (reason) {
+                    if (submit) {
+                        var message = "Connection closed (socket closed)";
+                        if (reason) {
+                            message = reason;
+                        }
+                        var url = "/connect.html?disconnect=" + encodeData(message);
+                        var props = {
+                            "username": username,
+                            "password": password,
+                            "encoding": encoding,
+                            "keyboard_layout": keyboard_layout,
+                            "action": action,
+                            "sound": sound,
+                            "audio_codec": audio_codec,
+                            "clipboard": clipboard,
+                            "exit_with_children": exit_with_children,
+                            "exit_with_client": exit_with_client,
+                            "sharing": sharing,
+                            "normal_fullscreen": normal_fullscreen,
+                            "video": video,
+                            "mediasource_video": mediasource_video,
+                            "debug": debug,
+                            "remote_logging": remote_logging,
+                            "insecure": insecure,
+                            "ignore_audio_blacklist": ignore_audio_blacklist,
+                        }
+                        for (var name in props) {
+                            var value = props[name];
+                            if (value) {
+                                url += "&" + name + "=" + encodeData(value);
+                            }
+                        }
+                        window.location = url;
+                    } else {
+                        // if we didn't submit through the form, silently redirect to the connect gui
+                        window.location = "connect.html";
+                    }
+                }
+            }
             client.init(ignore_audio_blacklist);
 
             // and connect

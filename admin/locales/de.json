@@ -123,7 +123,7 @@
   "CHAR_SAVE" : "Speichern",
   "CHAR_CANCEL" : "Abbrechen",
   "CHAR_FORMATS" : "Dateiformate",
-  "CHAR_MISSING": "Empfohlene Umgebungen (derzeit nicht verfügbar)",
+  "CHAR_MISSING": "Empfohlene Umgebungen",
   "CHAR_OBJ_INFORMATION": "Objektdetails",
   "CHAR_ENV_LIST": "Konfigurierte Umgebungen",
   "CHAR_CLASS_INFORMATION": "Klassifikationsdetails",
@@ -181,5 +181,11 @@
   "IMPORT_WAIT_MSG" : "Der Import eines Images kann mehrere Minuten dauert, abhängig von Größe des Images und der Leistungsfähigkeit des Servers",
 
   "OBJECTS_L" : "Objekte",
-  "OBJECTS_SEARCH" : "Eintippen zum Suchen..."
+  "OBJECTS_SEARCH" : "Eintippen zum Suchen...",
+
+  "DEFAULTENV_L" : "Standardumgebung",
+  "DEFAULTENV_ID_L" : "System ",
+  "DEFAULTENV_SEARCH" : "Umgebung auswählen...",
+  "DEFAULTENV_SAVE" : "Speichern",
+  "DEFAULTENV_CANCEL" : "Abbrechen"
 }
