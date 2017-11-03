@@ -19,6 +19,7 @@
 	// environments data connector
 	var getAllEnvsUrl = "EmilEnvironmentData/getAllEnvironments";
 	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
+	var getUserSessionUrl = "EmilEnvironmentData/userSession?userId={0}&objectId={1}";
 	
 	
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
@@ -178,6 +179,9 @@
 					allEnvironments: function($stateParams, $http, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + getAllEnvsUrl);
 					},
+					userSession: function($stateParams, $http, localConfig) {
+					    return $http.get(localConfig.data.eaasBackendURL + formatStr(getUserSessionUrl, "testuser01", $stateParams.objectId))
+					},
 					kbLayouts: function($http) {
 						return $http.get("kbLayouts.json");
 					}
@@ -229,31 +233,81 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-b/choose-env.html',
-						controller: function ($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate) {
+						controller: function ($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal) {
 							var vm = this;
 
 							vm.noSuggestion = false;
-							
-							if (objEnvironments.data.status !== "0" || objEnvironments.data.environmentList.length === 0) {
-								vm.noSuggestion = true;
+
+                            if (objEnvironments.data.status !== "0" || objEnvironments.data.environmentList.length === 0) {
+								$state.go('error', {errorMsg: {title: "no environment could be determined automatically. please use the admin page to assign an environment manually."}});
 							}
-							
-							if (objMetadata.data.status !== "0") {
-								$state.go('error', {errorMsg: {title: "Metadata Error " + objMetadata.data.status, message: objMetadata.data.message}});
-								return;
-							}
-							
-							vm.objecttitle = objMetadata.data.title;
-							
-							if(vm.noSuggestion) {
-								if(allEnvironments.data.status === "0") {
-									vm.environments = allEnvironments.data.environments;
-								} else {
-									$state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
-								}
-							} else {
-								vm.environments = objEnvironments.data.environmentList;
-							}
+
+                            console.log(userSession.envId);
+                            console.log(userSession.data.envId);
+                            if(userSession.data.envId)
+                            {
+                                $uibModal.open({
+                                	animation: true,
+                                	templateUrl: 'partials/wf-b/user-session-dialog.html',
+                                	controller: function($scope) {
+                                        this.startDefault = function() {
+                                            $scope.$close();
+                                            if (objEnvironments.data.environmentList.length === 1)
+                                            {
+                                                $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+                                                return;
+                                            }
+
+                                            if (objMetadata.data.status !== "0") {
+                                                $state.go('error', {errorMsg: {title: "Metadata Error " + objMetadata.data.status, message: objMetadata.data.message}});
+                                                return;
+                                            }
+
+                                            vm.objecttitle = objMetadata.data.title;
+
+                                            if(vm.noSuggestion) {
+                                                if(allEnvironments.data.status === "0") {
+                                                    vm.environments = allEnvironments.data.environments;
+                                                } else {
+                                                    $state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
+                                                }
+                                            } else {
+                                                vm.environments = objEnvironments.data.environmentList;
+                                            }
+                                        };
+
+                                        this.startSession = function() {
+                                            $scope.$close();
+                                            $state.go('wf-b.emulator', {envId: userSession.data.envId});
+                                        };
+                                	},
+                                	controllerAs: "userSessionDialogCtrl"
+                                });
+                            }
+                            else {
+                                if (objEnvironments.data.environmentList.length === 1)
+                                {
+                                  $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+                                  return;
+                                }
+
+                                if (objMetadata.data.status !== "0") {
+                                  $state.go('error', {errorMsg: {title: "Metadata Error " + objMetadata.data.status, message: objMetadata.data.message}});
+                                  return;
+                                }
+
+                                vm.objecttitle = objMetadata.data.title;
+
+                                if(vm.noSuggestion) {
+                                  if(allEnvironments.data.status === "0") {
+                                      vm.environments = allEnvironments.data.environments;
+                                  } else {
+                                      $state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
+                                  }
+                                } else {
+                                  vm.environments = objEnvironments.data.environmentList;
+                                }
+                            }
 
 							if (!$cookies.getObject('kbLayoutPrefs')) {
 								growl.warning($translate.instant('CHOOSE_ENV_NO_KEYBOARD_LAYOUT_WARNING'));
@@ -306,7 +360,8 @@
 							eaasClient.startEnvironment($stateParams.envId, {
 								keyboardLayout: kbLayoutPrefs.language.name,
 								keyboardModel: kbLayoutPrefs.layout.name,
-								object: $stateParams.objectId
+								object: $stateParams.objectId,
+								userContext: "testuser01"
 							});
 						},
 						controllerAs: "startEmuCtrl"
@@ -342,6 +397,22 @@
                             vm.sendCtrlAltDel = function() {
                             	window.eaasClient.sendCtrlAltDel();
                             };
+
+                            vm.saveSession = function() {
+                                var postReq = {};
+                                postReq.type = "saveUserSession";
+                                postReq.objectId = $stateParams.objectId;
+                                postReq.userContext = "testuser01";
+                                postReq.envId = $stateParams.envId;
+
+                                snapshotDoneFunc = function(data, status) {
+                                    growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+                                    window.eaasClient.release();
+                                    $('#emulator-stopped-container').show();
+                                    window.location = localConfig.data.stopEmulatorRedirectURL;
+                                };
+                                window.eaasClient.snapshot(postReq, snapshotDoneFunc);
+                            }
 
 							vm.restartEmulator = function() {
 								window.eaasClient.release();

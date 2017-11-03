@@ -28,8 +28,8 @@
 
 			<div style="text-align: right; margin-bottom: 15px;">
 				<div style="display: inline-block;">
-					<button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization()">
-					<span class="glyphicon glyphicon-cloud-download"></span> {{'CHAR_AUT' | translate}}</button>
+					<button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization(false, true)">
+					<span class="glyphicon glyphicon-cloud-download"></span> {{'CHAR_UPDATE_PROPOSAL' | translate}}</button>
 				</div>
 
 				<div style="display: inline-block;">
@@ -59,6 +59,12 @@
 		{{'CHAR_CLASS_INFORMATION' | translate}}
 	</div>
 	<div class="panel-body">
+		<div style="text-align: right; margin-bottom: 15px;">
+			<div style="display: inline-block;">
+				<button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization(true, false)">
+					<span class="glyphicon glyphicon-cloud-download"></span> {{'CHAR_UPDATE_CLASS' | translate}}</button>
+			</div>
+		</div>
 
 		<div ng-show="editObjectCharacterizationCtrl.suggested.length > 0">
 			<p >

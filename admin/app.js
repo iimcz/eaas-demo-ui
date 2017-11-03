@@ -11,7 +11,7 @@
     }
 	
 	// object data api
-	var objectEnvironmentsUrl = "EmilObjectData/environments?objectId={0}&update={1}";
+	var objectEnvironmentsUrl = "EmilObjectData/environments?objectId={0}&updateClassification={1}&updateProposal={2}";
 	var getObjectListURL = "EmilObjectData/list";
 	var getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
 	var syncObjectsUrl = "EmilObjectData/sync";
@@ -31,10 +31,11 @@
 	var commitUrl = "EmilEnvironmentData/commit";
 	var forkRevisionUrl = "EmilEnvironmentData/forkRevision";
 	var revertRevisionUrl = "EmilEnvironmentData/revertRevision";
-	var saveSessionUrl = "EmilEnvironmentData/saveSession";
 	var syncImagesUrl = "EmilEnvironmentData/sync";
 	var exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
 	var setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
+	var userSessionListUrl = "EmilEnvironmentData/userSessionList";
+	var deleteSessionUrl = "EmilEnvironmentData/deleteSession?sessionId={0}";
 
 	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
 	var buildVersionUrl = "Emil/buildInfo";
@@ -799,6 +800,46 @@
                     }
                 }
             })
+            .state('wf-s.user-session-overview', {
+                url: "/user-sessions",
+                resolve: {
+                    localConfig: function($http) {
+                        return $http.get("config.json");
+                    },
+                    sessionList: function($http, localConfig) {
+                        return $http.get(localConfig.data.eaasBackendURL + userSessionListUrl);
+                    }
+                },
+                views: {
+                    'wizard': {
+                        templateUrl: "partials/wf-s/user-sessions.html",
+
+                        controller: function($state, $stateParams, sessionList, $translate, $http, localConfig, growl) {
+                            var vm = this;
+                            vm.sessionList = sessionList.data.environments;
+                            console.log(vm.sessionList);
+
+                            vm.deleteSession = function(_envId)
+                            {
+                                if (window.confirm($translate.instant('JS_DELENV_OK'))) {
+                                    console.log(_envId);
+                                    $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, _envId))
+                                    .then(function(response) {
+                                        if (response.data.status === "0") {
+                                            growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                                            $state.go('wf-s.user-session-overview', {});
+                                        } else {
+                                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                            $state.go('wf-s.user-session-overview', {});
+                                        }
+                                    });
+                                }
+                            };
+                        },
+                        controllerAs: "sessionListCtrl"
+                    }
+                }
+            })
 			.state('wf-s.standard-envs-overview', {
 				url: "/standard-envs-overview",
 				params: {
@@ -1049,6 +1090,7 @@
 					isImportEnv: false,
 					softwareId: null,
 					isNewObjectEnv: false,
+					isUserSession: false,
 					objectId: null
 				},
 				views: {
@@ -1083,10 +1125,10 @@
 								keyboardLayout: kbLayoutPrefs.language.name,
 								keyboardModel: kbLayoutPrefs.layout.name
 							};
-
+                            console.log($stateParams);
 							if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
 								params.software = $stateParams.softwareId;
-							} else if ($stateParams.isNewObjectEnv) {
+							} else if ($stateParams.isNewObjectEnv || $stateParams.isUserSession) {
 								params.object = $stateParams.objectId;
 							}
 
@@ -1200,15 +1242,35 @@
 										
 										this.isSavingEnvironment = false;
 										this.saveEnvironment = function() {
+
                                             this.isSavingEnvironment = true;
                                             vm.stopEmulator();
 
 											var postReq = {};											
 											postReq.envId = $stateParams.envId;
-											postReq.sessionId = window.eaasClient.componentId;
 											postReq.message = this.envDescription;	
-											
-											var __saveSessionUrl = saveSessionUrl;
+
+											if ($stateParams.isImportEnv)
+											{
+											    postReq.type = "saveConfiguration";
+											    console.log("is import env");
+                                                postReq.commit = true;
+
+											    postResult = $http.post(localConfig.data.eaasBackendURL + commitUrl, postReq);
+                                                postResult.then(function(response) {
+                                                    $scope.$close();
+                                                    if (response.data.status === "0") {
+                                                        growl.success(response.data.message, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+
+                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    } else {
+                                                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+
+                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    }
+                                                });
+											}
+
 											if ($stateParams.isNewEnv) {
 												postReq.type = "newEnvironment";
 												postReq.title = this.envName;
@@ -1220,36 +1282,29 @@
 												postReq.title = this.envName;
 											} else { // same object for save / commit 
 												postReq.type = "saveConfiguration";
-												if($stateParams.isImportEnv) 
-												{
-													console.log("is import env");
-													postReq.commit = true;
-													__saveSessionUrl = commitUrl;
-												}
-												else if ($stateParams.isCreateEnv)
-													{
+												 if ($stateParams.isCreateEnv){
 													postReq.commit = true;
 													console.log("is create env");
 													postReq.softwareId = $stateParams.softwareId;
-													// __saveSessionUrl = commitUrl;
-													}
+												}
 												else 
 													postReq.commit = false;
 											}
-											
-											postResult = $http.post(localConfig.data.eaasBackendURL + __saveSessionUrl, postReq);
-											postResult.then(function(response) {
-												$scope.$close();
-												if (response.data.status === "0") {
-													growl.success(response.data.message, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-													
-													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-												} else {
-													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-							
-													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-												}
-											});
+
+											snapshotDoneFunc = function(data, status) {
+                                                growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+                                                window.eaasClient.release();
+                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                $scope.$close();
+
+                                            };
+	//											} else {
+	//												growl.error(response.data.message, {title: 'Error ' + response.data.status});
+	//												$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+	//											}
+
+	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc);
+
 										};
 										
 										this.deleteEnvironment = function() {
@@ -1310,7 +1365,7 @@
 				url: "/edit-object-characterization?objectId",
 				resolve: {
 					objEnvironments: function($stateParams, $http, localConfig) {
-						return $http.get(localConfig.data.eaasBackendURL + formatStr(objectEnvironmentsUrl, $stateParams.objectId, "false"));
+						return $http.get(localConfig.data.eaasBackendURL + formatStr(objectEnvironmentsUrl, $stateParams.objectId, "false", "false"));
 					},
 					metadata : function($stateParams, $http, localConfig) {
 					    return $http.get(localConfig.data.eaasBackendURL + formatStr(metadataUrl, $stateParams.objectId));
@@ -1332,12 +1387,13 @@
 							if(objEnvironments && objEnvironments.length > 0)
 							    vm.hasEnvironments = false;
 
-							vm.automaticCharacterization = function() {
+							vm.automaticCharacterization = function(updateClassification, updateProposal) {
 								if (window.confirm($translate.instant('JS_START_CHAR'))) {
 									$("html, body").addClass("wait");
 									$(".fullscreen-overlay-spinner").show();
 
-									$http.get(localConfig.data.eaasBackendURL + formatStr(objectEnvironmentsUrl, $stateParams.objectId, "true"))
+									$http.get(localConfig.data.eaasBackendURL
+									    + formatStr(objectEnvironmentsUrl, $stateParams.objectId, updateClassification, updateProposal))
 									    .then(function(response) {
 										if (response.data.status !== "0") {
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});

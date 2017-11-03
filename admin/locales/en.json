@@ -34,6 +34,7 @@
   "BASE_MENU_SHOW_SETTINGS_DLG": "Settings",
   "BASE_MENU_NEW_ENV" : "Create Base Environment",
   "BASE_MENU_OBJECTS" : "Objects",
+  "BASE_MENU_SESSIONS" : "User Sessions",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
@@ -119,8 +120,9 @@
 
 
   "CHAR_L" : "Characterize object",
-  "CHAR_AUT" : "Automated characterization",
   "CHAR_ADD" : "Add environment",
+  "CHAR_UPDATE_PROPOSAL" : "Detect/find environments",
+  "CHAR_UPDATE_CLASS" : "Re-classify object",
   "CHAR_SAVE" : "Save",
   "CHAR_CANCEL" : "Cancel",
   "CHAR_FORMATS" : "File formats",
@@ -186,5 +188,9 @@
   "DEFAULTENV_ID_L" : "System: ",
   "DEFAULTENV_SEARCH" : "Select an environment...",
   "DEFAULTENV_SAVE" : "Save",
-  "DEFAULTENV_CANCEL" : "Cancel"
+  "DEFAULTENV_CANCEL" : "Cancel",
+
+  "USER_SESSIONS_L" : "User Sessions",
+  "USER_SESSIONS_RUN" : "Start session",
+  "USER_SESSION_DEL" : "Delete session"
 }

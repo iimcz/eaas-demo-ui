@@ -34,6 +34,7 @@
   "BASE_MENU_SHOW_SETTINGS_DLG": "Einstellungen",
   "BASE_MENU_NEW_ENV" : "Basisumgebung erstellen",
   "BASE_MENU_OBJECTS" : "Objekte",
+  "BASE_MENU_SESSIONS" : "Nutzersitzungen",
   
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -118,7 +119,8 @@
   "EDITENV_RELMOUSE": "Relative Maus (Pointerlock)",
   
   "CHAR_L" : "Objektcharakterisierung",
-  "CHAR_AUT" : "Automatische Charakterisierung",
+  "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
+  "CHAR_UPDATE_CLASS" : "Erneut klassifizieren",
   "CHAR_ADD" : "Umgebung hinzufügen",
   "CHAR_SAVE" : "Speichern",
   "CHAR_CANCEL" : "Abbrechen",
@@ -187,5 +189,9 @@
   "DEFAULTENV_ID_L" : "System ",
   "DEFAULTENV_SEARCH" : "Umgebung auswählen...",
   "DEFAULTENV_SAVE" : "Speichern",
-  "DEFAULTENV_CANCEL" : "Abbrechen"
+  "DEFAULTENV_CANCEL" : "Abbrechen",
+
+  "USER_SESSIONS_L" : "Gespeicherte Nutzersitzungen",
+  "USER_SESSIONS_RUN" : "Sitzung starten",
+  "USER_SESSION_DEL" : "Sitzung löschen"
 }
