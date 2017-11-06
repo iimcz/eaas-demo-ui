@@ -8061,9 +8061,12 @@ Guacamole.HTTPTunnel = function(tunnelURL) {
 
     function sendPendingMessages() {
 
+        // NOTE: Comment out the state check, to flush all
+        //       pending messages after disconnect() call!
+
         // Do not attempt to send messages if not connected
-        if (tunnel.state !== Guacamole.Tunnel.State.OPEN)
-            return;
+        //if (tunnel.state !== Guacamole.Tunnel.State.OPEN)
+        //    return;
 
         if (outputMessageBuffer.length > 0) {
 
