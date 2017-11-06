@@ -193,5 +193,6 @@
 
   "USER_SESSIONS_L" : "Gespeicherte Nutzersitzungen",
   "USER_SESSIONS_RUN" : "Sitzung starten",
-  "USER_SESSION_DEL" : "Sitzung löschen"
+  "USER_SESSION_DEL" : "Sitzung löschen",
+  "USER_SESSIONS_TH" : "Aktive Sitzungen"
 }

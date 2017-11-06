@@ -23,7 +23,7 @@
   "ACTIONS_STOP" : "Stop",
   "ACTIONS_PRINT" : "Retrieve Printouts",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
-
+  "ACTIONS_SAVESESSION" : "Save Session",
 
   "BASE_SHOW_MENU" : "Show menu",
   "BASE_MENU_L" : "Menu",
@@ -58,5 +58,11 @@
   "JS_MENU_RENDER" : "Render",
   "JS_MENU_EDIT" : "Edit",
   "JS_MENU_DETAILS" : "Details",
-  "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically."
+  "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically.",
+
+  "USERSESSION_L" : "Resume session",
+  "USERSESSION_TEXT" : "Resume last saved session?",
+  "USERSESSION_START" : "Resume Session",
+  "USERSESSION_DELETE" : "Delete Session",
+  "USERSESSION_DEFAULT" : "New Session"
 }

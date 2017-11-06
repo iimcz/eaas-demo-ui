@@ -5,8 +5,7 @@
 			return typeof args[number] != 'undefined' ? args[number] : match;
 		});
 	};
-	
-	
+
 	// EMIL core api
 	var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
 	
@@ -19,9 +18,9 @@
 	// environments data connector
 	var getAllEnvsUrl = "EmilEnvironmentData/getAllEnvironments";
 	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
-	var getUserSessionUrl = "EmilEnvironmentData/userSession?userId={0}&objectId={1}";
-	
-	
+	var getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
+	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
+
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
 				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility'])
 
@@ -233,7 +232,7 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-b/choose-env.html',
-						controller: function ($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal) {
+						controller: function ($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig) {
 							var vm = this;
 
 							vm.noSuggestion = false;
@@ -279,6 +278,36 @@
                                         this.startSession = function() {
                                             $scope.$close();
                                             $state.go('wf-b.emulator', {envId: userSession.data.envId});
+                                        };
+
+                                        this.deleteSession = function() {
+                                            if (window.confirm($translate.instant('JS_DELENV_OK'))) {
+
+                                                $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, userSession.data.envId))
+                                                .then(function(response) {
+                                                    $scope.$close();
+                                                    if (objEnvironments.data.environmentList.length === 1)
+                                                    {
+                                                        $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+                                                        return;
+                                                    }
+
+                                                    if (objMetadata.data.status !== "0") {
+                                                        $state.go('error', {errorMsg: {title: "Metadata Error " + objMetadata.data.status, message: objMetadata.data.message}});
+                                                        return;
+                                                    }
+                                                    vm.objecttitle = objMetadata.data.title;
+                                                    if(vm.noSuggestion) {
+                                                        if(allEnvironments.data.status === "0") {
+                                                            vm.environments = allEnvironments.data.environments;
+                                                        } else {
+                                                            $state.go('error', {errorMsg: {title: "Environments Error " + objEnvironments.data.status, message: objEnvironments.data.message}});
+                                                        }
+                                                    } else {
+                                                        vm.environments = objEnvironments.data.environmentList;
+                                                    }
+                                                });
+                                            }
                                         };
                                 	},
                                 	controllerAs: "userSessionDialogCtrl"
