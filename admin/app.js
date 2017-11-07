@@ -1221,21 +1221,6 @@
 						controller: function ($scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
-							eaasClient.addOnConnectListener(function () {
-								$("#emulator-loading-container").hide();
-								$("#emulator-container").show();
-
-                                if (eaasClient.params.pointerLock === "true") {
-                                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                                    BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
-                                }
-
-								// Fix to close emulator on page leave
-								$scope.$on('$locationChangeStart', function(event) {
-									eaasClient.release();
-								});
-							});
-
 							eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
@@ -1254,7 +1239,22 @@
 								params.object = $stateParams.objectId;
 							}
 
-							eaasClient.startEnvironment($stateParams.envId, params);
+							eaasClient.startEnvironment($stateParams.envId, params).then(function () {
+                                eaasClient.connect().then(function() {
+                                    $("#emulator-loading-container").hide();
+                                    $("#emulator-container").show();
+
+                                       if (eaasClient.params.pointerLock === "true") {
+                                           growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                           BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                       }
+
+                                    // Fix to close emulator on page leave
+                                    $scope.$on('$locationChangeStart', function(event) {
+                                        eaasClient.release();
+                                    });
+                                });
+                            });
 						},
 						controllerAs: "startEmuCtrl"
 					},

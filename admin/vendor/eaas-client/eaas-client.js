@@ -8,7 +8,7 @@ EaasClient.Client = function (api_entrypoint, container) {
 
     // Clean up on window close
     window.onbeforeunload = function () {
-        this._disconnect();
+        this.disconnect();
         this.release();
     }.bind(this);
 
@@ -33,6 +33,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     this.componentId = null;
     this.networkId = null;
     this.driveId = null;
+    this.params = null;
 
     // ID for registered this.pollState() with setInterval()
     this.pollStateIntervalId = null;
@@ -76,7 +77,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         if (this.pollStateIntervalId)
             clearInterval(this.pollStateIntervalId);
 
-        this._disconnect();
+        this.disconnect();
 
         if (this.onError) {
             this.onError(msg || {"error": "No error message specified"});
@@ -239,11 +240,13 @@ EaasClient.Client = function (api_entrypoint, container) {
                 // Guacamole connector?
                 if (typeof data.guacamole !== "undefined") {
                     controlUrl = data.guacamole;
+		    _this.params = strParamsToObject(data.guacamole.substring(data.guacamole.indexOf("#") + 1));
                     connectViewerFunc = _this.establishGuacamoleTunnel;
                 }
                 // XPRA connector
                 else if (typeof data.xpra !== "undefined") {
                     controlUrl = data.xpra;
+		    _this.params = strParamsToObject(data.xpra.substring(data.guacamole.indexOf("#") + 1));
                     connectViewerFunc = _this.prepareAndLoadXpra;
                 }
                 else {
@@ -267,7 +270,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     };
 
     // Disconnects viewer from a running session
-    this._disconnect = function () {
+    this.disconnect = function () {
         var deferred = $.Deferred();
 
         if (!this.isStarted) {
@@ -424,7 +427,7 @@ EaasClient.Client = function (api_entrypoint, container) {
 
     }
 
-    // TODO: C  heck whether this works with current server-side implementation!
+    // TODO: Check whether this works with current server-side implementation!
     // this.startEnvironmentWithInternet = function (environmentId, kbLanguage,
     //                                               kbLayout) {
     //     $.ajax({
