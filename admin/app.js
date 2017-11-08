@@ -144,51 +144,6 @@
 		};
 	})
 
-    .controller('setDefaultEnvDialogController', function($scope) {
-        this.defaultEnv = null;
-        this.environments = environmentList.data.environments;
-        this.osId = osId;
-        this.osLabel = osLabel;
-
-        this.setEnvironment = function() {
-            $http.get(localConfig.data.eaasBackendURL + formatStr(setDefaultEnvironmentUrl,
-                this.osId, this.defaultEnv.envId))
-                .then(function(response) {
-                    if (response.data.status !== "0") {
-                        growl.error(response.data.message, {title: 'Error ' + response.data.message});
-                        $scope.$close();
-                    }
-                    else
-                        console.log("set default env for " + osId + " defaultEnv " + this.defaultEnv.envId);
-
-            })['finally'](function() {
-                $scope.$close();
-                $state.reload();
-            });
-
-        };
-    })
-
-    .controller('addEnvDialogController', function($scope) {
-        this.newEnv = null;
-        this.environments = environmentList.data.environments;
-        this.addEnvironment = function() {
-            // check if environment was already added
-            for (var i = 0; i < vm.objEnvironments.length; i++) {
-                if (vm.objEnvironments[i].id === this.newEnv.envId) {
-                    growl.warning($translate.instant('JS_ENV_ERR_DUP'));
-                    return;
-                }
-            }
-
-            vm.objEnvironments.push({
-                "id": this.newEnv.envId,
-                "label": this.newEnv.title
-            });
-            $scope.$close();
-        }
-    })
-
 	.controller('editObjectCharacterizationController', function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata) {
         var vm = this;
 
@@ -228,7 +183,31 @@
             $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/wf-s/set-default-environment-dialog.html',
-                controller: "setDefaultEnvDialogController as setDefaultEnvDialogCtrl"
+                controller: function($scope) {
+                    this.defaultEnv = null;
+                    this.environments = environmentList.data.environments;
+                    this.osId = osId;
+                    this.osLabel = osLabel;
+
+                    this.setEnvironment = function() {
+                        $http.get(localConfig.data.eaasBackendURL + formatStr(setDefaultEnvironmentUrl,
+                            this.osId, this.defaultEnv.envId))
+                            .then(function(response) {
+                                if (response.data.status !== "0") {
+                                    growl.error(response.data.message, {title: 'Error ' + response.data.message});
+                                    $scope.$close();
+                                }
+                                else
+                                    console.log("set default env for " + osId + " defaultEnv " + this.defaultEnv.envId);
+
+                        })['finally'](function() {
+                            $scope.$close();
+                            $state.reload();
+                        });
+
+                    };
+                },
+                controllerAs: "setDefaultEnvDialogCtrl"
             });
         };
 
@@ -236,7 +215,26 @@
             $uibModal.open({
                 animation: true,
                 templateUrl: 'partials/wf-s/add-environment-dialog.html',
-                controller: "addEnvDialogController as addEnvDialogCtrl"
+                controller: function($scope) {
+                    this.newEnv = null;
+                    this.environments = environmentList.data.environments;
+                    this.addEnvironment = function() {
+                        // check if environment was already added
+                        for (var i = 0; i < vm.objEnvironments.length; i++) {
+                            if (vm.objEnvironments[i].id === this.newEnv.envId) {
+                                growl.warning($translate.instant('JS_ENV_ERR_DUP'));
+                                return;
+                            }
+                        }
+
+                        vm.objEnvironments.push({
+                            "id": this.newEnv.envId,
+                            "label": this.newEnv.title
+                        });
+                        $scope.$close();
+                    }
+                },
+                controllerAs: "addEnvDialogCtrl"
             });
         };
 
