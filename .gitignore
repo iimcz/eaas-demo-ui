@@ -1,4 +1,8 @@
-/config.json
+node_modules
+dist
+coverage
+
 .idea
+/config.json
 /sublime.sublime-workspace
 /sublime.sublime-project

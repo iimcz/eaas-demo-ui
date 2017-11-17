@@ -12,7 +12,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     }.bind(this);
 
 
-    xpraShapes = {
+    var xpraShapes = {
         xpraWidth: 1024,
         xpraHeight: 768,
         xpraDPI: 96
@@ -65,6 +65,10 @@ EaasClient.Client = function (api_entrypoint, container) {
                     var state = data.state;
                     if (state == "OK")
                         _this.keepalive();
+                    else if(state == "STOPPED" || state == "FAILED"){
+                        _this.keepalive();
+                        $("#emulator-container").text("EMULATOR HAS STOPPED!");
+                    }
                     else if (state == "INACTIVE") {
                         location.reload();
                     } else
@@ -194,7 +198,7 @@ EaasClient.Client = function (api_entrypoint, container) {
             if (args.object == null) {
                 data.software = args.software;
             }
-	    data.userContext = args.userContext;
+            data.userContext = args.userContext;
         }
 
         var deferred = $.Deferred();
@@ -440,42 +444,58 @@ EaasClient.Client = function (api_entrypoint, container) {
     }
 
     // TODO: Check whether this works with current server-side implementation!
-    // this.startEnvironmentWithInternet = function (environmentId, kbLanguage,
-    //                                               kbLayout) {
-    //     $.ajax({
-    //         type: "POST",
-    //         url: API_URL + "/components",
-    //         data: JSON.stringify({
-    //             environment: environmentId,
-    //             keyboardLayout: kbLanguage,
-    //             keyboardModel: kbLayout
-    //         }),
-    //         contentType: "application/json"
-    //     }).done(
-    //         function (data) {
-    //             this.tmpdata = data;
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: API_URL + "/networks",
-    //                 data: JSON.stringify({
-    //                     components: [{
-    //                         componentId: data.id
-    //                     }],
-    //                     hasInternet: true
-    //                 }),
-    //                 contentType: "application/json"
-    //             }).done(
-    //                 function (data2) {
-    //                     this.pollState(this.tmpdata.controlUrl.replace(
-    //                         /([^:])(\/\/+)/g, '$1/'), this.tmpdata.id);
-    //                 }.bind(this)).fail(function (xhr, textStatus, error) {
-    //                 this._onFatalError($.parseJSON(xhr.responseText));
-    //             }.bind(this));
+    this.startEnvironmentWithInternet = function (environmentId, args) {
+        var data = {};
+        data.type = "machine";
+        data.environment = environmentId;
 
-    //         }.bind(this)).fail(function (xhr, textStatus, error) {
-    //         //this._onFatalError($.parseJSON(xhr.responseText).message);
-    //     }.bind(this));
-    // }
+        if (typeof args !== "undefined") {
+            data.keyboardLayout = args.keyboardLayout;
+            data.keyboardModel = args.keyboardModel;
+            data.object = args.object;
+
+            if (args.object == null) {
+                data.software = args.software;
+            }
+            data.userContext = args.userContext;
+        }
+
+        var deferred = $.Deferred();
+
+        console.log("Starting environment " + environmentId + "...");
+        $.ajax({
+            type: "POST",
+            url: API_URL + "/components",
+            data: JSON.stringify(data),
+            contentType: "application/json"
+        })
+            .then(function (data, status, xhr2) {
+                    console.log("Environment " + environmentId + " started.");
+                    $.ajax({
+                        type: "POST",
+                        url: API_URL + "/networks",
+                        data: JSON.stringify({
+                            components: [{
+                                componentId:  data.id
+                            }],
+                            hasInternet: true
+                        }),
+                        contentType: "application/json"
+                    }).then(function (network_data, status, xhr) {
+                        _this.componentId =  data.id;
+                        _this.driveId =  data.driveId;
+                        _this.networkId = network_data.id;
+                        _this.isStarted = true;
+                        _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
+                        deferred.resolve();
+                    })
+                },
+                function (xhr2) {
+                    _this._onFatalError($.parseJSON(xhr.responseText));
+                    deferred.reject();
+                });
+        return deferred.promise();
+    }
 };
 /*
  *  Example usage:
