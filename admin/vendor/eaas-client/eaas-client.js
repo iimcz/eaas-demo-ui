@@ -63,9 +63,11 @@ EaasClient.Client = function (api_entrypoint, container) {
         $.get(API_URL + formatStr("/components/{0}/state", _this.componentId))
             .then(function (data, status, xhr) {
                     var state = data.state;
-                    if (state == "OK" || state == "STOPPED" || state == "FAILED")
+                    if (state == "OK" )
                         _this.keepalive();
-                    else if (state == "INACTIVE") {
+                    else if(state == "STOPPED" || state == "FAILED"){
+                        $("#emulator-container").text("EMULATOR HAS STOPPED!");
+                    } else if (state == "INACTIVE") {
                         location.reload();
                     } else
                         _this._onFatalError("Invalid component state: " + state);
