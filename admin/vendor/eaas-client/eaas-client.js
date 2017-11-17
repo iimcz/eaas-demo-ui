@@ -66,6 +66,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                     if (state == "OK" )
                         _this.keepalive();
                     else if(state == "STOPPED" || state == "FAILED"){
+                        _this.keepalive();
                         $("#emulator-container").text("EMULATOR HAS STOPPED!");
                     } else if (state == "INACTIVE") {
                         location.reload();
