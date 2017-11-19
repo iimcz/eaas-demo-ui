@@ -32,9 +32,11 @@
   "BASE_MENU_OBJENVS": "Objektumgebungen",
   "BASE_MENU_SW" : "Software",  
   "BASE_MENU_SHOW_SETTINGS_DLG": "Einstellungen",
-  "BASE_MENU_NEW_ENV" : "Basisumgebung erstellen",
+  "BASE_MENU_NEW_ENV" : "Umgebung erstellen / importieren",
   "BASE_MENU_OBJECTS" : "Objekte",
   "BASE_MENU_SESSIONS" : "Nutzersitzungen",
+  "BASE_MENU_UPLOAD" : "Upload / Export",
+  "BASE_MENU_HELP" : "Hilfe",
   
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",

@@ -20,6 +20,7 @@
 
 	// environment data api
 	var getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
+	var getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
 	var updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
 	var deleteEnvironmentUrl = "EmilEnvironmentData/delete";
 	var initEmilEnvironmentsURL = "EmilEnvironmentData/init";
@@ -34,6 +35,7 @@
 	var syncImagesUrl = "EmilEnvironmentData/sync";
 	var exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
 	var setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
+	var getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
 
 	var userSessionListUrl = "EmilUserSession/list";
 	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
@@ -64,7 +66,7 @@
 
 	.controller('settingsDialogController', function($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl) {		
 		var vm = this;
-
+        vm.serverLogUrl = localConfig.data.eaasBackendURL + "Emil/serverLog";
 		vm.importEnvs = function() {
 			$scope.$close();
 
@@ -119,6 +121,8 @@
 				controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
 			});
 		};
+
+
 	})
 
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
@@ -832,67 +836,119 @@
 			  views: {
 				  'wizard': {
 					  templateUrl: 'partials/wf-s/synchronize-image-archives.html',
-					  controller: function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler) {
+					  controller: function ($http, $timeout, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler, $uibModal) {
 						  var vm = this;
+						  vm.isObjectEnvironment = false;
 
 						  var setEnvList = function (localEnvironmentList, remoteEnvironmentList) {
                               var envMap = {};
 
                               localEnvironmentList.forEach(function (env) {
-                                  env.isAvailableLocal = true;
+
                                   env.isAvailableRemote = false; // init with false, may be switched, if found in remote
                                   envMap[env.envId] = env;
                               });
 
                               remoteEnvironmentList.forEach(function (env) {
-                                  // environment is in the local archive, switch the isAvailableRemote flag
                                   if (envMap[env.envId]) {
+                                      envMap[env.envId].isAvailableRemoteInitial = true;
                                       envMap[env.envId].isAvailableRemote = true;
-                                      return;
                                   }
-
-                                  env.isAvailableLocal = false;
-                                  env.isAvailableRemote = true;
-                                  envMap[env.envId] = env;
                               });
 
                               vm.envList = Object.keys(envMap).map(function(key) {
-                                  envMap[key].isAvailableLocalInitial = envMap[key].isAvailableLocal;
-                                  envMap[key].isAvailableRemoteInitial = envMap[key].isAvailableRemote;
-
                                   return envMap[key];
                               });
                           };
 
-						  vm.fetchArchivesFromRemote = function (URI) {
-							  // TODO fetch real data from URI
+						  vm.fetchArchivesFromRemote = function (URI, type) {
 							  if (!URI) {
 							  	growl.error('Please enter a valid URI');
 							  	return;
 							  }
-
-                              var MOCK_REMOTE_BASE = [{"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"cbb628fb-f300-443f-87aa-0d831a879d6414","os":"n.a.","title":"DooM","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}, {"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"848b8mj","os":"n.a.","title":"FakeDooM2000","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
-                              // var MOCK_REMOTE_OBJ = [{"parentEnvId":null,"envId":"7022","os":"n.a.","title":"Hatari TOS 2.06 US","description":"n.a.","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
-
-                              setEnvList(environmentList.data.environments, MOCK_REMOTE_BASE);
-                              WizardHandler.wizard().next();
+                              vm.uri = encodeURIComponent(URI);
+                              remoteEnvironmentList = $http.get(localConfig.data.eaasBackendURL + formatStr(getRemoteEnvsUrl, encodeURIComponent(URI), type)).then(function(response) {
+                                if(response.data.status == "0")
+                                {
+                                    if(type == "base")
+                                        setEnvList(environmentList.data.environments, response.data.environments);
+                                    else if(type == "object"){
+                                        setEnvList(objectEnvironmentList.data.environments, response.data.environments);
+                                        vm.isObjectEnvironment = true;
+                                        vm.objectImportType = "byRef";
+                                    }
+                                    WizardHandler.wizard().next();
+                                }
+                                else
+                                {
+                                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                }
+                              });
                           };
 
                           vm.isSyncing = false;
                           vm.syncArchives = function (envs) {
                               vm.isSyncing = true;
-
                               growl.info($translate.instant('SYNC_START_INFO'));
 
-                              // fake rest post
-                              setTimeout(function () {
-                                  vm.isSyncing = false;
+                              var uploads = new Array();
+                              for (var i = 0; i < envs.length; i++)
+                              {
+                                 var e = envs[i];
 
-                                  // TODO call setEnvList with updated lists
+                                 if(e.isAvailableRemoteInitial)
+                                    continue;
+                                 if(!e.isAvailableRemote)
+                                    continue;
 
-                                  growl.success($translate.instant('SYNC_SUCCESS_INFO'));
-                              }, 7000);
-                          };
+                                 uploads.push(e.envId);
+
+                              }
+
+
+                              vm.checkState = function(_taskId, _modal)
+                              {
+                                    taskInfo = $http.get(localConfig.data.eaasBackendURL + formatStr(getTaskState, _taskId)).then(function(response){
+                                        if(response.data.status == "0")
+                                        {
+                                            if(response.data.isDone)
+                                            {
+                                                _modal.close();
+                                                vm.isSyncing = false;
+                                                growl.success("upload finished.");
+                                            }
+                                            else
+                                               $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                                        }
+                                        else
+                                        {
+                                            _modal.close();
+                                            vm.isSyncing = false;
+                                        }
+                                    });
+                              };
+
+
+                              growl.info("starting sync ");
+                              $http({
+                                method: 'POST',
+                                url: localConfig.data.eaasBackendURL + "EmilEnvironmentData/exportToRemoteArchive",
+                                data: {
+                                    envId: uploads,
+                                    wsHost: vm.uri
+                                }}).then(function(response) {
+                                   if(response.data.status == "0") {
+                                        var taskId = response.data.taskId;
+                                        modal = $uibModal.open({
+                                        	animation: true,
+                                        	templateUrl: 'partials/import-wait.html'
+                                        });
+                                        vm.checkState(taskId, modal);
+                                   }
+                              }, function(response) {
+                                  console.log("error");
+                              });
+                        };
 					  },
 					  controllerAs: "synchronizeImageArchivesCtrl"
 				  }
@@ -1211,7 +1267,8 @@
 					softwareId: null,
 					isNewObjectEnv: false,
 					isUserSession: false,
-					objectId: null
+					objectId: null,
+					userId: null
 				},
 				views: {
 					'wizard': {
@@ -1235,6 +1292,8 @@
 								params.software = $stateParams.softwareId;
 							} else if ($stateParams.isNewObjectEnv || $stateParams.isUserSession) {
 								params.object = $stateParams.objectId;
+								if($stateParams.isUserSession)
+								    params.userContext = $stateParams.userId;
 							}
 
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {

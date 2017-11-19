@@ -194,7 +194,11 @@ EaasClient.Client = function (api_entrypoint, container) {
             if (args.object == null) {
                 data.software = args.software;
             }
-	    data.userContext = args.userContext;
+            if(args.userContext)
+            {
+	            console.log("starting with userContext: " + args.userContext)
+	            data.userContext = args.userContext;
+	        }
         }
 
         var deferred = $.Deferred();

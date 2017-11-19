@@ -452,29 +452,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     //         }),
     //         contentType: "application/json"
     //     }).done(
-    //         function (data) {
-    //             this.tmpdata = data;
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: API_URL + "/networks",
-    //                 data: JSON.stringify({
-    //                     components: [{
-    //                         componentId: data.id
-    //                     }],
-    //                     hasInternet: true
-    //                 }),
-    //                 contentType: "application/json"
-    //             }).done(
-    //                 function (data2) {
-    //                     this.pollState(this.tmpdata.controlUrl.replace(
-    //                         /([^:])(\/\/+)/g, '$1/'), this.tmpdata.id);
-    //                 }.bind(this)).fail(function (xhr, textStatus, error) {
-    //                 this._onFatalError($.parseJSON(xhr.responseText));
-    //             }.bind(this));
-
-    //         }.bind(this)).fail(function (xhr, textStatus, error) {
-    //         //this._onFatalError($.parseJSON(xhr.responseText).message);
-    //     }.bind(this));
+    //   x^^^
     // }
 };
 /*

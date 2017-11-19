@@ -32,9 +32,11 @@
   "BASE_MENU_OBJENVS": "Object Environments",
   "BASE_MENU_SW" : "Software",
   "BASE_MENU_SHOW_SETTINGS_DLG": "Settings",
-  "BASE_MENU_NEW_ENV" : "Create Base Environment",
+  "BASE_MENU_NEW_ENV" : "Import / Create Environment",
   "BASE_MENU_OBJECTS" : "Objects",
   "BASE_MENU_SESSIONS" : "User Sessions",
+  "BASE_MENU_UPLOAD" : "Upload / Export",
+  "BASE_MENU_HELP" : "Help",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
