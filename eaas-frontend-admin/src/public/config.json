@@ -1,0 +1,6 @@
+{
+  "eaasBackendURL": "http://132.230.224.122/emil/",
+  "stopEmulatorRedirectURL":"http://132.230.224.122/demo-ui",
+  "dashboardClusterAPIBaseURL" : "http://132.230.224.122/eaas/api/v1/clusters/",
+  "dashboardAccessToken": "x"
+}

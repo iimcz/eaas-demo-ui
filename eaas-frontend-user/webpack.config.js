@@ -153,7 +153,7 @@ module.exports = function makeWebpackConfig() {
   config.plugins.push(
     new HtmlWebpackPlugin({
       template: './src/public/index.ejs',
-	  baseUrl: isProd ? PRODUCTION_BASE_PATH : '/',
+      baseUrl: isProd ? PRODUCTION_BASE_PATH : '/',
       inject: 'body'
     }),
 
@@ -190,7 +190,10 @@ module.exports = function makeWebpackConfig() {
   config.devServer = {
     contentBase: './src/public',
     stats: 'minimal',
-	open: true
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    open: true
   };
 
   return config;

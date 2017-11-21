@@ -1,77 +1,77 @@
 /* ==========================================================================
-		Browser Problem Prompt
+        Browser Problem Prompt
    ========================================================================== */
 
 .browserproblem {
-	background: #C11E1E;
-	color: #000000;
-	padding: 0.8em 0;
-	font-size: 1.25em;
-	text-align: center;
+    background: #C11E1E;
+    color: #000000;
+    padding: 0.8em 0;
+    font-size: 1.25em;
+    text-align: center;
 }
 
 /* ==========================================================================
-		Menu
+        Menu
    ========================================================================== */
 @media (min-width: 768px) {
-	.sidebar-nav .navbar .navbar-collapse {
-		padding: 0;
-		max-height: none;
-	}
-	
-	.sidebar-nav .navbar ul {
-		float: none;
-	}
-	
-	.sidebar-nav .navbar ul:not {
-		display: block;
-	}
-	
-	.sidebar-nav .navbar li {
-		float: none;
-		display: block;
-	}
-	
-	.sidebar-nav .navbar li a {
-		padding-top: 12px;
-		padding-bottom: 12px;
-	}
+    .sidebar-nav .navbar .navbar-collapse {
+        padding: 0;
+        max-height: none;
+    }
+    
+    .sidebar-nav .navbar ul {
+        float: none;
+    }
+    
+    .sidebar-nav .navbar ul:not {
+        display: block;
+    }
+    
+    .sidebar-nav .navbar li {
+        float: none;
+        display: block;
+    }
+    
+    .sidebar-nav .navbar li a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
 }
 
 /* ==========================================================================
-		Header
+        Header
    ========================================================================== */
 
 #header {
-	margin: 7px 0;
+    margin: 7px 0;
 }
 
 /* ==========================================================================
-		Action Heading
+        Action Heading
    ========================================================================== */
 
 #actionsHeading {
-	text-align: center;
+    text-align: center;
 }
 
 /* ==========================================================================
-		Action Buttons
+        Action Buttons
    ========================================================================== */
 
 #actionsBtnGroup {
-	width: 100%;
+    width: 100%;
 }
 
 #actionsBtnGroup .btn:first-child {
-	border-radius: 0;
+    border-radius: 0;
 }
 
 #actionsBtnGroup .btn:last-child {
-	border-radius: 0 0 3px 3px;
+    border-radius: 0 0 3px 3px;
 }
 
 /* ==========================================================================
-		Object Overview Page
+        Object Overview Page
    ========================================================================== */
 #object-grid-container {
   margin: 0 16px;
@@ -79,7 +79,7 @@
 
 #object-grid-container .object-container {
   height: 220px;
-  width: 150px;				  
+  width: 150px;                  
   display: inline-block;
   margin-right: 30px;
   margin-bottom: 30px;
@@ -125,64 +125,64 @@
 }
 
 /* ==========================================================================
-		Custom Environment Select
+        Custom Environment Select
    ========================================================================== */
 
 #chooseCustomEnvSelect {
-	margin-bottom: 7px;
+    margin-bottom: 7px;
 }
 
 /* ==========================================================================
-		Emulator
+        Emulator
    ========================================================================== */
 
 html.wait, body.wait {
-	cursor: progress !important;
+    cursor: progress !important;
 }
 
 #emulator-stopped-container {
-	display: none;
+    display: none;
 }
 
 #emulator-loading-spinner {
-	margin: 10px 0 0 90px;
+    margin: 10px 0 0 90px;
 }
 
 /* ==========================================================================
-		Change Media Dialog
+        Change Media Dialog
    ========================================================================== */
 
 #change-media-tabhost .tab-pane {
-	min-height: 200px;
+    min-height: 200px;
 }
 
 #change-media-tabhost .tab-pane {
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-	border-radius: 0px 0px 5px 5px;
-	padding: 10px;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0px 0px 5px 5px;
+    padding: 10px;
 }
 
 /* ==========================================================================
-		Error Page
+        Error Page
    ========================================================================== */
 
 #error-panel {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 /* ==========================================================================
-		Server Error Dialog
+        Server Error Dialog
    ========================================================================== */
 
 #error-loading-spinner {
-	display: block;
+    display: block;
     margin: 30px auto;    
 }
 
 /* ==========================================================================
-		Utility classes
+        Utility classes
    ========================================================================== */
 
 .m-t-0 {
