@@ -100,7 +100,7 @@ module.exports = function makeWebpackConfig() {
         fallbackLoader: 'style-loader',
         loader: [
           {loader: 'css-loader', query: {sourceMap: true}},
-          {loader: 'postcss-loader'}
+          {loader: 'postcss-loader', query: { config: './postcss.config.js' }}
         ],
       })
     }, {

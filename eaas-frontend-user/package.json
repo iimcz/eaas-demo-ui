@@ -1,7 +1,7 @@
 {
-  "name": "emil-ui",
+  "name": "eaas-frontend-user",
   "version": "0.0.1",
-  "description": "Web frontend for the EAAS REST backend",
+  "description": "User web frontend for the EAAS REST backend",
   "scripts": {
     "build": "rimraf dist && webpack --bail --progress --profile",
     "server": "webpack-dev-server --history-api-fallback --inline --progress",

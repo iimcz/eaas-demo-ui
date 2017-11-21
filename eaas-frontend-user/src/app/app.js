@@ -31,10 +31,10 @@ const appendScript = function(scriptText) {
     document.body.appendChild(script);
 };
 
-import guacamolejs from 'raw-loader!../../vendor/eaas-client/guacamole/guacamole.js';
+import guacamolejs from 'raw-loader!../../../common/eaas-client/guacamole/guacamole.js';
 appendScript(guacamolejs);
 
-import eaasclientjs from 'raw-loader!../../vendor/eaas-client/eaas-client.js';
+import eaasclientjs from 'raw-loader!../../../common/eaas-client/eaas-client.js';
 appendScript(eaasclientjs);
 
 /*
@@ -53,8 +53,8 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import 'ui-select/dist/select.css';
 import 'angular-growl-v2/build/angular-growl.css';
 import 'angular-loading-bar/build/loading-bar.css';
-import '../../vendor/eaas-client/guacamole/guacamole.css';
-import '../../vendor/eaas-client/eaas-client.css';
+import '../../../common/eaas-client/guacamole/guacamole.css';
+import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
 function formatStr(format) {
