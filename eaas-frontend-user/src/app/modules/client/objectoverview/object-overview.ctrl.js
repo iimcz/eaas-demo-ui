@@ -1,10 +1,10 @@
-module.exports = function($state, $stateParams, objectList, $translate, $uibModal) {    
+module.exports = function($state, $stateParams, objectList, $translate, $uibModal) {
     var vm = this;
-                
+
     vm.objectList = objectList.data.objects;
-    
+
     vm.menuOptions = [
-        [$translate.instant('JS_MENU_RENDER'), function ($itemScope) {                            
+        [$translate.instant('JS_MENU_RENDER'), function ($itemScope) {
             $state.go('wf-b.choose-env', {objectId: $itemScope.object.id});
         }],
         null, // Dividier

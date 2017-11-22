@@ -21,7 +21,7 @@ import 'angular-smart-table';
  * Import legacy emulator libraries
  */
 
-var $ = require('jquery');
+const $ = require('jquery');
 window.$ = window.jQuery = $; // publish jQuery into window scope for emulator libs
 
 const appendScript = function(scriptText) {
@@ -57,27 +57,27 @@ import '../../../common/eaas-client/guacamole/guacamole.css';
 import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
-function formatStr(format) {
-    var args = Array.prototype.slice.call(arguments, 1);
+const formatStr = function(format) {
+    const args = Array.prototype.slice.call(arguments, 1);
     return format.replace(/{(\d+)}/g, function(match, number) {
-        return typeof args[number] != 'undefined' ? args[number] : match;
+        return typeof args[number] !== 'undefined' ? args[number] : match;
     });
 };
 
 // EMIL core api
-var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
+const changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
 
 // object data connector
-var mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
-var loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
-var metadataUrl = "EmilObjectData/metadata?objectId={0}";
-var getObjectListURL = "EmilObjectData/list";
+const mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
+const loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
+const metadataUrl = "EmilObjectData/metadata?objectId={0}";
+const getObjectListURL = "EmilObjectData/list";
 
 // environments data connector
-var getAllEnvsUrl = "EmilEnvironmentData/getAllEnvironments";
-var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
-var getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
-var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
+const getAllEnvsUrl = "EmilEnvironmentData/getAllEnvironments";
+const getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
+const getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
+const deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 
 export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
                'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers'])
