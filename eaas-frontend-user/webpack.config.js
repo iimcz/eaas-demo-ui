@@ -6,6 +6,7 @@ var autoprefixer = require('autoprefixer');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 /**
  * Env
@@ -42,7 +43,7 @@ module.exports = function makeWebpackConfig() {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: isProd ? '/' : 'http://localhost:8080/',
+    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8080/',
 
     // Filename for entry points
     // Only adds hash in build mode
@@ -170,9 +171,13 @@ module.exports = function makeWebpackConfig() {
       // Only emit files when there are no errors
       new webpack.NoEmitOnErrorsPlugin(),
 
-      // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
-      // Minify all javascript, switch loaders to minimizing mode
-      new webpack.optimize.UglifyJsPlugin(),
+      // Reference: https://webpack.js.org/plugins/uglifyjs-webpack-plugin/
+      // Minify all javascript, disable renaming/mangling
+      new UglifyJSPlugin({
+        uglifyOptions: {
+		  mangle: false
+		}
+      }),
 
       // Copy assets from the public folder
       // Reference: https://github.com/kevlened/copy-webpack-plugin
