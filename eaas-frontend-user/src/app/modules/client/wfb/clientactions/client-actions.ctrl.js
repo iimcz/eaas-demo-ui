@@ -35,7 +35,7 @@ module.exports = function($scope, $window, $state, $http, $timeout, $uibModal, $
         postReq.userContext = "testuser01";
         postReq.envId = $stateParams.envId;
 
-        snapshotDoneFunc = function(data, status) {
+        var snapshotDoneFunc = function(data, status) {
             growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
             window.eaasClient.release();
             $('#emulator-stopped-container').show();
@@ -82,12 +82,12 @@ module.exports = function($scope, $window, $state, $http, $timeout, $uibModal, $
                         return;
                     }
 
-                    postObj = {};
+                    var postObj = {};
                     postObj.objectId = $stateParams.objectId;
                     postObj.driveId = window.eaasClient.driveId;
                     postObj.label = newMediumLabel;
 
-                    changeSuccsessFunc = function(data, status) {
+                    var changeSuccsessFunc = function(data, status) {
                         growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
                         currentMediumLabel = newMediumLabel;
                         $scope.$close();

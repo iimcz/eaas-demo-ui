@@ -1,4 +1,4 @@
-module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig) {
+module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig, helperFunctions, REST_URLS) {
     var vm = this;
 
     vm.noSuggestion = false;
@@ -49,7 +49,7 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
                 this.deleteSession = function() {
                     if (window.confirm($translate.instant('JS_DELENV_OK'))) {
 
-                        $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, userSession.data.envId))
+                        $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.deleteSessionUrl, userSession.data.envId))
                         .then(function(response) {
                             $scope.$close();
                             if (objEnvironments.data.environmentList.length === 1)

@@ -57,28 +57,6 @@ import '../../../common/eaas-client/guacamole/guacamole.css';
 import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
-const formatStr = function(format) {
-    const args = Array.prototype.slice.call(arguments, 1);
-    return format.replace(/{(\d+)}/g, function(match, number) {
-        return typeof args[number] !== 'undefined' ? args[number] : match;
-    });
-};
-
-// EMIL core api
-const changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
-
-// object data connector
-const mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
-const loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
-const metadataUrl = "EmilObjectData/metadata?objectId={0}";
-const getObjectListURL = "EmilObjectData/list";
-
-// environments data connector
-const getAllEnvsUrl = "EmilEnvironmentData/getAllEnvironments";
-const getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
-const getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
-const deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
-
 export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
                'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers'])
 
@@ -174,7 +152,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             template: require('./modules/client/objectoverview/object-overview.html'),
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
-                objectList: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + getObjectListURL)
+                objectList: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getObjectListURL)
             },
             controller: "ObjectOverviewController as objectOverviewCtrl"
         })
@@ -184,10 +162,10 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             template: require('./modules/client/wfb/base/base.html'),
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
-                objEnvironments: ($stateParams, $http, localConfig) => $http.get(localConfig.data.eaasBackendURL + formatStr(loadEnvsUrl, $stateParams.objectId)),
-                objMetadata: ($stateParams, $http, localConfig) => $http.get(localConfig.data.eaasBackendURL + formatStr(metadataUrl, $stateParams.objectId)),
-                allEnvironments: ($stateParams, $http, localConfig) => $http.get(localConfig.data.eaasBackendURL + getAllEnvsUrl),
-                userSession: ($stateParams, $http, localConfig) => $http.get(localConfig.data.eaasBackendURL + formatStr(getUserSessionUrl, "testuser01", $stateParams.objectId))
+                objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.loadEnvsUrl, $stateParams.objectId)),
+                objMetadata: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.metadataUrl, $stateParams.objectId)),
+                allEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
+                userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, "testuser01", $stateParams.objectId))
             },
             controller: "BaseController as baseCtrl"
         })
@@ -207,8 +185,8 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
         .state('wf-b.emulator', {
             url: "/emulator?envId",
             resolve: {
-                chosenEnv: ($http, $stateParams, localConfig) => $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId)),
-                mediaCollection: ($http, $stateParams, localConfig) => $http.get(localConfig.data.eaasBackendURL + formatStr(mediaCollectionURL, $stateParams.objectId))
+                chosenEnv: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId)),
+                mediaCollection: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.objectId))
             },
             views: {
                 'wizard': {
