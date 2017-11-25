@@ -412,7 +412,9 @@
 									controllerAs: "helpDialogCtrl"
 								});
 							}
-							
+
+							vm.enablePrinting = chosenEnv.data.enablePrinting;
+                            console.log("printing: " + vm.enablePrinting);
 							vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
 							};

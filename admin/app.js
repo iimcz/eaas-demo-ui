@@ -18,6 +18,8 @@
 	var mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
 	var metadataUrl = "EmilObjectData/metadata?objectId={0}";
 
+
+
 	// environment data api
 	var getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
 	var getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
@@ -36,6 +38,7 @@
 	var exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
 	var setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
 	var getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
+	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
 
 	var userSessionListUrl = "EmilUserSession/list";
 	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
@@ -1133,11 +1136,16 @@
 							this.envDescription = this.env.description;
 							this.envHelpText = this.env.helpText;
 							this.enableRelativeMouse = this.env.enableRelativeMouse;
+							this.enablePrinting = this.env.enablePrinting;
 
 							this.saveEdit = function() {
 							    console.log("save time: " + this.showDateContextPicker);
+							    var timecontext = null;
 							    if(this.showDateContextPicker)
+							    {
 								    console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+								    timecontext = vm.datetimePicker.date.getTime();
+								}
 
                                 this.env.title = this.envTitle;
                                 this.env.description = this.envDescription;
@@ -1147,7 +1155,8 @@
 									title: this.envTitle,
 									description: this.envDescription,
 									helpText: this.envHelpText,
-									time: vm.datetimePicker.date.getTime()
+									time: timecontext,
+									enablePrinting: vm.enablePrinting
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -1257,7 +1266,10 @@
                 			(($stateParams.softwareId != null) ?
                 			    formatStr(mediaCollectionURL, $stateParams.softwareId) :
                 			    formatStr(mediaCollectionURL, $stateParams.objectId)));
-                		}
+                		},
+                	chosenEnv: function($http, $stateParams, localConfig) {
+                    		return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
+                    }
                 },
 				params: {
 					envId: "-1",
@@ -1287,7 +1299,7 @@
 								keyboardLayout: kbLayoutPrefs.language.name,
 								keyboardModel: kbLayoutPrefs.layout.name
 							};
-                            console.log($stateParams);
+
 							if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
 								params.software = $stateParams.softwareId;
 							} else if ($stateParams.isNewObjectEnv || $stateParams.isUserSession) {
@@ -1317,11 +1329,12 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-s/actions.html',
-						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, $pageVisibility) {
+						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
 							vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
+							vm.enablePrinting = chosenEnv.data.enablePrinting;
 							
 							vm.screenshot = function() {
 								window.open(window.eaasClient.getScreenshotUrl());
