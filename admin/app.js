@@ -932,13 +932,17 @@
                               };
 
 
+                              var exportEmbedded = false;
+                              if(vm.objectImportType == "embedded")
+                                exportEmbedded = true;
                               growl.info("starting sync ");
                               $http({
                                 method: 'POST',
                                 url: localConfig.data.eaasBackendURL + "EmilEnvironmentData/exportToRemoteArchive",
                                 data: {
                                     envId: uploads,
-                                    wsHost: vm.uri
+                                    wsHost: vm.uri,
+                                    exportObjectEmbedded: exportEmbedded
                                 }}).then(function(response) {
                                    if(response.data.status == "0") {
                                         var taskId = response.data.taskId;
