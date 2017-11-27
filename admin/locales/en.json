@@ -36,7 +36,6 @@
   "BASE_MENU_OBJECTS" : "Objects",
   "BASE_MENU_SESSIONS" : "User Sessions",
   "BASE_MENU_UPLOAD" : "Upload / Export",
-  "BASE_MENU_HELP" : "Help",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
@@ -53,6 +52,15 @@
   "SET_KEYBOARD_DLG_SAVE" : "Save",
   "SET_KEYBOARD_DLG_SAVE_CANCEL" : "Cancel",
   "SET_KEYBOARD_DLG_SAVE_SUCCESS": "Choosen keyboard was saved on this computer",
+
+  "SW_OVERVIEW_HEADER" : "Software",
+  "SW_OVERVIEW_ADD" : "Add new software",
+  "SW_OVERVIEW_SEARCH" : "Search...",
+  "SW_OVERVIEW_SW_EDIT" : "[edit]",
+  "SW_OVERVIEW_SW_DEL" : "[delete]",
+
+  "ERROR_MODAL_TITLE": "Information",
+  "ERROR_MODAL_TEXT": "The EAAS service is currently not ready. As soon as it becomes ready you can automatically resume.",
   
   "SW_INGEST_HEADER" : "Software Ingest",
   "SW_INGEST_CHOOSE_OBJECT" : "Choose Object",
@@ -96,15 +104,6 @@
   "SW_NEW_IMAGE_START_BUTTON" : "Start",
   "SW_NEW_IMAGE_ROM_LBL" : "ROM File",
   
-  "SW_OVERVIEW_HEADER" : "Software",
-  "SW_OVERVIEW_ADD" : "Add new software",
-  "SW_OVERVIEW_SEARCH" : "Search...",
-  "SW_OVERVIEW_SW_EDIT" : "[edit]",
-  "SW_OVERVIEW_SW_DEL" : "[delete]",
-
-  "ERROR_MODAL_TITLE": "Information",
-  "ERROR_MODAL_TEXT": "The EAAS service is currently not ready. As soon as it becomes ready you can automatically resume.",
-  
   "EDITENV_L" : "Edit Environment",
   "EDITENV_ID": "ID",
   "EDITENV_NAME" : "Name",
@@ -120,7 +119,7 @@
   "EDITENV_REVS" : "Revisions",
   "EDITENV_DATE_CONTEXT": "Date",
   "EDITENV_RELMOUSE": "Relative Mouse (Pointerlock)",
-
+  "EDITENV_PRINTING" : "Environment can print",
 
   "CHAR_L" : "Characterize object",
   "CHAR_ADD" : "Add environment",
@@ -135,8 +134,9 @@
   "CHAR_CLASS_INFORMATION": "Classification Details",
   
   "EMU_TITLE" : "Preparing emulation session",
+  "EMU_STOPPED" : "Emulator stopped",
   "EMU_POINTER_LOCK_AVAILABLE" : "Click on the emulator for mouse control.",
-  
+
   "NEWENV_L" : "Create environment",
   "NEWENV_BASE" : "Base environment",
   "NEWENV_SW" : "Software",
@@ -165,7 +165,11 @@
   "SYNC_ARCHIVES_BTN" : "Synchronize archives",
   "SYNC_START_INFO" : "Syncing archives..",
   "SYNC_SUCCESS_INFO" : "Archives synced successfully",
-  
+  "SYNC_REMOTE_ARCHIVE_TYPE_LBL" : "Select image type",
+  "SYNC_ENV_NAME_TH" : "Local Environment",
+  "SYNC_ENV_REMOTE_AVAILABLE_TH" : "Upload",
+  "SYNC_ARCHIVES_OPTIONS" : "Object Upload Mode",
+
   "JS_DELENV_OK" : "Do you really want to delete this environment",
   "JS_DELENV_SUCCESS" : "Environment has been deleted",
   "JS_ENV_UPDATE" : "Metadata has been updated",
@@ -196,5 +200,5 @@
   "USER_SESSIONS_L" : "User Sessions",
   "USER_SESSIONS_RUN" : "Start session",
   "USER_SESSION_DEL" : "Delete session",
-  "USER_SESSIONS_TH" : "Aktive Sitzungen"
+  "USER_SESSIONS_TH" : "Saved sessions"
 }

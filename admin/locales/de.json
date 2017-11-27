@@ -36,7 +36,6 @@
   "BASE_MENU_OBJECTS" : "Objekte",
   "BASE_MENU_SESSIONS" : "Nutzersitzungen",
   "BASE_MENU_UPLOAD" : "Upload / Export",
-  "BASE_MENU_HELP" : "Hilfe",
   
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -120,6 +119,7 @@
   "EDITENV_REVS" : "Revisionen",
   "EDITENV_DATE_CONTEXT": "Datum",
   "EDITENV_RELMOUSE": "Relative Maus (Pointerlock)",
+  "EDITENV_PRINTING" : "Environment can print",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
@@ -133,7 +133,6 @@
   "CHAR_ENV_LIST": "Konfigurierte Umgebungen",
   "CHAR_CLASS_INFORMATION": "Klassifikationsdetails",
 
-  
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
   "EMU_POINTER_LOCK_AVAILABLE" : "Klicken sie auf den Emulator für die Maussteuerung.",
@@ -166,6 +165,10 @@
   "SYNC_ARCHIVES_BTN" : "Archive synchronisieren",
   "SYNC_START_INFO" : "Archive werden synchronisiert..",
   "SYNC_SUCCESS_INFO" : "Archive wurden erfolgreich synchronisiert",
+  "SYNC_REMOTE_ARCHIVE_TYPE_LBL" : "Umgebungstyp",
+  "SYNC_ENV_NAME_TH" : "Umgebungsname",
+  "SYNC_ENV_REMOTE_AVAILABLE_TH" : "Upload",
+  "SYNC_ARCHIVES_OPTIONS" : "Objektmodus",
 
   "JS_DELENV_OK" : "Dies löscht die Umgebung unwiderruflich. Wollen sie wirklich fortfahren?",
   "JS_DELENV_SUCCESS" : "Umgebung wurde erfolgreich gelöscht",
