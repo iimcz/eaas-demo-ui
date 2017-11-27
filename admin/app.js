@@ -1273,7 +1273,7 @@
                 			    formatStr(mediaCollectionURL, $stateParams.objectId)));
                 		},
                         chosenEnv: function($http, $stateParams, localConfig) {
-                                if(!isImportEnv)
+                                if(!$stateParams.isImportEnv)
                                     return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
                                 else
                                     return {};
@@ -1342,7 +1342,11 @@
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
 							vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
-							vm.enablePrinting = chosenEnv.data.enablePrinting;
+
+							if(chosenEnv.data)
+							    vm.enablePrinting = chosenEnv.data.enablePrinting;
+							else
+							    vm.enablePrinting = false;
 							
 							vm.screenshot = function() {
 								window.open(window.eaasClient.getScreenshotUrl());

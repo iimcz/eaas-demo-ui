@@ -94,6 +94,7 @@
   "SW_NEW_IMAGE_NATIVE_CONFIG_LBL" : "Native Config",
   "SW_NEW_IMAGE_CANCEL_BUTTON" : "Cancel",
   "SW_NEW_IMAGE_START_BUTTON" : "Start",
+  "SW_NEW_IMAGE_ROM_LBL" : "ROM File",
   
   "SW_OVERVIEW_HEADER" : "Software",
   "SW_OVERVIEW_ADD" : "Add new software",

@@ -66,6 +66,12 @@
 				</label>
 				<input type="text" class="form-control" ng-model="newImageCtrl.hdurl" ng-disabled="newImageCtrl.hdtype != 'url'" ng-required="newImageCtrl.hdtype == 'url'"/>
 				<!--  <span ng-hide="newImageCtrl.hdtype != 'url' || !newImageCtrl.form.$error.url">{{'SW_NEW_IMAGE_URL_VALIDATION_ERROR' | translate}}</span> -->
+				<p><br></p>
+				<label>
+					<input type="checkbox" ng-model="newImageCtrl.hasRom">
+					<span>{{'SW_NEW_IMAGE_ROM_LBL' | translate}}</span>
+				</label>
+				<input type="text" class="form-control" ng-model="newImageCtrl.rom" ng-disabled="!newImageCtrl.hasRom">
 			</div>
 		</div>
 	</div>
