@@ -764,7 +764,8 @@
 												urlString: vm.hdurl, 
 												templateId: vm.selectedSystem.id, 
 												label: vm.name, urlString: vm.hdurl, 
-												nativeConfig: vm.native_config
+												nativeConfig: vm.native_config,
+												rom: vm.rom
 											},
 											{
 											    timeout: "6000000"
@@ -1271,9 +1272,12 @@
                 			    formatStr(mediaCollectionURL, $stateParams.softwareId) :
                 			    formatStr(mediaCollectionURL, $stateParams.objectId)));
                 		},
-                	chosenEnv: function($http, $stateParams, localConfig) {
-                    		return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
-                    }
+                        chosenEnv: function($http, $stateParams, localConfig) {
+                                if(!isImportEnv)
+                                    return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
+                                else
+                                    return {};
+                        }
                 },
 				params: {
 					envId: "-1",
