@@ -1342,6 +1342,15 @@
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
 							vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
+							vm.isCreateEnv = $stateParams.isCreateEnv;
+                            vm.isImportEnv = $stateParams.isImportEnv;
+
+                            if(vm.isImportEnv || vm.isNewEnv || vm.isCreateEnv)
+                                vm.saveLabel = $translate.instant('ACTIONS_ENV');
+                            else if (vm.isNewObjectEnv)
+                                vm.saveLabel = $translate.instant('ACTIONS_OBJ_ENV');
+                            else
+                                vm.saveLabel = $translate.instant('ACTIONS_CHANGES');
 
 							if(chosenEnv.data)
 							    vm.enablePrinting = chosenEnv.data.enablePrinting;

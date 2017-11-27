@@ -26,9 +26,9 @@
 				</th>
 			</tr>
 			<tr>
-				<th>{{'SYNC_REMOTE_ARCHIVE_NAME_TH' | translate}}</th>
+				<th>{{'SYNC_ENV_NAME_TH' | translate}}</th>
 
-				<th>{{'SYNC_REMOTE_ARCHIVE_REMOTE_TH' | translate}}</th>
+				<th>{{'SYNC_ENV_REMOTE_AVAILABLE_TH' | translate}}</th>
 			</tr>
 			</thead>
 
@@ -36,7 +36,7 @@
 			<tr ng-repeat="row in displayEnvs">
 				<td>{{row.title}} ({{row.envId}})</td>
 
-				<td><input type="checkbox" ng-model="row.isAvailableRemote" ng-disabled="row.isAvailableRemoteInitial"></td>
+				<td><input type="checkbox" ng-model="row.isAvailableRemote" ng-disabled="!row.isAvailableRemoteInitial"></td>
 			</tr>
 			</tbody>
 

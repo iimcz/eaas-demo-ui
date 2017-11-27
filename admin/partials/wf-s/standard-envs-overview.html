@@ -25,8 +25,8 @@
 				ui-sref="wf-s.emulator({envId: row.envId})">{{'CHOOSE_ENV_PROPOSAL'
 					| translate}}</a> <a
 				ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
-					| translate}}</a> <a href="#"
-				ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a>
+					| translate}}</a> <!-- <a href="#"
+				ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a> -->
 				<a href="#"
 				ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'
 					| translate}}</a> <br> <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
