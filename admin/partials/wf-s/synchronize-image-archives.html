@@ -36,7 +36,7 @@
 			<tr ng-repeat="row in displayEnvs">
 				<td>{{row.title}} ({{row.envId}})</td>
 
-				<td><input type="checkbox" ng-model="row.isAvailableRemote" ng-disabled="!row.isAvailableRemoteInitial"></td>
+				<td><input type="checkbox" ng-model="row.upload" ng-disabled="row.isAvailableRemote"></td>
 			</tr>
 			</tbody>
 
@@ -44,9 +44,9 @@
 			<tr>
 				<td style="vertical-align:middle">
 					<div ng-if="synchronizeImageArchivesCtrl.isObjectEnvironment" style="vertical-align: middle">
-						<b>{{'SYNC_ARCHIVES_OPTIONS' | translate }}  </b>
-						<input  ng-model="synchronizeImageArchivesCtrl.objectImportType" type="radio" value="byRef" >Object Archive</input>
-						<input  ng-model="synchronizeImageArchivesCtrl.objectImportType" type="radio" value="embedded">Embedded</input>
+						<b>{{'SYNC_ARCHIVES_OPTIONS' | translate }}  </b> <br>
+						<input  ng-model="synchronizeImageArchivesCtrl.objectImportType" type="radio" value="byRef" >Upload to Object Archive</input>
+						<input  ng-model="synchronizeImageArchivesCtrl.objectImportType" type="radio" value="embedded">Embed Object</input>
 					</div>
 				</td>
 				<td>

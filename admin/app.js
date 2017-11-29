@@ -850,13 +850,14 @@
                               localEnvironmentList.forEach(function (env) {
 
                                   env.isAvailableRemote = false; // init with false, may be switched, if found in remote
+                                  env.upload = false;
                                   envMap[env.envId] = env;
                               });
 
                               remoteEnvironmentList.forEach(function (env) {
                                   if (envMap[env.envId]) {
-                                      envMap[env.envId].isAvailableRemoteInitial = true;
                                       envMap[env.envId].isAvailableRemote = true;
+                                      envMap[env.envId].upload = true;
                                   }
                               });
 
@@ -900,9 +901,9 @@
                               {
                                  var e = envs[i];
 
-                                 if(e.isAvailableRemoteInitial)
+                                 if(e.isAvailableRemote)
                                     continue;
-                                 if(!e.isAvailableRemote)
+                                 if(!e.upload)
                                     continue;
 
                                  uploads.push(e.envId);
@@ -1337,7 +1338,8 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-s/actions.html',
-						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, $pageVisibility, chosenEnv) {
+						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection,
+						    $timeout, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
 							
 							vm.isNewEnv = $stateParams.isNewEnv;
@@ -1414,6 +1416,9 @@
                             			this.chosen_medium_label = currentMediumLabel;
                             			this.media = mediaCollection.data.medium;
                             			this.isChangeMediaSubmitting = false;
+                            			this.objectId = $stateParams.softwareId;
+                            			if(!this.objectId)
+                            			    this.objectId = $stateParams.objectId;
 
                             			this.changeMedium = function(newMediumLabel) {
                                             if (newMediumLabel == null) {
@@ -1424,7 +1429,7 @@
                                             this.isChangeMediaSubmitting = true;
 
                                             postObj = {};
-                                            postObj.objectId = $stateParams.softwareId;
+                                            postObj.objectId = this.objectId;
                                             postObj.driveId = window.eaasClient.driveId;
                                             postObj.label = newMediumLabel;
 
