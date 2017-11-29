@@ -1162,7 +1162,8 @@
 									description: this.envDescription,
 									helpText: this.envHelpText,
 									time: timecontext,
-									enablePrinting: vm.enablePrinting
+									enablePrinting: vm.enablePrinting,
+									enableRelativeMouse: this.enableRelativeMouse
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));
