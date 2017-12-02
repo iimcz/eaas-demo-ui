@@ -50,7 +50,7 @@ appendScript(eaasclientjs);
  */
 
 import './modules/helpers.js';
-// import './modules/modules.js';
+import './modules/modules.js';
 
 /*
  * Import stylesheets
@@ -69,7 +69,9 @@ import './app.css';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
-                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers'])
+                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
+
+.constant('kbLayouts', require('./../public/kbLayouts.json'))
 
 .component('inputList', {
     templateUrl: 'partials/components/inputList.html',
@@ -82,67 +84,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     }
 })
 
-.controller('settingsDialogController', ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLayouts', 'growl', 'REST_URLS', function($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl, REST_URLS) {
-    var vm = this;
-
-    vm.importEnvs = function() {
-        $scope.$close();
-
-        $http.get(localConfig.data.eaasBackendURL + REST_URLS.initEmilEnvironmentsURL).then(function(response) {
-            if (response.data.status === "0") {
-                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                    growl.success(response.data.message);
-                } else {
-                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                }
-            }
-        );
-    };
-   
-    vm.syncObjects = function() {
-        $scope.$close();
-        
-        $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl).then(function(response) {
-            if (response.data.status === "0") {
-                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                    growl.success(response.data.message);
-                } else {
-                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                }
-            }
-        );
-    };
-    
-    vm.syncImages = function() {
-        $scope.$close();
-        
-        $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncImagesUrl).then(function(response) {
-            if (response.data.status === "0") {
-                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                    growl.success(response.data.message);
-                } else {
-                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                }
-            }
-        );
-    };
-    
-    vm.showSetKeyboardLayoutDialog = function() {
-        $uibModal.open({
-            animation: true,
-            templateUrl: 'partials/set-keyboard-layout-dialog.html',
-            resolve: {
-                kbLayouts: function() {
-                    return kbLayouts; // refers to outer kbLayouts variable
-                }
-            },
-            controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
-        });
-    };
-}])
-
 .controller('setKeyboardLayoutDialogController', ['$scope', '$cookies', '$translate', 'kbLayouts', 'growl', function($scope, $cookies, $translate, kbLayouts, growl) {
-    this.kbLayouts = kbLayouts.data;
+    this.kbLayouts = kbLayouts;
 
     var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs');
 
@@ -375,14 +318,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 localConfig: function($http) {
                     return $http.get("config.json" + '?id=' + new Date().getTime());
                 },
-                kbLayouts: function($http) {
-                    return $http.get("kbLayouts.json");
-                },
                 buildInfo: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl);
                 }
             },
-            controller: ['$uibModal', 'localConfig', 'kbLayouts', 'buildInfo', function($uibModal, localConfig, kbLayouts, buildInfo) {
+            controller: ['$uibModal', 'localConfig', 'buildInfo', function($uibModal, localConfig, buildInfo) {
                 var vm = this;
                 this.buildInfo = buildInfo.data.version;
                 vm.open = function() {
@@ -395,16 +335,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: true,
-                        templateUrl: 'partials/settings-dialog.html',
+                        template: require('./modules/admin/settingsdialog/settings-dialog.html'),
                         resolve: {
                             localConfig: function () {
                                 return localConfig;
-                            },
-                            kbLayouts: function () {
-                                return kbLayouts;
                             }
                         },
-                        controller: "settingsDialogController as settingsDialogCtrl"
+                        controller: "SettingsDialogController as settingsDialogCtrl"
                     });
                 };
             }],
@@ -819,14 +756,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 objectEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object"))
                 },
-                kbLayouts: function($http) {
-                    return $http.get("kbLayouts.json");
-                },
                 buildInfo: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl);
                 }
             },
-            controller: ['$state', '$uibModal', '$http', 'localConfig', 'kbLayouts', 'growl', 'buildInfo', function($state, $uibModal, $http, localConfig, kbLayouts, growl, buildInfo) {
+            controller: ['$state', '$uibModal', '$http', 'localConfig', 'growl', 'buildInfo', function($state, $uibModal, $http, localConfig, growl, buildInfo) {
                 var vm = this;
 
                 this.buildInfo = buildInfo.data.version;
@@ -841,16 +775,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: true,
-                        templateUrl: 'partials/settings-dialog.html',
+                        templateUrl: require('./modules/admin/settingsdialog/settings-dialog.html'),
                         resolve: {
                             localConfig: function() {
                                 return localConfig;
-                            },
-                            kbLayouts: function() {
-                                return kbLayouts;
                             }
                         },
-                        controller: "settingsDialogController as settingsDialogCtrl"
+                        controller: "SettingsDialogController as settingsDialogCtrl"
                     });
                 };
             }],
