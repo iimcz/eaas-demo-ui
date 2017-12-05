@@ -1030,10 +1030,15 @@
 				params: {
 					showObjects: false
 				},
+				resolve : {
+				    softwareList: function($http, localConfig) {
+                    	return $http.get(localConfig.data.eaasBackendURL + getSoftwarePackageDescriptions);
+                    }
+				},
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-s/standard-envs-overview.html',
-						controller: function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate) {
+						controller: function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList) {
 							var vm = this;
 							
 							if (environmentList.data.status !== "0") {
@@ -1053,8 +1058,20 @@
 									});
 								
 							};
-							
-                                vm.deleteEnvironment = function(envId) {
+
+							vm.addSoftware = function(envId) {
+                                $uibModal.open({
+                                	animation: true,
+                                	templateUrl: 'partials/wf-s/select-sw-dialog.html',
+                                	controller: function($scope) {
+                                	    this.envId = envId;
+                                	    this.software = softwareList.data.descriptions;
+                                	},
+                                    controllerAs: "addSoftwareDialogCtrl"
+                                });
+							};
+
+                            vm.deleteEnvironment = function(envId) {
 								if (window.confirm($translate.instant('JS_DELENV_OK'))) {
 									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
 										envId: envId,
@@ -1081,24 +1098,6 @@
 							vm.showObjects = $stateParams.showObjects;
 						},
 						controllerAs: "standardEnvsOverviewCtrl"
-					}
-				}
-			})
-			.state('wf-s.new-env', {
-				url: "/new-env",
-				resolve: {
-					softwareList: function($http, localConfig) {
-						return $http.get(localConfig.data.eaasBackendURL + getSoftwarePackageDescriptions);
-					}
-				},
-				views: {
-					'wizard': {
-						templateUrl: 'partials/wf-s/new-env.html',
-						controller: function ($scope, $state, $stateParams, environmentList, softwareList, growl) {
-							this.envs = environmentList.data.environments;							
-							this.software = softwareList.data.descriptions;
-						},
-						controllerAs: "newEnvCtrl"
 					}
 				}
 			})

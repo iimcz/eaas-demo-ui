@@ -1,11 +1,11 @@
 {
   "CHOOSE_ENV_L" : "Environments",
-  "CHOOSE_ENV_ADD" : "New environment",
   "CHOOSE_ENV_SEARCH" : "Search...",
   "CHOOSE_ENV_PROPOSAL" : "[Configure environment]",
   "CHOOSE_ENV_EDIT" : "[Edit description]",
   "CHOOSE_ENV_DEL" : "[Delete]",
   "CHOOSE_ENV_VER" : "Version",
+  "CHOOSE_ENV_ADDSW" : "[Add software]",
   
   "ERROR_RETURN_BTN" : "Back to overview",
   
@@ -137,13 +137,11 @@
   "EMU_STOPPED" : "Emulator stopped",
   "EMU_POINTER_LOCK_AVAILABLE" : "Click on the emulator for mouse control.",
 
-  "NEWENV_L" : "Create environment",
-  "NEWENV_BASE" : "Base environment",
-  "NEWENV_SW" : "Software",
-  "NEWENV_SELECT_ENV" : "Select environment...",
-  "NEWENV_SELECT_SW" : "Select software...",
-  "NEWENV_START" : "Start",
-  "NEWENV_CANCEL" : "Cancel",
+  "ADDSW_TITLE" : "Add software",
+  "ADDSW_DIALOG_LIST" : "Available software packages",
+  "ADDSW_DIALOG_SELECT_SW" : "Choose software package...",
+  "ADDSW_DIALOG_SELECT" : "Next",
+  "ADDSW_DIALOG_CANCEL" : "Cancel",
   
   "SAVEENV_L" : "Save changes",
   "SAVEENV_NAME" : "Name",

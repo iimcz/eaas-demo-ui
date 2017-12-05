@@ -6,13 +6,7 @@
 	<thead>
 		<tr>
 			<th colspan="6">
-				<div style="text-align: right; margin-bottom: 15px;">
-					<button type="submit" class="btn btn-default"
-						ui-sref="wf-s.new-env">
-						<span style="color: green" class="glyphicon glyphicon-plus"></span>
-						{{'CHOOSE_ENV_ADD' | translate}}
-					</button>
-				</div> <input st-search="" class="form-control"
+				<input st-search="" class="form-control"
 				placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
 			</th>
 		</tr>
@@ -20,18 +14,23 @@
 
 	<tbody>
 		<tr ng-repeat="row in displayEnvs">
-			<td><b>{{row.title}}</b> 
-			<br/><a
-				ui-sref="wf-s.emulator({envId: row.envId})">{{'CHOOSE_ENV_PROPOSAL'
-					| translate}}</a> <a
-				ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
+			<td>
+				<b>{{row.title}}</b>
+				<br/>
+				<a ui-sref="wf-s.emulator({envId: row.envId})">{{'CHOOSE_ENV_PROPOSAL'
+					| translate}}</a>
+				<a ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
 					| translate}}</a> <!-- <a href="#"
 				ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a> -->
-				<a href="#"
-				ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'
-					| translate}}</a> <br> <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
+				<a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'
+					| translate}}</a>
+				<a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
+				| translate}}</a>
+				<br>
+				<span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
 					| translate }}: {{row.version}}<br>
-			</span> {{row.description}}</td>
+				</span> {{row.description}}
+			</td>
 		</tr>
 	</tbody>
 
