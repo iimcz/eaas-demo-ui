@@ -1457,6 +1457,7 @@
 										this.isNewObjectEnv = $stateParams.isNewObjectEnv;
 										this.isCreateEnv = $stateParams.isCreateEnv;
 										this.isImportEnv = $stateParams.isImportEnv;
+										this.isUserSession = $stateParams.isUserSession;
 										
 										this.isSavingEnvironment = false;
 										this.saveEnvironment = function() {
@@ -1504,7 +1505,12 @@
 													postReq.commit = true;
 													console.log("is create env");
 													postReq.softwareId = $stateParams.softwareId;
-												}
+												 }
+												 else if(this.isUserSession) {
+												    postReq.userId = $stateParams.userId;
+												    postReq.commit = false;
+												 }
+
 												else 
 													postReq.commit = false;
 											}
