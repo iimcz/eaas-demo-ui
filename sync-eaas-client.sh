@@ -23,11 +23,14 @@ DEST="$BASEDIR"
 cd "$TEMPDIR"
 git clone "$REPO" .
 REV="$(git rev-parse HEAD)"
+SHORT="$(git rev-parse --short=10 HEAD)"
 build
 cd "$BASEDIR"
 add
 git commit -F - << EOF
-Update $NAME (via \`$BASENAME\`)
+Update $NAME ('$SHORT')
+
+Via \`$BASENAME\`.
 
 Commit '$REV'
 of $REPO
