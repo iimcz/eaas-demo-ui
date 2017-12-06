@@ -661,7 +661,7 @@
 						templateUrl: 'partials/wf-i/sw-ingest.html',
 						controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj, osList) {
 							var vm = this;
-							
+
 							vm.isNewSoftware = $stateParams.swId === "-1";
 
 							if (vm.isNewSoftware) {
@@ -726,6 +726,10 @@
 						templateUrl: 'partials/wf-i/new-image.html',
 						controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal) {
 							var vm = this;
+
+
+
+
 
 							vm.systems = systemList.data.systems;
 							vm.softwareList = softwareList.data.descriptions;
@@ -1301,6 +1305,12 @@
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
+
+                            $scope.onExit = function() {
+                                return ('close?');
+                            };
+                            window.onbeforeunload =  $scope.onExit;
+
 							// fallback to defaults when no cookie is found
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
@@ -1378,7 +1388,7 @@
 							vm.stopEmulator = function () {
 								window.eaasClient.release();
 								$('#emulator-stopped-container').show();
-								
+								$window.onbeforeunload = null;
 								if($stateParams.isTestEnv)
 								{
 									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {

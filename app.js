@@ -371,7 +371,11 @@
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
-
+                             // prevent accidentally closing session
+                            $scope.onExit = function() {
+                                return ('close?');
+                            };
+                            window.onbeforeunload = $scope.onExit;
                             eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
@@ -453,6 +457,10 @@
 							};
 
 							vm.stopEmulator = function () {
+							    	if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
+                                  					return;
+                                				}
+                                				window.onbeforeunload = null;
 								window.eaasClient.release();
 								$('#emulator-stopped-container').show();	
 								window.location = localConfig.data.stopEmulatorRedirectURL;
