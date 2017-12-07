@@ -34,6 +34,12 @@ BASENAME="$(basename "$(abspath "$0")")"
 TEMPDIR="$(mktemp -d)"
 DEST="$BASEDIR"
 
+cd "$BASEDIR"
+if test -n "$(git status --porcelain)"; then
+  git status
+  echo "$BASENAME: Working tree is not clean, aborting!"
+  exit 1
+fi
 cd "$TEMPDIR"
 git clone "$REPO" .
 REV="$(git rev-parse HEAD)"
