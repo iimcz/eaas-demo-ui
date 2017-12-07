@@ -54,4 +54,5 @@ Via \`$BASENAME\`.
 
 Commit '$REV'
 of $REPO
+(<${REPO%.git}/commit/$REV>).
 EOF
