@@ -417,9 +417,10 @@
 								});
 							}
 
+                            vm.emulatorState = window.eaasClient.getEmulatorState();
+
 							vm.enablePrinting = chosenEnv.data.enablePrinting;
-                            console.log("printing: " + vm.enablePrinting);
-							vm.help = function() {
+                            vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
 							};
 
@@ -436,6 +437,14 @@
                             };
 
                             vm.saveSession = function() {
+
+                                if(window.eaasClient.getEmulatorState() != "STOPPED")
+                                {
+                                    if (!window.confirm("Please make sure to shutdown the guest OS before creating derivatives")) { // $translate.instant('JS_DELENV_OK')
+                                        return;
+                                    }
+                                }
+
                                 var postReq = {};
                                 postReq.type = "saveUserSession";
                                 postReq.objectId = $stateParams.objectId;
@@ -457,10 +466,10 @@
 							};
 
 							vm.stopEmulator = function () {
-							    	if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
-                                  					return;
-                                				}
-                                				window.onbeforeunload = null;
+                                if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
+                                    return;
+                                }
+                                window.onbeforeunload = null;
 								window.eaasClient.release();
 								$('#emulator-stopped-container').show();	
 								window.location = localConfig.data.stopEmulatorRedirectURL;
