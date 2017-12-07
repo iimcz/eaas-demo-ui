@@ -417,7 +417,6 @@
 								});
 							}
 
-                            vm.emulatorState = window.eaasClient.getEmulatorState();
 
 							vm.enablePrinting = chosenEnv.data.enablePrinting;
                             vm.help = function() {
@@ -451,6 +450,7 @@
                                 postReq.userContext = "testuser01";
                                 postReq.envId = $stateParams.envId;
 
+                                window.onbeforeunload = null;
                                 snapshotDoneFunc = function(data, status) {
                                     growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                                     window.eaasClient.release();
