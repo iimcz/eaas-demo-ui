@@ -6,8 +6,10 @@ NAME="eaas-client"
 
 build() {
   mvn package
-  cp --remove-destination -rT target/"$NAME"-*/ "$DEST/vendor/""$NAME"
-  cp --remove-destination -rT target/"$NAME"-*/ "$DEST/admin/vendor/""$NAME"
+  rm -rf "$DEST/vendor/""$NAME"
+  cp -R target/"$NAME"-*/ "$DEST/vendor/""$NAME"
+  rm -rf "$DEST/admin/vendor/""$NAME"
+  cp -R target/"$NAME"-*/ "$DEST/admin/vendor/""$NAME"
 }
 
 add() {
@@ -15,8 +17,20 @@ add() {
   git add admin/vendor/"$NAME"
 }
 
-BASEDIR="$(dirname "$(readlink -f -- "$0")")"
-BASENAME="$(basename "$(readlink -f -- "$0")")"
+
+abspath()
+{
+    if [ -d "$1" ]
+    then
+        cd "$1" &> '/dev/null' && echo "$(pwd -P)" && exit 0
+    else
+        cd &> '/dev/null' "$(dirname "$1")" && echo "$(pwd -P)/$(basename "$1")" && exit 0
+    fi
+    exit 30
+}
+
+BASEDIR="$(dirname "$(abspath "$0")")"
+BASENAME="$(basename "$(abspath "$0")")"
 TEMPDIR="$(mktemp -d)"
 DEST="$BASEDIR"
 
