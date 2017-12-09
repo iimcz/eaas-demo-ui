@@ -724,12 +724,8 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-i/new-image.html',
-						controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal) {
+						controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal, $timeout) {
 							var vm = this;
-
-
-
-
 
 							vm.systems = systemList.data.systems;
 							vm.softwareList = softwareList.data.descriptions;
@@ -743,7 +739,29 @@
 							vm.onSelectSystem = function(item, model) {
 								vm.native_config = item.native_config;
 							};
-							
+
+							vm.checkState = function(_taskId, _modal)
+                            {
+                                taskInfo = $http.get(localConfig.data.eaasBackendURL + formatStr(getTaskState, _taskId)).then(function(response){
+                                    if(response.data.status == "0")
+                                    {
+                                        if(response.data.isDone)
+                                        {
+                                            _modal.close();
+                                            growl.success("import finished.");
+                                            console.log(response.data.userData.environmentId);
+                                            $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, isImportEnv: true });
+                                        }
+                                        else
+                                           $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                                    }
+                                    else
+                                    {
+                                        _modal.close();
+                                    }
+                                });
+                            };
+
 							vm.start = function() {
 								if (vm.hdtype == 'new') {
 									$http.post(localConfig.data.eaasBackendURL + createEnvironmentUrl, {
@@ -757,30 +775,25 @@
 										$state.go('wf-s.emulator', {envId: response.data.id, isCreateEnv: true, softwareId: vm.selectedSoftware.id});
 									});
 								} else {
-								     modal = $uibModal.open({
-                                        animation: true,
-                                        backdrop: 'static',
-                                        templateUrl: 'partials/import-wait.html'
-                                     });
-
 									$http.post(localConfig.data.eaasBackendURL + importImageUrl, 
-											{
-												urlString: vm.hdurl, 
-												templateId: vm.selectedSystem.id, 
-												label: vm.name, urlString: vm.hdurl, 
-												nativeConfig: vm.native_config,
-												rom: vm.rom
-											},
-											{
-											    timeout: "6000000"
-											}
-											).then(function(response) {
-										if (response.data.status !== "0") 
-											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-
-										modal.close();
-										$state.go('wf-s.emulator', {envId: response.data.id, isImportEnv: true });
-									});	
+									{
+                                        urlString: vm.hdurl,
+                                        templateId: vm.selectedSystem.id,
+                                        label: vm.name, urlString: vm.hdurl,
+                                        nativeConfig: vm.native_config,
+                                        rom: vm.rom
+									}).then(function(response) {
+										if(response.data.status == "0") {
+                                            var taskId = response.data.taskId;
+                                            modal = $uibModal.open({
+                                                animation: true,
+                                                templateUrl: 'partials/import-wait.html'
+                                            });
+                                            vm.checkState(taskId, modal);
+                                        }
+                                        }, function(response) {
+                                            console.log("error");
+                                 });
 								}
 							};
 						},
