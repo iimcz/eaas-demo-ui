@@ -1290,11 +1290,11 @@
                 			    formatStr(mediaCollectionURL, $stateParams.softwareId) :
                 			    formatStr(mediaCollectionURL, $stateParams.objectId)));
                 		},
-                        chosenEnv: function($http, $stateParams, localConfig) {
-                                if(!$stateParams.isImportEnv)
-                                    return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
-                                else
-                                    return {};
+                    chosenEnv: function($http, $stateParams, localConfig) {
+                             if(!$stateParams.isImportEnv && !$stateParams.isCreateEnv)
+                                 return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
+                             else
+                                 return {};
                         }
                 },
 				params: {
