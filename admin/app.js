@@ -895,6 +895,7 @@
                                     if(type == "base")
                                         setEnvList(environmentList.data.environments, response.data.environments);
                                     else if(type == "object"){
+
                                         setEnvList(objectEnvironmentList.data.environments, response.data.environments);
                                         vm.isObjectEnvironment = true;
                                         vm.objectImportType = "byRef";
@@ -961,7 +962,8 @@
                                 data: {
                                     envId: uploads,
                                     wsHost: vm.uri,
-                                    exportObjectEmbedded: exportEmbedded
+                                    exportObjectEmbedded: exportEmbedded,
+                                    objectArchiveHost: vm.remoteObjectArchiveURI
                                 }}).then(function(response) {
                                    if(response.data.status == "0") {
                                         var taskId = response.data.taskId;

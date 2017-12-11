@@ -156,9 +156,11 @@
   "SAVETESTENV_KEEP" : "Add imported environment to environments list?",
   "SAVETESTENV_CANCEL" : "Discard",
 
-  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "Enter the Remote archive URI",
+  "SYNC_REMOTE_ARCHIVE_URI_LBL" : "Enter the remote image archive URI",
   "SYNC_REMOTE_ARCHIVE_URI_PH" : "Remote archive URI..",
-  "SYNC_SET_URI_BTN" : "Select URI",
+  "SYNC_REMOTE_OBJECT_ARCHIVE_URI_LBL" : "Enter the remote object archive URI",
+  "SYNC_REMOTE_OBJECT_ARCHIVE_URI_PH" : "Remote object archive URI..",
+  "SYNC_SET_URI_BTN" : "Connect",
   "SYNC_ARCHIVES_L" : "Sync Archives",
   "SYNC_ARCHIVES_BTN" : "Synchronize archives",
   "SYNC_START_INFO" : "Syncing archives..",

@@ -158,7 +158,9 @@
 
   "SYNC_REMOTE_ARCHIVE_URI_LBL" : "URI des nicht-lokalen Archives",
   "SYNC_REMOTE_ARCHIVE_URI_PH" : "Archiv URI eingeben..",
-  "SYNC_SET_URI_BTN" : "Archiv URI auswählen",
+  "SYNC_REMOTE_OBJECT_ARCHIVE_URI_LBL" : "URI des nicht-lokalen Objekt-Archives",
+  "SYNC_REMOTE_OBJECT_ARCHIVE_URI_PH" : "Object-Archiv URI eingeben..",
+  "SYNC_SET_URI_BTN" : "Verbinden",
   "SYNC_ARCHIVES_L" : "Archivsynchronisierung",
   "SYNC_ARCHIVES_BTN" : "Archive synchronisieren",
   "SYNC_START_INFO" : "Archive werden synchronisiert..",
