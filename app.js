@@ -376,6 +376,9 @@
                                 return ('close?');
                             };
                             window.onbeforeunload = $scope.onExit;
+                            window.onunload = function() {
+                                window.onbeforeunload = null;
+                            }
                             eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
