@@ -15,9 +15,7 @@
   "ACTIONS_STOP" : "Beenden",
   "ACTIONS_PRINT" : "Druckaufträge",
   "ACTIONS_CHANGE_MEDIA" : "Medienwechsel",
-  "ACTIONS_ENV" : "Umgebung speichern",
-  "ACTIONS_CHANGES" : "Änderungen speichern",
-  "ACTIONS_OBJ_ENV" : "Neue Objekt Umgebung",
+  "ACTIONS_SAVE_ENV" : "Umgebung speichern",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   
   "ADDENV_L" : "Umgebung hinzufügen",
@@ -143,18 +141,16 @@
   "ADDSW_DIALOG_SELECT" : "Weiter",
   "ADDSW_DIALOG_CANCEL" : "Abbrechen",
   
-  "SAVEENV_L" : "Änderungen speichern",
+  "SAVEENV_L" : "Umgebung speichern",
   "SAVEENV_NAME" : "Name",
   "SAVEENV_NAME_PH" : "Name der Umgebung..",
   "SAVEENV_DESC" : "Beschreibung",
   "SAVEENV_DESC_PH" : "Beschreibung der Änderungen..",
   "SAVEENV_SAVE" : "Speichern",
   "SAVEENV_CANCEL" : "Abbrechen",
-  
-  "SAVETESTENV_SAVE" : "Speichern",
-  "SAVETESTENV_L" : "Import erfolgreich?",
-  "SAVETESTENV_KEEP" : "Importierte Umgebung hinzufügen?",
-  "SAVETESTENV_CANCEL" : "Verwerfen",
+  "SAVEENV_TYPE_REV" : "Revision",
+  "SAVEENV_TYPE_NEW" : "Neue Umgebung",
+  "SAVEENV_TYPE": "Speichern als:",
 
   "SYNC_REMOTE_ARCHIVE_URI_LBL" : "URI des nicht-lokalen Archives",
   "SYNC_REMOTE_ARCHIVE_URI_PH" : "Archiv URI eingeben..",

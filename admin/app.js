@@ -151,7 +151,8 @@
 		};
 	})
 
-	.controller('editObjectCharacterizationController', function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata) {
+	.controller('editObjectCharacterizationController', function ($scope, $state, $stateParams, $uibModal, $http,
+	localConfig, objEnvironments, environmentList, growl, $translate, metadata) {
         var vm = this;
 
         vm.objEnvironments = objEnvironments.data.environmentList;
@@ -750,7 +751,7 @@
                                             _modal.close();
                                             growl.success("import finished.");
                                             console.log(response.data.userData.environmentId);
-                                            $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, isImportEnv: true });
+                                            $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
                                         }
                                         else
                                            $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
@@ -772,7 +773,7 @@
 									}).then(function(response) {
 										if (response.data.status !== "0") 
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
-										$state.go('wf-s.emulator', {envId: response.data.id, isCreateEnv: true, softwareId: vm.selectedSoftware.id});
+										$state.go('wf-s.emulator', {envId: response.data.id, type: 'saveCreatedEnvironment', softwareId: vm.selectedSoftware.id});
 									});
 								} else {
 									$http.post(localConfig.data.eaasBackendURL + importImageUrl, 
@@ -1293,7 +1294,7 @@
                 			    formatStr(mediaCollectionURL, $stateParams.objectId)));
                 		},
                     chosenEnv: function($http, $stateParams, localConfig) {
-                             if(!$stateParams.isImportEnv && !$stateParams.isCreateEnv)
+                             if($stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                                  return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
                              else
                                  return {};
@@ -1301,11 +1302,8 @@
                 },
 				params: {
 					envId: "-1",
-					isNewEnv: false,
-					isCreateEnv: false,
-					isImportEnv: false,
+					type: 'saveRevision',
 					softwareId: null,
-					isNewObjectEnv: false,
 					isUserSession: false,
 					objectId: null,
 					userId: null
@@ -1320,7 +1318,6 @@
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
-
                             $scope.onExit = function() {
                                 return ('close?');
                             };
@@ -1334,13 +1331,10 @@
 								keyboardModel: kbLayoutPrefs.layout.name
 							};
 
-							if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
-								params.software = $stateParams.softwareId;
-							} else if ($stateParams.isNewObjectEnv || $stateParams.isUserSession) {
-								params.object = $stateParams.objectId;
-								if($stateParams.isUserSession)
-								    params.userContext = $stateParams.userId;
-							}
+							params.software = $stateParams.softwareId;
+							params.object = $stateParams.objectId;
+							params.userContext = $stateParams.userId;
+
 
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {
                                 eaasClient.connect().then(function() {
@@ -1366,18 +1360,7 @@
 						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection,
 						    $timeout, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
-							
-							vm.isNewEnv = $stateParams.isNewEnv;
-							vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
-							vm.isCreateEnv = $stateParams.isCreateEnv;
-                            vm.isImportEnv = $stateParams.isImportEnv;
-
-                            if(vm.isImportEnv || vm.isNewEnv || vm.isCreateEnv)
-                                vm.saveLabel = $translate.instant('ACTIONS_ENV');
-                            else if (vm.isNewObjectEnv)
-                                vm.saveLabel = $translate.instant('ACTIONS_OBJ_ENV');
-                            else
-                                vm.saveLabel = $translate.instant('ACTIONS_CHANGES');
+                            vm.type = $stateParams.type;
 
 							if(chosenEnv.data)
 							    vm.enablePrinting = chosenEnv.data.enablePrinting;
@@ -1478,82 +1461,41 @@
 									animation: true,
 									templateUrl: 'partials/wf-s/save-environment-dialog.html',
 									controller: function($scope) {
-										this.isNewEnv = $stateParams.isNewEnv;
-										this.isNewObjectEnv = $stateParams.isNewObjectEnv;
-										this.isCreateEnv = $stateParams.isCreateEnv;
-										this.isImportEnv = $stateParams.isImportEnv;
-										this.isUserSession = $stateParams.isUserSession;
-										
+
+                                        this.type = $stateParams.type;
+                                        if(!this.type)
+                                            alert("ERROR: invalid type");
+
 										this.isSavingEnvironment = false;
 										this.saveEnvironment = function() {
 
                                             this.isSavingEnvironment = true;
                                             vm.stopEmulator();
 
-											var postReq = {};											
+											var postReq = {};
+											postReq.type = this.type;
 											postReq.envId = $stateParams.envId;
-											postReq.message = this.envDescription;	
-
-											if ($stateParams.isImportEnv)
-											{
-											    postReq.type = "saveConfiguration";
-											    console.log("is import env");
-                                                postReq.commit = true;
-
-											    postResult = $http.post(localConfig.data.eaasBackendURL + commitUrl, postReq);
-                                                postResult.then(function(response) {
-                                                    $scope.$close();
-                                                    if (response.data.status === "0") {
-                                                        growl.success(response.data.message, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-
-                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                    } else {
-                                                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
-
-                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                    }
-                                                });
-											}
-
-											if ($stateParams.isNewEnv) {
-												postReq.type = "newEnvironment";
-												postReq.title = this.envName;
-												postReq.softwareId = $stateParams.softwareId;	
-												postReq.isObjectEnvironment= false;
-											} else if ($stateParams.isNewObjectEnv) {
-												postReq.type = "objectEnvironment";
-												postReq.objectId = $stateParams.objectId;
-												postReq.title = this.envName;
-											} else { // same object for save / commit 
-												postReq.type = "saveConfiguration";
-												 if ($stateParams.isCreateEnv){
-													postReq.commit = true;
-													console.log("is create env");
-													postReq.softwareId = $stateParams.softwareId;
-												 }
-												 else if(this.isUserSession) {
-												    postReq.userId = $stateParams.userId;
-												    postReq.commit = false;
-												 }
-
-												else 
-													postReq.commit = false;
-											}
+											postReq.message = this.envDescription;
+											postReq.title = this.envName;
+											postReq.softwareId = $stateParams.softwareId;
+											postReq.objectId = $stateParams.objectId;
+											postReq.userId = $stateParams.userId;
 
 											snapshotDoneFunc = function(data, status) {
                                                 growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                                                 window.eaasClient.release();
                                                 $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                                 $scope.$close();
-
+                                                this.isSavingEnvironment = false;
                                             };
-	//											} else {
-	//												growl.error(response.data.message, {title: 'Error ' + response.data.status});
-	//												$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-	//											}
 
-	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc);
-
+                                            snapshotErrorFunc = function(error) {
+                                                growl.error(error, {title: 'Error ' + error});
+                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                $scope.$close();
+                                                this.isSavingEnvironment = false;
+                                            };
+	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
 										};
 										
 										this.deleteEnvironment = function() {

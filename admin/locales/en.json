@@ -14,10 +14,8 @@
   "ACTIONS_SCREENSHOT" : "Screenshot",
   "ACTIONS_STOP" : "Stop",
   "ACTIONS_PRINT" : "Download Print Jobs",
-  "ACTIONS_ENV" : "Save Environment",
-  "ACTIONS_CHANGES" : "Save Changes",
+  "ACTIONS_SAVE_ENV" : "Save Environment",
   "ACTIONS_CHANGE_MEDIA" : "Change media",
-  "ACTIONS_OBJ_ENV" : "Create Object Environment",
   "ACTIONS_CTRLALTDEL" : "Send Ctr-Alt-Del",
   
   "ADDENV_L" : "Add environment",
@@ -145,16 +143,14 @@
   
   "SAVEENV_L" : "Save changes",
   "SAVEENV_NAME" : "Name",
-  "SAVEENV_NAME_PH" : "Envirnment name",
-  "SAVEENV_DESC" : "Decription",
+  "SAVEENV_NAME_PH" : "Environment name",
+  "SAVEENV_DESC" : "Description",
   "SAVEENV_DESC_PH" : "Description of changes..",
   "SAVEENV_SAVE" : "Save",
   "SAVEENV_CANCEL" : "Cancel",
-  
-  "SAVETESTENV_SAVE" : "Save",
-  "SAVETESTENV_L" : "Import successful?",
-  "SAVETESTENV_KEEP" : "Add imported environment to environments list?",
-  "SAVETESTENV_CANCEL" : "Discard",
+  "SAVEENV_TYPE_REV" : "Revision",
+  "SAVEENV_TYPE_NEW" : "New Environment",
+  "SAVEENV_TYPE": "Save as",
 
   "SYNC_REMOTE_ARCHIVE_URI_LBL" : "Enter the remote image archive URI",
   "SYNC_REMOTE_ARCHIVE_URI_PH" : "Remote archive URI..",
