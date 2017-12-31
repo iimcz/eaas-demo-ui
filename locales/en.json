@@ -7,6 +7,10 @@
   "CHOOSE_ENV_SELECT_BTN" : "launch with selected environment",
   "CHOOSE_ENV_NO_KEYBOARD_LAYOUT_WARNING" : "Please choose your desired keyboard.",
 
+  "CHOOSE_ENV_DLG_L" : "Choose Environment",
+  "CHOOSE_ENV_DLG_T1": "The following environments are available for the title: ",
+  "CHOOSE_ENV_DLG_T2": ".",
+
   "OVERVIEW_L" : "Objects",
   "OVERVIEW_SEARCH" : "Search...",
 
@@ -24,6 +28,7 @@
   "ACTIONS_PRINT" : "Retrieve Printouts",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_SAVESESSION" : "Save Session",
+  "ACTIONS_ALTENVS" : "Alternative Environments",
 
   "BASE_SHOW_MENU" : "Show menu",
   "BASE_MENU_L" : "Menu",

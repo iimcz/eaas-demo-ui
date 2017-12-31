@@ -135,29 +135,7 @@
 				},
 				controller: function($state, $stateParams, objectList, $translate, $uibModal) {
 					var vm = this;
-					
 					vm.objectList = objectList.data.objects;
-					
-					vm.menuOptions = [
-						[$translate.instant('JS_MENU_RENDER'), function ($itemScope) {							
-							$state.go('wf-b.choose-env', {objectId: $itemScope.object.id});
-						}],
-						null, // Dividier
-						[$translate.instant('JS_MENU_EDIT'), function ($itemScope) {
-							window.location.href = "admin/#/wf-s/edit-object-characterization?objectId=" + $itemScope.object.id;
-						}],
-						[$translate.instant('JS_MENU_DETAILS'), function ($itemScope) {
-							   $uibModal.open({
-                               		animation: true,
-                               		templateUrl: 'partials/wf-b/help-emil-dialog.html',
-                               		controller: function($scope) {
-                                  		this.helpTitle = "Object Details " + $itemScope.object.title;
-                                  		this.helpText = $itemScope.object.summary;
-                 					},
-                                    controllerAs: "helpDialogCtrl"
-                                });
-						}]
-					];
 				},
 				controllerAs: "objectOverviewCtrl"
 			})
@@ -406,7 +384,9 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
-						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams, $timeout, mediaCollection, growl, localConfig, $translate, $pageVisibility, chosenEnv) {
+						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams,
+						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments)
+						    {
 							var vm = this;
 							
 							function showHelpDialog(helpText) {
@@ -419,7 +399,6 @@
 									controllerAs: "helpDialogCtrl"
 								});
 							}
-
 
 							vm.enablePrinting = chosenEnv.data.enablePrinting;
                             vm.help = function() {
@@ -490,6 +469,18 @@
 							};
                             $timeout(eaasClientReadyTimer);
 
+                            vm.openChangeEnvDialog = function() {
+                                $uibModal.open({
+                                	animation: true,
+                                	templateUrl: 'partials/wf-b/choose-env-dialog.html',
+                                	controller: function($scope) {
+                                        this.title = objMetadata.data.title;
+                                        this.environments = objEnvironments.data.environmentList;
+                                	},
+                                	controllerAs: "changeEnvDialogCtrl"
+                                });
+                            };
+
 							vm.openChangeMediaDialog = function() {
 								$uibModal.open({
 									animation: true,
@@ -525,44 +516,8 @@
 									controllerAs: "openChangeMediaDialogCtrl"
 								});
 							};
-
-							/*
-							vm.openChangeMediaNativeDialog = function() {
-								$uibModal.open({
-									animation: true,
-									templateUrl: 'partials/wf-b/change-media-native-dialog.html',
-									controller: function($scope) {
-										this.helpmsg = initData.data.helpmsg;
-									},
-									controllerAs: "openChangeMediaNativeDialogCtrl"
-								});
-							}
-							*/
-							
-						//	var closeEmulatorOnTabLeaveTimer = null;
-						//	var leaveWarningShownBefore = false;
-							
-						//	var deregisterOnPageFocused = $pageVisibility.$on('pageFocused', function() {								
-						//		$timeout.cancel(closeEmulatorOnTabLeaveTimer);
-						//	});
-
-						//	var deregisterOnPageBlurred = $pageVisibility.$on('pageBlurred', function() {
-						//		if (!leaveWarningShownBefore) {
-						//			$window.alert($translate.instant('JS_EMU_LEAVE_PAGE'));
-						//			leaveWarningShownBefore = true;
-						//		}
-								
-						//		closeEmulatorOnTabLeaveTimer = $timeout(function() {
-						//			vm.stopEmulator();
-						//		}, 3 * 60 * 1000);
-						//	});
-							
-						//	$scope.$on("$destroy", function() {
-						//		deregisterOnPageFocused();
-						//		deregisterOnPageBlurred();
-						//	});
 						},
-						controllerAs: "actionsCtrl"
+					    controllerAs: "actionsCtrl"
 					},
 					'metadata': {
 						templateUrl: 'partials/wf-b/metadata.html',
