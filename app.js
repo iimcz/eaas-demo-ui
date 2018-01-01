@@ -448,13 +448,25 @@
 							};
 
 							vm.stopEmulator = function () {
-                                if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
-                                    return;
-                                }
-                                window.onbeforeunload = null;
-								window.eaasClient.release();
-								$('#emulator-stopped-container').show();	
-								window.location = localConfig.data.stopEmulatorRedirectURL;
+//                                if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
+//                                    return;
+//                                }
+
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-b/confirm-stop-dialog.html',
+                                    controller: function($scope) {
+                                        this.confirmed = function()
+                                        {
+                                            window.onbeforeunload = null;
+                                            window.eaasClient.release();
+                                            $('#emulator-stopped-container').show();
+                                            window.location = localConfig.data.stopEmulatorRedirectURL;
+                                        };
+                                    },
+                                    controllerAs: "confirmStopDialogCtrl"
+                                });
+
 							};
 
 							var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
