@@ -74,5 +74,11 @@
   "CONFIRM_STOP_H" : "Stop Session",
   "CONFIRM_STOP_T" : "If you continue, all changes made during this session will be lost.",
   "CONFIRM_STOP_OK" : "Continue",
-  "CONFIRM_STOP_CANCEL" : "Cancel"
+  "CONFIRM_STOP_CANCEL" : "Cancel",
+
+  "CONFIRM_RESTART_H" : "Restart Session",
+  "CONFIRM_RESTART_T" : "If you continue, all changes made during this session will be lost.",
+  "CONFIRM_RESTART_OK" : "Continue",
+  "CONFIRM_RESTART_OK2" : "Reset current changes",
+  "CONFIRM_RESTART_CANCEL" : "Cancel"
 }

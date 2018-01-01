@@ -219,8 +219,6 @@
 								$state.go('error', {errorMsg: {title: "no environment could be determined automatically. please use the admin page to assign an environment manually."}});
 							}
 
-                            console.log(userSession.envId);
-                            console.log(userSession.data.envId);
                             if(userSession.data.envId)
                             {
                                 $uibModal.open({
@@ -255,7 +253,7 @@
 
                                         this.startSession = function() {
                                             $scope.$close();
-                                            $state.go('wf-b.emulator', {envId: userSession.data.envId});
+                                            $state.go('wf-b.emulator', {envId: userSession.data.envId, isUserSession: true});
                                         };
 
                                         this.deleteSession = function() {
@@ -333,7 +331,7 @@
 				}
 			})
 			.state('wf-b.emulator', {
-				url: "/emulator?envId",
+				url: "/emulator",
 				resolve: {
 					chosenEnv: function($http, $stateParams, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
@@ -341,6 +339,10 @@
 					mediaCollection: function($http, $stateParams, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(mediaCollectionURL, $stateParams.objectId));
 					}
+				},
+				params: {
+				    envId: "-1",
+				    isUserSession: false
 				},
 				views: {
 					'wizard': {
@@ -385,7 +387,7 @@
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
 						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams,
-						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments)
+						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession)
 						    {
 							var vm = this;
 							
@@ -443,15 +445,32 @@
                             }
 
 							vm.restartEmulator = function() {
-								window.eaasClient.release();
-								$state.reload();
+
+							    $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-b/confirm-restart-dialog.html',
+                                    controller: function($scope) {
+                                        this.isUserSession = $stateParams.isUserSession;
+
+                                        this.confirmed = function(deleteUserSession)
+                                        {
+                                           window.eaasClient.release();
+                                           if(deleteUserSession)
+                                           {
+                                                $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, userSession.data.envId))
+                                                .then(function(response) {
+                                                    $state.go('wf-b.choose-env', {objectId : $stateParams.objectId}, {reload: true});
+                                                });
+                                           }
+                                           else
+                                               $state.reload();
+                                        };
+                                    },
+                                    controllerAs: "confirmRestartDialogCtrl"
+                                });
 							};
 
 							vm.stopEmulator = function () {
-//                                if (!window.confirm("If you continue, all changes made during this session will be lost.")) { // $translate.instant('JS_DELENV_OK')
-//                                    return;
-//                                }
-
                                 $uibModal.open({
                                     animation: true,
                                     templateUrl: 'partials/wf-b/confirm-stop-dialog.html',
@@ -466,7 +485,6 @@
                                     },
                                     controllerAs: "confirmStopDialogCtrl"
                                 });
-
 							};
 
 							var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
