@@ -75,6 +75,6 @@
   "CONFIRM_RESTART_H" : "Zurücksetzen",
   "CONFIRM_RESTART_T" : "Durch das Zurücksetzen werden alle bisherigen Änderungen verworfen und die Grundkonfiguration wiederhergestellt.",
   "CONFIRM_RESTART_OK" : "Grundkonfiguration wiederherstellen",
-  "CONFIRM_RESTART_OK2" : "Letzte Änderungen verwerfen",
+  "CONFIRM_RESTART_OK_2" : "Letzte Änderungen verwerfen",
   "CONFIRM_RESTART_CANCEL" : "Abbrechen"
 }
