@@ -6,9 +6,6 @@
 		});
 	};
 
-	// EMIL core api
-	var changeMediaURL = "Emil/changeMedia?sessionId={0}&objectId={1}&driveId={2}&label={3}";
-	
 	// object data connector
 	var mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
 	var loadEnvsUrl = "EmilObjectData/environments?objectId={0}";
