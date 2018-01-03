@@ -17,6 +17,7 @@
 	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
 	var getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
 	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
+	var environmentMetaDataUrl = "EmilEnvironmentData/environmentMetaData?envId={0}";
 
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
 				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility'])
@@ -335,6 +336,9 @@
 					},
 					mediaCollection: function($http, $stateParams, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(mediaCollectionURL, $stateParams.objectId));
+					},
+					environmentMetaData: function($http, $stateParams, localConfig) {
+					    return $http.get(localConfig.data.eaasBackendURL + formatStr(environmentMetaDataUrl, $stateParams.envId));
 					}
 				},
 				params: {
@@ -384,10 +388,9 @@
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
 						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams,
-						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession)
+						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession, environmentMetaData)
 						    {
 							var vm = this;
-							
 							function showHelpDialog(helpText) {
 								$uibModal.open({
 									animation: true,
@@ -508,7 +511,7 @@
                                 });
                             };
 
-							vm.openChangeMediaDialog = function() {
+							var changeMediaDlgFunc = function() {
 								$uibModal.open({
 									animation: true,
 									templateUrl: 'partials/wf-b/change-media-dialog.html',
@@ -543,6 +546,23 @@
 									controllerAs: "openChangeMediaDialogCtrl"
 								});
 							};
+
+							var changeMediaNotAvailableDlgFunc = function () {
+                                $uibModal.open({
+                                	animation: true,
+                                	templateUrl: 'partials/wf-b/help-emil-dialog.html',
+                                	controller: function($scope) {
+                                       this.helpTitle = $translate.instant('CHANGEM_TITLE');
+                                       this.helpText = $translate.instant('CHANGEM_ALT_TEXT');
+                                	},
+                                	controllerAs: "helpDialogCtrl"
+                                });
+							};
+
+							if(environmentMetaData.data.mediaChangeSupport)
+							    vm.openChangeMediaDialog = changeMediaDlgFunc;
+							else
+							    vm.openChangeMediaDialog = changeMediaNotAvailableDlgFunc;
 						},
 					    controllerAs: "actionsCtrl"
 					},

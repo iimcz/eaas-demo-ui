@@ -50,6 +50,7 @@
   "CHANGEM_TITLE" : "Change media",
   "CHANGEM_OK" : "OK",
   "CHANGEM_CANCEL" : "Cancel",
+  "CHANGEM_ALT_TEXT" : "No direct change media support. Consult environment help for guidance.",
 
   "EMU_TITLE" : "Preparing emulation session",
   "EMU_STOPPED" : "Emulation session was stopped.",

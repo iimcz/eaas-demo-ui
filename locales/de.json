@@ -46,6 +46,7 @@
   "CHANGEM_TITLE" : "Medienwechsel",
   "CHANGEM_OK" : "Medium wechseln",
   "CHANGEM_CANCEL" : "Abbrechen",
+  "CHANGEM_ALT_TEXT" : "Die bereitgestellte Publikation enthält mehrere Datenträger. Informationen zum Wechsel der Datenträger sind in der „Hilfe zur Bereitstellungsumgebung“ aufgeführt.",
 
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
