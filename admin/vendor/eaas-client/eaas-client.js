@@ -397,7 +397,7 @@ EaasClient.Client = function (api_entrypoint, container) {
       this.guac.sendKeyEvent(0, 0xFFFF);
     };
 
-    this.snapshot = function (postObj, onChangeDone) {
+    this.snapshot = function (postObj, onChangeDone, errorFn) {
         $.ajax({
             type: "POST",
             url: API_URL + formatStr("/components/{0}/snapshot", _this.componentId),
