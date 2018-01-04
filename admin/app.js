@@ -1163,6 +1163,8 @@
 							this.enableRelativeMouse = this.env.enableRelativeMouse;
 							this.enablePrinting = this.env.enablePrinting;
 
+							this.shutdownByOs = this.env.shutdownByOs;
+
 							this.saveEdit = function() {
 							    console.log("save time: " + this.showDateContextPicker);
 							    var timecontext = null;
@@ -1182,7 +1184,8 @@
 									helpText: this.envHelpText,
 									time: timecontext,
 									enablePrinting: vm.enablePrinting,
-									enableRelativeMouse: this.enableRelativeMouse
+									enableRelativeMouse: this.enableRelativeMouse,
+									shutdownByOs: this.shutdownByOs
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));

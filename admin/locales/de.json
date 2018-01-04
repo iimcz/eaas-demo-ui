@@ -117,7 +117,8 @@
   "EDITENV_REVS" : "Revisionen",
   "EDITENV_DATE_CONTEXT": "Datum",
   "EDITENV_RELMOUSE": "Relative Maus (Pointerlock)",
-  "EDITENV_PRINTING" : "Environment can print",
+  "EDITENV_PRINTING" : "Umgebung enthält Druckfunktion",
+  "EDITENV_SHUTDOWNBYOS": "Gast OS kann Emulation beenden",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
