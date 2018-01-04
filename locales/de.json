@@ -82,5 +82,8 @@
   "CONFIRM_RESTART_T" : "Durch das Zurücksetzen werden alle bisherigen Änderungen verworfen und die Grundkonfiguration wiederhergestellt.",
   "CONFIRM_RESTART_OK" : "Grundkonfiguration wiederherstellen",
   "CONFIRM_RESTART_OK_2" : "Letzte Änderungen verwerfen",
-  "CONFIRM_RESTART_CANCEL" : "Abbrechen"
+  "CONFIRM_RESTART_CANCEL" : "Abbrechen",
+
+  "TIMEOUT_DLG_TITLE" : "Timeout: Inaktive Bereitstellungssitzungen werden automatisch beendet",
+  "TIMEOUT_DLG_MESSAGE" : "Die Bereitstellungssitzung ist inaktiv und wird in Kürze automatisch beendet. Nicht gespeicherte Daten gehen verloren."
 }

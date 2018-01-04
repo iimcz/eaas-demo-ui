@@ -25,6 +25,53 @@
 
     .run(function($rootScope) {
         $rootScope.emulator = {state : ''};
+
+        $rootScope.idleTimer = {};
+        $rootScope.idleTimer.idleTime = 0;
+
+        $rootScope.initIdleTimer = function(idleTimeout)
+        {
+            if(idleTimeout <= 0)
+                return;
+
+            $rootScope.idleTimer.idleTime = 0;
+            $rootScope.idleTimer.idleTimeout = idleTimeout;
+            clearInterval($rootScope.idleTimer.idleInterval);
+            $rootScope.idleTimer.idleInterval = setInterval($rootScope.idleTimer.timerIncrement, 60000); // 1 minute
+            console.log("TIMER started");
+        }
+
+        $rootScope.disableIdleTimer = function()
+        {
+            clearInterval($rootScope.idleTimer.idleInterval);
+            console.log("TIMER stopped");
+        }
+
+        $(document).ready(function () {
+            //Zero the idle timer on mouse movement.
+            $(this).mousemove(function (e) {
+                $rootScope.idleTimer.idleTime = 0;
+            });
+
+            $(this).keypress(function (e) {
+                $rootScope.idleTimer.idleTime = 0;
+            });
+        });
+
+        $rootScope.idleTimer.timerIncrement = function() {
+            $rootScope.idleTimer.idleTime = $rootScope.idleTimer.idleTime + 1;
+
+            if ($rootScope.idleTimer.idleTime > $rootScope.idleTimer.idleTimeout - 1) {
+                if($rootScope.idleTimeoutWarnFn)
+                    $rootScope.idleTimeoutWarnFn();
+            }
+
+            if ($rootScope.idleTimer.idleTime > $rootScope.idleTimer.idleTimeout) {
+                if($rootScope.idleTimeoutFn)
+                    $rootScope.idleTimeoutFn();
+                $rootScope.disableIdleTimer();
+            }
+        };
     })
 
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
@@ -353,21 +400,47 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
-						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig) {
+						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig, $uibModal) {
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'de'}, layout: {name: 'pc105'}};
 
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
                             this.objectId = $stateParams.objectId;
+
+                            $rootScope.initIdleTimer(10);
+
                             window.onbeforeunload = function(e) {
                                 var dialogText = $translate.instant('MESSAGE_QUIT');
                                 e.returnValue = dialogText;
                                 return dialogText;
                             };
-                            window.onbeforeunload = $scope.onExit;
+
+                            $rootScope.idleTimeoutWarnFn = function()
+                            {
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-b/help-emil-dialog.html',
+                                    controller: function($scope) {
+                                        this.helpTitle = $translate.instant('TIMEOUT_DLG_TITLE');
+                                        this.helpText = $translate.instant('TIMEOUT_DLG_MESSAGE');
+                                    },
+                                    controllerAs: "helpDialogCtrl"
+                                });
+                            }
+
+                            $rootScope.idleTimeoutFn = function()
+                            {
+                                window.onbeforeunload = null;
+                                window.eaasClient.release();
+                                $('#emulator-stopped-container').show();
+                                window.location = localConfig.data.stopEmulatorRedirectURL;
+                            }
+
                             window.onunload = function() {
                                 window.onbeforeunload = null;
+                                $rootScope.disableIdleTimer();
                             }
+
                             window.eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
