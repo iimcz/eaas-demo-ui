@@ -58,7 +58,6 @@ EaasClient.Client = function (api_entrypoint, container) {
 
     var isStarted = false;
     var isConnected = false;
-
     var emulatorState;
 
     this.pollState = function () {
@@ -69,7 +68,8 @@ EaasClient.Client = function (api_entrypoint, container) {
                     _this.keepalive();
                 else if (emulatorState == "STOPPED" || emulatorState == "FAILED") {
                     _this.keepalive();
-                    $("#emulator-container").text("EMULATOR HAS STOPPED!");
+		    if(this.onEmulatorStopped)
+			this.onEmulatorStopped();
                 }
                 else if (emulatorState == "INACTIVE") {
                     location.reload();
@@ -397,7 +397,7 @@ EaasClient.Client = function (api_entrypoint, container) {
       this.guac.sendKeyEvent(0, 0xFFFF);
     };
 
-    this.snapshot = function (postObj, onChangeDone) {
+    this.snapshot = function (postObj, onChangeDone, errorFn) {
         $.ajax({
             type: "POST",
             url: API_URL + formatStr("/components/{0}/snapshot", _this.componentId),
@@ -405,7 +405,15 @@ EaasClient.Client = function (api_entrypoint, container) {
             contentType: "application/json"
         }).then(function (data, status, xhr) {
             onChangeDone(data, status);
-        });
+        }).fail(function(xhr, textStatus, error) {
+            if(errorFn)
+                errorFn(error);
+            else {
+                console.log(xhr.statusText);
+                console.log(textStatus);
+                console.log(error);
+            }
+        });  
     };
 
     this.changeMedia = function (postObj, onChangeDone) {
