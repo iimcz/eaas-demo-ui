@@ -22,6 +22,11 @@
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
 				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility'])
 
+
+    .run(function($rootScope) {
+        $rootScope.emulator = {state : ''};
+    })
+
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
 		this.kbLayouts = kbLayouts.data;
 
@@ -348,21 +353,35 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
-						controller: function ($scope, $sce, $state, $stateParams, $cookies, $translate, growl, localConfig) {
-							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
+						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig) {
+							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'de'}, layout: {name: 'pc105'}};
 
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
-                             // prevent accidentally closing session
-                            $scope.onExit = function() {
-                                return ('close?');
+
+                            this.objectId = $stateParams.objectId;
+                            window.onbeforeunload = function(e) {
+                                var dialogText = $translate.instant('MESSAGE_QUIT');
+                                e.returnValue = dialogText;
+                                return dialogText;
                             };
                             window.onbeforeunload = $scope.onExit;
                             window.onunload = function() {
                                 window.onbeforeunload = null;
                             }
-                            eaasClient.onError = function(message) {
+                            window.eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
+
+                            window.eaasClient.onEmulatorStopped = function() {
+                                if($rootScope.emulator.state == 'STOPPED')
+                                    return;
+
+                                $rootScope.emulator.state = 'STOPPED';
+                                $("#emulator-container").hide();
+                                $("#emulator-loading-container").show();
+                                $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+                                $scope.$apply();
+                            };
 
                             var params = {
                                 keyboardLayout: kbLayoutPrefs.language.name,
@@ -387,7 +406,7 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-b/actions.html',
-						controller: function ($scope, $window, $state, $http, $timeout, $uibModal, $stateParams,
+						controller: function ($rootScope, $scope, $window, $state, $http, $timeout, $uibModal, $stateParams,
 						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession, environmentMetaData)
 						    {
 							var vm = this;
@@ -403,6 +422,10 @@
 							}
 
 							vm.enablePrinting = chosenEnv.data.enablePrinting;
+							vm.shutdownByOs = chosenEnv.data.shutdownByOs;
+							vm.emulator = $rootScope.emulator;
+
+
                             vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
 							};
@@ -436,9 +459,9 @@
 
                                 window.onbeforeunload = null;
                                 snapshotDoneFunc = function(data, status) {
-                                    growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+                                    growl.success(status, {title: $translate.instant('JS_USERSESSION_SUCCESS')});
                                     window.eaasClient.release();
-                                    $('#emulator-stopped-container').show();
+                                    $('#emulator-container').hide();
                                     window.location = localConfig.data.stopEmulatorRedirectURL;
                                 };
                                 window.eaasClient.snapshot(postReq, snapshotDoneFunc);

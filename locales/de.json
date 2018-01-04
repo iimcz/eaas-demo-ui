@@ -24,6 +24,8 @@
   "ACTIONS_PRINT" : "Gedruckte Dokumente",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_SAVESESSION" : "Sitzung speichern",
+  "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
+  "ACTIONS_ALTENVS" : "Alternative Bereitstellungsumgebungen",
 
 
   "BASE_SHOW_MENU" : "Menu anzeigen",
@@ -49,7 +51,7 @@
   "CHANGEM_ALT_TEXT" : "Die bereitgestellte Publikation enthält mehrere Datenträger. Informationen zum Wechsel der Datenträger sind in der „Hilfe zur Bereitstellungsumgebung“ aufgeführt.",
 
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
-  "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
+  "EMU_STOPPED" : "Das Betriebssystem der Bereitstellungssitzung wurde heruntergefahren",
   "EMU_POINTER_LOCK_AVAILABLE" : "Klicken sie auf den Emulator für die Maussteuerung.",
   "METADATA_L" : "Metadaten",
   
@@ -61,6 +63,9 @@
   "JS_MENU_EDIT" : "Bearbeiten",
   "JS_MENU_DETAILS" : "Details",
   "JS_EMU_LEAVE_PAGE" : "Wenn sie nicht innerhalb der nächsten 3 Minuten auf diese Seite zurückkehren, wird der Emulator automatisch geschlossen.",
+  "JS_EMU_STOPPED" : "Das Betriebssystem der Bereitstellungssitzung wurde heruntergefahren.",
+  "JS_USERSESSION_SUCCESS" : "Die Sitzung wurde gespeichert. Die Bereitstellung wird beendet.",
+
 
   "USERSESSION_L" : "Sitzung wieder herstellen",
   "USERSESSION_TEXT" : "Letzte Sitzung wieder herstellen?",

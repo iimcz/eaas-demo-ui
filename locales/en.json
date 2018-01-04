@@ -28,6 +28,7 @@
   "ACTIONS_PRINT" : "Retrieve Printouts",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_SAVESESSION" : "Save Session",
+  "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   "ACTIONS_ALTENVS" : "Alternative Environments",
 
   "BASE_SHOW_MENU" : "Show menu",
@@ -65,6 +66,8 @@
   "JS_MENU_EDIT" : "Edit",
   "JS_MENU_DETAILS" : "Details",
   "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically.",
+  "JS_EMU_STOPPED" : "The emulator has been stopped",
+  "JS_USERSESSION_SUCCESS" : "Session snapshot has been saved.",
 
   "USERSESSION_L" : "Resume session",
   "USERSESSION_TEXT" : "Resume last saved session?",
