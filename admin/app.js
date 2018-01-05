@@ -70,6 +70,7 @@
 	.controller('settingsDialogController', function($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl) {		
 		var vm = this;
         vm.serverLogUrl = localConfig.data.eaasBackendURL + "Emil/serverLog";
+        vm.usageLogUrl = localConfig.data.eaasBackendURL + "Emil/usageLog";
 		vm.importEnvs = function() {
 			$scope.$close();
 
