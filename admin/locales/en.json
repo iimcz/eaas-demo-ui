@@ -131,6 +131,8 @@
   "CHAR_OBJ_INFORMATION": "Object Details",
   "CHAR_ENV_LIST": "Configured Environments",
   "CHAR_CLASS_INFORMATION": "Classification Details",
+  "CHAR_RESET_CHANGES": "Reset",
+  "CHAR_CONFIRM_RESET_T" : "Delete all manual assignments? Cannot be undone.",
   
   "EMU_TITLE" : "Preparing emulation session",
   "EMU_STOPPED" : "Emulator stopped",

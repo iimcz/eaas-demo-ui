@@ -131,6 +131,8 @@
   "CHAR_OBJ_INFORMATION": "Objektdetails",
   "CHAR_ENV_LIST": "Konfigurierte Umgebungen",
   "CHAR_CLASS_INFORMATION": "Klassifikationsdetails",
+  "CHAR_RESET_CHANGES": "Zurücksetzen",
+  "CHAR_CONFIRM_RESET_T" : "Alle manuellen Umgebungs-Zuordnungen löschen? Die Daten werden endgültig gelöscht.",
 
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",

@@ -39,11 +39,12 @@
 	var setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
 	var getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
 	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
+	var overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
 
 	var userSessionListUrl = "EmilUserSession/list";
 	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 
-	var overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
+
 	var buildVersionUrl = "Emil/buildInfo";
 	
 	// Software archive api
@@ -261,6 +262,18 @@
             }
             vm.objEnvironments.splice(i, 1);
         };
+
+        vm.resetChanges = function()
+        {
+            if (window.confirm($translate.instant('CHAR_CONFIRM_RESET_T'))) {
+                $http.post(localConfig.data.eaasBackendURL + overrideObjectCharacterizationUrl, {
+                    objectId: $stateParams.objectId,
+                    environments: []
+                }).then(function() {
+                    $state.go('wf-s.object-overview');
+                });
+            }
+        }
 
         vm.saveCharacterization = function() {
             $http.post(localConfig.data.eaasBackendURL + overrideObjectCharacterizationUrl, {
