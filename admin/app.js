@@ -687,7 +687,6 @@
 
 								if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)
 								{
-								    console.log("add presets")
 								    vm.operatingSystemId.puids.forEach(function(puid) {
                                        if(!vm.softwareObj.nativeFMTs.includes(puid.puid))
                                        {
@@ -751,7 +750,6 @@
                                         {
                                             _modal.close();
                                             growl.success("import finished.");
-                                            console.log(response.data.userData.environmentId);
                                             $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
                                         }
                                         else
@@ -1023,12 +1021,10 @@
                         controller: function($state, $stateParams, sessionList, $translate, $http, localConfig, growl) {
                             var vm = this;
                             vm.sessionList = sessionList.data.environments;
-                            console.log(vm.sessionList);
 
                             vm.deleteSession = function(_envId)
                             {
                                 if (window.confirm($translate.instant('JS_DELENV_OK'))) {
-                                    console.log(_envId);
                                     $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, _envId))
                                     .then(function(response) {
                                         if (response.data.status === "0") {
@@ -1135,9 +1131,8 @@
 							var vm = this;
 
                             vm.showDateContextPicker = false;
-
 							var envList = null;
-							console.log($stateParams.objEnv);
+
 							if($stateParams.objEnv)
 								envList = objectEnvironmentList.data.environments;
 							else 
@@ -1213,9 +1208,6 @@
 							};
 							
 							this.revert = function(currentId, revId) {
-								console.log("revert: ");
-								console.log(currentId);
-								console.log(revId);
 								$http.post(localConfig.data.eaasBackendURL + revertRevisionUrl, {
 									currentId: currentId,
 									revId: revId
@@ -1486,6 +1478,11 @@
 											postReq.userId = $stateParams.userId;
 
 											snapshotDoneFunc = function(data, status) {
+											    if(data.status === '1') {
+											        snapshotErrorFunc(data.message);
+                                                    return;
+                                                }
+
                                                 growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                                                 window.eaasClient.release();
                                                 $state.go('wf-s.standard-envs-overview', {}, {reload: true});
@@ -1499,6 +1496,7 @@
                                                 $scope.$close();
                                                 this.isSavingEnvironment = false;
                                             };
+
 	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
 										};
 										

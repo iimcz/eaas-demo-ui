@@ -17,7 +17,7 @@
 			<td>
 				<b>{{row.title}}</b>
 				<br/>
-				<a ui-sref="wf-s.emulator({envId: row.envId})">{{'CHOOSE_ENV_PROPOSAL'
+				<a ui-sref="wf-s.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId})">{{'CHOOSE_ENV_PROPOSAL'
 					| translate}}</a>
 				<a ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
 					| translate}}</a> <!-- <a href="#"
