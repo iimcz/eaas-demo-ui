@@ -343,8 +343,19 @@ EaasClient.Client = function (api_entrypoint, container) {
         return API_URL + formatStr("/components/{0}/screenshot", _this.componentId);
     };
 
-    this.getPrintUrl = function () {
-        return API_URL + formatStr("/components/{0}/print", _this.componentId);
+     this.downloadPrint = function (label)
+    {
+        return API_URL + formatStr("/components/{0}/downloadPrintJob?label={1}", _this.componentId, encodeURI(label));
+    }
+
+    this.getPrintJobs = function (successFn, errorFn) {
+        $.get(API_URL + formatStr("/components/{0}/printJobs", _this.componentId))
+        .done(function (data, status, xhr) {
+            successFn(data);
+        }).fail(function (xhr) {
+            if(errorFn)
+                errorFn(xhr);
+        });
     };
 
     this.getEmulatorState = function () {
@@ -413,7 +424,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                 console.log(textStatus);
                 console.log(error);
             }
-        });
+        });  
     };
 
     this.changeMedia = function (postObj, onChangeDone) {
