@@ -1379,9 +1379,29 @@
 							vm.screenshot = function() {
 								window.open(window.eaasClient.getScreenshotUrl());
 							};
-							vm.printEnvOut = function() {
-								window.open(window.eaasClient.getPrintUrl());
-							};
+
+
+                            var printSuccessFn = function(data) {
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-s/printed-list-dialog.html',
+                                    controller: function($scope) {
+                                        this.printJobs = data;
+
+                                        this.download = function(label)
+                                        {
+                                            window.open(window.eaasClient.downloadPrint(label));
+                                        }
+                                    },
+                                    controllerAs: "openPrintDialogCtrl"
+                                });
+                                // window.open(window.eaasClient.getPrintUrl());
+                            };
+
+                            vm.openPrintDialog = function ()
+                            {
+                                window.eaasClient.getPrintJobs(printSuccessFn);
+                            }
 
 							vm.restartEmulator = function() {
 								window.eaasClient.release();

@@ -87,5 +87,8 @@
   "CONFIRM_RESTART_CANCEL" : "Cancel",
 
   "TIMEOUT_DLG_TITLE" : "Timeout: Inactive session will be shut down shortly",
-  "TIMEOUT_DLG_MESSAGE" : "Your session is inactive for some time and will be shut down shortly. Click OK to extend the session."
+  "TIMEOUT_DLG_MESSAGE" : "Your session is inactive for some time and will be shut down shortly. Click OK to extend the session.",
+
+  "PRINT_H" : "EMiL print jobs",
+  "PRINT_DONE" : "Close"
 }

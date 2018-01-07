@@ -260,13 +260,17 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-b/choose-env.html',
-						controller: function ($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig) {
+						controller: function ($scope, $state, $stateParams, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig) {
 							var vm = this;
 
 							vm.noSuggestion = false;
 
                             if (objEnvironments.data.status !== "0" || objEnvironments.data.environmentList.length === 0) {
 								$state.go('error', {errorMsg: {title: "no environment could be determined automatically. please use the admin page to assign an environment manually."}});
+
+								// $state.go('error', {errorMsg: {title: "Fehler", message: "Es konnte keine geeignete Bereitstellungsumgebung für die Publikation "
+								//    + $stateParams.objectId + " ermittelt werden. Bitte wenden Sie sich an die Information."}});
+
 							}
 
                             if(userSession.data.envId)
@@ -507,9 +511,27 @@
 								 window.open(window.eaasClient.getScreenshotUrl());
 							};
 
-							vm.printEnvOut = function() {
-								 window.open(window.eaasClient.getPrintUrl());
-							};
+							var printSuccessFn = function(data) {
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-b/printed-list-dialog.html',
+                                    controller: function($scope) {
+                                        this.printJobs = data;
+
+                                        this.download = function(label)
+                                        {
+                                            window.open(window.eaasClient.downloadPrint(label));
+                                        }
+                                    },
+                                    controllerAs: "openPrintDialogCtrl"
+                                });
+                                // window.open(window.eaasClient.getPrintUrl());
+                            };
+
+                            vm.openPrintDialog = function ()
+                            {
+                                window.eaasClient.getPrintJobs(printSuccessFn);
+                            }
 
                             vm.sendCtrlAltDel = function() {
                             	window.eaasClient.sendCtrlAltDel();

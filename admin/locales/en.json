@@ -199,5 +199,8 @@
   "USER_SESSIONS_L" : "User Sessions",
   "USER_SESSIONS_RUN" : "Start session",
   "USER_SESSION_DEL" : "Delete session",
-  "USER_SESSIONS_TH" : "Saved sessions"
+  "USER_SESSIONS_TH" : "Saved sessions",
+
+  "PRINT_H" : "EMiL print jobs",
+  "PRINT_DONE" : "Close"
 }

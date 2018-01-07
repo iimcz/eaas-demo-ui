@@ -85,5 +85,8 @@
   "CONFIRM_RESTART_CANCEL" : "Abbrechen",
 
   "TIMEOUT_DLG_TITLE" : "Timeout: Inaktive Bereitstellungssitzungen werden automatisch beendet",
-  "TIMEOUT_DLG_MESSAGE" : "Die Bereitstellungssitzung ist inaktiv und wird in Kürze automatisch beendet. Nicht gespeicherte Daten gehen verloren."
+  "TIMEOUT_DLG_MESSAGE" : "Die Bereitstellungssitzung ist inaktiv und wird in Kürze automatisch beendet. Nicht gespeicherte Daten gehen verloren.",
+
+  "PRINT_H" : "EMiL Druckaufträge",
+  "PRINT_DONE" : "Schließen"
 }
