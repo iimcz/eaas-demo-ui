@@ -191,7 +191,11 @@
 			})
 			.state('wf-b', {
 				abstract: true,
-				url: "/wf-b?objectId",
+				url: "/wf-b",
+				params: {
+                    objectId: null,
+                    userId: null
+				},
 				templateUrl: "partials/wf-b/base.html",
 				resolve: {
 					localConfig: function($http) {
@@ -207,7 +211,7 @@
 						return $http.get(localConfig.data.eaasBackendURL + getAllEnvsUrl);
 					},
 					userSession: function($stateParams, $http, localConfig) {
-					    return $http.get(localConfig.data.eaasBackendURL + formatStr(getUserSessionUrl, "testuser01", $stateParams.objectId))
+					    return $http.get(localConfig.data.eaasBackendURL + formatStr(getUserSessionUrl, $stateParams.userId, $stateParams.objectId))
 					},
 					kbLayouts: function($http) {
 						return $http.get("kbLayouts.json");
@@ -225,7 +229,9 @@
 						});
 					}
 
-					var vm = this;
+
+
+	    			var vm = this;
 					
 					vm.open = function() {
 						showHelpDialog("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor " +
@@ -272,7 +278,7 @@
 								//    + $stateParams.objectId + " ermittelt werden. Bitte wenden Sie sich an die Information."}});
 
 							}
-
+                            console.log($stateParams.userId);
                             if(userSession.data.envId)
                             {
                                 $uibModal.open({
@@ -501,7 +507,7 @@
 							vm.enablePrinting = chosenEnv.data.enablePrinting;
 							vm.shutdownByOs = chosenEnv.data.shutdownByOs;
 							vm.emulator = $rootScope.emulator;
-
+                            vm.userCtx = $stateParams.userId;
 
                             vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
@@ -549,7 +555,7 @@
                                 var postReq = {};
                                 postReq.type = "saveUserSession";
                                 postReq.objectId = $stateParams.objectId;
-                                postReq.userContext = "testuser01";
+                                postReq.userContext = $stateParams.userId;
                                 postReq.envId = $stateParams.envId;
 
                                 window.onbeforeunload = null;
