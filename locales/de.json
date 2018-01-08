@@ -88,5 +88,6 @@
   "TIMEOUT_DLG_MESSAGE" : "Die Bereitstellungssitzung ist inaktiv und wird in Kürze automatisch beendet. Nicht gespeicherte Daten gehen verloren.",
 
   "PRINT_H" : "EMiL Druckaufträge",
-  "PRINT_DONE" : "Schließen"
+  "PRINT_DONE" : "Schließen",
+  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden"
 }

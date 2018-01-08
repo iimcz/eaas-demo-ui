@@ -90,5 +90,6 @@
   "TIMEOUT_DLG_MESSAGE" : "Your session is inactive for some time and will be shut down shortly. Click OK to extend the session.",
 
   "PRINT_H" : "EMiL print jobs",
-  "PRINT_DONE" : "Close"
+  "PRINT_DONE" : "Close",
+  "PRINT_NO_JOBS" : "No printer jobs found"
 }

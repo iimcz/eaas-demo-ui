@@ -202,5 +202,6 @@
   "USER_SESSIONS_TH" : "Aktive Sitzungen",
 
   "PRINT_H" : "EMiL Druckaufträge",
-  "PRINT_DONE" : "Schließen"
+  "PRINT_DONE" : "Schließen",
+  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden"
 }

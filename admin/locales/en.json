@@ -202,5 +202,6 @@
   "USER_SESSIONS_TH" : "Saved sessions",
 
   "PRINT_H" : "EMiL print jobs",
-  "PRINT_DONE" : "Close"
+  "PRINT_DONE" : "Close",
+  "PRINT_NO_JOBS" : "No printer jobs found"
 }

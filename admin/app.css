@@ -323,3 +323,7 @@ html.wait, body.wait {
 #object-grid-container .description {
   height: 50px;
 }
+
+#printerlink a :visited{
+    color: #ededed;
+}

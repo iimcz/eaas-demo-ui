@@ -188,3 +188,7 @@ html.wait, body.wait {
 .m-t-0 {
   margin-top: 0 !important;
 }
+
+#printerlink a :visited{
+    color: #ededed;
+}

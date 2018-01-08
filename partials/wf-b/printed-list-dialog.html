@@ -2,9 +2,13 @@
     <h3 class="modal-title">{{'PRINT_H' | translate}}</h3>
 </div>
 
+<div ng-if="openPrintDialogCtrl.printJobs.length == 0">
+    <p>{{'PRINT_NO_JOBS' | translate}}</p>
+</div>
+
 <div class="modal-body">
     <ul id="printlist">
-        <li ng-repeat="label in openPrintDialogCtrl.printJobs"><a ng-click="openPrintDialogCtrl.download(label);">{{label}}</a> </li>
+        <li ng-repeat="label in openPrintDialogCtrl.printJobs"><a id="printerlink" ng-click="openPrintDialogCtrl.download(label);">{{label}}</a> </li>
     </ul>
 </div>
 
