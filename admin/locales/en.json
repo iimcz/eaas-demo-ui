@@ -17,6 +17,7 @@
   "ACTIONS_SAVE_ENV" : "Save Environment",
   "ACTIONS_CHANGE_MEDIA" : "Change media",
   "ACTIONS_CTRLALTDEL" : "Send Ctr-Alt-Del",
+  "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   
   "ADDENV_L" : "Add environment",
   "ADDENV_SEARCH" : "Select an environment...",
@@ -179,6 +180,7 @@
   "JS_EMU_LEAVE_PAGE" : "If you don't return to this page within 3 min the emulator instance will be closed automatically.",
   "JS_MEDIA_CHANGETO" : "Changing to: ",
   "JS_MEDIA_CHANGE_ERR" : "Failed changing medium.",
+  "JS_EMU_STOPPED" : "The emulator has been stopped",
 
   "CHANGEM_TITLE" : "Change media",
   "CHANGEM_OK" : "OK",
@@ -208,5 +210,12 @@
   "CONFIRM_DELETE_H" : "Confirm delete",
   "CONFIRM_DELETE_T" : "Environment has dependencies. Deletion of this environment may cause future errors.",
   "CONFIRM_DELETE_OK" : "Delete",
-  "CONFIRM_DELETE_CANCEL": "Cancel"
+  "CONFIRM_DELETE_CANCEL": "Cancel",
+
+  "CONFIRM_STOP_H" : "Stop Session",
+  "CONFIRM_STOP_T" : "If you continue, all changes made during this session will be lost.",
+  "CONFIRM_STOP_OK" : "Continue",
+  "CONFIRM_STOP_CANCEL" : "Cancel",
+
+
 }

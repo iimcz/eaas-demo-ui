@@ -69,6 +69,8 @@
 	})
 
 	 .run(function($rootScope, $state) {
+        $rootScope.emulator = {state : ''};
+
         $rootScope.chk = {};
         $rootScope.chk.transitionEnable = true;
 
@@ -1380,17 +1382,33 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-s/emulator.html",
-						controller: function ($scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
+						controller: function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
 							eaasClient.onError = function(message) {
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
-                            $scope.onExit = function() {
-                                return ('close?');
+                            window.onbeforeunload = function(e) {
+                                var dialogText = $translate.instant('MESSAGE_QUIT');
+                                e.returnValue = dialogText;
+                                return dialogText;
                             };
-                            window.onbeforeunload =  $scope.onExit;
+
+                            window.onunload = function() {
+                                window.onbeforeunload = null;
+                            }
+
+                            window.eaasClient.onEmulatorStopped = function() {
+                                if($rootScope.emulator.state == 'STOPPED')
+                                    return;
+
+                                $rootScope.emulator.state = 'STOPPED';
+                                $("#emulator-container").hide();
+                                $("#emulator-loading-container").show();
+                                $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+                                $scope.$apply();
+                            };
 
 							// fallback to defaults when no cookie is found
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
@@ -1426,20 +1444,23 @@
 					},
 					'actions': {
 						templateUrl: 'partials/wf-s/actions.html',
-						controller: function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection,
+						controller: function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection,
 						    $timeout, $translate, $pageVisibility, chosenEnv) {
 							var vm = this;
                             vm.type = $stateParams.type;
+                            vm.emulator = $rootScope.emulator;
 
 							if(chosenEnv.data)
+							{
 							    vm.enablePrinting = chosenEnv.data.enablePrinting;
+							    vm.shutdownByOs = chosenEnv.data.shutdownByOs;
+							}
 							else
 							    vm.enablePrinting = false;
 							
 							vm.screenshot = function() {
 								window.open(window.eaasClient.getScreenshotUrl());
 							};
-
 
                             var printSuccessFn = function(data) {
                                 $uibModal.open({
@@ -1473,25 +1494,36 @@
                             };
 
 							vm.stopEmulator = function () {
-								window.eaasClient.release();
-								$('#emulator-stopped-container').show();
-								$window.onbeforeunload = null;
-								if($stateParams.isTestEnv)
-								{
-									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
-										envId: $stateParams.envId,
-										deleteMetaData: true,
-										deleteImage: true
-									}).then(function(response) {
-										if (response.data.status === "0") {		
-											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-										}
-									});
-								}
-								else if ($stateParams.isNewObjectEn)
-								    $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
-								else
-									$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+							    $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-s/confirm-stop-dialog.html',
+                                    controller: function($scope) {
+                                        this.confirmed = function()
+                                        {
+                                            window.onbeforeunload = null;
+                                            window.eaasClient.release();
+                                            $('#emulator-stopped-container').show();
+
+                                            if($stateParams.isTestEnv)
+                                            {
+                                                $http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
+                                                    envId: $stateParams.envId,
+                                                    deleteMetaData: true,
+                                                    deleteImage: true
+                                                }).then(function(response) {
+                                                    if (response.data.status === "0") {
+                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    }
+                                                });
+                                            }
+                                            else if ($stateParams.isNewObjectEn)
+                                                $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                            else
+                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                        };
+                                    },
+                                    controllerAs: "confirmStopDialogCtrl"
+                                });
 							};
 
 							var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
@@ -1504,6 +1536,7 @@
         						$timeout(eaasClientReadyTimer, 100);
                             };
                             $timeout(eaasClientReadyTimer);
+
 
 							vm.openChangeMediaDialog = function() {
                             	$uibModal.open({
@@ -1545,7 +1578,14 @@
            						});
                 			};
 
-							vm.openSaveEnvironmentDialog = function() {	
+							vm.openSaveEnvironmentDialog = function() {
+							    if(window.eaasClient.getEmulatorState() != "STOPPED")
+                                {
+                                    if (!window.confirm("Please make sure to shutdown the guest OS before creating derivatives")) { // $translate.instant('JS_DELENV_OK')
+                                        return;
+                                    }
+                                }
+
 								$uibModal.open({
 									animation: true,
 									templateUrl: 'partials/wf-s/save-environment-dialog.html',
@@ -1556,10 +1596,12 @@
                                             alert("ERROR: invalid type");
 
 										this.isSavingEnvironment = false;
+
+
 										this.saveEnvironment = function() {
 
                                             this.isSavingEnvironment = true;
-                                            vm.stopEmulator();
+                                            window.onbeforeunload = null;
 
 											var postReq = {};
 											postReq.type = this.type;
@@ -1593,26 +1635,26 @@
 	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
 										};
 										
-										this.deleteEnvironment = function() {
-											this.isSavingEnvironment = true;
-											window.eaasClient.release();
-											$('#emulator-stopped-container').show();
-											
-											$scope.$close();
-											
-											$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
-												envId: $stateParams.envId,
-												deleteMetaData: true,
-												deleteImage: true
-											}).then(function(response) {
-												if (response.data.status === "0") {		
-													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-												} else {
-													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-												}
-											});                         
-										};
+//										this.deleteEnvironment = function() {
+//											this.isSavingEnvironment = true;
+//											window.eaasClient.release();
+//											$('#emulator-stopped-container').show();
+//
+//											$scope.$close();
+//
+//											$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
+//												envId: $stateParams.envId,
+//												deleteMetaData: true,
+//												deleteImage: true
+//											}).then(function(response) {
+//												if (response.data.status === "0") {
+//													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+//												} else {
+//													growl.error(response.data.message, {title: 'Error ' + response.data.status});
+//													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+//												}
+//											});
+//										};
 									},
 									controllerAs: "openSaveEnvironmentDialogCtrl"
 								});

@@ -17,6 +17,7 @@
   "ACTIONS_CHANGE_MEDIA" : "Medienwechsel",
   "ACTIONS_SAVE_ENV" : "Umgebung speichern",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
+  "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
   
   "ADDENV_L" : "Umgebung hinzufügen",
   "ADDENV_SEARCH" : "Wählen oder suchen sie eine Umgebung...",
@@ -179,6 +180,7 @@
   "JS_EMU_LEAVE_PAGE" : "Wenn sie nicht innerhalb der nächsten 3 Minuten auf diese Seite zurückkehren, wird der Emulator automatisch geschlossen.",
   "JS_MEDIA_CHANGETO" : "Neues Medium: ",
   "JS_MEDIA_CHANGE_ERR" : "Das Medium konnte nicht gewechselt werden.",
+  "JS_EMU_STOPPED" : "Das Betriebssystem der Bereitstellungssitzung wurde heruntergefahren.",
 
   "CHANGEM_TITLE" : "Medienwechsel",
   "CHANGEM_OK" : "Medium wechseln",
@@ -208,5 +210,10 @@
   "CONFIRM_DELETE_H" : "Löschen bestätigen",
   "CONFIRM_DELETE_T" : "Diese Umgebung wurde manuell mind. einer Publikation zugeordnet. Durch das Löschen dieser Umgebung kann es zu Fehlern bei der Darstellung von Publikationen kommen",
   "CONFIRM_DELETE_OK" : "Löschen",
-  "CONFIRM_DELETE_CANCEL": "Abbrechen"
+  "CONFIRM_DELETE_CANCEL": "Abbrechen",
+
+  "CONFIRM_STOP_H" : "Beenden",
+  "CONFIRM_STOP_T" : "Nicht gespeicherte Daten gehen verloren.",
+  "CONFIRM_STOP_OK" : "Beenden",
+  "CONFIRM_STOP_CANCEL" : "Zurück zur Bereitstellung",
 }
