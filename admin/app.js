@@ -68,6 +68,22 @@
 		}
 	})
 
+	 .run(function($rootScope, $state) {
+        $rootScope.chk = {};
+        $rootScope.chk.transitionEnable = true;
+
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+            if (!$rootScope.chk.transitionEnable) {
+                event.preventDefault();
+               // $scope.toState = toState;
+               // $scope.open();
+                console.log("prevent: $stateChangeStart: "+toState.name);
+            } else {
+                console.log("$stateChangeStart: "+toState.name);
+            }
+        });
+	 })
+
 	.controller('settingsDialogController', function($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl) {		
 		var vm = this;
         vm.serverLogUrl = localConfig.data.eaasBackendURL + "Emil/serverLog";
@@ -1068,7 +1084,7 @@
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-s/standard-envs-overview.html',
-						controller: function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList) {
+						controller: function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList) {
 							var vm = this;
 							
 							if (environmentList.data.status !== "0") {
@@ -1101,24 +1117,68 @@
                                 });
 							};
 
+							var confirmDeleteFn = function(envId)
+							{
+							    console.log("confirmed");
+							    $http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
+                                        envId: envId,
+                                        deleteMetaData: true,
+                                        deleteImage: true,
+                                        force: true
+                                }).then(function(_response) {
+                                    if (_response.data.status === "0") {
+                                        // remove env locally
+                                        vm.envs = vm.envs.filter(function(env) {
+                                            return env.envId !== envId;
+                                        });
+                                        $rootScope.chk.transitionEnable = true;
+                                        growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                    }
+                                    else {
+                                        $rootScope.chk.transitionEnable = true;
+                                        growl.error(_response.data.message, {title: 'Error ' + _response.data.status});
+                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+
+                                    }
+                                });
+							};
+
                             vm.deleteEnvironment = function(envId) {
+                                $rootScope.chk.transitionEnable = false;
+
 								if (window.confirm($translate.instant('JS_DELENV_OK'))) {
 									$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
 										envId: envId,
-										deleteMetaData: true
+										deleteMetaData: true,
+										deleteImage: true,
+										force: false
 									}).then(function(response) {
 										if (response.data.status === "0") {
 											// remove env locally
 											vm.envs = vm.envs.filter(function(env) {
 												return env.envId !== envId;
 											});
-											
+											$rootScope.chk.transitionEnable = true;
 											growl.success($translate.instant('JS_DELENV_SUCCESS'));
 											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-										} else {
+										}
+										else if (response.data.status === "2") {
+
+                                            $uibModal.open({
+                                                animation: true,
+                                                templateUrl: 'partials/wf-s/confirm-delete-dialog.html',
+                                                controller: function($scope) {
+                                                    this.envId = envId;
+                                                    this.confirmed = confirmDeleteFn;
+                                                },
+                                                controllerAs: "confirmDeleteDialogCtrl"
+                                            });
+										}
+										else {
+										    $rootScope.chk.transitionEnable = true;
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
 											$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-
 										}
 									});
 								}

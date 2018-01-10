@@ -203,5 +203,10 @@
 
   "PRINT_H" : "EMiL print jobs",
   "PRINT_DONE" : "Close",
-  "PRINT_NO_JOBS" : "No printer jobs found"
+  "PRINT_NO_JOBS" : "No printer jobs found",
+
+  "CONFIRM_DELETE_H" : "Confirm delete",
+  "CONFIRM_DELETE_T" : "Environment has dependencies. Deletion of this environment may cause future errors.",
+  "CONFIRM_DELETE_OK" : "Delete",
+  "CONFIRM_DELETE_CANCEL": "Cancel"
 }

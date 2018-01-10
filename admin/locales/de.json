@@ -203,5 +203,10 @@
 
   "PRINT_H" : "EMiL Druckaufträge",
   "PRINT_DONE" : "Schließen",
-  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden"
+  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden",
+
+  "CONFIRM_DELETE_H" : "Löschen bestätigen",
+  "CONFIRM_DELETE_T" : "Diese Umgebung wurde manuell mind. einer Publikation zugeordnet. Durch das Löschen dieser Umgebung kann es zu Fehlern bei der Darstellung von Publikationen kommen",
+  "CONFIRM_DELETE_OK" : "Löschen",
+  "CONFIRM_DELETE_CANCEL": "Abbrechen"
 }
