@@ -215,7 +215,7 @@
   "CONFIRM_STOP_H" : "Stop Session",
   "CONFIRM_STOP_T" : "If you continue, all changes made during this session will be lost.",
   "CONFIRM_STOP_OK" : "Continue",
-  "CONFIRM_STOP_CANCEL" : "Cancel",
+  "CONFIRM_STOP_CANCEL" : "Cancel"
 
 
 }
