@@ -79,10 +79,11 @@
                 event.preventDefault();
                // $scope.toState = toState;
                // $scope.open();
-                console.log("prevent: $stateChangeStart: "+toState.name);
-            } else {
-                console.log("$stateChangeStart: "+toState.name);
+              //  console.log("prevent: $stateChangeStart: "+toState.name);
             }
+//            else {
+//                console.log("$stateChangeStart: "+toState.name);
+//            }
         });
 	 })
 
