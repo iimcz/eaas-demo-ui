@@ -1197,7 +1197,7 @@
 			.state('wf-s.edit-env', {
 				url: "/edit-env",
 				params: {
-					envId: "-1",
+					envId: null,
 					objEnv: false
 				},
 				views: {
@@ -1373,7 +1373,7 @@
                         }
                 },
 				params: {
-					envId: "-1",
+					envId: null,
 					type: 'saveRevision',
 					softwareId: null,
 					isUserSession: false,
@@ -1421,7 +1421,7 @@
 
 							params.software = $stateParams.softwareId;
 							params.object = $stateParams.objectId;
-							params.userContext = $stateParams.userId;
+							params.userId = $stateParams.userId;
 
 
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {

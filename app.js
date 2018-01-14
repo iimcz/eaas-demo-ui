@@ -394,6 +394,8 @@
 				url: "/emulator",
 				resolve: {
 					chosenEnv: function($http, $stateParams, localConfig) {
+					    if($stateParams.envId == null)
+					        return {};
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
 					},
 					mediaCollection: function($http, $stateParams, localConfig) {
@@ -404,13 +406,17 @@
 					}
 				},
 				params: {
-				    envId: "-1",
+				    envId: null,
 				    isUserSession: false
 				},
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
 						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig, $uibModal) {
+
+						    if(chosenEnv.data.status === '1')
+						        $state.go('error', {errorMsg: {title: "Die Bereitstellungsumgebung konnte nicht geladen werden."}});
+
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'de'}, layout: {name: 'pc105'}};
 
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
@@ -470,7 +476,7 @@
                                 keyboardLayout: kbLayoutPrefs.language.name,
                                 keyboardModel: kbLayoutPrefs.layout.name,
                                 object: $stateParams.objectId,
-                                userContext: "testuser01"
+                                userId: $stateParams.userId
                             };
 
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {
@@ -555,7 +561,7 @@
                                 var postReq = {};
                                 postReq.type = "saveUserSession";
                                 postReq.objectId = $stateParams.objectId;
-                                postReq.userContext = $stateParams.userId;
+                                postReq.userId = $stateParams.userId;
                                 postReq.envId = $stateParams.envId;
 
                                 window.onbeforeunload = null;
