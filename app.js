@@ -395,13 +395,16 @@
 				resolve: {
 					chosenEnv: function($http, $stateParams, localConfig) {
 					    if($stateParams.envId == null)
-					        return {};
+					        return { data : { status : "1"}};
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(getEmilEnvironmentUrl, $stateParams.envId));
 					},
 					mediaCollection: function($http, $stateParams, localConfig) {
 						return $http.get(localConfig.data.eaasBackendURL + formatStr(mediaCollectionURL, $stateParams.objectId));
 					},
 					environmentMetaData: function($http, $stateParams, localConfig) {
+					     if($stateParams.envId == null)
+                        	return { data : { status : "1"}};
+
 					    return $http.get(localConfig.data.eaasBackendURL + formatStr(environmentMetaDataUrl, $stateParams.envId));
 					}
 				},
@@ -412,9 +415,9 @@
 				views: {
 					'wizard': {
 						templateUrl: "partials/wf-b/emulator.html",
-						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig, $uibModal) {
+						controller: function ($scope, $rootScope, $state, $stateParams, $cookies, $translate, growl, localConfig, $uibModal, chosenEnv) {
 
-						    if(chosenEnv.data.status === '1')
+						    if(!chosenEnv || chosenEnv.data.status === '1')
 						        $state.go('error', {errorMsg: {title: "Die Bereitstellungsumgebung konnte nicht geladen werden."}});
 
 							var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'de'}, layout: {name: 'pc105'}};
