@@ -215,5 +215,10 @@
   "CONFIRM_STOP_H" : "Beenden",
   "CONFIRM_STOP_T" : "Nicht gespeicherte Daten gehen verloren.",
   "CONFIRM_STOP_OK" : "Beenden",
-  "CONFIRM_STOP_CANCEL" : "Zurück zur Bereitstellung"
+  "CONFIRM_STOP_CANCEL" : "Zurück zur Bereitstellung",
+
+  "CONFIRM_SNAPSHOT_H" : "Umgebung speichern",
+  "CONFIRM_SNAPSHOT_T" : "Die Sitzung sollte erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'.",
+  "CONFIRM_SNAPSHOT_OK" : "Weiter",
+  "CONFIRM_SNAPSHOT_CANCEL" : "Zurück zur Bereitstellung"
 }

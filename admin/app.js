@@ -1580,86 +1580,74 @@
                 			};
 
 							vm.openSaveEnvironmentDialog = function() {
-							    if(window.eaasClient.getEmulatorState() != "STOPPED")
+
+                                var saveDialog = function()
                                 {
-                                    if (!window.confirm("Please make sure to shutdown the guest OS before creating derivatives")) { // $translate.instant('JS_DELENV_OK')
-                                        return;
-                                    }
-                                }
+                                    $uibModal.open({
+                                        animation: true,
+                                        templateUrl: 'partials/wf-s/save-environment-dialog.html',
+                                        controller: function($scope) {
 
-								$uibModal.open({
-									animation: true,
-									templateUrl: 'partials/wf-s/save-environment-dialog.html',
-									controller: function($scope) {
+                                            this.type = $stateParams.type;
+                                            if(!this.type)
+                                                alert("ERROR: invalid type");
 
-                                        this.type = $stateParams.type;
-                                        if(!this.type)
-                                            alert("ERROR: invalid type");
-
-										this.isSavingEnvironment = false;
+                                            this.isSavingEnvironment = false;
 
 
-										this.saveEnvironment = function() {
+                                            this.saveEnvironment = function() {
 
-                                            this.isSavingEnvironment = true;
-                                            window.onbeforeunload = null;
+                                                this.isSavingEnvironment = true;
+                                                window.onbeforeunload = null;
 
-											var postReq = {};
-											postReq.type = this.type;
-											postReq.envId = $stateParams.envId;
-											postReq.message = this.envDescription;
-											postReq.title = this.envName;
-											postReq.softwareId = $stateParams.softwareId;
-											postReq.objectId = $stateParams.objectId;
-											postReq.userId = $stateParams.userId;
+                                                var postReq = {};
+                                                postReq.type = this.type;
+                                                postReq.envId = $stateParams.envId;
+                                                postReq.message = this.envDescription;
+                                                postReq.title = this.envName;
+                                                postReq.softwareId = $stateParams.softwareId;
+                                                postReq.objectId = $stateParams.objectId;
+                                                postReq.userId = $stateParams.userId;
 
-											snapshotDoneFunc = function(data, status) {
-											    if(data.status === '1') {
-											        snapshotErrorFunc(data.message);
-                                                    return;
-                                                }
+                                                snapshotDoneFunc = function(data, status) {
+                                                    if(data.status === '1') {
+                                                        snapshotErrorFunc(data.message);
+                                                        return;
+                                                    }
 
-                                                growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-                                                window.eaasClient.release();
-                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                $scope.$close();
-                                                this.isSavingEnvironment = false;
+                                                    growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+                                                    window.eaasClient.release();
+                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    $scope.$close();
+                                                    this.isSavingEnvironment = false;
+                                                };
+
+                                                snapshotErrorFunc = function(error) {
+                                                    growl.error(error, {title: 'Error ' + error});
+                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    $scope.$close();
+                                                    this.isSavingEnvironment = false;
+                                                };
+
+                                                window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
                                             };
 
-                                            snapshotErrorFunc = function(error) {
-                                                growl.error(error, {title: 'Error ' + error});
-                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                $scope.$close();
-                                                this.isSavingEnvironment = false;
-                                            };
+                                        },
+                                        controllerAs: "openSaveEnvironmentDialogCtrl"
+                                    });
+                                };
 
-	                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
-										};
-										
-//										this.deleteEnvironment = function() {
-//											this.isSavingEnvironment = true;
-//											window.eaasClient.release();
-//											$('#emulator-stopped-container').show();
-//
-//											$scope.$close();
-//
-//											$http.post(localConfig.data.eaasBackendURL + deleteEnvironmentUrl, {
-//												envId: $stateParams.envId,
-//												deleteMetaData: true,
-//												deleteImage: true
-//											}).then(function(response) {
-//												if (response.data.status === "0") {
-//													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-//												} else {
-//													growl.error(response.data.message, {title: 'Error ' + response.data.status});
-//													$state.go('wf-s.standard-envs-overview', {}, {reload: true});
-//												}
-//											});
-//										};
-									},
-									controllerAs: "openSaveEnvironmentDialogCtrl"
-								});
-									
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-s/confirm-snapshot-dialog.html',
+                                    controller: function($scope) {
+                                        this.confirmed = function()
+                                        {
+                                            saveDialog();
+                                        };
+                                    },
+                                    controllerAs: "confirmSnapshotDialogCtrl"
+                                });
 							}
 							
 							/*

@@ -215,7 +215,10 @@
   "CONFIRM_STOP_H" : "Stop Session",
   "CONFIRM_STOP_T" : "If you continue, all changes made during this session will be lost.",
   "CONFIRM_STOP_OK" : "Continue",
-  "CONFIRM_STOP_CANCEL" : "Cancel"
+  "CONFIRM_STOP_CANCEL" : "Cancel",
 
-
+  "CONFIRM_SNAPSHOT_H" : "Save Environment",
+  "CONFIRM_SNAPSHOT_T" : "Please make sure to shutdown the guest operating system before creating an snapshot. ",
+  "CONFIRM_SNAPSHOT_OK" : "Continue",
+  "CONFIRM_SNAPSHOT_CANCEL" : "Cancel"
 }
