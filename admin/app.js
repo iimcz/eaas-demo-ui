@@ -1236,6 +1236,8 @@
 							this.enablePrinting = this.env.enablePrinting;
 
 							this.shutdownByOs = this.env.shutdownByOs;
+							this.os = this.env.os;
+							this.userTag = this.env.userTag;
 
 							this.saveEdit = function() {
 							    console.log("save time: " + this.showDateContextPicker);
@@ -1249,6 +1251,7 @@
                                 this.env.title = this.envTitle;
                                 this.env.description = this.envDescription;
                                 this.env.helpText = this.envHelpText;
+
 								$http.post(localConfig.data.eaasBackendURL + updateDescriptionUrl, {
 									envId: $stateParams.envId,
 									title: this.envTitle,
@@ -1257,7 +1260,9 @@
 									time: timecontext,
 									enablePrinting: vm.enablePrinting,
 									enableRelativeMouse: this.enableRelativeMouse,
-									shutdownByOs: this.shutdownByOs
+									shutdownByOs: this.shutdownByOs,
+									os: this.os,
+									userTag: this.userTag
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));

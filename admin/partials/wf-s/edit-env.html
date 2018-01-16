@@ -19,6 +19,30 @@
 				  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
 	</div>
 
+	<p>
+		<b>{{'EDITENV_OS' | translate}}:</b> <span id="osl" ng-if="!editEnvCtrl.editOsMode">{{editEnvCtrl.os}}</span>
+		<span ng-if="editEnvCtrl.editOsMode">
+
+			<input id="osi" type="text" style="max-width: 300px;"
+				   ng-model="editEnvCtrl.os"
+				   placeholder="{{'EDITENV_OS_PH' | translate}}">
+		</span>
+		<button ng-if="!editEnvCtrl.editOsMode" ng-click="editEnvCtrl.editOsMode = true">{{'EDITENV_TAG_EDIT' | translate}}</button>
+		<button ng-if="editEnvCtrl.editOsMode" ng-click="editEnvCtrl.editOsMode = false">{{'EDITENV_TAG_DONE' | translate}}</button>
+	</p>
+
+	<p>
+		<b>{{'EDITENV_USERSORTTAG' | translate}}:</b> <span id="tagv" ng-if="!editEnvCtrl.editTagMode">{{editEnvCtrl.userTag}}</span>
+		<span ng-if="editEnvCtrl.editTagMode">
+
+			<input id="tagi" type="text" style="max-width: 300px;"
+				   ng-model="editEnvCtrl.userTag"
+				   placeholder="{{'EDITENV_TAG_PH' | translate}}">
+		</span>
+		<button ng-if="!editEnvCtrl.editTagMode" ng-click="editEnvCtrl.editTagMode = true">{{'EDITENV_TAG_EDIT' | translate}}</button>
+		<button ng-if="editEnvCtrl.editTagMode" ng-click="editEnvCtrl.editTagMode = false">{{'EDITENV_TAG_DONE' | translate}}</button>
+	</p>
+
 	<div class="form-group">
 		<input type="checkbox" ng-model="editEnvCtrl.enablePrinting">
 		<label>{{'EDITENV_PRINTING' | translate}}</label>
@@ -55,11 +79,8 @@
 			</div>
 		</div>
 	</div>
-	
-	<p>
-		<b>{{'EDITENV_OS' | translate}}:</b> {{editEnvCtrl.env.os}}
-	</p>
-	
+
+
 	<div ng-show="editEnvCtrl.env.revisions.length > 0">
 		<p id="editEnvSoftwareListLabel">
 			<b>{{'EDITENV_REVS' | translate}}:</b>

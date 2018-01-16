@@ -8,18 +8,13 @@
 		<button type="submit" class="btn btn-default" ng-click="actionsCtrl.openChangeMediaDialog()"
 				ng-show="actionsCtrl.driveId >= 0">{{'ACTIONS_CHANGE_MEDIA' | translate}}</button>
 
-
-		<div ng-if="actionsCtrl.shutdownByOs">
-
-			<button type="submit" class="btn btn-default" uib-tooltip="{{'ACTIONS_SAVESESSION_HELP' | translate}}" ng-click="actionsCtrl.openSaveEnvironmentDialog()"
+		<button ng-if="actionsCtrl.shutdownByOs"
+				type="submit" class="btn btn-default" uib-tooltip="{{'ACTIONS_SAVESESSION_HELP' | translate}}" ng-click="actionsCtrl.openSaveEnvironmentDialog()"
 					ng-disabled="actionsCtrl.emulator.state != 'STOPPED'" ng-show="actionsCtrl.type"> {{'ACTIONS_SAVE_ENV' | translate}}</button>
-		</div>
 
-		<div ng-if="!actionsCtrl.shutdownByOs">
-			<button type="submit" class="btn btn-default" ng-click="actionsCtrl.openSaveEnvironmentDialog()"
-					ng-show="actionsCtrl.type"> {{'ACTIONS_SAVE_ENV' | translate}}</button>
-		</div>
-
+		<button ng-if="!actionsCtrl.shutdownByOs"
+				type="submit" class="btn btn-default" ng-click="actionsCtrl.openSaveEnvironmentDialog()"
+				ng-show="actionsCtrl.type"> {{'ACTIONS_SAVE_ENV' | translate}}</button>
 
 		<button type="submit" class="btn btn-default" ng-click="actionsCtrl.sendCtrlAltDel()">{{'ACTIONS_CTRLALTDEL' | translate}}</button>
 		<button type="submit" class="btn btn-default" ng-click="actionsCtrl.restartEmulator()">{{'ACTIONS_RESTART' | translate}}</button>
