@@ -40,10 +40,10 @@
 	var getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
 	var getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
 	var overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
+	var getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
 
 	var userSessionListUrl = "EmilUserSession/list";
 	var deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
-
 
 	var buildVersionUrl = "Emil/buildInfo";
 	
@@ -1200,14 +1200,21 @@
 					envId: null,
 					objEnv: false
 				},
+				resolve: {
+				    objectDependencies: function($http, localConfig, $stateParams) {
+                    	return $http.get(localConfig.data.eaasBackendURL + formatStr(getObjectDependencies, $stateParams.envId));
+                    }
+				},
 				views: {
 					'wizard': {
 						templateUrl: 'partials/wf-s/edit-env.html',
-						controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate) {
+						controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies) {
 							var vm = this;
 
                             vm.showDateContextPicker = false;
 							var envList = null;
+
+							this.dependencies = objectDependencies.data;
 
 							if($stateParams.objEnv)
 								envList = objectEnvironmentList.data.environments;

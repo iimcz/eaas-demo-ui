@@ -125,6 +125,7 @@
   "EDITENV_TAG_PH" : "User tag",
   "EDITENV_TAG_EDIT" : "edit",
   "EDITENV_TAG_DONE" : "done",
+  "EDITENV_EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
 
   "CHAR_L" : "Characterize object",
   "CHAR_ADD" : "Add environment",

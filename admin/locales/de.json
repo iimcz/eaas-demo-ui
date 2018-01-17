@@ -125,6 +125,7 @@
   "EDITENV_TAG_PH" : "User Tag",
   "EDITENV_TAG_EDIT" : "Bearbeiten",
   "EDITENV_TAG_DONE" : "Fertig",
+  "EDITENV_EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
