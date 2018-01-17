@@ -19,7 +19,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" type="button" ng-click="$close()">{{'CHANGEM_CANCEL' | translate}}</button>
-        <button type="submit" class="btn btn-default" ng-click="$close()" ui-sref="wf-b.emulator({envId:changeEnvDialogCtrl.custom_env.id})"
+        <button type="submit" class="btn btn-default" ng-click="changeEnvDialogCtrl.changeEnv();$close()"
                 ng-disabled="!changeEnvDialogCtrl.altEnvForm.$valid">{{'CHOOSE_ENV_SELECT_BTN' | translate}}</button>
     </div>
 </form>

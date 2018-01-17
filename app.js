@@ -637,8 +637,15 @@
                                 	animation: true,
                                 	templateUrl: 'partials/wf-b/choose-env-dialog.html',
                                 	controller: function($scope) {
+                                	    this.custom_env = null;
                                         this.title = objMetadata.data.title;
                                         this.environments = objEnvironments.data.environmentList;
+
+                                        this.changeEnv= function()
+                                        {
+                                            window.eaasClient.release();
+                                            $state.go('wf-b.emulator', {envId: this.custom_env.id});
+                                        };
                                 	},
                                 	controllerAs: "changeEnvDialogCtrl"
                                 });
