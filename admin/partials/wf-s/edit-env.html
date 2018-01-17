@@ -84,7 +84,7 @@
 			<label>{{'EDITENV_OBJ_DEPENDENCIES' | translate}}:</label>
 		</p>
 		<ul id="objDepList">
-			<li ng-repeat="id in editEnvCtrl.dependencies">{{id}}</li>
+			<li ng-repeat="id in editEnvCtrl.dependencies"><a ui-sref="wf-s.edit-object-characterization({objectId: id})">{{id}}</a></li>
 		</ul>
 	</div>
 	
