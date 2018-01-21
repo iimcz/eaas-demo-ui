@@ -1,5 +1,6 @@
 {
   "CHOOSE_ENV_L" : "Standardumgebungen",
+  "CHOOSE_OBJENV_L" : "Objektumgebungen",
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
   "CHOOSE_ENV_PROPOSAL" : "[Umgebung konfigurieren]",
   "CHOOSE_ENV_EDIT" : "[Beschreibung bearbeiten]",

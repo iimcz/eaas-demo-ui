@@ -1529,7 +1529,7 @@
                                                     }
                                                 });
                                             }
-                                            else if ($stateParams.isNewObjectEn)
+                                            else if ($stateParams.isNewObjectEnv)
                                                 $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
                                             else
                                                 $state.go('wf-s.standard-envs-overview', {}, {reload: true});
@@ -1629,14 +1629,20 @@
 
                                                     growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                                                     window.eaasClient.release();
-                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    if ($stateParams.isNewObjectEnv)
+                                                        $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                                    else
+                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                                     $scope.$close();
                                                     this.isSavingEnvironment = false;
                                                 };
 
                                                 snapshotErrorFunc = function(error) {
                                                     growl.error(error, {title: 'Error ' + error});
-                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                    if ($stateParams.isNewObjectEnv)
+                                                        $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                                    else
+                                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                                     $scope.$close();
                                                     this.isSavingEnvironment = false;
                                                 };
@@ -1660,6 +1666,7 @@
                                     },
                                     controllerAs: "confirmSnapshotDialogCtrl"
                                 });
+
 							}
 							
 							/*

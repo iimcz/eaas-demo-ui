@@ -1,5 +1,6 @@
 {
   "CHOOSE_ENV_L" : "Environments",
+  "CHOOSE_OBJENV_L" : "Objectenvironments",
   "CHOOSE_ENV_SEARCH" : "Search...",
   "CHOOSE_ENV_PROPOSAL" : "[Configure environment]",
   "CHOOSE_ENV_EDIT" : "[Edit description]",
