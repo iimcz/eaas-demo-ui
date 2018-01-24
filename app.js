@@ -517,6 +517,7 @@
 							vm.shutdownByOs = chosenEnv.data.shutdownByOs;
 							vm.emulator = $rootScope.emulator;
                             vm.userCtx = $stateParams.userId;
+                            vm.media = mediaCollection.data.medium;
 
                             vm.help = function() {
 								showHelpDialog(chosenEnv.data.helpText);
