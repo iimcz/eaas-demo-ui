@@ -74,6 +74,12 @@
         };
     })
 
+    .filter('trustAsHtml', function($sce){
+        return function(text) {
+                return $sce.trustAsHtml(text);
+        };
+     })
+
 	.controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
 		this.kbLayouts = kbLayouts.data;
 
@@ -239,6 +245,7 @@
 					};
 
 					vm.showObjectHelpDialog = function() {
+
 						showHelpDialog(objMetadata.help);
 					};
 
@@ -502,6 +509,8 @@
 						    mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession, environmentMetaData)
 						    {
 							var vm = this;
+                            vm.objEnvironments = objEnvironments.data.environmentList;
+
 							function showHelpDialog(helpText) {
 								$uibModal.open({
 									animation: true,
