@@ -20,7 +20,7 @@
 	var environmentMetaDataUrl = "EmilEnvironmentData/environmentMetaData?envId={0}";
 
 	angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
-				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility'])
+				   'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'angular-page-visibility', 'ngAria'])
 
 
     .run(function($rootScope) {
