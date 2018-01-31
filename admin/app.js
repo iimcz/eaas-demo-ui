@@ -1213,9 +1213,10 @@
 
                             vm.showDateContextPicker = false;
 							var envList = null;
+							vm.isObjectEnv = $stateParams.objEnv;
 
 							this.dependencies = objectDependencies.data;
-
+                            vm.isObjectEnv = $stateParams.objEnv;
 							if($stateParams.objEnv)
 								envList = objectEnvironmentList.data.environments;
 							else 
@@ -1247,7 +1248,6 @@
 							this.userTag = this.env.userTag;
 
 							this.saveEdit = function() {
-							    console.log("save time: " + this.showDateContextPicker);
 							    var timecontext = null;
 							    if(this.showDateContextPicker)
 							    {
@@ -1276,8 +1276,11 @@
 									} else {
 										growl.error(response.data.message, {title: 'Error ' + response.data.status});
 									}
-									
-									$state.go('wf-s.standard-envs-overview', {}, {reload: true});
+
+									if (vm.isObjectEnv)
+                                        $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                    else
+                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
 								});
 							};
 							
