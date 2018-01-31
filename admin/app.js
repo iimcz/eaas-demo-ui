@@ -1115,6 +1115,7 @@
                                 	controller: function($scope) {
                                 	    this.envId = envId;
                                 	    this.software = softwareList.data.descriptions;
+                                	    this.returnToObjects = $stateParams.showObjects;
                                 	},
                                     controllerAs: "addSoftwareDialogCtrl"
                                 });
@@ -1393,7 +1394,8 @@
 					softwareId: null,
 					isUserSession: false,
 					objectId: null,
-					userId: null
+					userId: null,
+					returnToObjects: false;
 				},
 				views: {
 					'wizard': {
@@ -1532,7 +1534,7 @@
                                                     }
                                                 });
                                             }
-                                            else if ($stateParams.isNewObjectEnv)
+                                            else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                                 $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
                                             else
                                                 $state.go('wf-s.standard-envs-overview', {}, {reload: true});
