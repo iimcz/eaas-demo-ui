@@ -1395,7 +1395,7 @@
 					isUserSession: false,
 					objectId: null,
 					userId: null,
-					returnToObjects: false;
+					returnToObjects: false
 				},
 				views: {
 					'wizard': {
@@ -1634,7 +1634,7 @@
 
                                                     growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                                                     window.eaasClient.release();
-                                                    if ($stateParams.isNewObjectEnv)
+                                                    if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                                         $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
                                                     else
                                                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
@@ -1644,7 +1644,7 @@
 
                                                 snapshotErrorFunc = function(error) {
                                                     growl.error(error, {title: 'Error ' + error});
-                                                    if ($stateParams.isNewObjectEnv)
+                                                    if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                                         $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
                                                     else
                                                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
