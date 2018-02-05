@@ -9,7 +9,7 @@
     </div>
 
     <ul id="printlist">
-        <li ng-repeat="label in openPrintDialogCtrl.printJobs"><a id="printerlink" ng-click="openPrintDialogCtrl.download(label);">{{label}}</a> </li>
+        <li ng-repeat="label in openPrintDialogCtrl.printJobs"><button id="printerbutton" ng-click="openPrintDialogCtrl.download(label);" tabindex=0>{{label}}</button> </li>
     </ul>
 </div>
 

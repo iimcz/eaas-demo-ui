@@ -324,6 +324,18 @@ html.wait, body.wait {
   height: 50px;
 }
 
-#printerlink a :visited{
-    color: #ededed;
+.m-t-0 {
+  margin-top: 0 !important;
+}
+
+button#printerbutton    {
+    cursor: pointer;
+    background-image: none;
+    border: none;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+button:focus#printerbutton    {
+    background-color: #ededed;
 }

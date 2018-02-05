@@ -33,8 +33,11 @@
 	}
 	
 	.sidebar-nav .navbar li a {
-		padding-top: 12px;
-		padding-bottom: 12px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		font-size: 15pt;
+		text-color: #1d1d1b;
+        line-height: 28pt;
 	}
 }
 
@@ -43,7 +46,16 @@
    ========================================================================== */
 
 #header {
-	margin: 7px 0;
+	margin-top: 0px;
+	margin-bottom: 15px;
+}
+
+#content {
+    min-height: 98vh;
+    padding-right: 0px;
+    padding-left: 15px;
+    margin: 0;
+    padding: 0 0 75px;
 }
 
 /* ==========================================================================
@@ -189,6 +201,23 @@ html.wait, body.wait {
   margin-top: 0 !important;
 }
 
-#printerlink a :visited{
-    color: #ededed;
+
+button#printerbutton    {
+    cursor: pointer;
+    background-image: none;
+    border: none;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+button:focus#printerbutton    {
+    background-color: #ededed;
+}
+
+.tooltip {
+   text-align:left;
+ }
+
+.tooltip-inner {
+   text-align: left;
 }

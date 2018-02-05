@@ -713,6 +713,11 @@
 							    vm.openChangeMediaDialog = changeMediaDlgFunc;
 							else
 							    vm.openChangeMediaDialog = changeMediaNotAvailableDlgFunc;
+
+							vm.mediaChangeEnabled = false;
+							for(i = 0; i < mediaCollection.data.medium.length; i++)
+							    if(mediaCollection.data.medium[i].items.length > 1)
+							      vm.mediaChangeEnabled = true;
 						},
 					    controllerAs: "actionsCtrl"
 					},
