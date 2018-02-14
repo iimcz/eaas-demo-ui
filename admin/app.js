@@ -1050,7 +1050,7 @@
                     'wizard': {
                         templateUrl: "partials/wf-s/user-sessions.html",
 
-                        controller: function($state, $stateParams, sessionList, $translate, $http, localConfig, growl) {
+                        controller: function($scope, $state, $stateParams, sessionList, $translate, $http, localConfig, growl, $interval) {
                             var vm = this;
                             vm.sessionList = sessionList.data.environments;
 
@@ -1069,6 +1069,14 @@
                                     });
                                 }
                             };
+
+                            var theInterval = $interval(function(){
+                                  $state.reload();
+                            }.bind(this), 10000);
+
+                            $scope.$on('$destroy', function () {
+                                    $interval.cancel(theInterval)
+                            });
                         },
                         controllerAs: "sessionListCtrl"
                     }
