@@ -580,12 +580,32 @@
                                 postReq.userId = $stateParams.userId;
                                 postReq.envId = $stateParams.envId;
 
+                                waitModal = $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/save-wait-dialog.html'
+                                });
+
                                 window.onbeforeunload = null;
                                 snapshotDoneFunc = function(data, status) {
-                                    growl.success(status, {title: $translate.instant('JS_USERSESSION_SUCCESS')});
-                                    window.eaasClient.release();
-                                    $('#emulator-container').hide();
-                                    window.location = localConfig.data.stopEmulatorRedirectURL;
+                                      waitModal.close();
+                                      $uibModal.open({
+                                        animation: true,
+                                        templateUrl: 'partials/save-done-dialog.html',
+                                        controller: function($scope) {
+                                            this.done = function () {
+                                                window.eaasClient.release();
+                                                $('#emulator-container').hide();
+                                                window.location = localConfig.data.stopEmulatorRedirectURL;
+                                            };
+
+                                            this.start = function() {
+                                                window.eaasClient.release();
+                                                $('#emulator-container').hide();
+                                                $state.go('wf-b.choose-env', {objectId : $stateParams.objectId}, {reload: true});
+                                            }
+                                        },
+                                        controllerAs: "saveSessionWaitDlg"
+                                    });
                                 };
                                 window.eaasClient.snapshot(postReq, snapshotDoneFunc);
                             }

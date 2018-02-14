@@ -91,5 +91,13 @@
 
   "PRINT_H" : "EMiL print jobs",
   "PRINT_DONE" : "Close",
-  "PRINT_NO_JOBS" : "No printer jobs found"
+  "PRINT_NO_JOBS" : "No printer jobs found",
+
+  "SAVE_WAIT_TITLE" : "Please wait",
+  "SAVE_WAIT_T" : "Saving session",
+
+  "SAVE_DONE_H" : "Done",
+  "SAVE_DONE_T" : "Session successfully saved",
+  "SAVE_DONE_START" : "Continue session",
+  "SAVE_DONE_EXIT" : "Exit"
 }

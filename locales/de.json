@@ -89,5 +89,13 @@
 
   "PRINT_H" : "EMiL Druckaufträge",
   "PRINT_DONE" : "Schließen",
-  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden"
+  "PRINT_NO_JOBS" : "Keine Druckaufträge gefunden",
+
+  "SAVE_WAIT_TITLE" : "Bitte warten",
+  "SAVE_WAIT_T" : "Die Sitzung wird gespeichert.",
+
+  "SAVE_DONE_H" : "Speichervorgang erfolgreich",
+  "SAVE_DONE_T" : "Die Sitzung wurde gespeichert.",
+  "SAVE_DONE_START" : "Bereitstellung fortsetzen",
+  "SAVE_DONE_EXIT" : "Beenden"
 }
