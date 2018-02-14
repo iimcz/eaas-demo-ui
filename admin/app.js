@@ -1440,6 +1440,11 @@
 							params.object = $stateParams.objectId;
 							params.userId = $stateParams.userId;
 
+							if($stateParams.type == 'saveUserSession')
+							{
+							    params.lockEnvironment = true;
+                                console.log("locking user session");
+                            }
 
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {
                                 eaasClient.connect().then(function() {

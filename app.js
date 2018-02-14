@@ -489,6 +489,9 @@
                                 userId: $stateParams.userId
                             };
 
+                            if($stateParams.isUserSession)
+                                params.lockEnvironment = true;
+
 							eaasClient.startEnvironment($stateParams.envId, params).then(function () {
                                 eaasClient.connect().then(function() {
                                     $("#emulator-loading-container").hide();
