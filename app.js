@@ -159,6 +159,14 @@
 
 		// Now set up the states
 		$stateProvider
+		    .state('emulation-redirect', {
+		        url: "/emulationSession?objectId&environmentId&userId",
+                controller : function($state, $stateParams)
+                {
+                    $state.go('wf-b.emulator', {envId: $stateParams.environmentId, objectId: $stateParams.objectId, userId: $stateParams.userId});
+                },
+                controllerAs: ""
+		    })
 			.state('error', {
 				url: "/error",
 				templateUrl: "partials/error.html",

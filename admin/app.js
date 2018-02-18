@@ -1425,6 +1425,10 @@
                                 window.onbeforeunload = null;
                             }
 
+                            this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
+                            if($stateParams.objectId)
+                                this.link += "&objectId=" + $stateParams.objectId;
+
                             window.eaasClient.onEmulatorStopped = function() {
                                 if($rootScope.emulator.state == 'STOPPED')
                                     return;
