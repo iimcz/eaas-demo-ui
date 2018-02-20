@@ -331,7 +331,8 @@
         $httpProvider.interceptors.push(function($q, $injector, $timeout) {
             return {
                 responseError: function(rejection) {
-                    if (((rejection || {}).config || {}).method !== 'GET') {
+
+                    if (((rejection || {}).config || {}).method !== 'GET' || (rejection && rejection.data && rejection.data.status))  {
                         $injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
                         return $q.reject(rejection);
                     }
@@ -1113,7 +1114,7 @@
 											growl.error(response.data.message, {title: 'Error ' + response.data.status});
 										}
 									});
-								
+
 							};
 
 							vm.addSoftware = function(envId) {
