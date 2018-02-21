@@ -197,7 +197,6 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
                     if(reason) {
                         message = reason;
                     }
-                    var url = "/connect.html";
                     function add_prop(prop, value) {
                         if (typeof(Storage) !== "undefined") {
                             if (value===null || value==="undefined") {
@@ -206,11 +205,6 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
                             else {
                                 sessionStorage.setItem(prop, value);
                             }
-                        } else {
-                            if (value===null || value==="undefined") {
-                                value = "";
-                            }
-                            url = url + "&"+prop+"="+encodeURIComponent(""+value);
                         }
                     }
                     add_prop("disconnect", message);
@@ -247,10 +241,6 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
                         var value = props[name];
                         add_prop(name, value);
                     }
-                    window.location=url;
-                } else {
-                    // if we didn't submit through the form, silently redirect to the connect gui
-                    window.location="connect.html";
                 }
             }
         }
@@ -376,7 +366,7 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
         var client = init_client();
 
         /**
-         * PATCH
+         * Client PATCH
          */
 
 
@@ -441,7 +431,7 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
                 url = "https";
             }
             url += "://"+this.host
-                // +":"+this.port
+            // +":"+this.port
             ;
             if (this.path) {
                 url += "/"+this.path;
@@ -466,6 +456,7 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
             x = 0;
             y = 0;
             // create the XpraWindow object to own the new div
+
             var win = new XpraWindow(this, mycanvas, wid, x, y, w, h,
                 metadata,
                 override_redirect,
@@ -595,5 +586,7 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
             return {x: mx, y: my, button: mbutton};
         };
     });
+
+
 
 };
