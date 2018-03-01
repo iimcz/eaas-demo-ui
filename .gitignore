@@ -2,3 +2,5 @@
 .idea
 /sublime.sublime-workspace
 /sublime.sublime-project
+*.br
+*.gz

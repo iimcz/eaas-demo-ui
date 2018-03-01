@@ -1537,7 +1537,7 @@
                                         this.confirmed = function()
                                         {
                                             window.onbeforeunload = null;
-                                            window.eaasClient.release();
+                                            // window.eaasClient.release();
                                             $('#emulator-stopped-container').show();
 
                                             if($stateParams.isTestEnv)
