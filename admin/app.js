@@ -1413,6 +1413,7 @@
 							window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
 							eaasClient.onError = function(message) {
+							    window.onbeforeunload = null;
 								$state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
 							};
 
