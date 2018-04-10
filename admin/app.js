@@ -1252,6 +1252,7 @@
 							this.envHelpText = this.env.helpText;
 							this.enableRelativeMouse = this.env.enableRelativeMouse;
 							this.enablePrinting = this.env.enablePrinting;
+							this.nativeConfig = this.env.nativeConfig;
 
 							this.shutdownByOs = this.env.shutdownByOs;
 							this.os = this.env.os;
@@ -1279,7 +1280,8 @@
 									enableRelativeMouse: this.enableRelativeMouse,
 									shutdownByOs: this.shutdownByOs,
 									os: this.os,
-									userTag: this.userTag
+									userTag: this.userTag,
+									nativeConfig: this.nativeConfig
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -1344,6 +1346,12 @@
                                     cancel: {}
 								}
 							};
+
+							if(this.env.timeContext)
+							{
+                                vm.datetimePicker.date.setTime(this.env.timeContext);
+                                vm.showDateContextPicker = true;
+                            }
 
                             if ($translate.use() === 'de') {
                                 vm.datetimePicker.buttonBar = {
