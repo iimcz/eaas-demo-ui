@@ -1646,6 +1646,8 @@
 
                                                 var postReq = {};
                                                 postReq.type = this.type;
+                                                if(postReq.type === 'objectEnvironment')
+                                                    postReq.embeddedObject = true;
                                                 postReq.envId = $stateParams.envId;
                                                 postReq.message = this.envDescription;
                                                 postReq.title = this.envName;
