@@ -188,6 +188,41 @@ EaasClient.Client = function (api_entrypoint, container) {
          */
     };
 
+    this.getContainerResultUrl = function()
+    {
+        console.log(_this.componentId);
+        return API_URL + formatStr("/components/{0}/result", _this.componentId);
+    }
+
+    this.startContainer = function(containerId, args)
+    {
+        var data = {};
+        data.type = "container";
+        data.environment = containerId;
+	data.input_data = args.input_data;
+
+        console.log("Starting container " + containerId + "...");
+        var deferred = $.Deferred();
+
+        $.ajax({
+            type: "POST",
+            url: API_URL + "/components",
+                data: JSON.stringify(data),
+                contentType: "application/json"
+        })
+            .then(function (data, status, xhr) {
+                console.log("container " + containerId + " started.");
+                _this.componentId = data.id;
+                _this.isStarted = true;
+                _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
+                deferred.resolve();
+            },
+            function (xhr) {
+                _this._onFatalError($.parseJSON(xhr.responseText));
+                deferred.reject();
+            });
+        return deferred.promise();
+    };
 
     this.startEnvironment = function (environmentId, args) {
         var data = {};
@@ -308,7 +343,7 @@ EaasClient.Client = function (api_entrypoint, container) {
     };
 
     // Checkpoints a running session
-    this.checkpoint = function () {
+    this.checkpoint = function (request) {
         var deferred = $.Deferred();
 
         if (!this.isStarted) {
@@ -321,10 +356,12 @@ EaasClient.Client = function (api_entrypoint, container) {
         $.ajax({
             type: "POST",
             url: API_URL + formatStr("/components/{0}/checkpoint", _this.componentId),
-            timeout: 30000
+            timeout: 30000,
+			contentType: "application/json",
+			data: JSON.stringify(request)
         })
             .done(function (data, status, xhr) {
-                var envid = data.environment_id;
+                var envid = data.envId;
                 console.log("Checkpoint created: " + envid);
                 deferred.resolve(envid);
             })
@@ -506,27 +543,35 @@ EaasClient.Client = function (api_entrypoint, container) {
         container.appendChild(iframe);
     };
 
-    this.startEnvironmentWithAttachment = function (environmentId, args) {
+
+
+     /* Example of input_data:
+
+        input_data[0] = {
+        type: "HDD",
+        partition_table_type: "MBR",
+        filesystem_type: "FAT32",
+        // filesystem_type: "VFAT",
+        size_mb: 1024,
+        content: [
+            {
+                action: "extract",
+                compression_format: "TAR",
+                url: "http://132.230.4.15/objects/ub/policy.tar",
+                name: "test"
+            }
+        ]
+        };
+
+     * @param environmentId
+     * @param args
+     * @param input_data
+     * @returns {*}
+     */
+    this.startEnvironmentWithAttachment = function (environmentId, args, input_data) {
         var data = {};
         data.type = "machine";
         data.environment = environmentId;
-        var input_data = [];
-
-        input_data[0] = {
-            type: "HDD",
-            partition_table_type: "MBR",
-            filesystem_type: "FAT32",
-            // filesystem_type: "VFAT",
-            size_mb : 1024,
-            content : [
-                {
-                    action: "extract",
-                    compression_format: "TAR",
-                    url: "http://132.230.4.15/objects/ub/policy.tar",
-                    name: "test"
-                }
-            ]
-        };
         data.input_data = input_data;
 
 
