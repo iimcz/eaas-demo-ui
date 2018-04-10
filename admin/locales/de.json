@@ -127,6 +127,7 @@
   "EDITENV_TAG_EDIT" : "Bearbeiten",
   "EDITENV_TAG_DONE" : "Fertig",
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
+  "EDITENV_NATIVE_CONFIG" : "Native config",
   
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",

@@ -127,6 +127,7 @@
   "EDITENV_TAG_EDIT" : "edit",
   "EDITENV_TAG_DONE" : "done",
   "EDITENV_OBJ_DEPENDENCIES" : "Manually assigned objects",
+  "EDITENV_NATIVE_CONFIG" : "Native config",
 
   "CHAR_L" : "Characterize object",
   "CHAR_ADD" : "Add environment",
