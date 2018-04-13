@@ -20,7 +20,8 @@ var loadXpra = function (xpraUrl, xpraPath, xpraConf) {
         var password = getparam("password") || null;
         var sound = true;
         if (Utilities.isFirefox() || Utilities.isChrome()) {
-            var audio_codec = getparam("audio_codec") || "http-stream:mp3";
+            // var audio_codec = getparam("audio_codec") || "http-stream:mp3";
+            var audio_codec = getparam("audio_codec") || "mediasource:aac+mpeg4";
       } else if(Utilities.isSafari()){
             var audio_codec = getparam("audio_codec") || "legacy:wav";
         } else
