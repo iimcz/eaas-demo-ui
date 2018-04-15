@@ -1626,7 +1626,7 @@
                 			};
 
 							vm.openSaveEnvironmentDialog = function() {
-
+                                $('#emulator-container').hide();
                                 var saveDialog = function()
                                 {
                                     $uibModal.open({
@@ -1642,6 +1642,7 @@
 
 
                                             this.saveEnvironment = function() {
+
 
                                                 this.isSavingEnvironment = true;
                                                 window.onbeforeunload = null;
@@ -1684,7 +1685,13 @@
                                                 };
 
                                                 window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
+                                                $('#emulator-container').show();
                                             };
+                                            this.showEmu = function() {
+                                                $('#emulator-container').show();
+                                            }
+
+
 
                                         },
                                         controllerAs: "openSaveEnvironmentDialogCtrl"
@@ -1699,6 +1706,9 @@
                                         {
                                             saveDialog();
                                         };
+                                        this.showEmu = function() {
+                                            $('#emulator-container').show();
+                                        }
                                     },
                                     controllerAs: "confirmSnapshotDialogCtrl"
                                 });
