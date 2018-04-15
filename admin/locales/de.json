@@ -128,7 +128,8 @@
   "EDITENV_TAG_DONE" : "Fertig",
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
-  
+  "EDITENV_XPRA": "XPRA Video (Experimental)",
+
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
   "CHAR_UPDATE_CLASS" : "Erneut klassifizieren",

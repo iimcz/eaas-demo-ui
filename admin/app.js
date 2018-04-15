@@ -1253,6 +1253,7 @@
 							this.enableRelativeMouse = this.env.enableRelativeMouse;
 							this.enablePrinting = this.env.enablePrinting;
 							this.nativeConfig = this.env.nativeConfig;
+							this.useXpra = this.env.useXpra;
 
 							this.shutdownByOs = this.env.shutdownByOs;
 							this.os = this.env.os;
@@ -1281,7 +1282,8 @@
 									shutdownByOs: this.shutdownByOs,
 									os: this.os,
 									userTag: this.userTag,
-									nativeConfig: this.nativeConfig
+									nativeConfig: this.nativeConfig,
+									useXpra : this.useXpra
 								}).then(function(response) {
 									if (response.data.status === "0") {
 										growl.success($translate.instant('JS_ENV_UPDATE'));
