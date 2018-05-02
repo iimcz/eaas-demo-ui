@@ -68,10 +68,10 @@ import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
-                                   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate', 
+                                   'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
 
-.constant('kbLayouts', require('./../public/kbLayouts.json'))
+// .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
 .component('inputList', {
     templateUrl: 'partials/components/inputList.html',
@@ -84,8 +84,70 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     }
 })
 
-.controller('setKeyboardLayoutDialogController', ['$scope', '$cookies', '$translate', 'kbLayouts', 'growl', function($scope, $cookies, $translate, kbLayouts, growl) {
-    this.kbLayouts = kbLayouts;
+
+    .controller('settingsDialogController', ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLayouts', 'growl', 'REST_URLS', function ($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl, REST_URLS) {
+        var vm = this;
+        vm.serverLogUrl = localConfig.data.eaasBackendURL + "Emil/serverLog";
+        vm.usageLogUrl = localConfig.data.eaasBackendURL + "Emil/usageLog";
+        vm.importEnvs = function () {
+            $scope.$close();
+
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.initEmilEnvironmentsURL).then(function (response) {
+                    if (response.data.status === "0") {
+                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                        growl.success(response.data.message);
+                    } else {
+                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                    }
+                }
+            );
+        };
+
+        vm.syncObjects = function () {
+            $scope.$close();
+
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl).then(function (response) {
+                    if (response.data.status === "0") {
+                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                        growl.success(response.data.message);
+                    } else {
+                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                    }
+                }
+            );
+        };
+
+        vm.syncImages = function () {
+            $scope.$close();
+
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncImagesUrl).then(function (response) {
+                    if (response.data.status === "0") {
+                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                        growl.success(response.data.message);
+                    } else {
+                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                    }
+                }
+            );
+        };
+        vm.showSetKeyboardLayoutDialog = function () {
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/set-keyboard-layout-dialog.html',
+                resolve: {
+                    kbLayouts: function () {
+                        return kbLayouts; // refers to outer kbLayouts variable
+                    }
+                },
+                controller: "SetKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
+            });
+        };
+
+
+    }])
+
+.controller('SetKeyboardLayoutDialogController', ['$scope', '$cookies', '$translate', 'kbLayouts', 'growl', function($scope, $cookies, $translate, kbLayouts, growl) {
+    this.kbLayouts = kbLayouts.data;
 
     var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs');
 
@@ -107,7 +169,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     };
 }])
 
-.controller('editObjectCharacterizationController', ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'localConfig', 'objEnvironments', 'environmentList', 'growl', '$translate', 'metadata', 'helperFunctions', 'REST_URLS', function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata, helperFunctions, REST_URLS) {
+.controller('editObjectCharacterizationController', ['$scope', '$state', '$stateParams', '$uibModal', '$http',
+    'localConfig', 'objEnvironments', 'environmentList', 'growl', '$translate', 'metadata', 'helperFunctions', 'REST_URLS',
+    function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata, helperFunctions, REST_URLS) {
     var vm = this;
 
     vm.objEnvironments = objEnvironments.data.environmentList;
@@ -215,6 +279,18 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
         vm.objEnvironments.splice(i, 1);
     };
 
+        vm.resetChanges = function()
+        {
+            if (window.confirm($translate.instant('CHAR_CONFIRM_RESET_T'))) {
+                $http.post(localConfig.data.eaasBackendURL + REST_URLS.overrideObjectCharacterizationUrl, {
+                    objectId: $stateParams.objectId,
+                    environments: []
+                }).then(function() {
+                    $state.go('wf-s.object-overview');
+                });
+            }
+        }
+
     vm.saveCharacterization = function() {
         $http.post(localConfig.data.eaasBackendURL + REST_URLS.overrideObjectCharacterizationUrl, {
             objectId: $stateParams.objectId,
@@ -260,7 +336,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     $httpProvider.interceptors.push(function($q, $injector, $timeout) {
         return {
             responseError: function(rejection) {
-                if (((rejection || {}).config || {}).method !== 'GET') {
+                if (((rejection || {}).config || {}).method !== 'GET' || (rejection && rejection.data && rejection.data.status)) {
                     $injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
                     return $q.reject(rejection);
                 }
@@ -318,11 +394,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 localConfig: function($http) {
                     return $http.get("config.json" + '?id=' + new Date().getTime());
                 },
+                kbLayouts: function($http) {
+                    return $http.get("kbLayouts.json");
+                },
                 buildInfo: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl);
                 }
             },
-            controller: ['$uibModal', 'localConfig', 'buildInfo', function($uibModal, localConfig, buildInfo) {
+            controller: ['$uibModal', 'localConfig', 'kbLayouts', 'buildInfo', function($uibModal, localConfig, kbLayouts, buildInfo) {
                 var vm = this;
                 this.buildInfo = buildInfo.data.version;
                 vm.open = function() {
@@ -335,13 +414,16 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: true,
-                        template: require('./modules/admin/settingsdialog/settings-dialog.html'),
+                        templateUrl: 'partials/settings-dialog.html',
                         resolve: {
                             localConfig: function () {
                                 return localConfig;
+                            },
+                            kbLayouts: function() {
+                                return kbLayouts;
                             }
                         },
-                        controller: "SettingsDialogController as settingsDialogCtrl"
+                        controller: "settingsDialogController as settingsDialogCtrl"
                     });
                 };
             }],
@@ -388,7 +470,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                         // only keep elements of the type ResourceProvider
                         allClusterProviders = allClusterProviders.filter(function (elem, i, arr) {
-                            return elem.__resource_type === 'ResourceProvider';
+                            return elem.__resource_type === 'ResourceProvider';buildInfo
                         });
 
                         var resourceProviders = allClusterProviders.map(function (resourceProvider) {
@@ -644,7 +726,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                             if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)
                             {
-                                console.log("add presets");
                                 vm.operatingSystemId.puids.forEach(function(puid) {
                                    if(!vm.softwareObj.nativeFMTs.includes(puid.puid))
                                    {
@@ -694,47 +775,63 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         vm.hdtype = 'size';
 
                         vm.imageId = "";
-                        
                         vm.onSelectSystem = function(item, model) {
                             vm.native_config = item.native_config;
                         };
-                        
+
+                        vm.checkState = function(_taskId, _modal)
+                        {
+                            taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getTaskState, _taskId)).then(function(response){
+                                if(response.data.status == "0")
+                                {
+                                    if(response.data.isDone)
+                                    {
+                                        _modal.close();
+                                        growl.success("import finished.");
+                                        $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
+                                    }
+                                    else
+                                        $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                                }
+                                else
+                                {
+                                    _modal.close();
+                                }
+                            });
+                        };
+
                         vm.start = function() {
                             if (vm.hdtype == 'new') {
                                 $http.post(localConfig.data.eaasBackendURL + REST_URLS.createEnvironmentUrl, {
                                     size: vm.hdsize + 'M',
-                                    templateId: vm.selectedSystem.id, 
-                                    label: vm.name, urlString: vm.hdurl, 
-                                    nativeConfig: vm.native_config
+                                    templateId: vm.selectedSystem.id,
+                                    label: vm.name, urlString: vm.hdurl,
+                                        nativeConfig: vm.native_config
                                 }).then(function(response) {
-                                    if (response.data.status !== "0") 
+                                    if (response.data.status !== "0")
                                         growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                                    $state.go('wf-s.emulator', {envId: response.data.id, isCreateEnv: true, softwareId: vm.selectedSoftware.id});
+                                    $state.go('wf-s.emulator', {envId: response.data.id, type: 'saveCreatedEnvironment', softwareId: vm.selectedSoftware.id});
                                 });
                             } else {
-                                 var modal = $uibModal.open({
-                                    animation: true,
-                                    backdrop: 'static',
-                                    templateUrl: 'partials/import-wait.html'
-                                 });
-
                                 $http.post(localConfig.data.eaasBackendURL + REST_URLS.importImageUrl,
-                                        {
-                                            urlString: vm.hdurl, 
-                                            templateId: vm.selectedSystem.id, 
-                                            label: vm.name, urlString: vm.hdurl, 
-                                            nativeConfig: vm.native_config
-                                        },
-                                        {
-                                            timeout: "6000000"
-                                        }
-                                        ).then(function(response) {
-                                    if (response.data.status !== "0") 
-                                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
-
-                                    modal.close();
-                                    $state.go('wf-s.emulator', {envId: response.data.id, isImportEnv: true });
-                                });    
+                                    {
+                                        urlString: vm.hdurl,
+                                        templateId: vm.selectedSystem.id,
+                                        label: vm.name, urlString: vm.hdurl,
+                                        nativeConfig: vm.native_config,
+                                        rom: vm.rom
+                                    }).then(function(response) {
+                                    if(response.data.status == "0") {
+                                        var taskId = response.data.taskId;
+                                        modal = $uibModal.open({
+                                            animation: true,
+                                            templateUrl: 'partials/import-wait.html'
+                                        });
+                                        vm.checkState(taskId, modal);
+                                    }
+                                }, function(response) {
+                                    console.log("error");
+                                });
                             }
                         };
                     },
@@ -756,32 +853,38 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 objectEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object"))
                 },
+                kbLayouts: function($http) {
+                    return $http.get("kbLayouts.json");
+                },
                 buildInfo: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl);
                 }
             },
-            controller: ['$state', '$uibModal', '$http', 'localConfig', 'growl', 'buildInfo', function($state, $uibModal, $http, localConfig, growl, buildInfo) {
+            controller: ['$state', '$uibModal', '$http', 'localConfig', 'kbLayouts', 'growl', 'buildInfo', function($state, $uibModal, $http, localConfig, kbLayouts, growl, buildInfo) {
                 var vm = this;
 
                 this.buildInfo = buildInfo.data.version;
 
                 vm.open = function() {
                     $uibModal.open({
-                        animation: true,
+                        animation: false,
                         templateUrl: 'partials/wf-s/help-emil-dialog.html'
                     });
-                };
+                }
                 
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
-                        animation: true,
-                        templateUrl: require('./modules/admin/settingsdialog/settings-dialog.html'),
+                        animation: false,
+                        templateUrl: 'partials/settings-dialog.html',
                         resolve: {
-                            localConfig: function() {
+                            localConfig: function () {
                                 return localConfig;
+                            },
+                            kbLayouts: function () {
+                                return kbLayouts;
                             }
                         },
-                        controller: "SettingsDialogController as settingsDialogCtrl"
+                        controller: "settingsDialogController as settingsDialogCtrl"
                     });
                 };
             }],
@@ -794,64 +897,122 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                   templateUrl: 'partials/wf-s/synchronize-image-archives.html',
                   controller: ['$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate', 'WizardHandler', function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler) {
                       var vm = this;
+                      vm.isObjectEnvironment = false;
 
                       var setEnvList = function (localEnvironmentList, remoteEnvironmentList) {
                           var envMap = {};
 
                           localEnvironmentList.forEach(function (env) {
-                              env.isAvailableLocal = true;
+
                               env.isAvailableRemote = false; // init with false, may be switched, if found in remote
+                              env.upload = false;
                               envMap[env.envId] = env;
                           });
 
                           remoteEnvironmentList.forEach(function (env) {
-                              // environment is in the local archive, switch the isAvailableRemote flag
                               if (envMap[env.envId]) {
                                   envMap[env.envId].isAvailableRemote = true;
-                                  return;
+                                  envMap[env.envId].upload = true;
                               }
-
-                              env.isAvailableLocal = false;
-                              env.isAvailableRemote = true;
-                              envMap[env.envId] = env;
                           });
 
                           vm.envList = Object.keys(envMap).map(function(key) {
-                              envMap[key].isAvailableLocalInitial = envMap[key].isAvailableLocal;
-                              envMap[key].isAvailableRemoteInitial = envMap[key].isAvailableRemote;
-
                               return envMap[key];
                           });
                       };
 
-                      vm.fetchArchivesFromRemote = function (URI) {
-                          // TODO fetch real data from URI
+                      vm.fetchArchivesFromRemote = function (URI, type) {
                           if (!URI) {
-                            growl.error('Please enter a valid URI');
-                            return;
+                              growl.error('Please enter a valid URI');
+                              return;
                           }
+                          vm.uri = encodeURIComponent(URI);
+                          remoteEnvironmentList = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getRemoteEnvsUrl, encodeURIComponent(URI), type)).then(function(response) {
+                              if(response.data.status == "0")
+                              {
+                                  if(type == "base")
+                                      setEnvList(environmentList.data.environments, response.data.environments);
+                                  else if(type == "object"){
 
-                          var MOCK_REMOTE_BASE = [{"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"cbb628fb-f300-443f-87aa-0d831a879d6414","os":"n.a.","title":"DooM","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}, {"parentEnvId":"3a0d52e5-24df-4daa-bd54-89806877f52614","envId":"848b8mj","os":"n.a.","title":"FakeDooM2000","description":"asdasd\n--\nasdasd\n--\na","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
-                          // var MOCK_REMOTE_OBJ = [{"parentEnvId":null,"envId":"7022","os":"n.a.","title":"Hatari TOS 2.06 US","description":"n.a.","version":null,"emulator":"n.a.","helpText":null,"installedSoftwareIds":[]}];
-
-                          setEnvList(environmentList.data.environments, MOCK_REMOTE_BASE);
-                          WizardHandler.wizard().next();
+                                      setEnvList(objectEnvironmentList.data.environments, response.data.environments);
+                                      vm.isObjectEnvironment = true;
+                                      vm.objectImportType = "byRef";
+                                  }
+                                  WizardHandler.wizard().next();
+                              }
+                              else
+                              {
+                                  growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                              }
+                          });
                       };
 
                       vm.isSyncing = false;
                       vm.syncArchives = function (envs) {
                           vm.isSyncing = true;
-
                           growl.info($translate.instant('SYNC_START_INFO'));
 
-                          // fake rest post
-                          setTimeout(function () {
-                              vm.isSyncing = false;
+                          var uploads = new Array();
+                          for (var i = 0; i < envs.length; i++)
+                          {
+                              var e = envs[i];
 
-                              // TODO call setEnvList with updated lists
+                              if(e.isAvailableRemote)
+                                  continue;
+                              if(!e.upload)
+                                  continue;
 
-                              growl.success($translate.instant('SYNC_SUCCESS_INFO'));
-                          }, 7000);
+                              uploads.push(e.envId);
+
+                          }
+
+
+                          vm.checkState = function(_taskId, _modal)
+                          {
+                              taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getTaskState, _taskId)).then(function(response){
+                                  if(response.data.status == "0")
+                                  {
+                                      if(response.data.isDone)
+                                      {
+                                          _modal.close();
+                                          vm.isSyncing = false;
+                                          growl.success("upload finished.");
+                                      }
+                                      else
+                                          $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                                  }
+                                  else
+                                  {
+                                      _modal.close();
+                                      vm.isSyncing = false;
+                                  }
+                              });
+                          };
+
+                          var exportEmbedded = false;
+                          if(vm.objectImportType == "embedded")
+                              exportEmbedded = true;
+                          growl.info("starting sync ");
+                          $http({
+                              method: 'POST',
+                              url: localConfig.data.eaasBackendURL + "EmilEnvironmentData/exportToRemoteArchive",
+                              data: {
+                                  envId: uploads,
+                                  wsHost: vm.uri,
+                                  exportObjectEmbedded: exportEmbedded,
+                                  objectArchiveHost: vm.remoteObjectArchiveURI
+                              }}).then(function(response) {
+                              if(response.data.status == "0") {
+                                  var taskId = response.data.taskId;
+                                  modal = $uibModal.open({
+                                      animation: true,
+                                      templateUrl: 'partials/import-wait.html'
+                                  });
+                                  vm.checkState(taskId, modal);
+                              }
+                          }, function(response) {
+                              console.log("error");
+                          });
                       };
                   }],
                   controllerAs: "synchronizeImageArchivesCtrl"
@@ -894,7 +1055,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 'wizard': {
                     templateUrl: "partials/wf-s/user-sessions.html",
 
-                    controller: ['$state', '$stateParams', 'sessionList', '$translate', '$http', 'localConfig', 'growl', 'helperFunctions', 'REST_URLS', function($state, $stateParams, sessionList, $translate, $http, localConfig, growl, helperFunctions, REST_URLS) {
+                    controller: ['$scope' , '$state', '$stateParams', 'sessionList', '$translate', '$http', 'localConfig', 'growl', '$interval', 'helperFunctions', 'REST_URLS', function($scope, $state, $stateParams, sessionList, $translate, $http, localConfig, growl, $interval, helperFunctions, REST_URLS) {
                         var vm = this;
                         vm.sessionList = sessionList.data.environments;
                         console.log(vm.sessionList);
@@ -915,6 +1076,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 });
                             }
                         };
+
+                        var theInterval = $interval(function(){
+                            $state.reload();
+                        }.bind(this), 10000);
+
+                        $scope.$on('$destroy', function () {
+                            $interval.cancel(theInterval)
+                        });
                     }],
                     controllerAs: "sessionListCtrl"
                 }
@@ -925,19 +1094,26 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             params: {
                 showObjects: false
             },
+            resolve : {
+                softwareList: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
+                }
+            },
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-s/standard-envs-overview.html',
-                    controller: ['$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate', 'helperFunctions', 'REST_URLS', function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, helperFunctions, REST_URLS) {
+                    controller: ['$rootScope', '$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
+                        '$uibModal', 'softwareList', 'helperFunctions', 'REST_URLS',
+                        function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, REST_URLS) {
                         var vm = this;
-                        
+
                         if (environmentList.data.status !== "0") {
                             $state.go('error', {errorMsg: {title: "Load Environments Error " + environmentList.data.status, message: environmentList.data.message}});
                             return;
                         }
-                        
+
                         vm.exportEnvironment = function(envId) {
-                                
+
                             $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.exportEnvironmentUrl, envId))
                                 .then(function(response) {
                                     if (response.data.status === "0") {
@@ -946,27 +1122,84 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         growl.error(response.data.message, {title: 'Error ' + response.data.status});
                                     }
                                 });
-                            
+
                         };
-                        
-                            vm.deleteEnvironment = function(envId) {
+
+                        vm.addSoftware = function(envId) {
+                            $uibModal.open({
+                                animation: true,
+                                templateUrl: 'partials/wf-s/select-sw-dialog.html',
+                                controller: function($scope) {
+                                    this.envId = envId;
+                                    this.software = softwareList.data.descriptions;
+                                    this.returnToObjects = $stateParams.showObjects;
+                                },
+                                controllerAs: "addSoftwareDialogCtrl"
+                            });
+                        };
+
+                        var confirmDeleteFn = function(envId)
+                        {
+                            console.log("confirmed");
+                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+                                envId: envId,
+                                deleteMetaData: true,
+                                deleteImage: true,
+                                force: true
+                            }).then(function(_response) {
+                                if (_response.data.status === "0") {
+                                    // remove env locally
+                                    vm.envs = vm.envs.filter(function(env) {
+                                        return env.envId !== envId;
+                                    });
+                                    $rootScope.chk.transitionEnable = true;
+                                    growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                }
+                                else {
+                                    $rootScope.chk.transitionEnable = true;
+                                    growl.error(_response.data.message, {title: 'Error ' + _response.data.status});
+                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+
+                                }
+                            });
+                        };
+
+                        vm.deleteEnvironment = function(envId) {
+                            $rootScope.chk.transitionEnable = false;
+
                             if (window.confirm($translate.instant('JS_DELENV_OK'))) {
                                 $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
                                     envId: envId,
-                                    deleteMetaData: true
+                                    deleteMetaData: true,
+                                    deleteImage: true,
+                                    force: false
                                 }).then(function(response) {
                                     if (response.data.status === "0") {
                                         // remove env locally
                                         vm.envs = vm.envs.filter(function(env) {
                                             return env.envId !== envId;
                                         });
-                                        
+                                        $rootScope.chk.transitionEnable = true;
                                         growl.success($translate.instant('JS_DELENV_SUCCESS'));
                                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                    } else {
+                                    }
+                                    else if (response.data.status === "2") {
+
+                                        $uibModal.open({
+                                            animation: true,
+                                            templateUrl: 'partials/wf-s/confirm-delete-dialog.html',
+                                            controller: function($scope) {
+                                                this.envId = envId;
+                                                this.confirmed = confirmDeleteFn;
+                                            },
+                                            controllerAs: "confirmDeleteDialogCtrl"
+                                        });
+                                    }
+                                    else {
+                                        $rootScope.chk.transitionEnable = true;
                                         growl.error(response.data.message, {title: 'Error ' + response.data.status});
                                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-
                                     }
                                 });
                             }
@@ -979,47 +1212,54 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 }
             }
         })
-        .state('wf-s.new-env', {
-            url: "/new-env",
-            resolve: {
-                softwareList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
-                }
-            },
-            views: {
-                'wizard': {
-                    templateUrl: 'partials/wf-s/new-env.html',
-                    controller: ['$scope', '$state', '$stateParams', 'environmentList', 'softwareList', 'growl', function ($scope, $state, $stateParams, environmentList, softwareList, growl) {
-                        this.envs = environmentList.data.environments;
-                        this.software = softwareList.data.descriptions;
-                    }],
-                    controllerAs: "newEnvCtrl"
-                }
-            }
-        })
+        // .state('wf-s.new-env', {
+        //     url: "/new-env",
+        //     resolve: {
+        //         softwareList: function($http, localConfig, REST_URLS) {
+        //             return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
+        //         }
+        //     },
+        //     views: {
+        //         'wizard': {
+        //             templateUrl: 'partials/wf-s/new-env.html',
+        //             controller: ['$scope', '$state', '$stateParams', 'environmentList', 'softwareList', 'growl', function ($scope, $state, $stateParams, environmentList, softwareList, growl) {
+        //                 this.envs = environmentList.data.environments;
+        //                 this.software = softwareList.data.descriptions;
+        //             }],
+        //             controllerAs: "newEnvCtrl"
+        //         }
+        //     }
+        // })
         .state('wf-s.edit-env', {
             url: "/edit-env",
             params: {
-                envId: "-1",
+                envId: null,
                 objEnv: false
+            },
+            resolve: {
+                objectDependencies: function($http, localConfig, $stateParams) {
+                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getObjectDependencies, $stateParams.envId));
+                }
             },
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-s/edit-env.html',
-                    controller: ['$http', '$scope', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate', 'helperFunctions', 'REST_URLS', function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, helperFunctions, REST_URLS) {
+                    controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, REST_URLS) {
                         var vm = this;
 
                         vm.showDateContextPicker = false;
-
                         var envList = null;
-                        console.log($stateParams.objEnv);
+                        vm.isObjectEnv = $stateParams.objEnv;
+
+                        this.dependencies = objectDependencies.data;
+                        vm.isObjectEnv = $stateParams.objEnv;
                         if($stateParams.objEnv)
                             envList = objectEnvironmentList.data.environments;
-                        else 
+                        else
                             envList = environmentList.data.environments;
-                            
-                        this.env = null; 
-                        
+
+                        this.env = null;
+
                         for(var i = 0; i < envList.length; i++) {
                             if (envList[i].envId === $stateParams.envId) {
                                 this.env = envList[i];
@@ -1037,32 +1277,53 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         this.envDescription = this.env.description;
                         this.envHelpText = this.env.helpText;
                         this.enableRelativeMouse = this.env.enableRelativeMouse;
+                        this.enablePrinting = this.env.enablePrinting;
+                        this.nativeConfig = this.env.nativeConfig;
+                        this.useXpra = this.env.useXpra;
+
+                        this.shutdownByOs = this.env.shutdownByOs;
+                        this.os = this.env.os;
+                        this.userTag = this.env.userTag;
 
                         this.saveEdit = function() {
-                            console.log("save time: " + this.showDateContextPicker);
+                            var timecontext = null;
                             if(this.showDateContextPicker)
+                            {
                                 console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+                                timecontext = vm.datetimePicker.date.getTime();
+                            }
 
                             this.env.title = this.envTitle;
                             this.env.description = this.envDescription;
                             this.env.helpText = this.envHelpText;
+
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                                 envId: $stateParams.envId,
                                 title: this.envTitle,
                                 description: this.envDescription,
                                 helpText: this.envHelpText,
-                                time: vm.datetimePicker.date.getTime()
+                                time: timecontext,
+                                enablePrinting: vm.enablePrinting,
+                                enableRelativeMouse: this.enableRelativeMouse,
+                                shutdownByOs: this.shutdownByOs,
+                                os: this.os,
+                                userTag: this.userTag,
+                                nativeConfig: this.nativeConfig,
+                                useXpra : this.useXpra
                             }).then(function(response) {
                                 if (response.data.status === "0") {
                                     growl.success($translate.instant('JS_ENV_UPDATE'));
                                 } else {
                                     growl.error(response.data.message, {title: 'Error ' + response.data.status});
                                 }
-                                
-                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+
+                                if (vm.isObjectEnv)
+                                    $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                else
+                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                             });
                         };
-                        
+
                         this.fork = function(revId) {
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.forkRevisionUrl, {
                                 id: revId
@@ -1076,11 +1337,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                             });
                         };
-                        
+
                         this.revert = function(currentId, revId) {
-                            console.log("revert: ");
-                            console.log(currentId);
-                            console.log(revId);
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.revertRevisionUrl, {
                                 currentId: currentId,
                                 revId: revId
@@ -1117,6 +1375,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             }
                         };
 
+                        if(this.env.timeContext)
+                        {
+                            vm.datetimePicker.date.setTime(this.env.timeContext);
+                            vm.showDateContextPicker = true;
+                        }
+
                         if ($translate.use() === 'de') {
                             vm.datetimePicker.buttonBar = {
                                 show: true,
@@ -1148,7 +1412,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                             vm.isOpen = true;
                         };
-                    }],
+                    },
                     controllerAs: "editEnvCtrl"
                 }
             }
@@ -1161,17 +1425,22 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         (($stateParams.softwareId != null) ?
                             helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.softwareId) :
                             helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.objectId)));
-                    }
+                },
+                chosenEnv: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
+                    if($stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                        return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId));
+                    else
+                        return {};
+                }
             },
             params: {
-                envId: "-1",
-                isNewEnv: false,
-                isCreateEnv: false,
-                isImportEnv: false,
+                envId: null,
+                type: 'saveRevision',
                 softwareId: null,
-                isNewObjectEnv: false,
                 isUserSession: false,
-                objectId: null
+                objectId: null,
+                userId: null,
+                returnToObjects: false
             },
             views: {
                 'wizard': {
@@ -1183,6 +1452,31 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             $state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
                         };
 
+                        window.onbeforeunload = function(e) {
+                            var dialogText = $translate.instant('MESSAGE_QUIT');
+                            e.returnValue = dialogText;
+                            return dialogText;
+                        };
+
+                        window.onunload = function() {
+                            window.onbeforeunload = null;
+                        }
+
+                        this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
+                        if($stateParams.objectId)
+                            this.link += "&objectId=" + $stateParams.objectId;
+
+                        window.eaasClient.onEmulatorStopped = function() {
+                            if($rootScope.emulator.state == 'STOPPED')
+                                return;
+
+                            $rootScope.emulator.state = 'STOPPED';
+                            $("#emulator-container").hide();
+                            $("#emulator-loading-container").show();
+                            $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+                            $scope.$apply();
+                        };
+
                         // fallback to defaults when no cookie is found
                         var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
 
@@ -1190,12 +1484,18 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             keyboardLayout: kbLayoutPrefs.language.name,
                             keyboardModel: kbLayoutPrefs.layout.name
                         };
-                        console.log($stateParams);
-                        if ($stateParams.isNewEnv || $stateParams.softwareId !== null) {
-                            params.software = $stateParams.softwareId;
-                        } else if ($stateParams.isNewObjectEnv || $stateParams.isUserSession) {
-                            params.object = $stateParams.objectId;
+
+                        params.software = $stateParams.softwareId;
+                        params.object = $stateParams.objectId;
+                        params.userId = $stateParams.userId;
+
+                        if($stateParams.type == 'saveUserSession')
+                        {
+                            params.lockEnvironment = true;
+                            console.log("locking user session");
                         }
+
+
 
                         eaasClient.startEnvironment($stateParams.envId, params).then(function () {
                             eaasClient.connect().then(function() {
@@ -1218,18 +1518,51 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 },
                 'actions': {
                     templateUrl: 'partials/wf-s/actions.html',
-                    controller: ['$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'mediaCollection', '$timeout', '$translate', 'helperFunctions', 'REST_URLS', function ($scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, helperFunctions, REST_URLS) {
+                    controller: ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'mediaCollection',
+                        '$timeout', '$translate', 'chosenEnv', 'helperFunctions', 'REST_URLS',
+                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, helperFunctions, REST_URLS, chosenEnv) {
                         var vm = this;
-                        
-                        vm.isNewEnv = $stateParams.isNewEnv;
-                        vm.isNewObjectEnv = $stateParams.isNewObjectEnv;
-                        
+
+                        vm.type = $stateParams.type;
+                        vm.emulator = $rootScope.emulator;
+
+                        if(chosenEnv.data)
+                        {
+                            vm.enablePrinting = chosenEnv.data.enablePrinting;
+                            vm.shutdownByOs = chosenEnv.data.shutdownByOs;
+                        }
+                        else
+                            vm.enablePrinting = false;
+
                         vm.screenshot = function() {
                             window.open(window.eaasClient.getScreenshotUrl());
                         };
-                        vm.printEnvOut = function() {
-                            window.open(window.eaasClient.getPrintUrl());
+
+
+                        var printSuccessFn = function(data) {
+                            $uibModal.open({
+                                animation: true,
+                                templateUrl: 'partials/wf-s/printed-list-dialog.html',
+                                controller: function($scope) {
+                                    this.printJobs = data;
+
+                                    this.download = function(label)
+                                    {
+                                        window.open(window.eaasClient.downloadPrint(label));
+                                    }
+                                },
+                                controllerAs: "openPrintDialogCtrl"
+                            });
+                            // window.open(window.eaasClient.getPrintUrl());
                         };
+
+
+                        vm.openPrintDialog = function ()
+                        {
+                            window.eaasClient.getPrintJobs(printSuccessFn);
+                        }
+
+
 
                         vm.restartEmulator = function() {
                             window.eaasClient.release();
@@ -1241,25 +1574,36 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         };
 
                         vm.stopEmulator = function () {
-                            window.eaasClient.release();
-                            $('#emulator-stopped-container').show();
-                            
-                            if($stateParams.isTestEnv)
-                            {
-                                $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                                    envId: $stateParams.envId,
-                                    deleteMetaData: true,
-                                    deleteImage: true
-                                }).then(function(response) {
-                                    if (response.data.status === "0") {        
-                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                    }
-                                });
-                            }
-                            else if ($stateParams.isNewObjectEn)
-                                $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
-                            else
-                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                            $uibModal.open({
+                                animation: true,
+                                templateUrl: 'partials/wf-s/confirm-stop-dialog.html',
+                                controller: function($scope) {
+                                    this.confirmed = function()
+                                    {
+                                        window.onbeforeunload = null;
+                                        // window.eaasClient.release();
+                                        $('#emulator-stopped-container').show();
+
+                                        if($stateParams.isTestEnv)
+                                        {
+                                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+                                                envId: $stateParams.envId,
+                                                deleteMetaData: true,
+                                                deleteImage: true
+                                            }).then(function(response) {
+                                                if (response.data.status === "0") {
+                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                }
+                                            });
+                                        }
+                                        else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                                            $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                        else
+                                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                    };
+                                },
+                                controllerAs: "confirmStopDialogCtrl"
+                            });
                         };
 
                         var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
@@ -1282,6 +1626,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     this.media = mediaCollection.data.medium;
                                     this.isChangeMediaSubmitting = false;
 
+                                    this.objectId = $stateParams.softwareId;
+                                    if(!this.objectId)
+                                        this.objectId = $stateParams.objectId;
+
                                     this.changeMedium = function(newMediumLabel) {
                                         if (newMediumLabel == null) {
                                             growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
@@ -1291,7 +1639,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         this.isChangeMediaSubmitting = true;
 
                                         var postObj = {};
-                                        postObj.objectId = $stateParams.softwareId;
+                                        postObj.objectId = $stateParams.objectId;
                                         postObj.driveId = window.eaasClient.driveId;
                                         postObj.label = newMediumLabel;
 
@@ -1310,108 +1658,118 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             });
                         };
 
-                        vm.openSaveEnvironmentDialog = function() {    
+                        vm.openSaveEnvironmentDialog = function() {
+                            $('#emulator-container').hide();
+                            var saveDialog = function()
+                            {
+                                $uibModal.open({
+                                    animation: true,
+                                    templateUrl: 'partials/wf-s/save-environment-dialog.html',
+                                    controller: function($scope) {
+
+                                        this.type = $stateParams.type;
+                                        if(!this.type)
+                                            alert("ERROR: invalid type");
+
+                                        this.isSavingEnvironment = false;
+
+
+                                        this.saveEnvironment = function() {
+
+
+                                            this.isSavingEnvironment = true;
+                                            window.onbeforeunload = null;
+
+                                            var postReq = {};
+                                            postReq.type = this.type;
+                                            if(postReq.type === 'objectEnvironment')
+                                                postReq.embeddedObject = true;
+                                            postReq.envId = $stateParams.envId;
+                                            postReq.message = this.envDescription;
+                                            postReq.title = this.envName;
+                                            postReq.softwareId = $stateParams.softwareId;
+                                            postReq.objectId = $stateParams.objectId;
+                                            postReq.userId = $stateParams.userId;
+
+                                            snapshotDoneFunc = function(data, status) {
+                                                if(data.status === '1') {
+                                                    snapshotErrorFunc(data.message);
+                                                    return;
+                                                }
+
+                                                growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
+                                                window.eaasClient.release();
+                                                if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                                                    $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                                else
+                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                $scope.$close();
+                                                this.isSavingEnvironment = false;
+                                            };
+
+                                            snapshotErrorFunc = function(error) {
+                                                growl.error(error, {title: 'Error ' + error});
+                                                if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                                                    $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                                else
+                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                                $scope.$close();
+                                                this.isSavingEnvironment = false;
+                                            };
+
+                                            window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
+                                            $('#emulator-container').show();
+                                        };
+                                        this.showEmu = function() {
+                                            $('#emulator-container').show();
+                                        }
+
+
+
+                                    },
+                                    controllerAs: "openSaveEnvironmentDialogCtrl"
+                                });
+                            };
+
                             $uibModal.open({
                                 animation: true,
-                                templateUrl: 'partials/wf-s/save-environment-dialog.html',
-                                controller: function($scope, helperFunctions, REST_URLS) {
-                                    this.isNewEnv = $stateParams.isNewEnv;
-                                    this.isNewObjectEnv = $stateParams.isNewObjectEnv;
-                                    this.isCreateEnv = $stateParams.isCreateEnv;
-                                    this.isImportEnv = $stateParams.isImportEnv;
-                                    
-                                    this.isSavingEnvironment = false;
-                                    this.saveEnvironment = function() {
-
-                                        this.isSavingEnvironment = true;
-                                        vm.stopEmulator();
-
-                                        var postReq = {};                                            
-                                        postReq.envId = $stateParams.envId;
-                                        postReq.message = this.envDescription;    
-
-                                        if ($stateParams.isImportEnv)
-                                        {
-                                            postReq.type = "saveConfiguration";
-                                            console.log("is import env");
-                                            postReq.commit = true;
-
-                                            var postResult = $http.post(localConfig.data.eaasBackendURL + REST_URLS.commitUrl, postReq);
-                                            postResult.then(function(response) {
-                                                $scope.$close();
-                                                if (response.data.status === "0") {
-                                                    growl.success(response.data.message, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-
-                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                } else {
-                                                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
-
-                                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                                }
-                                            });
-                                        }
-
-                                        if ($stateParams.isNewEnv) {
-                                            postReq.type = "newEnvironment";
-                                            postReq.title = this.envName;
-                                            postReq.softwareId = $stateParams.softwareId;    
-                                            postReq.isObjectEnvironment= false;
-                                        } else if ($stateParams.isNewObjectEnv) {
-                                            postReq.type = "objectEnvironment";
-                                            postReq.objectId = $stateParams.objectId;
-                                            postReq.title = this.envName;
-                                        } else { // same object for save / commit 
-                                            postReq.type = "saveConfiguration";
-                                             if ($stateParams.isCreateEnv){
-                                                postReq.commit = true;
-                                                console.log("is create env");
-                                                postReq.softwareId = $stateParams.softwareId;
-                                            }
-                                            else 
-                                                postReq.commit = false;
-                                        }
-
-                                        var snapshotDoneFunc = function(data, status) {
-                                            growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-                                            window.eaasClient.release();
-                                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                            $scope.$close();
-
-                                        };
-//                                            } else {
-//                                                growl.error(response.data.message, {title: 'Error ' + response.data.status});
-//                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-//                                            }
-
-                                        window.eaasClient.snapshot(postReq, snapshotDoneFunc);
-
+                                templateUrl: 'partials/wf-s/confirm-snapshot-dialog.html',
+                                controller: function($scope) {
+                                    this.confirmed = function()
+                                    {
+                                        saveDialog();
                                     };
-                                    
-                                    this.deleteEnvironment = function() {
-                                        this.isSavingEnvironment = true;
-                                        window.eaasClient.release();
-                                        $('#emulator-stopped-container').show();
-                                        
-                                        $scope.$close();
-                                        
-                                        $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                                            envId: $stateParams.envId,
-                                            deleteMetaData: true,
-                                            deleteImage: true
-                                        }).then(function(response) {
-                                            if (response.data.status === "0") {        
-                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                            } else {
-                                                growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                                            }
-                                        });                         
-                                    };
+                                    this.showEmu = function() {
+                                        $('#emulator-container').show();
+                                    }
                                 },
-                                controllerAs: "openSaveEnvironmentDialogCtrl"
+                                controllerAs: "confirmSnapshotDialogCtrl"
                             });
-                                
+
                         }
+                        /*
+                        var closeEmulatorOnTabLeaveTimer = null;
+                        var leaveWarningShownBefore = false;
+                        var deregisterOnPageFocused = $pageVisibility.$on('pageFocused', function() {
+                            $timeout.cancel(closeEmulatorOnTabLeaveTimer);
+                        });
+
+                        var deregisterOnPageBlurred = $pageVisibility.$on('pageBlurred', function() {
+                            if (!leaveWarningShownBefore) {
+                                $window.alert($translate.instant('JS_EMU_LEAVE_PAGE'));
+                                leaveWarningShownBefore = true;
+                            }
+
+                            closeEmulatorOnTabLeaveTimer = $timeout(function() {
+                                vm.stopEmulator();
+                            }, 3 * 60 * 1000);
+                        });
+
+                        $scope.$on("$destroy", function() {
+                            deregisterOnPageFocused();
+                            deregisterOnPageBlurred();
+                        });
+                        */
                     }],
                     controllerAs: "actionsCtrl"
                 }

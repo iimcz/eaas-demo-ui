@@ -27,6 +27,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncImagesUrl = "EmilEnvironmentData/sync";
     this.exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
     this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
+    this.getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
 
     this.userSessionListUrl = "EmilUserSession/list";
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";

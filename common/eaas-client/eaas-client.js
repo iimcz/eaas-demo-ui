@@ -500,8 +500,6 @@ EaasClient.Client = function (api_entrypoint, container) {
 
         jQuery.when(
             jQuery.getScript(xpraPath + '/eaas-xpra.js'),
-            jQuery.getScript(xpraPath + '/js/lib/jquery-ui.js'),
-            jQuery.getScript(xpraPath + '/js/lib/jquery.ba-throttle-debounce.js'),
             jQuery.getScript(xpraPath + '/js/lib/bencode.js'),
             jQuery.getScript(xpraPath + '/js/lib/zlib.js'),
             jQuery.getScript(xpraPath + '/js/lib/forge.js'),
