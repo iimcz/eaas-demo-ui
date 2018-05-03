@@ -43,7 +43,7 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
 
                 this.startSession = function() {
                     $scope.$close();
-                    $state.go('wf-b.emulator', {envId: userSession.data.envId});
+                    $state.go('wf-b.emulator', {envId: userSession.data.envId, isUserSession: true});
                 };
 
                 this.deleteSession = function() {

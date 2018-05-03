@@ -57,8 +57,68 @@ import '../../../common/eaas-client/guacamole/guacamole.css';
 import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
-export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl', 
+export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl',
                'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers'])
+
+
+    .run(function($rootScope) {
+        $rootScope.emulator = {state : ''};
+
+        $rootScope.idleTimer = {};
+        $rootScope.idleTimer.idleTime = 0;
+
+        $rootScope.initIdleTimer = function(idleTimeout)
+        {
+            if(idleTimeout <= 0)
+                return;
+
+            $rootScope.idleTimer.idleTime = 0;
+            $rootScope.idleTimer.idleTimeout = idleTimeout;
+            clearInterval($rootScope.idleTimer.idleInterval);
+            $rootScope.idleTimer.idleInterval = setInterval($rootScope.idleTimer.timerIncrement, 60000); // 1 minute
+            console.log("TIMER started");
+        }
+
+        $rootScope.disableIdleTimer = function()
+        {
+            clearInterval($rootScope.idleTimer.idleInterval);
+            console.log("TIMER stopped");
+        }
+
+        $(document).ready(function () {
+            //Zero the idle timer on mouse movement.
+            $(this).mousemove(function (e) {
+                $rootScope.idleTimer.idleTime = 0;
+            });
+
+            $(this).keypress(function (e) {
+                $rootScope.idleTimer.idleTime = 0;
+            });
+        });
+
+        $rootScope.idleTimer.timerIncrement = function() {
+            $rootScope.idleTimer.idleTime = $rootScope.idleTimer.idleTime + 1;
+
+            if ($rootScope.idleTimer.idleTime > $rootScope.idleTimer.idleTimeout - 1) {
+                if($rootScope.idleTimeoutWarnFn)
+                    $rootScope.idleTimeoutWarnFn();
+            }
+
+            if ($rootScope.idleTimer.idleTime > $rootScope.idleTimer.idleTimeout) {
+                if($rootScope.idleTimeoutFn)
+                    $rootScope.idleTimeoutFn();
+                $rootScope.disableIdleTimer();
+            }
+        };
+    })
+
+
+    .filter('trustAsHtml', function ($sce) {
+        return function (text) {
+            return $sce.trustAsHtml(text);
+        };
+    })
+
 
 .controller('setKeyboardLayoutDialogController', function($scope, $cookies, $translate, kbLayouts, growl) {
     this.kbLayouts = kbLayouts.data;
@@ -139,6 +199,14 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
 
     // Now set up the states
     $stateProvider
+        .state('emulation-redirect', {
+            url: "/emulationSession?objectId&environmentId&userId",
+            controller : function($state, $stateParams)
+            {
+                $state.go('wf-b.emulator', {envId: $stateParams.environmentId, objectId: $stateParams.objectId, userId: $stateParams.userId});
+            },
+            controllerAs: ""
+        })
         .state('error', {
             url: "/error",
             template: require('./modules/client/clienterror/client-error.html'),
@@ -165,7 +233,10 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
                 objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.loadEnvsUrl, $stateParams.objectId)),
                 objMetadata: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.metadataUrl, $stateParams.objectId)),
                 allEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
-                userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, "testuser01", $stateParams.objectId))
+                userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, "testuser01", $stateParams.objectId)),
+                kbLayouts: function($http) {
+                    return $http.get("kbLayouts.json");
+                }
             },
             controller: "BaseController as baseCtrl"
         })
@@ -183,10 +254,20 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             }
         })
         .state('wf-b.emulator', {
-            url: "/emulator?envId",
+            url: "/emulator",
             resolve: {
                 chosenEnv: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId)),
-                mediaCollection: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.objectId))
+                mediaCollection: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.objectId)),
+                environmentMetaData: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
+                    if($stateParams.envId == null)
+                        return { data : { status : "1"}};
+
+                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.environmentMetaDataUrl, $stateParams.envId));
+                }
+            },
+            params: {
+                envId: null,
+                isUserSession: false
             },
             views: {
                 'wizard': {

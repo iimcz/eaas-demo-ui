@@ -17,6 +17,7 @@ emilUIHelpersModule.service('REST_URLS', function () {
     this.getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
     this.getUserSessionUrl = "EmilUserSession/session?userId={0}&objectId={1}";
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
+    this.environmentMetaDataUrl = "EmilEnvironmentData/environmentMetaData?envId={0}";
 });
 
 emilUIHelpersModule.service('helperFunctions', function () {
