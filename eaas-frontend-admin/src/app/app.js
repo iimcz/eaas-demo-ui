@@ -1540,11 +1540,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     templateUrl: 'partials/wf-s/actions.html',
                     controller: ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'mediaCollection',
                         '$timeout', '$translate', 'chosenEnv', 'helperFunctions', 'REST_URLS',
-                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, helperFunctions, REST_URLS, chosenEnv) {
+                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
                         var vm = this;
 
                         vm.type = $stateParams.type;
                         vm.emulator = $rootScope.emulator;
+
+                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + chosenEnv.data);
+                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + chosenEnv.data.enablePrinting);
 
                         if(chosenEnv.data)
                         {
@@ -1580,7 +1583,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         vm.openPrintDialog = function ()
                         {
                             window.eaasClient.getPrintJobs(printSuccessFn);
-                        }
+                        };
 
 
 
