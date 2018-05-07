@@ -84,6 +84,24 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     }
 })
 
+    .run(function($rootScope, $state) {
+        $rootScope.emulator = {state : ''};
+
+        $rootScope.chk = {};
+        $rootScope.chk.transitionEnable = true;
+
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+            if (!$rootScope.chk.transitionEnable) {
+                event.preventDefault();
+                // $scope.toState = toState;
+                // $scope.open();
+                //  console.log("prevent: $stateChangeStart: "+toState.name);
+            }
+//            else {
+//                console.log("$stateChangeStart: "+toState.name);
+//            }
+        });
+    })
 
     .controller('settingsDialogController', ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLayouts', 'growl', 'REST_URLS', function ($state, $http, $scope, $uibModal, localConfig, kbLayouts, growl, REST_URLS) {
         var vm = this;
@@ -764,7 +782,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-i/new-image.html',
-                    controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal, REST_URLS) {
+                    controller: function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal, $timeout, helperFunctions, REST_URLS) {
                         var vm = this;
 
                         vm.systems = systemList.data.systems;
@@ -781,7 +799,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                         vm.checkState = function(_taskId, _modal)
                         {
-                            taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getTaskState, _taskId)).then(function(response){
+                           var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function(response){
                                 if(response.data.status == "0")
                                 {
                                     if(response.data.isDone)
@@ -823,7 +841,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     }).then(function(response) {
                                     if(response.data.status == "0") {
                                         var taskId = response.data.taskId;
-                                        modal = $uibModal.open({
+                                       var modal = $uibModal.open({
                                             animation: true,
                                             templateUrl: 'partials/import-wait.html'
                                         });
@@ -895,7 +913,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
           views: {
               'wizard': {
                   templateUrl: 'partials/wf-s/synchronize-image-archives.html',
-                  controller: ['$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate', 'WizardHandler', function ($http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler) {
+                  controller: ['$http', '$timeout',  '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate', 'WizardHandler',
+                      '$uibModal', 'helperFunctions' , 'REST_URLS',
+                      function ($http, $timeout, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, WizardHandler, $uibModal, helperFunctions, REST_URLS) {
                       var vm = this;
                       vm.isObjectEnvironment = false;
 
@@ -921,13 +941,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                           });
                       };
 
-                      vm.fetchArchivesFromRemote = function (URI, type) {
+                      vm.fetchArchivesFromRemote = function (URI, type, remoteEnvironmentList) {
                           if (!URI) {
                               growl.error('Please enter a valid URI');
                               return;
                           }
                           vm.uri = encodeURIComponent(URI);
-                          remoteEnvironmentList = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getRemoteEnvsUrl, encodeURIComponent(URI), type)).then(function(response) {
+                          remoteEnvironmentList = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getRemoteEnvsUrl, encodeURIComponent(URI), type)).then(function(response) {
                               if(response.data.status == "0")
                               {
                                   if(type == "base")
@@ -969,7 +989,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                           vm.checkState = function(_taskId, _modal)
                           {
-                              taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getTaskState, _taskId)).then(function(response){
+                             var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function(response){
                                   if(response.data.status == "0")
                                   {
                                       if(response.data.isDone)
@@ -1237,14 +1257,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 objEnv: false
             },
             resolve: {
-                objectDependencies: function($http, localConfig, $stateParams) {
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(getObjectDependencies, $stateParams.envId));
+                objectDependencies: function($http, localConfig, $stateParams, helperFunctions, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getObjectDependencies, $stateParams.envId));
                 }
             },
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-s/edit-env.html',
-                    controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, REST_URLS) {
+                    controller: function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, REST_URLS) {
                         var vm = this;
 
                         vm.showDateContextPicker = false;
@@ -1445,7 +1465,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/emulator.html",
-                    controller: ['$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', function ($scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
+                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
                         window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
                         eaasClient.onError = function(message) {
@@ -1691,8 +1711,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             postReq.objectId = $stateParams.objectId;
                                             postReq.userId = $stateParams.userId;
 
-                                            snapshotDoneFunc = function(data, status) {
-                                                if(data.status === '1') {
+                                            var snapshotDoneFunc = (data, status) => {
+                                                console.log("error status: " + status);
+
+                                                if(status === '1') {
+                                                    console.log("error message: " + data.message);
+
                                                     snapshotErrorFunc(data.message);
                                                     return;
                                                 }
@@ -1704,17 +1728,18 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                                 else
                                                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                                 $scope.$close();
-                                                this.isSavingEnvironment = false;
+                                                window.isSavingEnvironment = false;
                                             };
 
-                                            snapshotErrorFunc = function(error) {
+                                            var snapshotErrorFunc = error => {
+                                                console.log("given error: " + error);
                                                 growl.error(error, {title: 'Error ' + error});
                                                 if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                                     $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
                                                 else
                                                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                                 $scope.$close();
-                                                this.isSavingEnvironment = false;
+                                                window.isSavingEnvironment = false;
                                             };
 
                                             window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);

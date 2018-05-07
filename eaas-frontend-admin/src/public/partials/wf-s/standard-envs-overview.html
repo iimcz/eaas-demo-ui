@@ -26,7 +26,7 @@
             <a href="#" ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a>
             <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'
                 | translate}}</a>
-            <a href="#" ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
+            <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
                 | translate}}</a>
             <br>
             <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'

@@ -3,7 +3,7 @@ import ng from 'angular';
 const emilAdminUIHelpersModule = ng.module('emilAdminUI.helpers', []);
 
 emilAdminUIHelpersModule.service('REST_URLS', function () {
-// object data api
+    // object data api
     this.objectEnvironmentsUrl = "EmilObjectData/environments?objectId={0}&updateClassification={1}&updateProposal={2}";
     this.getObjectListURL = "EmilObjectData/list";
     this.getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
@@ -11,8 +11,10 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
     this.metadataUrl = "EmilObjectData/metadata?objectId={0}";
 
-// environment data api
+
+    // environment data api
     this.getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
+    this.getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
     this.updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
     this.deleteEnvironmentUrl = "EmilEnvironmentData/delete";
     this.initEmilEnvironmentsURL = "EmilEnvironmentData/init";
@@ -27,15 +29,17 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncImagesUrl = "EmilEnvironmentData/sync";
     this.exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
     this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
+    this.getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
     this.getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
+    this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
+    this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
 
     this.userSessionListUrl = "EmilUserSession/list";
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 
-    this.overrideObjectCharacterizationUrl = "Emil/overrideObjectCharacterization";
     this.buildVersionUrl = "Emil/buildInfo";
 
-// Software archive api
+    // Software archive api
     this.getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";
     this.saveSoftwareUrl = "EmilSoftwareData/saveSoftwareObject";
     this.getSoftwareObjectURL = "EmilSoftwareData/getSoftwareObject?softwareId={0}";

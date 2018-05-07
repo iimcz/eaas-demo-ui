@@ -43,7 +43,7 @@ module.exports = function makeWebpackConfig() {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8081/',
+    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8080/',
 
     // Filename for entry points
     // Only adds hash in build mode
