@@ -1546,9 +1546,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         vm.type = $stateParams.type;
                         vm.emulator = $rootScope.emulator;
 
-                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + chosenEnv.data);
-                        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + chosenEnv.data.enablePrinting);
-
                         if(chosenEnv.data)
                         {
                             vm.enablePrinting = chosenEnv.data.enablePrinting;
