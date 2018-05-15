@@ -1061,6 +1061,49 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 }
             }
         })
+        .state('wf-s.handles', {
+            url: "/handles",
+            resolve: {
+                localConfig: function($http) {
+                    return $http.get("config.json");
+                },
+                handles: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList);
+                }
+            },
+            views: {
+                'wizard': {
+                    templateUrl: "partials/wf-s/handleList.html",
+
+                    controller: function($state, $stateParams, $http,  handles, localConfig, helperFunctions) {
+                        var vm = this;
+                        vm.handles = handles.data.handles;
+
+                        $("#addHandleValue").hide();
+                        $("#addHandle").hide();
+                        $("#save-addHandle-field").hide();
+
+                        vm.showAddHandleDialog = function () {
+                            $("#save-addHandle-field").show();
+                            $("#addHandle").show();
+                            $("#addHandleValue").show();
+                            $("#show-addHandle-field").hide();
+                        };
+
+                        vm.addHandle = function () {
+                            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
+                                handle: document.getElementById("addHandle").value,
+                                handleValue: document.getElementById("addHandleValue").value
+                            });
+
+                            $state.reload();
+                        };
+
+                    },
+                    controllerAs: "handleOverview"
+                }
+            }
+        })
         .state('wf-s.user-session-overview', {
             url: "/user-sessions",
             resolve: {
@@ -1816,7 +1859,48 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     controller: "editObjectCharacterizationController as editObjectCharacterizationCtrl"
                 }
             }
-        });
+        })
+        .state('wf-s.edit-handle', {
+        url: "/edit-handle?handle",
+        resolve: {
+            handleValue: function ($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
+                return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleValue + helperFunctions.formatStr("?handle={0}" , encodeURI($stateParams.handle)));
+            }
+        },
+        views: {
+            'wizard': {
+                templateUrl: 'partials/wf-s/edit-handle.html',
+                controller: ['$state', '$scope', '$stateParams', '$http', 'handleValue', 'localConfig', 'helperFunctions' , function($state, $scope, $stateParams, $http, handleValue, localConfig, helperFunctions) {
+                    $("#newHandleValue").hide();
+                    $("#editHandleValue").hide();
+                    var vm = this;
+                    vm.handleValue = handleValue.data.handleValue;
+                    vm.handle = $stateParams.handle;
+
+                    vm.deleteHandle = function () {
+                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))
+                    };
+
+                    vm.showHandleValue = function () {
+                        $("#newHandleValue").show();
+                        $("#editHandleValue").show();
+                        $("#showHandleValue").hide();
+                    };
+
+                    vm.editHandle = function () {
+                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/modifyHandle", encodeURI($stateParams.handle)), {
+                            handle: $stateParams.handle,
+                            handleValue: document.getElementById("newHandleValue").value
+                        });
+
+                        $state.go('wf-s.edit-handle', $stateParams, {reload: true});
+                    };
+                }],
+                controllerAs: "handleOverview"
+            }
+
+        }
+    });
         
     growlProvider.globalTimeToLive(5000);
 }]);

@@ -10,7 +10,8 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncObjectsUrl = "EmilObjectData/sync";
     this.mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
     this.metadataUrl = "EmilObjectData/metadata?objectId={0}";
-
+    this.getHandleList = "components/getHandleList";
+    this.getHandleValue = "components/getHandleValue";
 
     // environment data api
     this.getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";

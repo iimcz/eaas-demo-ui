@@ -4,7 +4,12 @@
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
   "CHOOSE_ENV_PROPOSAL" : "[Umgebung konfigurieren]",
   "CHOOSE_ENV_EDIT" : "[Beschreibung bearbeiten]",
+  "CHOOSE_HANDLE_EDIT" : "Handle URL bearbeiten",
+  "CHOOSE_HANDLE_SHOW" : "Handle URL speichern",
+  "ADD_HANDLE" : "Handle hinzufügen",
+  "SAVE_HANDLE" : "Save handle",
   "CHOOSE_ENV_DEL" : "[Löschen]",
+  "HANDLE_DELETE" : "Handle löschen",
   "CHOOSE_ENV_VER" : "Version",
   "CHOOSE_ENV_ADDSW" : "[Software hinzufügen]",
 
@@ -28,6 +33,7 @@
   "BASE_SHOW_MENU" : "Menu anzeigen",
   "BASE_MENU_L" : "Menu",
   "BASE_MENU_HELP" : "Hilfe",
+  "BASE_MENU_HANDLE" : "Handle",
   "BASE_MENU_ENVS" : "Umgebungen",
   "BASE_MENU_OBJENVS": "Objektumgebungen",
   "BASE_MENU_SW" : "Software",
@@ -200,6 +206,7 @@
   "IMPORT_WAIT_MSG" : "Der Import eines Images kann mehrere Minuten dauert, abhängig von Größe des Images und der Leistungsfähigkeit des Servers",
 
   "OBJECTS_L" : "Objekte",
+  "HANDLES_L" : "Handles",
   "OBJECTS_SEARCH" : "Eintippen zum Suchen...",
 
   "DEFAULTENV_L" : "Standardumgebung",
