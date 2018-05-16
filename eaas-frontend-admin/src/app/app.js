@@ -1879,6 +1879,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                     vm.deleteHandle = function () {
                         $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))
+                        $state.go('wf-s.handles', {reload: true});
                     };
 
                     vm.showHandleValue = function () {
@@ -1892,6 +1893,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             handle: $stateParams.handle,
                             handleValue: document.getElementById("newHandleValue").value
                         });
+
+                        vm.handleValue = $stateParams.handle;
 
                         $state.go('wf-s.edit-handle', $stateParams, {reload: true});
                     };
