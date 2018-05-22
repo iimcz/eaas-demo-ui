@@ -12,6 +12,10 @@
   "HANDLE_DELETE" : "Handle löschen",
   "CHOOSE_ENV_VER" : "Version",
   "CHOOSE_ENV_ADDSW" : "[Software hinzufügen]",
+  "CHOOSE_CONTAINER_L" : "Container",
+  "CHOOSE_ENV_RUN" : "[Start]",
+
+
 
   "ERROR_RETURN_BTN" : "Zurück zur Übersicht",
 
@@ -24,6 +28,11 @@
   "ACTIONS_SAVE_ENV" : "Umgebung speichern",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
+
+  "CONTAINER_ACTIONS_ABORT" : "Abbrechen",
+
+  "CONTAINER_STOPPED" : "Beendet",
+  "CONTAINER_STOPPED_T" : "Container Ausführung beendet.",
 
   "ADDENV_L" : "Umgebung hinzufügen",
   "ADDENV_SEARCH" : "Wählen oder suchen sie eine Umgebung...",
@@ -42,6 +51,8 @@
   "BASE_MENU_OBJECTS" : "Objekte",
   "BASE_MENU_SESSIONS" : "Nutzersitzungen",
   "BASE_MENU_UPLOAD" : "Upload / Export",
+  "BASE_MENU_CONTAINER" : "Import Container",
+  "BASE_MENU_CONTAINER_ENVS" : "Container",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -109,6 +120,33 @@
   "SW_NEW_IMAGE_CANCEL_BUTTON" : "Abbrechen",
   "SW_NEW_IMAGE_START_BUTTON" : "Starten",
   "SW_NEW_IMAGE_ROM_LBL" : "ROM Datei",
+
+  "SW_NEW_CONTAINER_HEADER" : "Neuen Container erstellen",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Ursprungsumgebung wählen",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH" : "Wählen sie eine Runtime (Singularity, Docker...)",
+  "SW_NEW_CONTAINER_ORIGIN" : "Containerumgebung",
+  "SW_NEW_CONTAINER_FROM_BUILDFILE" : "Container aus Buildfile generieren",
+  "SW_NEW_CONTAINER_BUILDFILE_URL" : "Buildfile",
+  "SW_NEW_CONTAINER_IMAGE_URL" : "fertiges Image",
+  "SW_NEW_CONTAINER_CONFIG" : "Konfiguration des Containers",
+  "SW_NEW_CONTAINER_IMAGE_SIZE" : "Größe des fertigen Image",
+  "SW_NEW_CONTAINER_DOCKER_IMAGE_URL" : "Image Name und Tag aus dem Dockerhub oder URL zu tar-archiv (docker save)",
+  "SW_NEW_CONTAINER_RUNC_GUI" : "GUI ist erforderlich",
+  "SW_NEW_CONTAINER_COMMAND_PH" : "Befehl welcher im Container ausgefühlt werden soll",
+  "SW_NEW_CONTAINER_OUTPUT_PH" : "Pfad zur Ausgabe von Ergebnissen",
+  "SW_NEW_CONTAINER_OUTPUT" : "Outputpfad",
+  "SW_NEW_CONTAINER_IMAGE_STRUCTURE" : "Zusätzlich zum Image je ein Input- und ein Outputverzeichnis innerhalb des Containers benötigt.",
+  "SW_NEW_CONTAINER_FORMAT_DOCKER" : "EaaS verarbeitet Docker Images in Form von auf Docker Hub gehosteten Images oder mit docker save erzeugte tar Archiven. Hub-gehostete Inhalte können analog zu docker pull referenziert werden, für tar-Archive muss eine URL zum gewünschten Archiv angegeben werden. Zudem kann ein benutzerdefinierter Befehl definiert werden, ansonsten wird der Standardbefehl des Images verwendet.",
+  "SW_NEW_CONTAINER_FORMAT_SINGULARITY" : "EaaS nimmt Singularity Images im Standard Singularity Format (http://singularity.lbl.gov/docs-build-container) an. Zudem kann ein benutzerdefinierter Befehl definiert werden, ansonsten wird das Singularity Startscript ausgeführt.",
+  "SW_NEW_CONTAINER_FORMAT_RUNC" : "(WIP) Benötigt Absprache, entweder Tar-archiv oder Image file.",
+  "SW_NEW_CONTAINER_ARCHIVE_T" : "Type",
+  "SW_NEW_CONTAINER_ENVIRONMENT_H" : "Umgebungsvariablen",
+  "SW_NEW_CONTAINER_ENVIRONMENT_NOTE" : "Hier können Umgebungsvariablen für den auszuführenden Prozess definiert werden.",
+  "SW_NEW_CONTAINER_ENVIRONMENT_PH" : "YOURVAR=value",
+
+  "SW_NEW_CONTAINER_ARGUMENTS_H" : "Prozess und Argumente/Parameter",
+  "SW_NEW_CONTAINER_ARGUMENTS_NOTE" : "Prozess und Argumente für den auszuführenden Container-Einstiegspunkt",
+  "SW_NEW_CONTAINER_ARGUMENTS_PH" : "cmdl / args",
 
   "EDITENV_L" : "Umgebung bearbeiten",
   "EDITENV_ID" : "ID",
@@ -237,5 +275,16 @@
   "CONFIRM_SNAPSHOT_H" : "Umgebung speichern",
   "CONFIRM_SNAPSHOT_T" : "Die Sitzung sollte erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'.",
   "CONFIRM_SNAPSHOT_OK" : "Weiter",
-  "CONFIRM_SNAPSHOT_CANCEL" : "Zurück zur Bereitstellung"
+  "CONFIRM_SNAPSHOT_CANCEL" : "Zurück zur Bereitstellung",
+
+  "EDIT_CONTAINER_L" : "Container bearbeiten",
+  "EDIT_CONTAINER_ID" : "ID",
+  "EDIT_CONTAINER_NAME" : "Name",
+  "EDIT_CONTAINER_INPUT" : "Input Ordner",
+  "EDIT_CONTAINER_INPUT_PH" : "Pfad im Container",
+  "EDIT_CONTAINER_OUTPUT" : "Ouput Ordner",
+  "EDIT_CONTAINER_OUTPUT_PH" :  "Pfad im Container",
+  "EDIT_CONTAINER_HELPTEXT" : "Beschreibung",
+  "EDIT_CONTAINER_CANCEL" : "Abbrechen",
+  "EDIT_CONTAINER_SAVE" : "Speichern"
 }

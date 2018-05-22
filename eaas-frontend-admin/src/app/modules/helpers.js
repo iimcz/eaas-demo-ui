@@ -35,6 +35,12 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
 
+    this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
+    this.importContainerUrl = "EmilContainerData/importContainer";
+    this.getContainerTaskState = "EmilContainerData/taskState?taskId={0}";
+    this.updateContainerUrl = "EmilContainerData/updateContainer";
+    this.deleteContainerUrl = "EmilContainerData/delete";
+
     this.userSessionListUrl = "EmilUserSession/list";
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 

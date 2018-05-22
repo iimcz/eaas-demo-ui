@@ -1,0 +1,59 @@
+<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>
+
+<form id="editContainerForm" name="editContainerCtrl.editContainerForm">
+	<p>
+		<label>{{'EDIT_CONTAINER_ID' | translate}}:</label>
+		{{editContainerCtrl.env.envId}}
+	</p>
+	
+	<div class="form-group">
+		<label>{{'EDIT_CONTAINER_NAME' | translate}}</label>
+		<input type="text"
+			class="form-control" ng-model="editContainerCtrl.envTitle"
+			placeholder="{{'EDIT_CONTAINER_NAME_PH' | translate}}" required>
+	</div>
+
+
+	<div class="form-group">
+		<label>{{'EDIT_CONTAINER_INPUT' | translate}}</label>
+		<input type="text"
+			   class="form-control" ng-model="editContainerCtrl.envInput"
+			   placeholder="{{'EDIT_CONTAINER_INPUT_PH' | translate}}" required>
+	</div>
+
+	<div class="form-group">
+		<label>{{'EDIT_CONTAINER_OUTPUT' | translate}}</label>
+		<input type="text"
+			   class="form-control" ng-model="editContainerCtrl.envOutput"
+			   placeholder="{{'EDIT_CONTAINER_OUTPUT_PH' | translate}}" required>
+	</div>
+
+	<p>
+		<b>{{'EDIT_CONTAINER_HELPTEXT' | translate}}:</b> <br />
+		<text-angular ng-model="editContainerCtrl.envHelpText" ></text-angular>
+	</p>
+
+	<input-list list="editContainerCtrl.processEnvs"
+				heading="{{'SW_NEW_CONTAINER_ENVIRONMENT_H' | translate}}"
+				list-empty-note="{{'SW_NEW_CONTAINER_ENVIRONMENT_NOTE' | translate}}"
+				input-placeholder="{{'SW_NEW_CONTAINER_ENVIRONMENT_PH' | translate}}"
+				add-button-text="+">
+	</input-list>
+
+	<input-list list="editContainerCtrl.processArgs"
+				heading="{{'SW_NEW_CONTAINER_ARGUMENTS_H' | translate}}"
+				list-empty-note="{{'SW_NEW_CONTAINER_ARGUMENTS_NOTE' | translate}}"
+				input-placeholder="{{'SW_NEW_CONTAINER_ARGUMENTS_PH' | translate}}"
+				add-button-text="+">
+	</input-list>
+
+	<div style="text-align: right;">
+		<button type="submit" class="btn btn-default"
+			ui-sref="wf-s.standard-envs-overview({showObjects: false, showContainers: true})">{{'EDIT_CONTAINER_CANCEL' |
+			translate}}</button>
+		<button type="submit" class="btn btn-primary"
+			ng-click="editContainerCtrl.saveEdit()"
+			ng-disabled="!editContainerCtrl.editContainerForm.$valid">{{'EDIT_CONTAINER_SAVE'
+			| translate}}</button>
+	</div>
+</form>

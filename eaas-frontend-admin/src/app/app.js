@@ -73,16 +73,27 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
-.component('inputList', {
-    templateUrl: 'partials/components/inputList.html',
-    bindings: {
-        list: '=',
-        heading: '@',
-        listEmptyNote: '@',
-        inputPlaceholder: '@',
-        addButtonText: '@'
-    }
-})
+    .component('inputList', {
+        templateUrl: 'partials/components/inputList.html',
+        bindings: {
+            list: '=',
+            heading: '@',
+            listEmptyNote: '@',
+            inputPlaceholder: '@',
+            addButtonText: '@'
+        }
+    })
+    .component('containerInputList', {
+        templateUrl: 'partials/components/containerInputList.html',
+        bindings: {
+            list: '=',
+            heading: '@',
+            listEmptyNote: '@',
+            inputPlaceholder: '@',
+            addButtonText: '@'
+        }
+    })
+
 
     .run(function($rootScope, $state) {
         $rootScope.emulator = {state : ''};
@@ -329,7 +340,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     }]);
 
     /*
-     * Internationalization 
+     * Internationalization
      */
     $translateProvider.useStaticFilesLoader({
       prefix: 'locales/',
@@ -720,7 +731,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     templateUrl: 'partials/wf-i/sw-ingest.html',
                     controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj, osList, REST_URLS) {
                         var vm = this;
-                        
+
                         vm.isNewSoftware = $stateParams.swId === "-1";
 
                         if (vm.isNewSoftware) {
@@ -738,7 +749,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         vm.save = function() {
                             if("softwareArchiveId" in localConfig.data)
                                  vm.softwareObj.archiveId = localConfig.data.softwareArchiveId;
-                            
+
                             vm.softwareObj.objectId = vm.selectedObject.id;
                             vm.softwareObj.label = vm.selectedObject.title;
 
@@ -757,12 +768,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 if (response.data.status === "0") {
                                     growl.success(response.data.message);
                                     $state.go('wf-i.sw-overview', {}, {reload: true});
-                                    
+
                                 } else {
                                     growl.error(response.data.message, {title: 'Error ' + response.data.status});
                                 }
                             });
-                            
+
                         };
                     },
                     controllerAs: "swIngestCtrl"
@@ -857,6 +868,143 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 }
             }
         })
+        .state('wf-i.new-container', {
+            url: "/new-container",
+            resolve: {
+                // change for containers
+                runtimeList: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOriginRuntimeList);
+                }
+            },
+            views: {
+                'wizard': {
+                    templateUrl: 'partials/wf-i/new-container.html',
+                    controller: ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout', 'helperFunctions', 'REST_URLS',
+                        function ($http, $scope, $state, $stateParams, runtimeList, growl, localConfig, $uibModal, $timeout, helperFunctions, REST_URLS) {
+
+                        var container = this;
+                        container.runtimes = runtimeList.data.runtimes;
+                        console.log(container.runtimes);
+
+                        // initialize default values of the form
+                        container.imageSize = 1024;
+                        container.imageType = 'size';
+
+                        container.imageId = "";
+                        container.env = [];
+                        container.args = [];
+
+                        //TODO: ?
+                        container.onSelectRuntime = function(item, model) {
+                            container.runtime = item.id;
+                        };
+
+                        container.isValid = function() {
+
+                            if(!container.imageInput || !container.imageOutput)
+                            {
+                                growl.error("input / ouput folder are required");
+                                return false;
+                            }
+
+                            if(container.args.length == 0)
+                            {
+                                growl.error("process is required");
+                                return false;
+                            }
+
+                            if(!container.name)
+                            {
+                                growl.error("container name is required");
+                                return false;
+                            }
+
+                            if(!container.imageUrl)
+                            {
+                                growl.error("image file / image URL is required");
+                                return false;
+                            }
+
+                            return true;
+                        };
+
+                        container.checkState = function(_taskId)
+                        {
+                           var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function(response){
+                                if(response.data.status == "0")
+                                {
+                                    if(response.data.isDone)
+                                    {
+                                        container.modal.close();
+                                        growl.success("import successful.");
+                                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                    }
+                                    else
+                                        $timeout(function() {container.checkState(_taskId);}, 2500);
+                                }
+                                else
+                                {
+                                    container.modal.close();
+                                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
+                                }
+                            });
+                        };
+
+                        //Next Step
+                        container.import = function() {
+
+                            if(!container.isValid())
+                                return;
+
+                            var convertedEnv = [];
+                            var convertedArgs = [];
+                            var escapeEl = document.createElement('textarea');
+
+                            var unescape = function(html) {
+                                escapeEl.innerHTML = html;
+                                return escapeEl.textContent;
+                            };
+
+                            for(var _e in container.env)
+                            {
+                                convertedEnv.push(unescape(container.env[_e]));
+                            }
+
+                            for(var _a in container.args)
+                            {
+                                convertedArgs.push(unescape(container.args[_a]));
+                            }
+
+                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.importContainerUrl,
+                                {
+                                    urlString: container.imageUrl,
+                                    runtimeID: container.runtime,
+                                    name: container.name,
+                                    processArgs: container.args,
+                                    processEnvs: container.env,
+                                    inputFolder: container.imageInput,
+                                    outputFolder: container.imageOutput,
+                                    imageType: container.archiveType,
+                                    guiRequired: container.gui
+                                }).then(function(response) {
+                                if(response.data.status === "0") {
+                                    var taskId = response.data.taskId;
+                                    container.modal = $uibModal.open({
+                                        animation: true,
+                                        templateUrl: 'partials/import-wait.html'
+                                    });
+                                    container.checkState(taskId);
+                                }
+                                else {
+                                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
+                                }
+                            });
+                        };
+                    }],
+                    controllerAs: "newContainerCtrl"
+                }
+            }
+        })
         .state('wf-s', {
             abstract: true,
             url: "/wf-s",
@@ -870,6 +1018,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 },
                 objectEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object"))
+                },
+                containerEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "container"))
                 },
                 kbLayouts: function($http) {
                     return $http.get("kbLayouts.json");
@@ -889,7 +1040,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         templateUrl: 'partials/wf-s/help-emil-dialog.html'
                     });
                 }
-                
+
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: false,
@@ -1155,7 +1306,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
         .state('wf-s.standard-envs-overview', {
             url: "/standard-envs-overview",
             params: {
-                showObjects: false
+                showObjects: false,
+                showContainers: false
             },
             resolve : {
                 softwareList: function($http, localConfig, REST_URLS) {
@@ -1165,9 +1317,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-s/standard-envs-overview.html',
-                    controller: ['$rootScope', '$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
+                    controller: ['$rootScope', '$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'containerEnvironmentList', 'localConfig', 'growl', '$translate',
                         '$uibModal', 'softwareList', 'helperFunctions', 'REST_URLS',
-                        function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, REST_URLS) {
+                        function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList, containerEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, REST_URLS) {
                         var vm = this;
 
                         if (environmentList.data.status !== "0") {
@@ -1228,7 +1380,41 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             });
                         };
 
-                        vm.deleteEnvironment = function(envId) {
+                            vm.deleteContainer = function (envId) {
+                                $rootScope.chk.transitionEnable = false;
+                                if (window.confirm($translate.instant('JS_DELENV_OK'))) {
+                                    $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteContainerUrl, {
+                                        envId: envId,
+                                        deleteMetaData: true,
+                                        deleteImage: true,
+                                        force: false
+                                    }).then(function (response) {
+                                        if (response.data.status === "0") {
+                                            // remove env locally
+                                            vm.envs = vm.envs.filter(function (env) {
+                                                return env.envId !== envId;
+                                            });
+                                            $rootScope.chk.transitionEnable = true;
+                                            growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                                            $state.go('wf-s.standard-envs-overview', {
+                                                showContainers: true,
+                                                showObjects: false
+                                            }, {reload: true});
+                                        }
+                                        else {
+                                            $rootScope.chk.transitionEnable = true;
+                                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                            $state.go('wf-s.standard-envs-overview', {
+                                                showContainers: true,
+                                                showObjects: false
+                                            }, {reload: true});
+                                        }
+                                    });
+                                }
+                            };
+
+
+                            vm.deleteEnvironment = function(envId) {
                             $rootScope.chk.transitionEnable = false;
 
                             if (window.confirm($translate.instant('JS_DELENV_OK'))) {
@@ -1268,9 +1454,22 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             }
                         };
                         vm.envs = environmentList.data.environments;
+
+                            for (let i = 0; i < vm.envs.length; i++) {
+                                console.log("!!!!! env:" + vm.envs[i].envId);
+                            }
+
                         vm.objEnvs = objectEnvironmentList.data.environments;
+                        vm.containerEnvs = containerEnvironmentList.data.environments;
+
+                            for (let i = 0; i < vm.containerEnvs.length; i++) {
+                                console.log("!!!!! container: " + vm.containerEnvs[i].envId);
+                            }
+
                         vm.showObjects = $stateParams.showObjects;
-                    }],
+                        vm.showContainers = $stateParams.showContainers;
+                        }],
+
                     controllerAs: "standardEnvsOverviewCtrl"
                 }
             }
@@ -1477,6 +1676,74 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         };
                     },
                     controllerAs: "editEnvCtrl"
+                }
+            }
+        })
+        .state('wf-s.edit-container', {
+            url: "/edit-container",
+            params: {
+                envId: null,
+            },
+            views: {
+                'wizard': {
+                    templateUrl: 'partials/wf-s/edit-container.html',
+                    controller: ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS', function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
+                        var vm = this;
+
+                        vm.showDateContextPicker = false;
+                        var envList = null;
+
+                        envList = containerEnvironmentList.data.environments;
+                        this.env = null;
+
+                        for(var i = 0; i < envList.length; i++) {
+                            if (envList[i].envId === $stateParams.envId) {
+                                this.env = envList[i];
+                                break;
+                            }
+                        }
+
+                        if(this.env === null)
+                        {
+                            growl.error("Container not found");
+                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                        }
+
+                        this.envTitle = this.env.title;
+                        this.envHelpText = this.env.helpText;
+                        this.envInput = this.env.input;
+                        this.envOutput = this.env.output;
+                        this.processArgs = this.env.processArgs; // todo deep copy
+                        this.processEnvs = this.env.processEnvs;
+
+                        this.saveEdit = function() {
+
+                            this.env.title = this.envTitle;
+                            this.env.input = this.envInput;
+                            this.env.output = this.envOutput;
+                            this.env.helpText = this.envHelpText;
+                            this.env.processArgs = this.processArgs;
+                            this.env.processEnvs = this.processEnvs;
+
+                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
+                                id: $stateParams.envId,
+                                title: this.envTitle,
+                                helpText: this.envHelpText,
+                                outputFolder : this.envOutput,
+                                inputFolder : this.envInput,
+                                processEnvs : this.processEnvs,
+                                processArgs : this.processArgs
+                            }).then(function(response) {
+                                if (response.data.status === "0") {
+                                    growl.success($translate.instant('JS_ENV_UPDATE'));
+                                } else {
+                                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                }
+                                $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: true});
+                            });
+                        };
+                    }],
+                    controllerAs: "editContainerCtrl"
                 }
             }
         })
@@ -1843,6 +2110,131 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                 }
             }
         })
+        .state('wf-s.container', {
+            url: "/container",
+            resolve: {
+            },
+            params: {
+                envId: null,
+            },
+            views: {
+                'wizard': {
+                    templateUrl: "partials/wf-s/container.html",
+                    controller: ['$rootScope','$scope','$sce','$state','$stateParams','$translate','localConfig','growl','$uibModal','containerEnvironmentList',
+                        function ($rootScope, $scope, $sce, $state, $stateParams, $translate, localConfig, growl, $uibModal, containerEnvironmentList) {
+                        var vm = this;
+
+                        window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+                        eaasClient.onError = function(message) {
+                            window.onbeforeunload = null;
+                            $state.go('error', {errorMsg: {title: "Error", message: message.error}});
+                        };
+
+                        window.onbeforeunload = function(e) {
+                            var dialogText = $translate.instant('MESSAGE_QUIT');
+                            e.returnValue = dialogText;
+                            return dialogText;
+                        };
+
+                        window.onunload = function() {
+                            window.onbeforeunload = null;
+                        }
+
+                        envList = containerEnvironmentList.data.environments;
+                        console.log(envList);
+                        vm.env = null;
+
+                        for(var i = 0; i < envList.length; i++) {
+                            if (envList[i].envId === $stateParams.envId) {
+                                vm.env = envList[i];
+                                break;
+                            }
+                        }
+
+                        window.eaasClient.onEmulatorStopped = function() {
+                            $("#emulator-loading-container").hide();
+                            $("#container-running").hide();
+                            $("#container-stopped").show();
+                            console.log("done " + eaasClient.getContainerResultUrl());
+                        };
+
+                        var params = {};
+
+                        vm.downloadLink = function()
+                        {
+                            window.open(window.eaasClient.getContainerResultUrl());
+                        };
+
+                        var confirmStartFn = function(inputs)
+                        {
+                            params.input_data = [];
+                            var input = {};
+                            input.size_mb = 512;
+                            input.destination = vm.env.input;
+                            input.content = inputs;
+                            params.input_data.push(input);
+
+                            $("#emulator-loading-container").show();
+                            eaasClient.startContainer($stateParams.envId, params).then(function () {
+                                $("#emulator-loading-container").hide();
+                                $("#container-running").show();
+
+                                eaasClient.connect().then(function() {
+                                    $("#emulator-container").show();
+
+                                    if (eaasClient.params.pointerLock === "true") {
+                                        growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                        BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                    }
+
+                                    // Fix to close emulator on page leave
+                                    $scope.$on('$locationChangeStart', function(event) {
+                                        eaasClient.release();
+                                    });
+                                });
+
+
+                                $scope.$on('$locationChangeStart', function(event) {
+                                    eaasClient.release();
+                                });
+                            });
+                        }
+
+                        $uibModal.open({
+                            animation: true,
+                            templateUrl: 'partials/wf-s/container-run-dialog.html',
+                            controller: function($scope) {
+                                this.run = function()
+                                {
+                                    confirmStartFn(this.inputs);
+                                }
+                                this.cancel = function()
+                                {
+                                    $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
+                                };
+                                this.inputs = [];
+                            },
+                            controllerAs: "runContainerDlgCtrl"
+                        });
+
+
+                    }],
+                    controllerAs: "startContainerCtrl"
+                },
+                'actions': {
+                    templateUrl: 'partials/wf-s/container-actions.html',
+                    controller: function ($scope, $window, $state, $http, $stateParams) {
+                        var vm = this;
+
+                        vm.abort = function () {
+                            console.log("aborting container...");
+                            $state.go('wf-s.standard-envs-overview', {showContainers: true, showObjects: false}, {reload: true});
+                        };
+                    },
+                    controllerAs: "containerActionsCtrl"
+                }
+            }
+        })
         .state('wf-s.edit-object-characterization', {
             url: "/edit-object-characterization?objectId",
             resolve: {
@@ -1904,6 +2296,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
         }
     });
-        
+
     growlProvider.globalTimeToLive(5000);
 }]);

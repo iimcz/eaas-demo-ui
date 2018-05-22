@@ -1,6 +1,6 @@
 {
   "CHOOSE_ENV_L" : "Environments",
-  "CHOOSE_OBJENV_L" : "Objectenvironments",
+  "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
   "CHOOSE_ENV_PROPOSAL" : "[Configure environment]",
   "CHOOSE_ENV_EDIT" : "[Edit description]",
@@ -13,6 +13,8 @@
   "CHOOSE_ENV_DEL" : "[Delete]",
   "CHOOSE_ENV_VER" : "Version",
   "CHOOSE_ENV_ADDSW" : "[Add software]",
+  "CHOOSE_CONTAINER_L" : "Container",
+  "CHOOSE_ENV_RUN" : "[Run]",
 
   "ERROR_RETURN_BTN" : "Back to overview",
 
@@ -25,6 +27,11 @@
   "ACTIONS_CHANGE_MEDIA" : "Change media",
   "ACTIONS_CTRLALTDEL" : "Send Ctr-Alt-Del",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
+
+  "CONTAINER_ACTIONS_ABORT" : "Abort",
+
+  "CONTAINER_STOPPED" : "Finished",
+  "CONTAINER_STOPPED_T" : "Container process done.",
 
   "ADDENV_L" : "Add environment",
   "ADDENV_SEARCH" : "Select an environment...",
@@ -43,6 +50,8 @@
   "BASE_MENU_OBJECTS" : "Objects",
   "BASE_MENU_SESSIONS" : "User Sessions",
   "BASE_MENU_UPLOAD" : "Upload / Export",
+  "BASE_MENU_CONTAINER" : "Import Container",
+  "BASE_MENU_CONTAINER_ENVS" : "Container",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
@@ -110,6 +119,34 @@
   "SW_NEW_IMAGE_CANCEL_BUTTON" : "Cancel",
   "SW_NEW_IMAGE_START_BUTTON" : "Start",
   "SW_NEW_IMAGE_ROM_LBL" : "ROM File",
+
+  "SW_NEW_CONTAINER_HEADER" : "Create new Container",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Choose Origin Runtime",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH" : "Choose a  Runtime (Singularity, Docker...)",
+  "SW_NEW_CONTAINER_ORIGIN" : "Container Environment",
+  "SW_NEW_CONTAINER_FROM_BUILDFILE" : "Generate Container from Buildfile",
+  "SW_NEW_CONTAINER_BUILDFILE_URL" : "Buildfile",
+  "SW_NEW_CONTAINER_IMAGE_URL" : "Ready-made Image",
+  "SW_NEW_CONTAINER_CONFIG" : "Container Config",
+  "SW_NEW_CONTAINER_IMAGE_SIZE" : "Size of finished Image",
+  "SW_NEW_CONTAINER_DOCKER_IMAGE_URL" : "Image Name and Tag from Dockerhub or URL of tar-archive (docker save)",
+  "SW_NEW_CONTAINER_RUNC_GUI" : "GUI is required",
+  "SW_NEW_CONTAINER_INPUT_PH" : "Path for user input",
+  "SW_NEW_CONTAINER_OUTPUT_PH" : "Pfad for resulting output",
+  "SW_NEW_CONTAINER_INPUT" : "Input path",
+  "SW_NEW_CONTAINER_OUTPUT" : "Output path",
+  "SW_NEW_CONTAINER_IMAGE_STRUCTURE" : "Additionally, paths for input and output directories are required.",
+  "SW_NEW_CONTAINER_FORMAT_DOCKER" : "EaaS can process Docker images from the Docker Hub or in the form of tar-archives generated with docker save. Hub hosted images are referenced via its name and tag, tar-archives via an URL pointing towards it. Additionally a command can be specified. If no command is given the default image entrypoint is used.",
+  "SW_NEW_CONTAINER_FORMAT_SINGULARITY" : "EaaS processes Singularity images in the standard Singularity Format (http://singularity.lbl.gov/docs-build-container). Additionally a command can be specified, otherwise the default singularity runscript is used.",
+  "SW_NEW_CONTAINER_FORMAT_RUNC" : "(WIP) needs clarification, tar-archive or image file",
+  "SW_NEW_CONTAINER_ARCHIVE_T" : "Type",
+  "SW_NEW_CONTAINER_ENVIRONMENT_H" : "Environment variables",
+  "SW_NEW_CONTAINER_ENVIRONMENT_NOTE" : "Enter environment variables for to be set inside the container",
+  "SW_NEW_CONTAINER_ENVIRONMENT_PH" : "YOURVAR=value",
+
+  "SW_NEW_CONTAINER_ARGUMENTS_H" : "Process",
+  "SW_NEW_CONTAINER_ARGUMENTS_NOTE" : "Enter container start script and arguments",
+  "SW_NEW_CONTAINER_ARGUMENTS_PH" : "cmdl / args",
 
   "EDITENV_L" : "Edit Environment",
   "EDITENV_ID": "ID",
@@ -237,5 +274,16 @@
   "CONFIRM_SNAPSHOT_H" : "Save Environment",
   "CONFIRM_SNAPSHOT_T" : "Please make sure to shutdown the guest operating system before creating an snapshot. ",
   "CONFIRM_SNAPSHOT_OK" : "Continue",
-  "CONFIRM_SNAPSHOT_CANCEL" : "Cancel"
+  "CONFIRM_SNAPSHOT_CANCEL" : "Cancel",
+
+  "EDIT_CONTAINER_L" : "Edit container",
+  "EDIT_CONTAINER_ID" : "ID",
+  "EDIT_CONTAINER_NAME" : "Name",
+  "EDIT_CONTAINER_INPUT" : "Input folder",
+  "EDIT_CONTAINER_INPUT_PH" : "path within the container",
+  "EDIT_CONTAINER_OUTPUT" : "Output folder",
+  "EDIT_CONTAINER_OUTPUT_PH" : "path within the container",
+  "EDIT_CONTAINER_HELPTEXT" : "Description",
+  "EDIT_CONTAINER_CANCEL" : "Cancel",
+  "EDIT_CONTAINER_SAVE" : "Save"
 }

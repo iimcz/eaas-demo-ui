@@ -1,9 +1,11 @@
 
-<h2 class="m-t-0" ng-if="!standardEnvsOverviewCtrl.showObjects">{{'CHOOSE_ENV_L' | translate}}</h2>
+<h2 class="m-t-0" ng-if="!standardEnvsOverviewCtrl.showObjects && !standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_L' | translate}}</h2>
 <h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showObjects">{{'CHOOSE_OBJENV_L' | translate}}</h2>
+<h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_CONTAINER_L' | translate}}</h2>
+
 
 <table id="standard-envs-overview-table" st-table="displayEnvs"
-       st-safe-src="standardEnvsOverviewCtrl.showObjects?standardEnvsOverviewCtrl.objEnvs:standardEnvsOverviewCtrl.envs"
+       st-safe-src="standardEnvsOverviewCtrl.showObjects?standardEnvsOverviewCtrl.objEnvs:(standardEnvsOverviewCtrl.showContainers?standardEnvsOverviewCtrl.containerEnvs:standardEnvsOverviewCtrl.envs)"
        class="table">
     <thead>
     <tr>
@@ -19,14 +21,35 @@
         <td>
             <b>{{row.title}}</b>
             <br/>
-            <a ui-sref="wf-s.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_PROPOSAL'
+
+            <!--Start-->
+            <a ui-sref="wf-s.container({envId: row.envId})" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN'
                 | translate}}</a>
-            <a ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
+            <a ui-sref="wf-s.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_PROPOSAL'
                 | translate}}</a>
-            <a href="#" ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a>
-            <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'
+
+
+            <!--Edit-->
+            <a ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})"
+               ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_EDIT'
                 | translate}}</a>
-            <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
+
+            <a ui-sref="wf-s.edit-container({envId: row.envId})"
+               ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_EDIT'
+                | translate}}</a>
+
+            <!--Export-->
+            <a href="#" ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)" ng-if="!standardEnvsOverviewCtrl.showContainers">[export]</a>
+
+            <!--Delete-->
+            <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_DEL'
+                | translate}}</a>
+            <a href="#" ng-if="standardEnvsOverviewCtrl.showContainers" ng-click="standardEnvsOverviewCtrl.deleteContainer(row.envId)">{{'CHOOSE_ENV_DEL'
+                | translate}}</a>
+
+
+            <!--Software-->
+            <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_ADDSW'
                 | translate}}</a>
             <br>
             <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
