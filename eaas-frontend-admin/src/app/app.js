@@ -1454,18 +1454,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             }
                         };
                         vm.envs = environmentList.data.environments;
-
-                            for (let i = 0; i < vm.envs.length; i++) {
-                                console.log("!!!!! env:" + vm.envs[i].envId);
-                            }
-
                         vm.objEnvs = objectEnvironmentList.data.environments;
                         vm.containerEnvs = containerEnvironmentList.data.environments;
-
-                            for (let i = 0; i < vm.containerEnvs.length; i++) {
-                                console.log("!!!!! container: " + vm.containerEnvs[i].envId);
-                            }
-
                         vm.showObjects = $stateParams.showObjects;
                         vm.showContainers = $stateParams.showContainers;
                         }],
@@ -2138,9 +2128,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
                         window.onunload = function() {
                             window.onbeforeunload = null;
-                        }
+                        };
 
-                        envList = containerEnvironmentList.data.environments;
+                        var envList = containerEnvironmentList.data.environments;
                         console.log(envList);
                         vm.env = null;
 
@@ -2207,7 +2197,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 this.run = function()
                                 {
                                     confirmStartFn(this.inputs);
-                                }
+                                };
                                 this.cancel = function()
                                 {
                                     $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
