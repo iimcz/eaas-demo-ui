@@ -2114,6 +2114,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         function ($rootScope, $scope, $sce, $state, $stateParams, $translate, localConfig, growl, $uibModal, containerEnvironmentList) {
                         var vm = this;
 
+                        $("#container-stopped").hide();
+
                         window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
                         eaasClient.onError = function(message) {
                             window.onbeforeunload = null;
