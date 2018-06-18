@@ -72,13 +72,13 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         postReq.userId = $stateParams.userId;
         postReq.envId = $stateParams.envId;
 
-        waitModal = $uibModal.open({
+        var waitModal = $uibModal.open({
             animation: true,
             templateUrl: 'partials/save-wait-dialog.html'
         });
 
         window.onbeforeunload = null;
-        snapshotDoneFunc = function(data, status) {
+        var snapshotDoneFunc = function(data, status) {
             waitModal.close();
             $uibModal.open({
                 animation: true,

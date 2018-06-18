@@ -15,7 +15,7 @@ var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var ENV = process.env.npm_lifecycle_event;
 var isProd = ENV === 'build';
 
-var PRODUCTION_BASE_PATH = '/admin/';
+var PRODUCTION_BASE_PATH = '';
 
 module.exports = function makeWebpackConfig() {
   /**
@@ -43,7 +43,7 @@ module.exports = function makeWebpackConfig() {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8080/',
+    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8081/',
 
     // Filename for entry points
     // Only adds hash in build mode
