@@ -192,12 +192,12 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                         return;
                     }
 
-                    postObj = {};
+                    var postObj = {};
                     postObj.objectId = $stateParams.objectId;
                     postObj.driveId = window.eaasClient.driveId;
                     postObj.label = newMediumLabel;
 
-                    changeSuccsessFunc = function(data, status) {
+                    var changeSuccsessFunc = function(data, status) {
                         growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
                         currentMediumLabel = newMediumLabel;
                         $scope.$close();

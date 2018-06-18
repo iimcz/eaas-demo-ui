@@ -1693,6 +1693,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     if(!this.objectId)
                                         this.objectId = $stateParams.objectId;
 
+
                                     this.changeMedium = function(newMediumLabel) {
                                         if (newMediumLabel == null) {
                                             growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
@@ -1702,7 +1703,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         this.isChangeMediaSubmitting = true;
 
                                         var postObj = {};
-                                        postObj.objectId = $stateParams.objectId;
+                                        postObj.objectId = this.objectId;
+
                                         postObj.driveId = window.eaasClient.driveId;
                                         postObj.label = newMediumLabel;
 
