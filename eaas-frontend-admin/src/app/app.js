@@ -1091,12 +1091,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         };
 
                         vm.addHandle = function () {
+                            jQuery.when(
                             $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
                                 handle: document.getElementById("addHandle").value,
                                 handleValue: document.getElementById("addHandleValue").value
+                            })
+                        ).done(function () {
+                                $state.reload()
                             });
-
-                            $state.reload();
                         };
 
                     },
@@ -1880,8 +1882,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     vm.handle = $stateParams.handle;
 
                     vm.deleteHandle = function () {
-                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))
-                        $state.go('wf-s.handles', {reload: true});
+                        jQuery.when(
+                            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))).done(
+                            function () {
+                                $state.go('wf-s.handles', {reload: true});
+                            })
                     };
 
                     vm.showHandleValue = function () {
@@ -1891,14 +1896,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     };
 
                     vm.editHandle = function () {
-                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/modifyHandle", encodeURI($stateParams.handle)), {
-                            handle: $stateParams.handle,
-                            handleValue: document.getElementById("newHandleValue").value
+                        jQuery.when(
+                            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/modifyHandle", encodeURI($stateParams.handle)), {
+                                handle: $stateParams.handle,
+                                handleValue: document.getElementById("newHandleValue").value
+                            }),
+                            vm.handleValue = $stateParams.handle
+                        ).done(function () {
+                            $state.go('wf-s.edit-handle', $stateParams, {reload: true})
                         });
 
-                        vm.handleValue = $stateParams.handle;
 
-                        $state.go('wf-s.edit-handle', $stateParams, {reload: true});
                     };
                 }],
                 controllerAs: "handleOverview"
