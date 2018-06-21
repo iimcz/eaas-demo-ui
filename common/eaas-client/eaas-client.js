@@ -496,31 +496,43 @@ EaasClient.Client = function (api_entrypoint, container) {
                 var eaasClientPath = scripts[prop].src;
             }
         }
-        var xpraPath = eaasClientPath.substring(0, eaasClientPath.indexOf(searchingAim)) + "xpra/";
-
+        if(typeof eaasClientPath == "undefined") {
+            xpraPath = "xpra/";
+        } else {
+            var xpraPath = eaasClientPath.substring(0, eaasClientPath.indexOf(searchingAim)) + "xpra/";
+        }
         jQuery.when(
-            jQuery.getScript(xpraPath + '/eaas-xpra.js'),
-            jQuery.getScript(xpraPath + '/js/lib/bencode.js'),
             jQuery.getScript(xpraPath + '/js/lib/zlib.js'),
-            jQuery.getScript(xpraPath + '/js/lib/forge.js'),
-            jQuery.getScript(xpraPath + '/js/lib/wsworker_check.js'),
-            jQuery.getScript(xpraPath + '/js/lib/broadway/Decoder.js'),
-            jQuery.getScript(xpraPath + '/js/lib/aurora/aurora-xpra.js'),
-            jQuery.getScript(xpraPath + '/js/Keycodes.js'),
-            jQuery.getScript(xpraPath + '/js/Utilities.js'),
-            jQuery.getScript(xpraPath + '/js/Notifications.js'),
-            jQuery.getScript(xpraPath + '/js/MediaSourceUtil.js'),
-            jQuery.getScript(xpraPath + '/js/Window.js'),
-            jQuery.getScript(xpraPath + '/js/Protocol.js'),
-            jQuery.getScript(xpraPath + '/js/Client.js'),
 
+            jQuery.getScript(xpraPath + '/js/lib/aurora/aurora.js'),
+            jQuery.getScript(xpraPath + '/js/lib/lz4.js'),
+            jQuery.getScript(xpraPath + '/js/lib/jquery-ui.js'),
+            jQuery.getScript(xpraPath + '/js/lib/jquery.ba-throttle-debounce.js'),
             jQuery.Deferred(function (deferred) {
                 jQuery(deferred.resolve);
-            })
-        ).done(function () {
-            loadXpra(xpraUrl, xpraPath, _this.xpraConf);
-        })
+            })).done(function () {
+            jQuery.when(
+                jQuery.getScript(xpraPath + '/js/lib/bencode.js'),
+                jQuery.getScript(xpraPath + '/js/lib/forge.js'),
+                jQuery.getScript(xpraPath + '/js/lib/wsworker_check.js'),
+                jQuery.getScript(xpraPath + '/js/lib/broadway/Decoder.js'),
+                jQuery.getScript(xpraPath + '/js/lib/aurora/aurora-xpra.js'),
+                jQuery.getScript(xpraPath + '/eaas-xpra.js'),
+                jQuery.getScript(xpraPath + '/js/Keycodes.js'),
+                jQuery.getScript(xpraPath + '/js/Utilities.js'),
+                jQuery.getScript(xpraPath + '/js/Notifications.js'),
+                jQuery.getScript(xpraPath + '/js/MediaSourceUtil.js'),
+                jQuery.getScript(xpraPath + '/js/Window.js'),
+                jQuery.getScript(xpraPath + '/js/Protocol.js'),
+                jQuery.getScript(xpraPath + '/js/Client.js'),
 
+                jQuery.Deferred(function (deferred) {
+                    jQuery(deferred.resolve);
+                })).done(function () {
+                    loadXpra(xpraUrl, xpraPath, _this.xpraConf);
+                }
+            )
+        })
     };
 
     this.prepareAndLoadWebEmulator = function (url) {
