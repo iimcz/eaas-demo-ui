@@ -1,0 +1,111 @@
+<h2 class="m-t-0">{{'CHAR_L' | translate}}</h2>
+
+<div style="text-align: right;">
+    <button class="btn btn-primary" type="button" ng-click="editObjectCharacterizationCtrl.saveCharacterization()">{{'CHAR_SAVE' | translate}}</button>
+    <button class="btn btn-primary" type="button" ng-click="editObjectCharacterizationCtrl.resetChanges()">{{'CHAR_RESET_CHANGES' | translate}}</button>
+    <button class="btn btn-default" type="button" ui-sref="wf-s.object-overview">{{'CHAR_CANCEL' | translate}}</button>
+</div>
+<br>
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        {{'CHAR_OBJ_INFORMATION' | translate}}
+    </div>
+    <div class="panel-body">
+        <p>
+            <b>Object ID:</b> {{editObjectCharacterizationCtrl.metadata.title}}
+        </p>
+        <br/>
+        <p ng-bind-html="editObjectCharacterizationCtrl.metadata.summary"></p>
+        </p>
+    </div>
+
+    <br/>
+    <div class="panel-heading">
+        {{'CHAR_ENV_LIST' | translate}}
+    </div>
+    <div class="panel-body">
+        <div class="row">
+
+            <div style="text-align: right; margin-bottom: 15px;">
+                <div style="display: inline-block;">
+                    <button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization(false, true)">
+                        <span class="glyphicon glyphicon-cloud-download"></span> {{'CHAR_UPDATE_PROPOSAL' | translate}}</button>
+                </div>
+
+                <div style="display: inline-block;">
+                    <button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.openAddEnvDialog()">
+                        <span style="color: green" class="glyphicon glyphicon-plus"></span> {{'CHAR_ADD' | translate}}</button>
+                </div>
+            </div>
+
+            <ul class="list-group-item" ng-sortable="{animation: 150, handle: '.handle'}">
+                <li class="list-group-item" ng-repeat="env in editObjectCharacterizationCtrl.objEnvironments">
+                    <div class="handle btn btn-primary"><i class="glyphicon glyphicon-move"></i></div>
+                    <div style="display: inline-block;">{{env.label}} <span ng-if="env.objectEnvironment">(OE)</span></div>
+                    <div class="btn btn-default" style="float: right; color: #CC322E;" ng-click="editObjectCharacterizationCtrl.removeEnvironment(env)">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </div>
+                    <div style="float: right;"><button type="submit" class="btn btn-primary"
+                                                       ui-sref="wf-s.emulator({envId: env.id,
+												type: 'objectEnvironment',
+												objectId: editObjectCharacterizationCtrl.objectId,
+												returnToObjects: true})" >Run</button>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <br/>
+    <div class="panel-heading">
+        {{'CHAR_CLASS_INFORMATION' | translate}}
+    </div>
+    <div class="panel-body">
+        <div style="text-align: right; margin-bottom: 15px;">
+            <div style="display: inline-block;">
+                <button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization(true, false)">
+                    <span class="glyphicon glyphicon-cloud-download"></span> {{'CHAR_UPDATE_CLASS' | translate}}</button>
+            </div>
+        </div>
+
+        <div ng-show="editObjectCharacterizationCtrl.suggested.length > 0">
+            <p >
+                <b>{{'CHAR_MISSING' | translate}}:</b>
+            </p>
+            <ul>
+                <li ng-repeat="env in editObjectCharacterizationCtrl.suggested">{{env.label}}
+                    <ul>
+                        <li><b>Default Environment:</b> {{env.defaultEnvironment.label}}
+                            <a ng-click="editObjectCharacterizationCtrl.openDefaultEnvDialog(env.id, env.label)">Edit/Assign</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div ng-show="editObjectCharacterizationCtrl.fileFormats.length > 0">
+            <p >
+                <b>{{'CHAR_FORMATS' | translate}}:</b>
+            </p>
+            <ul>
+                <li ng-repeat="fmt in editObjectCharacterizationCtrl.fileFormats">
+                    <b>{{fmt.name}}</b> ({{fmt.puid}})
+                    <ul>
+                        <li><b>File count:</b> {{fmt.count}}</li>
+                        <li><b>File dates:</b> {{fmt.fromDate | date:'medium'}} - {{fmt.toDate | date:'medium'}}</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<br>
+
+
+<div class="fullscreen-overlay-spinner">
+    <img style="margin: -72px 0 0 -72px;" height="144" width="144" src="img/gears.gif" />
+</div>
