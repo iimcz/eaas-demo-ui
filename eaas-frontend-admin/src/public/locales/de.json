@@ -28,9 +28,9 @@
   "ACTIONS_SAVE_ENV" : "Umgebung speichern",
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
+  "ACTIONS_SNAPSHOT": "Snapshot",
 
   "CONTAINER_ACTIONS_ABORT" : "Abbrechen",
-
   "CONTAINER_STOPPED" : "Beendet",
   "CONTAINER_STOPPED_T" : "Container Ausführung beendet.",
 
@@ -173,6 +173,14 @@
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
+  "EDITENV_ENABLE_INTERNET" : "Internetzugang aktivieren",
+  "EDITENV_ENABLE_SERVERMODE" : "Nutzung als Server ermöglichen",
+  "EDITENV_ENABLE_SOCKS" : "SOCKS5 Proxy aktivieren",
+  "EDITENV_SERVER_IP" : "Interne Server Address",
+  "EDITENV_SERVER_PORT" : "Interner Server Port",
+  "EDITENV_GW_PRIVATE_IP" : "Interne IP des Gateways",
+  "EDITENV_GW_PRIVATE_MASK" : "Interne IP Maske des Gateways (dezimal)",
+
 
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
@@ -200,6 +208,7 @@
   "ADDSW_DIALOG_CANCEL" : "Abbrechen",
 
   "SAVEENV_L" : "Umgebung speichern",
+  "SAVEENV_CHECKPOINT_L" : "Snapshot speichern",
   "SAVEENV_NAME" : "Name",
   "SAVEENV_NAME_PH" : "Name der Umgebung..",
   "SAVEENV_DESC" : "Beschreibung",

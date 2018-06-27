@@ -27,6 +27,7 @@
   "ACTIONS_CHANGE_MEDIA" : "Change media",
   "ACTIONS_CTRLALTDEL" : "Send Ctr-Alt-Del",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
+  "ACTIONS_SNAPSHOT": "Snapshot",
 
   "CONTAINER_ACTIONS_ABORT" : "Abort",
 
@@ -173,6 +174,13 @@
   "EDITENV_OBJ_DEPENDENCIES" : "Manually assigned objects",
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
+  "EDITENV_ENABLE_INTERNET" : "Enable Internet access",
+  "EDITENV_ENABLE_SERVERMODE" : "Enable server mode",
+  "EDITENV_ENABLE_SOCKS" : "use SOCKS5",
+  "EDITENV_SERVER_IP" : "Internal server IP",
+  "EDITENV_SERVER_PORT" : "Internal server port",
+  "EDITENV_GW_PRIVATE_IP" : "Internal gateway IP",
+  "EDITENV_GW_PRIVATE_MASK" : "Internal gateway IP mask(decimal)",
 
   "CHAR_L" : "Characterize object",
   "CHAR_ADD" : "Add environment",
@@ -200,6 +208,7 @@
   "ADDSW_DIALOG_CANCEL" : "Cancel",
 
   "SAVEENV_L" : "Save changes",
+  "SAVEENV_CHECKPOINT_L" : "Save Snapshot",
   "SAVEENV_NAME" : "Name",
   "SAVEENV_NAME_PH" : "Environment name",
   "SAVEENV_DESC" : "Description",

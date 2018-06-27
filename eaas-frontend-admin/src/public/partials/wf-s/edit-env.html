@@ -59,6 +59,44 @@
     </div>
 
     <div class="form-group">
+        <input type="checkbox" ng-model="editEnvCtrl.enableInternet">
+        <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
+    </div>
+
+    <div class="form-group">
+        <input type="checkbox" ng-model="editEnvCtrl.serverMode">
+        <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
+    </div>
+
+    <div ng-if="editEnvCtrl.serverMode">
+
+        <div class="form-group">
+            <input type="checkbox" ng-model="editEnvCtrl.enableSocks">
+            <label>{{'EDITENV_ENABLE_SOCKS' | translate}}</label>
+        </div>
+
+        <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
+            <label>{{'EDITENV_SERVER_IP' | translate}}</label> <input type="text"
+                                                                      class="form-control" ng-model="editEnvCtrl.serverIp">
+        </div>
+
+        <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
+            <label>{{'EDITENV_SERVER_PORT' | translate}}</label>
+            <input type="text" class="form-control" ng-model="editEnvCtrl.serverPort">
+        </div>
+
+        <div class="form-group">
+            <label>{{'EDITENV_GW_PRIVATE_IP' | translate}}</label>
+            <input type="text" class="form-control" ng-model="editEnvCtrl.gwPrivateIp">
+        </div>
+
+        <div class="form-group">
+            <label>{{'EDITENV_GW_PRIVATE_MASK' | translate}}</label>
+            <input type="text" class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
+        </div>
+    </div>
+
+    <div class="form-group">
         <input type="checkbox" ng-model="editEnvCtrl.useXpra">
         <label>{{'EDITENV_XPRA' | translate}}</label>
     </div>
