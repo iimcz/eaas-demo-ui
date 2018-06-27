@@ -1,4 +1,9 @@
 # Quick start
+0) Create config.json from config.json.template
+
+*$PROJECTDIR$/src/public/config.json*
+
+
 1) Retrieve dependencies
 
 ```
