@@ -1332,7 +1332,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             }
                         }
 
-                        if(this.env === null)
+                        if(!this.env)
                         {
                             growl.error("Environment not found");
                             $state.go('wf-s.standard-envs-overview', {}, {reload: true});
@@ -1344,6 +1344,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         this.enableRelativeMouse = this.env.enableRelativeMouse;
                         this.enablePrinting = this.env.enablePrinting;
                         this.nativeConfig = this.env.nativeConfig;
+                        this.enableInternet = this.env.enableInternet;
+                        this.serverMode = this.env.serverMode;
+                        this.enableSocks = this.env.enableSocks;
+                        this.serverIp = this.env.serverIp;
+                        this.serverPort = this.env.serverPort;
+                        this.gwPrivateIp = this.env.gwPrivateIp;
+                        this.gwPrivateMask = this.env.gwPrivateMask;
                         this.useXpra = this.env.useXpra;
 
                         this.shutdownByOs = this.env.shutdownByOs;
@@ -1373,6 +1380,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 shutdownByOs: this.shutdownByOs,
                                 os: this.os,
                                 userTag: this.userTag,
+                                useXpra : this.useXpra,
+                                enableInternet: this.enableInternet,
+                                serverMode: this.serverMode,
+                                enableSocks: this.enableSocks,
+                                serverIp : this.serverIp,
+                                serverPort : this.serverPort,
+                                gwPrivateIp: this.gwPrivateIp,
+                                gwPrivateMask: this.gwPrivateMask
                                 nativeConfig: this.nativeConfig,
                                 useXpra : this.useXpra
                             }).then(function(response) {
@@ -1510,7 +1525,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/emulator.html",
-                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
+                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv', function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
                         window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
                         eaasClient.onError = function(message) {
@@ -1553,6 +1568,23 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         params.software = $stateParams.softwareId;
                         params.object = $stateParams.objectId;
                         params.userId = $stateParams.userId;
+                        if(chosenEnv.data)
+                        {
+                            params.hasTcpGateway = chosenEnv.data.serverMode;
+                            params.hasInternet = chosenEnv.data.enableInternet;
+                            if(params.hasTcpGateway)
+                            {
+                                params.tcpGatewayConfig = {
+                                    socks : chosenEnv.data.enableSocks,
+                                    gwPrivateIp : chosenEnv.data.gwPrivateIp,
+                                    gwPrivateMask: chosenEnv.data.gwPrivateMask,
+                                    serverPort : chosenEnv.data.serverPort,
+                                    serverIp : chosenEnv.data.serverIp
+                                };
+                            }
+                        }
+                        console.log(params);
+
 
                         if($stateParams.type == 'saveUserSession')
                         {
@@ -1567,10 +1599,23 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 $("#emulator-loading-container").hide();
                                 $("#emulator-container").show();
 
-                                   if (eaasClient.params.pointerLock === "true") {
-                                       growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                                       BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
-                                   }
+                                console.log(eaasClient.networkTcpInfo);
+                                if(eaasClient.networkTcpInfo)
+                                {
+                                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/,'http'));
+
+                                    console.log(url.hostname);
+                                    console.log(url.pathname);
+                                    var pathArray = url.pathname.split('/');
+                                    console.log(pathArray);
+
+                                    $("#emulator-info-container").text("connect to: " + url.hostname + " protocol " + pathArray[1] + " port " + pathArray[2]);
+                                }
+
+                                if (eaasClient.params.pointerLock === "true") {
+                                   growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                   BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                }
 
                                 // Fix to close emulator on page leave
                                 $scope.$on('$locationChangeStart', function(event) {
@@ -1723,6 +1768,28 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 },
                                 controllerAs: "openChangeMediaDialogCtrl"
                             });
+                        };
+
+                        vm.checkpoint = function ()
+                        {
+                            window.onbeforeunload = null;
+                            window.eaasClient.disconnect();
+                            window.eaasClient.checkpoint({
+                                type: "newEnvironment",
+                                envId: $stateParams.envId,
+                           })
+                           .done(function(newEnvId) {
+                                if(!newEnvId)
+                                {
+                                    growl.error(status, {title: "Snapshot failed"});
+                                    $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                    window.eaasClient.release();
+                                }
+                                console.log("Checkpointed environment saved as: " + newEnvId);
+                                growl.success(status, {title: "New snapshot created."});
+                                window.eaasClient.release();
+                                $state.go('wf-s.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
+                           });
                         };
 
                         vm.openSaveEnvironmentDialog = function() {
