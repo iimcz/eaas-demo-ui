@@ -3,5 +3,16 @@
   "stopEmulatorRedirectURL":"http://127.0.0.1:8080/demo-ui",
   "dashboardClusterAPIBaseURL" : "http://127.0.0.1:8080/eaas/api/v1/clusters/",
   "dashboardAccessToken": "secret",
-  "baseEmulatorUrl" : "http://localhost:8080/demo-ui/"
+  "baseEmulatorUrl" : "http://localhost:8080/demo-ui/",
+
+  "features" : {
+      "screenshots" : false,
+      "snapshots": false,
+      "containers" : false,
+      "objectEnvironments": true,
+      "objects" : true,
+      "network" : false,
+      "software" : true,
+      "handle" : false
+    }
 }

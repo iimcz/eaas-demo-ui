@@ -21,6 +21,7 @@ import 'chart.js';
 import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
+import 'angular-jwt'
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
@@ -67,9 +68,10 @@ import '../../../common/eaas-client/guacamole/guacamole.css';
 import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
-export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
+export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
-                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
+                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules',
+                                   'angular-jwt'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -84,11 +86,16 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     }
 })
 
+
     .run(function($rootScope, $state) {
         $rootScope.emulator = {state : ''};
 
         $rootScope.chk = {};
         $rootScope.chk.transitionEnable = true;
+
+//        localStorage.setItem('id_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE');
+//       localStorage.removeItem('id_token');
+
 
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
             if (!$rootScope.chk.transitionEnable) {
@@ -319,7 +326,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     };
 }])
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide) {
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -350,6 +358,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
     var httpResponseErrorModal = null;
 
+
+    // Please note we're annotating the function so that the $injector works when the file is minified
+    jwtOptionsProvider.config({
+      whiteListedDomains: "localhost",
+      tokenGetter: [ function() {
+        return localStorage.getItem('id_token');
+      }]
+    });
+
+
+    $httpProvider.interceptors.push('jwtInterceptor');
     // Add a global AJAX error handler
     $httpProvider.interceptors.push(function($q, $injector, $timeout) {
         return {
@@ -429,6 +448,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     });
                 };
 
+                vm.config = localConfig.data;
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: true,
@@ -893,7 +913,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         templateUrl: 'partials/wf-s/help-emil-dialog.html'
                     });
                 }
-                
+
+                vm.config = localConfig.data;
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: false,
@@ -1391,7 +1412,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 serverIp : this.serverIp,
                                 serverPort : this.serverPort,
                                 gwPrivateIp: this.gwPrivateIp,
-                                gwPrivateMask: this.gwPrivateMask
+                                gwPrivateMask: this.gwPrivateMask,
                                 nativeConfig: this.nativeConfig,
                                 useXpra : this.useXpra
                             }).then(function(response) {
@@ -1529,7 +1550,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/emulator.html",
-                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv', function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
+                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
+                    function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
                         window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
                         eaasClient.onError = function(message) {
@@ -1637,6 +1659,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
                         var vm = this;
 
+                        vm.config = localConfig.data;
                         vm.type = $stateParams.type;
                         vm.emulator = $rootScope.emulator;
 
