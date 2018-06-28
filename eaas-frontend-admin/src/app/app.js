@@ -839,14 +839,18 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         nativeConfig: vm.native_config,
                                         rom: vm.rom
                                     }).then(function(response) {
-                                    if(response.data.status == "0") {
-                                        var taskId = response.data.taskId;
-                                       var modal = $uibModal.open({
-                                            animation: true,
-                                            templateUrl: 'partials/import-wait.html'
-                                        });
-                                        vm.checkState(taskId, modal);
-                                    }
+                                        if(response.data.status == "0") {
+                                            var taskId = response.data.taskId;
+                                           var modal = $uibModal.open({
+                                                animation: true,
+                                                templateUrl: 'partials/import-wait.html'
+                                            });
+                                            vm.checkState(taskId, modal);
+                                        }
+                                        else
+                                        {
+                                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                        }
                                 }, function(response) {
                                     console.log("error");
                                 });
