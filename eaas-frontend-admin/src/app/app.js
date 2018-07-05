@@ -1678,8 +1678,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             });
                         };
 
-                        
-                        if(typeof chosenEnv.data.connectEnvs == "undefined" || !chosenEnv.data.connectEnvs){
+                        //todo optimize this if else
+                        if (typeof chosenEnv.data == "undefined") {
+                            vm.runEmulator([]);
+                        }
+                        else if (typeof chosenEnv.data.connectEnvs == "undefined" || !chosenEnv.data.connectEnvs) {
                             console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
                             vm.runEmulator([]);
                         }
@@ -1712,7 +1715,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             });
 
                             modal.result.then({}, function () {
-                                //Get triggers when modal is dismissed (user chooses on close button or clicks out of modal)
+                                //Get triggers when modal is dismissed (user chooses close button or clicks out of modal borders)
                                 let isObjectEnv = false;
                                 if ($stateParams.objectId != null)
                                     isObjectEnv = true;
