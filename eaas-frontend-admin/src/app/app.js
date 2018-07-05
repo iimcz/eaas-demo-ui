@@ -26,6 +26,7 @@ import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
 
+
 /*
  * Import legacy emulator libraries
  */
@@ -85,8 +86,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         addButtonText: '@'
     }
 })
-
-
     .run(function($rootScope, $state) {
         $rootScope.emulator = {state : ''};
 
@@ -337,7 +336,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     }]);
 
     /*
-     * Internationalization 
+     * Internationalization
      */
     $translateProvider.useStaticFilesLoader({
       prefix: 'locales/',
@@ -740,7 +739,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                     templateUrl: 'partials/wf-i/sw-ingest.html',
                     controller: function ($stateParams, $state, $http, localConfig, growl, objectList, softwareObj, osList, REST_URLS) {
                         var vm = this;
-                        
+
                         vm.isNewSoftware = $stateParams.swId === "-1";
 
                         if (vm.isNewSoftware) {
@@ -758,7 +757,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         vm.save = function() {
                             if("softwareArchiveId" in localConfig.data)
                                  vm.softwareObj.archiveId = localConfig.data.softwareArchiveId;
-                            
+
                             vm.softwareObj.objectId = vm.selectedObject.id;
                             vm.softwareObj.label = vm.selectedObject.title;
 
@@ -777,12 +776,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                 if (response.data.status === "0") {
                                     growl.success(response.data.message);
                                     $state.go('wf-i.sw-overview', {}, {reload: true});
-                                    
+
                                 } else {
                                     growl.error(response.data.message, {title: 'Error ' + response.data.status});
                                 }
                             });
-                            
                         };
                     },
                     controllerAs: "swIngestCtrl"
@@ -1377,6 +1375,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         this.gwPrivateIp = this.env.gwPrivateIp;
                         this.gwPrivateMask = this.env.gwPrivateMask;
                         this.useXpra = this.env.useXpra;
+                        this.connectEnvs = this.env.connectEnvs;
 
                         this.shutdownByOs = this.env.shutdownByOs;
                         this.os = this.env.os;
@@ -1414,8 +1413,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                 gwPrivateIp: this.gwPrivateIp,
                                 gwPrivateMask: this.gwPrivateMask,
                                 nativeConfig: this.nativeConfig,
-                                useXpra : this.useXpra
-                            }).then(function(response) {
+                                connectEnvs : this.connectEnvs
+                        }).then(function(response) {
                                 if (response.data.status === "0") {
                                     growl.success($translate.instant('JS_ENV_UPDATE'));
                                 } else {
@@ -1550,105 +1549,176 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/emulator.html",
-                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
-                    function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
-                        window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+                    controller: ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList','objectEnvironmentList','$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
+                    function ($rootScope, $uibModal, $scope, $sce, environmentList, objectEnvironmentList, $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
 
-                        eaasClient.onError = function(message) {
-                            $state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
-                        };
 
-                        window.onbeforeunload = function(e) {
-                            var dialogText = $translate.instant('MESSAGE_QUIT');
-                            e.returnValue = dialogText;
-                            return dialogText;
-                        };
+                        var vm = this;
+                        vm.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
 
-                        window.onunload = function() {
-                            window.onbeforeunload = null;
-                        }
+                        vm.runEmulator = function(selectedEnvs) {
 
-                        this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
-                        if($stateParams.objectId)
-                            this.link += "&objectId=" + $stateParams.objectId;
+                            let type = "machine";
 
-                        window.eaasClient.onEmulatorStopped = function() {
-                            if($rootScope.emulator.state == 'STOPPED')
-                                return;
+                            window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
-                            $rootScope.emulator.state = 'STOPPED';
-                            $("#emulator-container").hide();
-                            $("#emulator-loading-container").show();
-                            $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
-                            $scope.$apply();
-                        };
+                            eaasClient.onError = function (message) {
+                                $state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
+                            };
 
-                        // fallback to defaults when no cookie is found
-                        var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
+                            window.onbeforeunload = function (e) {
+                                var dialogText = $translate.instant('MESSAGE_QUIT');
+                                e.returnValue = dialogText;
+                                return dialogText;
+                            };
 
-                        var params = {
-                            keyboardLayout: kbLayoutPrefs.language.name,
-                            keyboardModel: kbLayoutPrefs.layout.name
-                        };
+                            window.onunload = function () {
+                                window.onbeforeunload = null;
+                            };
 
-                        params.software = $stateParams.softwareId;
-                        params.object = $stateParams.objectId;
-                        params.userId = $stateParams.userId;
-                        if(chosenEnv.data)
-                        {
-                            params.hasTcpGateway = chosenEnv.data.serverMode;
-                            params.hasInternet = chosenEnv.data.enableInternet;
-                            if(params.hasTcpGateway)
-                            {
-                                params.tcpGatewayConfig = {
-                                    socks : chosenEnv.data.enableSocks,
-                                    gwPrivateIp : chosenEnv.data.gwPrivateIp,
-                                    gwPrivateMask: chosenEnv.data.gwPrivateMask,
-                                    serverPort : chosenEnv.data.serverPort,
-                                    serverIp : chosenEnv.data.serverIp
-                                };
+                            this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
+                            if ($stateParams.objectId)
+                                this.link += "&objectId=" + $stateParams.objectId;
+
+                            window.eaasClient.onEmulatorStopped = function () {
+                                if ($rootScope.emulator.state == 'STOPPED')
+                                    return;
+
+                                $rootScope.emulator.state = 'STOPPED';
+                                $("#emulator-container").hide();
+                                $("#emulator-loading-container").show();
+                                $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+                                $scope.$apply();
+                            };
+
+                            // fallback to defaults when no cookie is found
+                            var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {
+                                language: {name: 'us'},
+                                layout: {name: 'pc105'}
+                            };
+
+                            let params = {};
+                            if (chosenEnv.data) {
+                                params.hasTcpGateway = chosenEnv.data.serverMode;
+                                params.hasInternet = chosenEnv.data.enableInternet;
+                                if (params.hasTcpGateway) {
+                                    params.tcpGatewayConfig = {
+                                        socks: chosenEnv.data.enableSocks,
+                                        gwPrivateIp: chosenEnv.data.gwPrivateIp,
+                                        gwPrivateMask: chosenEnv.data.gwPrivateMask,
+                                        serverPort: chosenEnv.data.serverPort,
+                                        serverIp: chosenEnv.data.serverIp
+                                    };
+                                }
                             }
-                        }
-                        console.log(params);
+                            console.log(params);
+
+                            var envs = [];
+                            for (let i = 0; i < selectedEnvs.length; i++) {
+                                //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
+                                let data = createData(selectedEnvs[i].envId, type, selectedEnvs[i].objectId, selectedEnvs[i].userId, selectedEnvs[i].softwareId);
+                                envs.push({data, visualize: false});
+                            }
 
 
-                        if($stateParams.type == 'saveUserSession')
-                        {
-                            params.lockEnvironment = true;
-                            console.log("locking user session");
-                        }
+                            let data = createData($stateParams.envId, type, $stateParams.objectId, $stateParams.userId, $stateParams.softwareId, kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name);
 
+                            if ($stateParams.type == 'saveUserSession') {
+                                data.lockEnvironment = true;
+                                console.log("locking user session");
+                            }
 
+                            function createData (envId, type, objectId, userId, softwareId, keyboardLayout, keyboardModel) {
+                                let data = {};
+                                data.type = type;
+                                data.environment = envId;
+                                data.object = objectId;
+                                data.userId = userId;
+                                data.software = softwareId;
 
-                        eaasClient.startEnvironment($stateParams.envId, params).then(function () {
-                            eaasClient.connect().then(function() {
-                                $("#emulator-loading-container").hide();
-                                $("#emulator-container").show();
-
-                                console.log(eaasClient.networkTcpInfo);
-                                if(eaasClient.networkTcpInfo)
-                                {
-                                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/,'http'));
-
-                                    console.log(url.hostname);
-                                    console.log(url.pathname);
-                                    var pathArray = url.pathname.split('/');
-                                    console.log(pathArray);
-
-                                    $("#emulator-info-container").text("connect to: " + url.hostname + " protocol " + pathArray[1] + " port " + pathArray[2]);
+                                if (typeof keyboardLayout != "undefined") {
+                                    data.keyboardLayout = keyboardLayout;
                                 }
 
-                                if (eaasClient.params.pointerLock === "true") {
-                                   growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                                   BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                if (typeof keyboardModel != "undefined") {
+                                    data.keyboardModel = keyboardModel;
                                 }
+                                return data;
+                            };
 
-                                // Fix to close emulator on page leave
-                                $scope.$on('$locationChangeStart', function(event) {
-                                    eaasClient.release();
+                            envs.push({data, visualize: true});
+
+                            eaasClient.start(envs, params).then(function () {
+                                eaasClient.connect().then(function () {
+                                    $("#emulator-loading-container").hide();
+                                    $("#emulator-container").show();
+
+                                    console.log(eaasClient.networkTcpInfo);
+                                    if (eaasClient.networkTcpInfo) {
+                                        var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
+
+                                        console.log(url.hostname);
+                                        console.log(url.pathname);
+                                        var pathArray = url.pathname.split('/');
+                                        console.log(pathArray);
+
+                                        $("#emulator-info-container").text("connect to: " + url.hostname + " protocol " + pathArray[1] + " port " + pathArray[2]);
+                                    }
+
+                                    if (eaasClient.params.pointerLock === "true") {
+                                        growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                        BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                    }
+
+                                    // Fix to close emulator on page leave
+                                    $scope.$on('$locationChangeStart', function (event) {
+                                        eaasClient.release();
+                                    });
                                 });
                             });
-                        });
+                        };
+
+                        
+                        if(typeof chosenEnv.data.connectEnvs == "undefined" || !chosenEnv.data.connectEnvs){
+                            console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
+                            vm.runEmulator([]);
+                        }
+                        else {
+                            let modal = $uibModal.open({
+                                templateUrl: 'partials/wf-s/connected-envs-modal.html',
+                                controller: function ($scope, $uibModalInstance) {
+                                    $scope.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
+                                    $scope.selected = [];
+                                    $scope.ok = function () {
+                                        $uibModalInstance.close();
+                                        vm.runEmulator($scope.selected);
+                                    };
+
+                                    $scope.cancel = function () {
+                                        $uibModalInstance.dismiss('cancel');
+                                    };
+
+                                    $scope.OnClickSelect = function (item) {
+                                        console.log("got item! " + item.envId);
+                                        $scope.selected.push(item)
+                                    };
+
+                                    $scope.OnRemoveSelect = function (item) {
+                                        var index = $scope.selected.indexOf(item);
+                                        $scope.selected.splice(index, 1);
+                                    }
+                                },
+                                controllerAs: "connectedEnvs"
+                            });
+
+                            modal.result.then({}, function () {
+                                //Get triggers when modal is dismissed (user chooses on close button or clicks out of modal)
+                                let isObjectEnv = false;
+                                if ($stateParams.objectId != null)
+                                    isObjectEnv = true;
+                                $state.go('wf-s.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
+                            });
+                        }
                     }],
                     controllerAs: "startEmuCtrl"
                 },
@@ -2008,6 +2078,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
         }
     });
-        
+
     growlProvider.globalTimeToLive(5000);
 }]);

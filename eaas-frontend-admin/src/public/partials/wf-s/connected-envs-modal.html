@@ -1,0 +1,22 @@
+
+<div class="modal-header">
+    <h3 class="modal-title">Connect additional environments</h3>
+</div>
+
+<div class="modal-body">
+
+        <ui-select multiple ng-model="selectedEnvs" theme="bootstrap" on-remove="OnRemoveSelect($item)" ui-outer-click="cancel()" on-select="OnClickSelect($item)"  close-on-select="true"  ng-disabled="disabled" style="width: 550px;" title="Choose environment">
+            <ui-select-match placeholder="Select environment or leave it empty...">
+                <p align="left"><br>ID: {{$item.envId}}<br>Title: {{$item.title}}}</p>
+            </ui-select-match>
+            <ui-select-choices repeat="item in (envs | filter: $select.search) track by item.envId">
+                ID:  {{item.envId}} <br>
+                Title: {{item.title}}
+            </ui-select-choices>
+        </ui-select>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

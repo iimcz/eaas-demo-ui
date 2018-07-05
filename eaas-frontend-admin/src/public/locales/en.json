@@ -137,6 +137,7 @@
   "EDITENV_OBJ_DEPENDENCIES" : "Manually assigned objects",
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
+  "EDITENV_CANCONNECTENVS": "Can be connected with other environments (Experimental)",
   "EDITENV_ENABLE_INTERNET" : "Enable Internet access",
   "EDITENV_ENABLE_SERVERMODE" : "Enable server mode",
   "EDITENV_ENABLE_SOCKS" : "use SOCKS5",

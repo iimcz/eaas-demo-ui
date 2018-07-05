@@ -32,6 +32,8 @@ EaasClient.Client = function (api_entrypoint, container) {
     var API_URL = api_entrypoint.replace(/([^:])(\/\/+)/g, '$1/').replace(/\/+$/, '');
 
     this.componentId = null;
+    this.componentId2 = null;
+    this.networkTcpInfo = null;
     this.networkId = null;
     this.driveId = null;
     this.params = null;
@@ -63,21 +65,26 @@ EaasClient.Client = function (api_entrypoint, container) {
     var emulatorState;
 
     this.pollState = function () {
-        $.get(API_URL + formatStr("/components/{0}/state", _this.componentId))
-            .then(function (data, status, xhr) {
-                emulatorState = data.state;
-                if (emulatorState == "OK")
-                    _this.keepalive();
-                else if (emulatorState == "STOPPED" || emulatorState == "FAILED") {
-                    _this.keepalive();
-                    if(_this.onEmulatorStopped)
-                        _this.onEmulatorStopped();
-                }
-                else if (emulatorState == "INACTIVE") {
-                    location.reload();
-                } else
-                    _this._onFatalError("Invalid component state: " + this.emulatorState);
-            }).fail(function () {
+
+        $.ajax({
+            type: "GET",
+            url: API_URL + formatStr("/components/{0}/state", _this.componentId),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
+            async: false,
+        }).then(function (data, status, xhr) {
+            emulatorState = data.state;
+            if (emulatorState == "OK")
+                _this.keepalive();
+            else if (emulatorState == "STOPPED" || emulatorState == "FAILED") {
+                _this.keepalive();
+                if(_this.onEmulatorStopped)
+                    _this.onEmulatorStopped();
+            }
+            else if (emulatorState == "INACTIVE") {
+                location.reload();
+            } else
+                _this._onFatalError("Invalid component state: " + this.emulatorState);
+        }).fail(function () {
             _this._onFatalError("connection failed")
         });
     };
@@ -106,13 +113,28 @@ EaasClient.Client = function (api_entrypoint, container) {
 
     this.keepalive = function () {
         var url = null;
+
         if (_this.networkId != null) {
+            if (typeof _this.envsComponentsData != "undefined"){
+                //FIXME we should send only one keepalive
+                for (let i = 0; i < _this.envsComponentsData.length; i++) {
+                    $.ajax({
+                        type: "POST",
+                        url: API_URL + formatStr("/components/{0}/keepalive", _this.envsComponentsData[i].id),
+                        headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+                    });
+                }
+            }
             url = formatStr("/networks/{0}/keepalive", _this.networkId);
         } else if (_this.componentId != null) {
             url = formatStr("/components/{0}/keepalive", _this.componentId);
         }
 
-        $.post(API_URL + url);
+        $.ajax({
+            type: "POST",
+            url: API_URL + url,
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+        });
     };
 
     this.establishGuacamoleTunnel = function (controlUrl) {
@@ -199,7 +221,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         var data = {};
         data.type = "container";
         data.environment = containerId;
-	data.input_data = args.input_data;
+        data.input_data = args.input_data;
 
         console.log("Starting container " + containerId + "...");
         var deferred = $.Deferred();
@@ -207,10 +229,10 @@ EaasClient.Client = function (api_entrypoint, container) {
         $.ajax({
             type: "POST",
             url: API_URL + "/components",
-                data: JSON.stringify(data),
-                contentType: "application/json"
-        })
-            .then(function (data, status, xhr) {
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+        }).then(function (data, status, xhr) {
                 console.log("container " + containerId + " started.");
                 _this.componentId = data.id;
                 _this.isStarted = true;
@@ -224,6 +246,154 @@ EaasClient.Client = function (api_entrypoint, container) {
         return deferred.promise();
     };
 
+    /*
+     Method to start (connected) environments directly from constructed config.
+     If you want it simple, use window.client.startEnvironment(id, params);
+
+     ############################################
+      Example of Connected Environments:
+       var data = {};
+       data.type = "machine";
+       data.environment = "ENVIRONMENT1 ID";
+       var env = {data, visualize: false};
+
+       var data = {};
+       data.type = "machine";
+       data.environment = "ENVIRONMENT2 ID";
+       var env2 = {data, visualize: true};
+
+       window.client.start([env, env2], params)
+
+     ############################################
+       Example of input_data:
+
+        input_data[0] = {
+            type: "HDD",
+            partition_table_type: "MBR",
+            filesystem_type: "FAT32",
+            size_mb: 1024,
+            content: [
+                {
+                    action: "extract",
+                    compression_format: "TAR",
+                    url: "http://132.230.4.15/objects/ub/policy.tar",
+                    name: "test"
+                }
+            ]
+        };
+
+        var data = {};
+        data.type = "machine";
+        data.environment = "ENVIRONMENT1 ID";
+        data.input_data = input_data;
+     ############################################
+
+     * @param environments
+     * @param args
+     * @returns {*}
+     */
+    this.start = function (environments, args) {
+
+        var connectNetwork = function (envsComponentsData) {
+            components = [];
+            for (let i = 0; i < envsComponentsData.length; i++) {
+                components.push({componentId: envsComponentsData[i].id});
+            }
+
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/networks",
+                data: JSON.stringify({
+                    components,
+                    hasInternet: args.hasInternet ? true : false,
+                    // hasTcpGateway: args.hasTcpGateway ? true : false,
+                    // tcpGatewayConfig : args.tcpGatewayConfig ? args.tcpGatewayConfig : {}
+                }),
+                contentType: "application/json",
+                headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+            }).then(function (network_data, status, xhr) {
+                    _this.envsComponentsData = envsComponentsData;
+                    _this.networkId = network_data.id;
+                    _this.networkTcpInfo = network_data.networkUrls != null ? network_data.networkUrls.tcp : null;
+                    _this.isStarted = true;
+                    _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
+                    deferred.resolve();
+                },
+                function (xhr) {
+                    _this._onFatalError($.parseJSON(xhr.responseText));
+                    deferred.reject();
+                });
+        };
+
+
+        var connectEnvs = function(environments) {
+            var idsData = [];
+            for (let i = 0; i < environments.length; i++) {
+                console.log("env: " + environments[i].data.environment);
+                $.ajax({
+                    type: "POST",
+                    url: API_URL + "/components",
+                    headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
+                    success: function (envData, status2, xhr2) {
+                        idsData.push(envData);
+                        if(environments[i].visualize == true){
+                            console.log("_this.componentId "+ envData.id);
+                            if(_this.componentId != null)
+                                console.error("We support visualization of only one environment at the time!! Visualizing the last specified...");
+                            _this.componentId = envData.id;
+                            _this.driveId = envData.driveId;
+                        }
+                    },
+                    async:false,
+                    data: JSON.stringify(environments[i].data),
+                    contentType: "application/json"
+                })
+            }
+            connectNetwork(idsData);
+        };
+
+        var deferred = $.Deferred();
+
+        if (environments.length > 1) {
+            connectEnvs(environments)
+        } else {
+            console.log("Starting environment " + environments[0].data.environment + "...");
+            $.ajax({
+                type: "POST",
+                url: API_URL + "/components",
+                data: JSON.stringify(environments[0].data),
+                contentType: "application/json",
+                headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+            })
+                .then(function (data, status, xhr) {
+                        _this.componentId = data.id;
+                        _this.driveId = data.driveId;
+
+                        if (args.tcpGatewayConfig || args.hasInternet) {
+                            connectNetwork(data);
+                        } else {
+                            console.log("Environment " + environments[0].data.environment + " started.");
+                            _this.isStarted = true;
+                            _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
+                            deferred.resolve();
+                        }
+                    },
+                    function (xhr) {
+                        _this._onFatalError($.parseJSON(xhr.responseText));
+                        deferred.reject();
+                    });
+        }
+
+        return deferred.promise();
+    };
+
+    /**
+     * Method to support obsolete APIs and single environment sessions
+     * @Deprecated
+     * @param environmentId
+     * @param args
+     * @returns {*}
+     */
     this.startEnvironment = function (environmentId, args) {
         var data = {};
         data.type = "machine";
@@ -241,31 +411,9 @@ EaasClient.Client = function (api_entrypoint, container) {
             if(args.lockEnvironment)
                 data.lockEnvironment = true;
         }
-
-        var deferred = $.Deferred();
-
-        console.log("Starting environment " + environmentId + "...");
-        $.ajax({
-            type: "POST",
-            url: API_URL + "/components",
-            data: JSON.stringify(data),
-            contentType: "application/json"
-        })
-            .then(function (data, status, xhr) {
-                    console.log("Environment " + environmentId + " started.");
-                    _this.componentId = data.id;
-                    _this.driveId = data.driveId;
-                    _this.isStarted = true;
-                    _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-                    deferred.resolve();
-                },
-                function (xhr) {
-                    _this._onFatalError($.parseJSON(xhr.responseText));
-                    deferred.reject();
-                });
-
-        return deferred.promise();
+        return this.start([{data, visualize: true}], args);
     };
+
 
     // Connects viewer to a running session
     this.connect = function () {
@@ -278,41 +426,46 @@ EaasClient.Client = function (api_entrypoint, container) {
         }
 
         console.log("Connecting viewer...");
-        $.get(API_URL + formatStr("/components/{0}/controlurls", _this.componentId))
-            .done(function (data, status, xhr) {
-                var connectViewerFunc;
-                var controlUrl;
 
-                // Guacamole connector?
-                if (typeof data.guacamole !== "undefined") {
-                    controlUrl = data.guacamole;
-                    _this.params = strParamsToObject(data.guacamole.substring(data.guacamole.indexOf("#") + 1));
-                    connectViewerFunc = _this.establishGuacamoleTunnel;
-                }
-                // XPRA connector
-                else if (typeof data.xpra !== "undefined") {
-                    controlUrl = data.xpra;
-                    _this.params = strParamsToObject(data.xpra.substring(data.xpra.indexOf("#") + 1));
-                    connectViewerFunc = _this.prepareAndLoadXpra;
-                }
-                // WebEmulator connector
-                else if (typeof data.webemulator !== "undefined") {
-                    controlUrl = encodeURIComponent(JSON.stringify(data));
-                    _this.params = strParamsToObject(data.webemulator.substring(data.webemulator.indexOf("#") + 1));
-                    connectViewerFunc = _this.prepareAndLoadWebEmulator;
-                }
-                else {
-                    console.error("Unsupported connector type: " + data);
-                    deferred.reject();
-                    return;
-                }
+        $.ajax({
+            type: "GET",
+            url: API_URL + formatStr("/components/{0}/controlurls", _this.componentId),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
+            async: false,
+        }).done(function (data, status, xhr) {
+            var connectViewerFunc;
+            var controlUrl;
 
-                // Establish the connection
-                connectViewerFunc.call(_this, controlUrl);
-                console.log("Viewer connected successfully.");
-                _this.isConnected = true;
-                deferred.resolve();
-            })
+            // Guacamole connector?
+            if (typeof data.guacamole !== "undefined") {
+                controlUrl = data.guacamole;
+                _this.params = strParamsToObject(data.guacamole.substring(data.guacamole.indexOf("#") + 1));
+                connectViewerFunc = _this.establishGuacamoleTunnel;
+            }
+            // XPRA connector
+            else if (typeof data.xpra !== "undefined") {
+                controlUrl = data.xpra;
+                _this.params = strParamsToObject(data.xpra.substring(data.xpra.indexOf("#") + 1));
+                connectViewerFunc = _this.prepareAndLoadXpra;
+            }
+            // WebEmulator connector
+            else if (typeof data.webemulator !== "undefined") {
+                controlUrl = encodeURIComponent(JSON.stringify(data));
+                _this.params = strParamsToObject(data.webemulator.substring(data.webemulator.indexOf("#") + 1));
+                connectViewerFunc = _this.prepareAndLoadWebEmulator;
+            }
+            else {
+                console.error("Unsupported connector type: " + data);
+                deferred.reject();
+                return;
+            }
+
+            // Establish the connection
+            connectViewerFunc.call(_this, controlUrl);
+            console.log("Viewer connected successfully.");
+            _this.isConnected = true;
+            deferred.resolve();
+        })
             .fail(function (xhr) {
                 console.error("Connecting viewer failed!")
                 _this._onFatalError($.parseJSON(xhr.responseText))
@@ -357,8 +510,9 @@ EaasClient.Client = function (api_entrypoint, container) {
             type: "POST",
             url: API_URL + formatStr("/components/{0}/checkpoint", _this.componentId),
             timeout: 30000,
-			contentType: "application/json",
-			data: JSON.stringify(request)
+            contentType: "application/json",
+            data: JSON.stringify(request),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         })
             .done(function (data, status, xhr) {
                 var envid = data.envId;
@@ -390,10 +544,14 @@ EaasClient.Client = function (api_entrypoint, container) {
     }
 
     this.getPrintJobs = function (successFn, errorFn) {
-        $.get(API_URL + formatStr("/components/{0}/printJobs", _this.componentId))
-            .done(function (data, status, xhr) {
-                successFn(data);
-            }).fail(function (xhr) {
+        $.ajax({
+            type: "GET",
+            url: API_URL + formatStr("/components/{0}/printJobs", _this.componentId),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
+            async: false,
+        }).done(function (data, status, xhr) {
+            successFn(data);
+        }).fail(function (xhr) {
             if(errorFn)
                 errorFn(xhr);
         });
@@ -418,6 +576,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         $.ajax({
             type: "GET",
             url: API_URL + formatStr("/components/{0}/stop", _this.componentId),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
             async: false,
         });
 
@@ -442,6 +601,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         $.ajax({
             type: "DELETE",
             url: API_URL + formatStr("/components/{0}", _this.componentId),
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
             async: false,
         });
     };
@@ -460,7 +620,8 @@ EaasClient.Client = function (api_entrypoint, container) {
             type: "POST",
             url: API_URL + formatStr("/components/{0}/snapshot", _this.componentId),
             data: JSON.stringify(postObj),
-            contentType: "application/json"
+            contentType: "application/json",
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         }).then(function (data, status, xhr) {
             onChangeDone(data, status);
         }).fail(function(xhr, textStatus, error) {
@@ -479,7 +640,8 @@ EaasClient.Client = function (api_entrypoint, container) {
             type: "POST",
             url: API_URL + formatStr("/components/{0}/changeMedia", _this.componentId),
             data: JSON.stringify(postObj),
-            contentType: "application/json"
+            contentType: "application/json",
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         }).then(function (data, status, xhr) {
             onChangeDone(data, status);
         });
@@ -553,130 +715,6 @@ EaasClient.Client = function (api_entrypoint, container) {
         container.appendChild(iframe);
     };
 
-
-
-     /* Example of input_data:
-
-        input_data[0] = {
-        type: "HDD",
-        partition_table_type: "MBR",
-        filesystem_type: "FAT32",
-        // filesystem_type: "VFAT",
-        size_mb: 1024,
-        content: [
-            {
-                action: "extract",
-                compression_format: "TAR",
-                url: "http://132.230.4.15/objects/ub/policy.tar",
-                name: "test"
-            }
-        ]
-        };
-
-     * @param environmentId
-     * @param args
-     * @param input_data
-     * @returns {*}
-     */
-    this.startEnvironmentWithAttachment = function (environmentId, args, input_data) {
-        var data = {};
-        data.type = "machine";
-        data.environment = environmentId;
-        data.input_data = input_data;
-
-
-        if (typeof args !== "undefined") {
-            data.keyboardLayout = args.keyboardLayout;
-            data.keyboardModel = args.keyboardModel;
-            data.object = args.object;
-
-            if (args.object == null) {
-                data.software = args.software;
-            }
-            data.userContext = args.userContext;
-        }
-
-        var deferred = $.Deferred();
-
-        console.log("Starting environment " + environmentId + "...");
-        $.ajax({
-            type: "POST",
-            url: API_URL + "/components",
-            data: JSON.stringify(data),
-            contentType: "application/json"
-        })
-            .then(function (data, status, xhr) {
-                    console.log("Environment " + environmentId + " started.");
-                    _this.componentId = data.id;
-                    _this.driveId = data.driveId;
-                    _this.isStarted = true;
-                    _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-                    deferred.resolve();
-                },
-                function (xhr) {
-                    _this._onFatalError($.parseJSON(xhr.responseText));
-                    deferred.reject();
-                });
-
-        this.isAttachmentAvailable = true;
-        return deferred.promise();
-    };
-
-
-
-    this.startEnvironmentWithInternet = function (environmentId, args) {
-        var data = {};
-        data.type = "machine";
-        data.environment = environmentId;
-
-        if (typeof args !== "undefined") {
-            data.keyboardLayout = args.keyboardLayout;
-            data.keyboardModel = args.keyboardModel;
-            data.object = args.object;
-
-            if (args.object == null) {
-                data.software = args.software;
-            }
-            data.userId = args.userId;
-        }
-
-        var deferred = $.Deferred();
-
-        console.log("Starting environment " + environmentId + "...");
-        $.ajax({
-            type: "POST",
-            url: API_URL + "/components",
-            data: JSON.stringify(data),
-            contentType: "application/json"
-        })
-            .then(function (data, status, xhr2) {
-                    console.log("Environment " + environmentId + " started.");
-                    $.ajax({
-                        type: "POST",
-                        url: API_URL + "/networks",
-                        data: JSON.stringify({
-                            components: [{
-                                componentId:  data.id
-                            }],
-                            hasInternet: true
-                        }),
-                        contentType: "application/json"
-                    }).then(function (network_data, status, xhr) {
-                        _this.componentId =  data.id;
-                        _this.driveId =  data.driveId;
-                        _this.networkId = network_data.id;
-                        _this.isStarted = true;
-                        _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-                        deferred.resolve();
-                    })
-                },
-                function (xhr2) {
-                    _this._onFatalError($.parseJSON(xhr.responseText));
-                    deferred.reject();
-                });
-        return deferred.promise();
-    }
-
     this.startDockerEnvironment = function (environmentId, args) {
         var data = {};
         data.type = "container";
@@ -700,7 +738,8 @@ EaasClient.Client = function (api_entrypoint, container) {
             type: "POST",
             url: API_URL + "/components",
             data: JSON.stringify(data),
-            contentType: "application/json"
+            contentType: "application/json",
+            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         })
             .then(function (data, status, xhr) {
                     console.log("Environment " + environmentId + " started.");
@@ -718,129 +757,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         return deferred.promise();
     };
 
-    // TODO: add Lklsocks support
-    // this.startEnvironmentWithSocks = function (environmentId, args) {
-    //     var request = {};
-    //     request.type = "machine";
-    //     request.environment = environmentId;
-    //
-    //     if (typeof args !== "undefined") {
-    //         request.keyboardLayout = args.keyboardLayout;
-    //         request.keyboardModel = args.keyboardModel;
-    //         request.object = args.object;
-    //
-    //         if (args.object == null) {
-    //             request.software = args.software;
-    //         }
-    //         request.userContext = args.userContext;
-    //     }
-    //
-    //     var data2 = {};
-    //     data2.type = "socks";
-    //
-    //
-    //     var deferred = $.Deferred();
-    //
-    //     console.log("Starting environment " + environmentId + "...");
-    //     $.ajax({
-    //         type: "POST",
-    //         url: API_URL + "/components",
-    //         data: JSON.stringify(request),
-    //         contentType: "application/json"
-    //     }).then(function (machine_response, status1, xhr1) {
-    //             console.log("Environment " + environmentId + " started.");
-    //             $.ajax({
-    //                 type: "POST",
-    //                 url: API_URL + "/components",
-    //                 data: JSON.stringify(data2),
-    //                 contentType: "application/json"
-    //             }).then(function (socks_data, status2, xhr2) {
-    //                     $.ajax({
-    //                         type: "POST",
-    //                         url: API_URL + "/networks",
-    //                         data: JSON.stringify({
-    //                             components: [
-    //                                 {componentId: machine_response.id},
-    //                                 {componentId: socks_data.id}
-    //                            ]
-    //                         }),
-    //                         contentType: "application/json"
-    //                     }).then(function (network_data, status3, xhr3) {
-    //                         _this.componentId = machine_response.id;
-    //                         _this.driveId = machine_response.driveId;
-    //                         _this.networkId = network_data.id;
-    //                         _this.isStarted = true;
-    //                         _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-    //                         deferred.resolve();
-    //                     })
-    //                     })
-    //                 },
-    //                 function (xhr2) {
-    //                     _this._onFatalError($.parseJSON(xhr.responseText));
-    //                     deferred.reject();
-    //                 });
-    //             return deferred.promise();
-    // }
 
-    this.startConnectedEnvironments = function (environmentId1, environmentId2, args) {
-        var data = {};
-        data.type = "machine";
-        data.environment = environmentId1;
-
-        if (typeof args !== "undefined") {
-            data.keyboardLayout = args.keyboardLayout;
-            data.keyboardModel = args.keyboardModel;
-            data.object = args.object;
-
-            if (args.object == null) {
-                data.software = args.software;
-            }
-            data.userId = args.userId;
-        }
-        var deferred = $.Deferred();
-
-        console.log("Starting environment " + environmentId1 + "...");
-        $.ajax({
-            type: "POST",
-            url: API_URL + "/components",
-            data: JSON.stringify(data),
-            contentType: "application/json"
-        }).then(function (data1, status1, xhr1) {
-                console.log("Environment " + environmentId1 + " started.");
-                data.environment = environmentId2;
-                $.ajax({
-                    type: "POST",
-                    url: API_URL + "/components",
-                    data: JSON.stringify(data),
-                    contentType: "application/json"
-                }).then(function (data2, status2, xhr2) {
-                    $.ajax({
-                        type: "POST",
-                        url: API_URL + "/networks",
-                        data: JSON.stringify({
-                            components: [
-                                {componentId: data1.id},
-                                {componentId: data2.id}
-                            ],
-                            hasInternet: true
-                        }),
-                        contentType: "application/json"
-                    }).then(function (network_data, status3, xhr3) {
-                        _this.componentId = data1.id;
-                        _this.driveId = data1.driveId;
-                        _this.networkId = network_data.id;
-                        _this.isStarted = true;
-                        _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-                        deferred.resolve();
-                    })
-                })
-            },
-            function (xhr2) {
-                _this._onFatalError($.parseJSON(xhr.responseText));
-                deferred.reject();
-            });
-        return deferred.promise();
-    }
 };
 /*
  *  Example usage:
@@ -1067,8 +984,7 @@ BWFLA.showClientCursor = function(guac)
 {
     var display = guac.getDisplay();
     display.showCursor(true);
-};
-/*
+};/*
  *  Example usage:
  *
  *      var centerOnScreen = function(width, height) {
@@ -1089,117 +1005,117 @@ var BWFLA = BWFLA || {};
 // Method to attach a callback to an event
 BWFLA.registerEventCallback = function(target, eventName, callback)
 {
-  var event = 'on' + eventName;
+    var event = 'on' + eventName;
 
-  if (!(event in target)) {
-    console.error('Event ' + eventName + ' not supported!');
-    return;
-  }
+    if (!(event in target)) {
+        console.error('Event ' + eventName + ' not supported!');
+        return;
+    }
 
-  // Add placeholder for event-handlers to target's prototype
-  if (!('__bwFlaEventHandlers__' in target))
-    target.constructor.prototype.__bwFlaEventHandlers__ = {};
+    // Add placeholder for event-handlers to target's prototype
+    if (!('__bwFlaEventHandlers__' in target))
+        target.constructor.prototype.__bwFlaEventHandlers__ = {};
 
-  // Initialize the list for event's callbacks
-  if (!(event in target.__bwFlaEventHandlers__))
-    target.__bwFlaEventHandlers__[event] = [];
+    // Initialize the list for event's callbacks
+    if (!(event in target.__bwFlaEventHandlers__))
+        target.__bwFlaEventHandlers__[event] = [];
 
-  // Add the new callback to event's callback-list
-  var callbacks = target.__bwFlaEventHandlers__[event];
-  callbacks.push(callback);
+    // Add the new callback to event's callback-list
+    var callbacks = target.__bwFlaEventHandlers__[event];
+    callbacks.push(callback);
 
-  // If required, initialize handler management function
-  if (target[event] == null) {
-    target[event] = function() {
-      var params = arguments;  // Parameters to the original callback
+    // If required, initialize handler management function
+    if (target[event] == null) {
+        target[event] = function() {
+            var params = arguments;  // Parameters to the original callback
 
-      // Call all registered callbacks one by one
-      callbacks.forEach(function(func) {
-        func.apply(target, params);
-      });
-    };
-  }
+            // Call all registered callbacks one by one
+            callbacks.forEach(function(func) {
+                func.apply(target, params);
+            });
+        };
+    }
 };
 
 
 // Method to unregister a callback for an event
 BWFLA.unregisterEventCallback = function(target, eventName, callback)
 {
-  // Look in the specified target for the callback and
-  // remove it from the execution chain for this event
+    // Look in the specified target for the callback and
+    // remove it from the execution chain for this event
 
-  if (!('__bwFlaEventHandlers__' in target))
-    return;
+    if (!('__bwFlaEventHandlers__' in target))
+        return;
 
-  var callbacks = target.__bwFlaEventHandlers__['on' + eventName];
-  if (callbacks == null)
-    return;
+    var callbacks = target.__bwFlaEventHandlers__['on' + eventName];
+    if (callbacks == null)
+        return;
 
-  var index = callbacks.indexOf(callback);
-  if (index > -1)
-    callbacks.splice(index, 1);
+    var index = callbacks.indexOf(callback);
+    if (index > -1)
+        callbacks.splice(index, 1);
 };
 
 /** Custom mouse-event handlers for use with the Guacamole.Mouse */
 var BwflaMouse = function(client)
 {
-  var events = [];
-  var handler = null;
-  var waiting = false;
+    var events = [];
+    var handler = null;
+    var waiting = false;
 
 
-  /** Adds a state's copy to the current event-list. */
-  function addEventCopy(state)
-  {
-    var copy = new Guacamole.Mouse.State(state.x, state.y, state.left,
-        state.middle, state.right, state.up, state.down);
+    /** Adds a state's copy to the current event-list. */
+    function addEventCopy(state)
+    {
+        var copy = new Guacamole.Mouse.State(state.x, state.y, state.left,
+            state.middle, state.right, state.up, state.down);
 
-    events.push(copy);
-  }
+        events.push(copy);
+    }
 
-  /** Sets a new timeout-callback, replacing the old one. */
-  function setNewTimeout(callback, timeout)
-  {
-    if (handler != null)
-      window.clearTimeout(handler);
+    /** Sets a new timeout-callback, replacing the old one. */
+    function setNewTimeout(callback, timeout)
+    {
+        if (handler != null)
+            window.clearTimeout(handler);
 
-    handler = window.setTimeout(callback, timeout);
-  }
+        handler = window.setTimeout(callback, timeout);
+    }
 
-  /** Handler, called on timeout. */
-  function onTimeout()
-  {
-    while (events.length > 0)
-      client.sendMouseState(events.shift());
+    /** Handler, called on timeout. */
+    function onTimeout()
+    {
+        while (events.length > 0)
+            client.sendMouseState(events.shift());
 
-    handler = null;
-    waiting = false;
-  };
+        handler = null;
+        waiting = false;
+    };
 
 
-  /** Handler for mouse-down events. */
-  this.onmousedown = function(state)
-  {
-    setNewTimeout(onTimeout, 100);
-    addEventCopy(state);
-    waiting = true;
-  };
+    /** Handler for mouse-down events. */
+    this.onmousedown = function(state)
+    {
+        setNewTimeout(onTimeout, 100);
+        addEventCopy(state);
+        waiting = true;
+    };
 
-  /** Handler for mouse-up events. */
-  this.onmouseup = function(state)
-  {
-    setNewTimeout(onTimeout, 150);
-    addEventCopy(state);
-    waiting = true;
-  };
+    /** Handler for mouse-up events. */
+    this.onmouseup = function(state)
+    {
+        setNewTimeout(onTimeout, 150);
+        addEventCopy(state);
+        waiting = true;
+    };
 
-  /** Handler for mouse-move events. */
-  this.onmousemove = function(state)
-  {
-    if (waiting == true)
-      addEventCopy(state);
-    else client.sendMouseState(state);
-  };
+    /** Handler for mouse-move events. */
+    this.onmousemove = function(state)
+    {
+        if (waiting == true)
+            addEventCopy(state);
+        else client.sendMouseState(state);
+    };
 };
 
 var BWFLA = BWFLA || {};
@@ -1208,89 +1124,89 @@ var BWFLA = BWFLA || {};
 /** Requests a pointer-lock on given element, if supported by the browser. */
 BWFLA.requestPointerLock = function(target, event)
 {
-  function lockPointer() {
-    var havePointerLock = 'pointerLockElement' in document
-                          || 'mozPointerLockElement' in document
-                          || 'webkitPointerLockElement' in document;
+    function lockPointer() {
+        var havePointerLock = 'pointerLockElement' in document
+            || 'mozPointerLockElement' in document
+            || 'webkitPointerLockElement' in document;
 
-    if (!havePointerLock) {
-      var message = "Your browser does not support the PointerLock API!\n"
+        if (!havePointerLock) {
+            var message = "Your browser does not support the PointerLock API!\n"
                 + "Using relative mouse is not possible.\n\n"
                 + "Mouse input will be disabled for this virtual environment.";
 
-      console.warn(message);
-      alert(message);
-      return;
+            console.warn(message);
+            alert(message);
+            return;
+        }
+
+        // Activate pointer-locking
+        target.requestPointerLock = target.requestPointerLock
+            || target.mozRequestPointerLock
+            || target.webkitRequestPointerLock;
+
+        target.requestPointerLock();
+    };
+
+    function enableLockEventListener()
+    {
+        target.addEventListener(event, lockPointer, false);
+    };
+
+    function disableLockEventListener()
+    {
+        target.removeEventListener(event, lockPointer, false);
+    };
+
+    function onPointerLockChange() {
+        if (document.pointerLockElement === target
+            || document.mozPointerLockElement === target
+            || document.webkitPointerLockElement === target) {
+            // Pointer was just locked
+            console.debug("Pointer was locked!");
+            target.isPointerLockEnabled = true;
+            disableLockEventListener();
+        } else {
+            // Pointer was just unlocked
+            console.debug("Pointer was unlocked.");
+            target.isPointerLockEnabled = false;
+            enableLockEventListener();
+        }
+    };
+
+    function onPointerLockError(error) {
+        var message = "Pointer lock failed!";
+        console.warn(message);
+        alert(message);
     }
 
-    // Activate pointer-locking
-    target.requestPointerLock = target.requestPointerLock
-                                || target.mozRequestPointerLock
-                                || target.webkitRequestPointerLock;
+    // Hook for pointer lock state change events
+    document.addEventListener('pointerlockchange', onPointerLockChange, false);
+    document.addEventListener('mozpointerlockchange', onPointerLockChange, false);
+    document.addEventListener('webkitpointerlockchange', onPointerLockChange, false);
 
-    target.requestPointerLock();
-  };
+    // Hook for pointer lock errors
+    document.addEventListener('pointerlockerror', onPointerLockError, false);
+    document.addEventListener('mozpointerlockerror', onPointerLockError, false);
+    document.addEventListener('webkitpointerlockerror', onPointerLockError, false);
 
-  function enableLockEventListener()
-  {
-    target.addEventListener(event, lockPointer, false);
-  };
+    enableLockEventListener();
 
-  function disableLockEventListener()
-  {
-    target.removeEventListener(event, lockPointer, false);
-  };
-
-  function onPointerLockChange() {
-    if (document.pointerLockElement === target
-        || document.mozPointerLockElement === target
-        || document.webkitPointerLockElement === target) {
-      // Pointer was just locked
-      console.debug("Pointer was locked!");
-      target.isPointerLockEnabled = true;
-      disableLockEventListener();
-    } else {
-      // Pointer was just unlocked
-      console.debug("Pointer was unlocked.");
-      target.isPointerLockEnabled = false;
-      enableLockEventListener();
-    }
-  };
-
-  function onPointerLockError(error) {
-    var message = "Pointer lock failed!";
-    console.warn(message);
-    alert(message);
-  }
-
-  // Hook for pointer lock state change events
-  document.addEventListener('pointerlockchange', onPointerLockChange, false);
-  document.addEventListener('mozpointerlockchange', onPointerLockChange, false);
-  document.addEventListener('webkitpointerlockchange', onPointerLockChange, false);
-
-  // Hook for pointer lock errors
-  document.addEventListener('pointerlockerror', onPointerLockError, false);
-  document.addEventListener('mozpointerlockerror', onPointerLockError, false);
-  document.addEventListener('webkitpointerlockerror', onPointerLockError, false);
-
-  enableLockEventListener();
-
-  // Set flag for relative-mouse mode
-  target.isRelativeMouse = true;
+    // Set flag for relative-mouse mode
+    target.isRelativeMouse = true;
 };
 
 
 /** Hides the layer containing client-side mouse-cursor. */
 BWFLA.hideClientCursor = function(guac)
 {
-  var display = guac.getDisplay();
-  display.showCursor(false);
+    var display = guac.getDisplay();
+    display.showCursor(false);
 };
 
 
 /** Shows the layer containing client-side mouse-cursor. */
 BWFLA.showClientCursor = function(guac)
 {
-  var display = guac.getDisplay();
-  display.showCursor(true);
+    var display = guac.getDisplay();
+    display.showCursor(true);
 };
