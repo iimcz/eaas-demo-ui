@@ -22,6 +22,7 @@
     "angular-ui-bootstrap": "1.2.5",
     "angular-ui-router": "0.2.18",
     "ui-select": "0.16.0",
+    "popper.js": "1.14.3",
     "bootstrap": "3.3.7",
     "jquery": "3.2.1",
     "chart.js": "2.6.0",

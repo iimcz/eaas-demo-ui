@@ -14,7 +14,7 @@
   "CHOOSE_ENV_ADDSW" : "[Software hinzufügen]",
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Start]",
-
+  "CHOOSE_ENV_RUN_MODIFIED" : "[Start modifiziert]",
 
 
   "ERROR_RETURN_BTN" : "Zurück zur Übersicht",
@@ -286,5 +286,9 @@
   "EDIT_CONTAINER_OUTPUT_PH" :  "Pfad im Container",
   "EDIT_CONTAINER_HELPTEXT" : "Beschreibung",
   "EDIT_CONTAINER_CANCEL" : "Abbrechen",
-  "EDIT_CONTAINER_SAVE" : "Speichern"
+  "EDIT_CONTAINER_SAVE" : "Speichern",
+
+  "CONTAINER_RUN_L" : "Starte Container",
+  "CONTAINER_RUN_RUN" : "Start",
+  "CONTAINER_RUN_CANCEL" : "Abbrechen"
 }

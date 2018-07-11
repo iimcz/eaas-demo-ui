@@ -1,0 +1,233 @@
+<div class="panel panel-default">
+
+    <div class="panel-heading">{{$ctrl.heading}}</div>
+    <div class="panel-body">
+
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="elem in $ctrl.list track by $index">
+                <label>Input source</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="$ctrl.list[$index].url" size="30">
+                    <span class="input-group-addon">Url</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="$ctrl.list[$index].name" size="30">
+                    <span class="input-group-addon">(File-)Name</span>
+
+                </div>
+                <div class="input-group">
+                <label>Action:</label> {{$ctrl.list[$index].action}}
+                </div>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="$ctrl.list.splice($index, 1)">
+                            Delete input
+                        </button>
+                    </span>
+                </div>
+            </li>
+        </ul>
+
+        <!-- Choose input source dropdown menu -->
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            {{$ctrl.inputSourceButtonText}}<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a ng-click="$ctrl.onInputSourceSelection($event)" method="upload">Upload Files</a></li>
+                <li><a ng-click="$ctrl.onInputSourceSelection($event)" method="import">Import from URL</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">REST Interfaces</li>
+                <li><a ng-click="$ctrl.onInputSourceSelection($event)" method="uniprot">Uniprot</a></li>
+                <li><a ng-click="$ctrl.onInputSourceSelection($event)" method="pride">PRIDE Archive</a></li>
+            </ul>
+        </div>
+
+        <!-- Appropriate section for each input source -->
+        <!-- Upload Files -->
+        <div ng-if="$ctrl.showDialogs['upload']" >
+            <div>
+                <label class="import-file">
+                    <input type="file" id="fileUpload" onchange="$ctrl.onImportFileChosen('#fileUpload'[0].files[0])" style="display: none">
+                    <div>
+                        <button class="btn btn-default" type="button" onclick="document.querySelector('#fileUpload').click()">
+                        Choose File
+                        </button>
+                    </div>
+                </label>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control" id="inputFileName" ng-readonly=true ng-model="$ctrl.newInputUrl" size="30">
+                <span class="input-group-addon">Chosen File</span>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control" id="containerFileName" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                <span class="input-group-addon">Destination</span>
+            </div>
+            <div class="input-group">
+                <select class="form-control" theme="bootstrap" ng-model="$ctrl.newAction" >
+                    <option value="copy">copy</option>
+                    <option value="extract">extract</option>
+                </select>
+                <span class="input-group-addon">Action</span>
+            </div>
+            <label>{{$ctrl.newInputUrl}}</label>
+            <label>{{$ctrl.newInputName}}</label>
+            <div class="input-group">
+                <span class="input-group-btn">
+                     <button class="btn btn-default" type="button"
+                             ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                             $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                         {{$ctrl.addButtonText}}
+                     </button>
+                 </span>
+            </div>
+        </div>                
+        <!-- Import from URL -->
+        <div ng-if="$ctrl.showDialogs['import']" >
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputUrl" size="30">
+                <span class="input-group-addon">Url</span>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                <span class="input-group-addon">Destination</span>
+            </div>
+            <div class="input-group">
+                <select class="form-control" theme="bootstrap" ng-model="$ctrl.newAction" >
+                    <option value="copy">copy</option>
+                    <option value="extract">extract</option>
+                </select>
+                <span class="input-group-addon">Action</span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-btn">
+                     <button class="btn btn-default" type="button"
+                             ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                             $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                         {{$ctrl.addButtonText}}
+                     </button>
+                 </span>
+            </div>
+        </div>
+        <!-- TODO PRIDE Archive -->
+
+        <!-- TODO Uniprot -->
+        <div ng-if="$ctrl.showDialogs['uniprot']" >
+            <div><input type="radio" name="uniprotMode" ng-model="uniprotMode" value="individual" ng-change="string"> Retrieving individual entries</div>
+            <div><input type="radio" name="uniprotMode" ng-model="uniprotMode" value="batch" ng-change="string"> Batch retrieval of entries</div>
+            <div><input type="radio" name="uniprotMode" ng-model="uniprotMode" value="query" ng-change="string"> Retrieve entries via queries</div>
+            
+            <!-- Uniprot individual entries -->
+            <!-- Text field whitespace separated IDs+file ending, user can specify a directory, names are not changed, just copy mode(because no archives) -->
+            <div ng-if="uniprotMode == 'individual'">
+                <div class="input-group">
+                    <textarea class="scrollabletextbox" id="uniprotIndividualFiles" placeholder="Newline separated URLs, e.g.
+https://www.uniprot.org/uniprot/P12345.txt
+https://www.uniprot.org/uniprot/P12345.xml
+https://www.uniprot.org/uniprot/P12345.rdf" cols="60" rows="5"></textarea>
+                    <!--<input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputUrl" size="30">-->
+                    <span class="input-group-addon">Filename(s)</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                    <span class="input-group-addon">Destination</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                                 ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                                 $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                                {{$ctrl.addButtonText}}
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <!-- Uniprot batch retrieval -->
+            <div ng-if="uniprotMode == 'batch'">
+                <div>
+                    <label class="import-file">
+                        <input type="file" id="fileUpload" onchange="$('#inputFileName').val($('#fileUpload')[0].files[0].name)" style="display: none">
+                        <div>
+                            <button class="btn btn-default" type="button" onclick="document.querySelector('#fileUpload').click()">
+                            Choose Batch File
+                            </button>
+                        </div>
+                    </label>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="inputFileName" ng-readonly=true ng-model="$ctrl.newInputUrl" size="30">
+                    <span class="input-group-addon">Chosen File</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="containerFileName" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                    <span class="input-group-addon">Destination</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                                 ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                                 $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                                 Retrieve Batch
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <!-- Uniprot queries -->
+            <div ng-if="uniprotMode == 'query'">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="(e.g. https://www.uniprot.org/uniprot/?query=organism:9606+AND+antigen&format=fasta&compress=yes)" ng-model="$ctrl.uniprotQuery" size="30">
+                    <span class="input-group-addon">Query</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                    <span class="input-group-addon">Destination</span>
+                </div>
+                <div class="input-group">
+                    <select class="form-control" theme="bootstrap" ng-model="$ctrl.newAction" >
+                        <option value="copy">copy</option>
+                        <option value="extract">extract</option>
+                    </select>
+                    <span class="input-group-addon">Action</span>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-btn">
+                         <button class="btn btn-default" type="button"
+                                ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                                $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                            {{$ctrl.addButtonText}}
+                        </button>
+                    </span>
+                </div>
+            </div>
+
+            <!--
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputUrl" size="30">
+                <span class="input-group-addon">Url</span>
+            </div>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                <span class="input-group-addon">(File-)Name</span>
+            </div>
+            <div class="input-group">
+                <select class="form-control" theme="bootstrap" ng-model="$ctrl.newAction" >
+                    <option value="copy">copy</option>
+                    <option value="extract">extract</option>
+                </select>
+                <span class="input-group-addon">Action</span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-btn">
+                     <button class="btn btn-default" type="button"
+                             ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
+                             $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                         {{$ctrl.addButtonText}}
+                     </button>
+                 </span>
+            </div>
+        </div>
+        -->
+
+    </div>
+</div>

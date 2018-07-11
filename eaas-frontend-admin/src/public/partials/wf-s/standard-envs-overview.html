@@ -23,7 +23,9 @@
             <br/>
 
             <!--Start-->
-            <a ui-sref="wf-s.container({envId: row.envId})" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN'
+            <a ui-sref="wf-s.container({envId: row.envId, modifiedDialog: false})" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN'
+                | translate}}</a>
+            <a ui-sref="wf-s.container({envId: row.envId, modifiedDialog: true })" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN_MODIFIED'
                 | translate}}</a>
             <a ui-sref="wf-s.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_PROPOSAL'
                 | translate}}</a>

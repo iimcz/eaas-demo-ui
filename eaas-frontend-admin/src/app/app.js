@@ -31,6 +31,8 @@ import 'sortablejs/ng-sortable';
 
 var $ = require('jquery');
 window.$ = window.jQuery = $; // publish jQuery into window scope for emulator libs
+window.Popper = require('popper.js').default;
+require('bootstrap');
 
 const appendScript = function(scriptText) {
     let script   = document.createElement("script");
@@ -93,7 +95,20 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             addButtonText: '@'
         }
     })
-
+    .component('containerInputListModified', {
+        templateUrl: 'partials/components/containerInputListModified.html',
+        bindings: {
+            list: '=',
+            heading: '@',
+            listEmptyNote: '@',
+            inputPlaceholder: '@',
+            addButtonText: '@',
+            inputSourceButtonText: '=',
+            onInputSourceSelection: '<',
+            onImportFileChosen: '<',
+            showDialogs: '='
+        }
+    })
 
     .run(function($rootScope, $state) {
         $rootScope.emulator = {state : ''};
@@ -2106,6 +2121,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             },
             params: {
                 envId: null,
+                modifiedDialog: false,
             },
             views: {
                 'wizard': {
@@ -2192,24 +2208,68 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             });
                         }
 
-                        $uibModal.open({
-                            animation: true,
-                            templateUrl: 'partials/wf-s/container-run-dialog.html',
-                            controller: function($scope) {
-                                this.run = function()
-                                {
-                                    confirmStartFn(this.inputs);
-                                };
-                                this.cancel = function()
-                                {
-                                    $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
-                                };
-                                this.inputs = [];
-                            },
-                            controllerAs: "runContainerDlgCtrl"
-                        });
-
-
+                        if (!$stateParams.modifiedDialog) {
+                            $uibModal.open({
+                                animation: true,
+                                templateUrl: 'partials/wf-s/container-run-dialog.html',
+                                controller: function($scope) {
+                                    this.run = function()
+                                    {
+                                        confirmStartFn(this.inputs);
+                                    };
+                                    this.cancel = function()
+                                    {
+                                        $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
+                                    };
+                                    this.inputs = [];
+                                },
+                                controllerAs: "runContainerDlgCtrl"
+                            });
+                        }
+                        else {
+                            $uibModal.open({
+                                animation: true,
+                                templateUrl: 'partials/wf-s/container-run-dialog-modified.html',
+                                controller: function($scope) {
+                                    this.run = function()
+                                    {
+                                        confirmStartFn(this.inputs);
+                                    };
+                                    this.cancel = function()
+                                    {
+                                        $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
+                                    };
+                                    this.onInputSourceSelection = function(obj) {
+                                        // Get chosen input source
+                                        var inputMethod = obj.target.attributes.method.value;
+                                        // Show div corresponding to the chosen input type, hide all other
+                                        if (inputMethod != this.activeInputMethod) {
+                                            // Disable old input method
+                                            this.showDialogs[this.activeInputMethod] = false;
+                                            // Enable new input method
+                                            this.activeInputMethod = inputMethod;
+                                            this.showDialogs[this.activeInputMethod] = true;
+                                            this.inputSourceButtonText = obj.target.firstChild.data;
+                                        }
+                                    };
+                                    this.onImportFileChosen = function(file) {
+                                       alert(file)
+                                       this.newInputUrl = file.name;
+                                       this.newInputName = file.name;
+                                    };
+                                    this.showDialogs = {
+                                        "upload": false,
+                                        "import": false,
+                                        "pride": false,
+                                        "uniprot": false
+                                    };
+                                    this.inputs = [];
+                                    this.inputSourceButtonText = "Choose Input Source";
+                                    this.activeInputMethod = null;
+                                },
+                                controllerAs: "runContainerDlgCtrl"
+                            });
+                        }
                     }],
                     controllerAs: "startContainerCtrl"
                 },

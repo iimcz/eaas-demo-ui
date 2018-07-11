@@ -15,6 +15,7 @@
   "CHOOSE_ENV_ADDSW" : "[Add software]",
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Run]",
+  "CHOOSE_ENV_RUN_MODIFIED" : "[Run modified]",
 
   "ERROR_RETURN_BTN" : "Back to overview",
 
@@ -285,5 +286,9 @@
   "EDIT_CONTAINER_OUTPUT_PH" : "path within the container",
   "EDIT_CONTAINER_HELPTEXT" : "Description",
   "EDIT_CONTAINER_CANCEL" : "Cancel",
-  "EDIT_CONTAINER_SAVE" : "Save"
+  "EDIT_CONTAINER_SAVE" : "Save",
+
+  "CONTAINER_RUN_L" : "Run container",
+  "CONTAINER_RUN_RUN" : "Run",
+  "CONTAINER_RUN_CANCEL" : "Cancel"
 }

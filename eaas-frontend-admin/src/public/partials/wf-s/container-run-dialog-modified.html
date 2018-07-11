@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{'CONTAINER_RUN_L' | translate}}</h3>
+</div>
+
+<div class="modal-body">
+    <container-input-list-modified list="runContainerDlgCtrl.inputs"
+                heading="Define input sources"
+                list-empty-note="Add input sources to the container. File-names are relative to the containers input folder."
+                add-button-text="Add Input Source"
+                input-source-button-text="runContainerDlgCtrl.inputSourceButtonText"
+                on-input-source-selection="runContainerDlgCtrl.onInputSourceSelection"
+                on-import-file-chosen="runContainerDlgCtrl.onImportFileChosen"
+                show-dialogs="runContainerDlgCtrl.showDialogs">
+    </container-input-list-modified>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$close();runContainerDlgCtrl.cancel()" >{{'CONTAINER_RUN_CANCEL' | translate}}</button>
+    <button class="btn btn-default" type="button" ng-click="$close();runContainerDlgCtrl.run()">{{'CONTAINER_RUN_RUN' | translate}}</button>
+</div>
