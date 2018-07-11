@@ -21,9 +21,11 @@ import 'chart.js';
 import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
+import 'angular-jwt'
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
+
 
 /*
  * Import legacy emulator libraries
@@ -67,11 +69,13 @@ import '../../../common/eaas-client/guacamole/guacamole.css';
 import '../../../common/eaas-client/eaas-client.css';
 import './app.css';
 
-export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
+export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
-                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
+                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules',
+                                   'angular-jwt'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
+
 
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
@@ -94,12 +98,15 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
         }
     })
 
-
     .run(function($rootScope, $state) {
         $rootScope.emulator = {state : ''};
 
         $rootScope.chk = {};
         $rootScope.chk.transitionEnable = true;
+
+//        localStorage.setItem('id_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE');
+//       localStorage.removeItem('id_token');
+
 
         $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
             if (!$rootScope.chk.transitionEnable) {
@@ -330,7 +337,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
     };
 }])
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide) {
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -361,6 +369,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
 
     var httpResponseErrorModal = null;
 
+
+    // Please note we're annotating the function so that the $injector works when the file is minified
+    jwtOptionsProvider.config({
+      whiteListedDomains: "localhost",
+      tokenGetter: [ function() {
+        return localStorage.getItem('id_token');
+      }]
+    });
+
+
+    $httpProvider.interceptors.push('jwtInterceptor');
     // Add a global AJAX error handler
     $httpProvider.interceptors.push(function($q, $injector, $timeout) {
         return {
@@ -440,6 +459,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     });
                 };
 
+                vm.config = localConfig.data;
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: true,
@@ -850,14 +870,18 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         nativeConfig: vm.native_config,
                                         rom: vm.rom
                                     }).then(function(response) {
-                                    if(response.data.status == "0") {
-                                        var taskId = response.data.taskId;
-                                       var modal = $uibModal.open({
-                                            animation: true,
-                                            templateUrl: 'partials/import-wait.html'
-                                        });
-                                        vm.checkState(taskId, modal);
-                                    }
+                                        if(response.data.status == "0") {
+                                            var taskId = response.data.taskId;
+                                           var modal = $uibModal.open({
+                                                animation: true,
+                                                templateUrl: 'partials/import-wait.html'
+                                            });
+                                            vm.checkState(taskId, modal);
+                                        }
+                                        else
+                                        {
+                                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                        }
                                 }, function(response) {
                                     console.log("error");
                                 });
@@ -1041,6 +1065,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     });
                 }
 
+
+                vm.config = localConfig.data;
                 vm.showSettingsDialog = function() {
                     $uibModal.open({
                         animation: false,
@@ -1242,12 +1268,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         };
 
                         vm.addHandle = function () {
+                            jQuery.when(
                             $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
                                 handle: document.getElementById("addHandle").value,
                                 handleValue: document.getElementById("addHandleValue").value
+                            })
+                        ).done(function () {
+                                $state.reload()
                             });
-
-                            $state.reload();
                         };
 
                     },
@@ -1539,6 +1567,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         this.gwPrivateIp = this.env.gwPrivateIp;
                         this.gwPrivateMask = this.env.gwPrivateMask;
                         this.useXpra = this.env.useXpra;
+                        this.connectEnvs = this.env.connectEnvs;
 
                         this.shutdownByOs = this.env.shutdownByOs;
                         this.os = this.env.os;
@@ -1574,10 +1603,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                 serverIp : this.serverIp,
                                 serverPort : this.serverPort,
                                 gwPrivateIp: this.gwPrivateIp,
-                                gwPrivateMask: this.gwPrivateMask
+
+                                gwPrivateMask: this.gwPrivateMask,
                                 nativeConfig: this.nativeConfig,
-                                useXpra : this.useXpra
-                            }).then(function(response) {
+                                connectEnvs : this.connectEnvs
+                        }).then(function(response) {
                                 if (response.data.status === "0") {
                                     growl.success($translate.instant('JS_ENV_UPDATE'));
                                 } else {
@@ -1780,104 +1810,177 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/emulator.html",
-                    controller: ['$rootScope', '$scope', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv', function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, localConfig, growl) {
-                        window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
+                    controller: ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList','objectEnvironmentList','$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
+                    function ($rootScope, $uibModal, $scope, $sce, environmentList, objectEnvironmentList, $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
 
-                        eaasClient.onError = function(message) {
-                            $state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
-                        };
+                        var vm = this;
+                        vm.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
 
-                        window.onbeforeunload = function(e) {
-                            var dialogText = $translate.instant('MESSAGE_QUIT');
-                            e.returnValue = dialogText;
-                            return dialogText;
-                        };
+                        vm.runEmulator = function(selectedEnvs) {
 
-                        window.onunload = function() {
-                            window.onbeforeunload = null;
-                        }
+                            let type = "machine";
 
-                        this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
-                        if($stateParams.objectId)
-                            this.link += "&objectId=" + $stateParams.objectId;
+                            window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
-                        window.eaasClient.onEmulatorStopped = function() {
-                            if($rootScope.emulator.state == 'STOPPED')
-                                return;
+                            eaasClient.onError = function (message) {
+                                $state.go('error', {errorMsg: {title: "Emulation Error", message: message.error}});
+                            };
 
-                            $rootScope.emulator.state = 'STOPPED';
-                            $("#emulator-container").hide();
-                            $("#emulator-loading-container").show();
-                            $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
-                            $scope.$apply();
-                        };
+                            window.onbeforeunload = function (e) {
+                                var dialogText = $translate.instant('MESSAGE_QUIT');
+                                e.returnValue = dialogText;
+                                return dialogText;
+                            };
 
-                        // fallback to defaults when no cookie is found
-                        var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {language: {name: 'us'}, layout: {name: 'pc105'}};
+                            window.onunload = function () {
+                                window.onbeforeunload = null;
+                            };
 
-                        var params = {
-                            keyboardLayout: kbLayoutPrefs.language.name,
-                            keyboardModel: kbLayoutPrefs.layout.name
-                        };
+                            this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
+                            if ($stateParams.objectId)
+                                this.link += "&objectId=" + $stateParams.objectId;
 
-                        params.software = $stateParams.softwareId;
-                        params.object = $stateParams.objectId;
-                        params.userId = $stateParams.userId;
-                        if(chosenEnv.data)
-                        {
-                            params.hasTcpGateway = chosenEnv.data.serverMode;
-                            params.hasInternet = chosenEnv.data.enableInternet;
-                            if(params.hasTcpGateway)
-                            {
-                                params.tcpGatewayConfig = {
-                                    socks : chosenEnv.data.enableSocks,
-                                    gwPrivateIp : chosenEnv.data.gwPrivateIp,
-                                    gwPrivateMask: chosenEnv.data.gwPrivateMask,
-                                    serverPort : chosenEnv.data.serverPort,
-                                    serverIp : chosenEnv.data.serverIp
-                                };
+                            window.eaasClient.onEmulatorStopped = function () {
+                                if ($rootScope.emulator.state == 'STOPPED')
+                                    return;
+
+                                $rootScope.emulator.state = 'STOPPED';
+                                $("#emulator-container").hide();
+                                $("#emulator-loading-container").show();
+                                $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+                                $scope.$apply();
+                            };
+
+                            // fallback to defaults when no cookie is found
+                            var kbLayoutPrefs = $cookies.getObject('kbLayoutPrefs') || {
+                                language: {name: 'us'},
+                                layout: {name: 'pc105'}
+                            };
+
+                            let params = {};
+                            if (chosenEnv.data) {
+                                params.hasTcpGateway = chosenEnv.data.serverMode;
+                                params.hasInternet = chosenEnv.data.enableInternet;
+                                if (params.hasTcpGateway) {
+                                    params.tcpGatewayConfig = {
+                                        socks: chosenEnv.data.enableSocks,
+                                        gwPrivateIp: chosenEnv.data.gwPrivateIp,
+                                        gwPrivateMask: chosenEnv.data.gwPrivateMask,
+                                        serverPort: chosenEnv.data.serverPort,
+                                        serverIp: chosenEnv.data.serverIp
+                                    };
+                                }
                             }
-                        }
-                        console.log(params);
+                            console.log(params);
 
+                            var envs = [];
+                            for (let i = 0; i < selectedEnvs.length; i++) {
+                                //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
+                                let data = createData(selectedEnvs[i].envId, type, selectedEnvs[i].objectId, selectedEnvs[i].userId, selectedEnvs[i].softwareId);
+                                envs.push({data, visualize: false});
+                            }
 
-                        if($stateParams.type == 'saveUserSession')
-                        {
-                            params.lockEnvironment = true;
-                            console.log("locking user session");
-                        }
+                            let data = createData($stateParams.envId, type, $stateParams.objectId, $stateParams.userId, $stateParams.softwareId, kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name);
 
+                            if ($stateParams.type == 'saveUserSession') {
+                                data.lockEnvironment = true;
+                                console.log("locking user session");
+                            }
 
+                            function createData (envId, type, objectId, userId, softwareId, keyboardLayout, keyboardModel) {
+                                let data = {};
+                                data.type = type;
+                                data.environment = envId;
+                                data.object = objectId;
+                                data.userId = userId;
+                                data.software = softwareId;
 
-                        eaasClient.startEnvironment($stateParams.envId, params).then(function () {
-                            eaasClient.connect().then(function() {
-                                $("#emulator-loading-container").hide();
-                                $("#emulator-container").show();
-
-                                console.log(eaasClient.networkTcpInfo);
-                                if(eaasClient.networkTcpInfo)
-                                {
-                                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/,'http'));
-
-                                    console.log(url.hostname);
-                                    console.log(url.pathname);
-                                    var pathArray = url.pathname.split('/');
-                                    console.log(pathArray);
-
-                                    $("#emulator-info-container").text("connect to: " + url.hostname + " protocol " + pathArray[1] + " port " + pathArray[2]);
+                                if (typeof keyboardLayout != "undefined") {
+                                    data.keyboardLayout = keyboardLayout;
                                 }
 
-                                if (eaasClient.params.pointerLock === "true") {
-                                   growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                                   BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                if (typeof keyboardModel != "undefined") {
+                                    data.keyboardModel = keyboardModel;
                                 }
+                                return data;
+                            };
 
-                                // Fix to close emulator on page leave
-                                $scope.$on('$locationChangeStart', function(event) {
-                                    eaasClient.release();
+                            envs.push({data, visualize: true});
+
+                            eaasClient.start(envs, params).then(function () {
+                                eaasClient.connect().then(function () {
+                                    $("#emulator-loading-container").hide();
+                                    $("#emulator-container").show();
+
+                                    console.log(eaasClient.networkTcpInfo);
+                                    if (eaasClient.networkTcpInfo) {
+                                        var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
+
+                                        console.log(url.hostname);
+                                        console.log(url.pathname);
+                                        var pathArray = url.pathname.split('/');
+                                        console.log(pathArray);
+
+                                        $("#emulator-info-container").text("connect to: " + url.hostname + " protocol " + pathArray[1] + " port " + pathArray[2]);
+                                    }
+
+                                    if (eaasClient.params.pointerLock === "true") {
+                                        growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                                        BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                                    }
+
+                                    // Fix to close emulator on page leave
+                                    $scope.$on('$locationChangeStart', function (event) {
+                                        eaasClient.release();
+                                    });
                                 });
                             });
-                        });
+                        };
+
+                        //todo optimize this if else
+                        if (typeof chosenEnv.data == "undefined") {
+                            vm.runEmulator([]);
+                        }
+                        else if (typeof chosenEnv.data.connectEnvs == "undefined" || !chosenEnv.data.connectEnvs) {
+                            console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
+                            vm.runEmulator([]);
+                        }
+                        else {
+                            let modal = $uibModal.open({
+                                templateUrl: 'partials/wf-s/connected-envs-modal.html',
+                                controller: function ($scope, $uibModalInstance) {
+                                    $scope.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
+                                    $scope.selected = [];
+                                    $scope.ok = function () {
+                                        $uibModalInstance.close();
+                                        vm.runEmulator($scope.selected);
+                                    };
+
+                                    $scope.cancel = function () {
+                                        $uibModalInstance.dismiss('cancel');
+                                    };
+
+                                    $scope.OnClickSelect = function (item) {
+                                        console.log("got item! " + item.envId);
+                                        $scope.selected.push(item)
+                                    };
+
+                                    $scope.OnRemoveSelect = function (item) {
+                                        var index = $scope.selected.indexOf(item);
+                                        $scope.selected.splice(index, 1);
+                                    }
+                                },
+                                controllerAs: "connectedEnvs"
+                            });
+
+                            modal.result.then({}, function () {
+                                //Get triggers when modal is dismissed (user chooses close button or clicks out of modal borders)
+                                let isObjectEnv = false;
+                                if ($stateParams.objectId != null)
+                                    isObjectEnv = true;
+                                $state.go('wf-s.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
+                            });
+                        }
                     }],
                     controllerAs: "startEmuCtrl"
                 },
@@ -1888,6 +1991,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
                         var vm = this;
 
+                        vm.config = localConfig.data;
                         vm.type = $stateParams.type;
                         vm.emulator = $rootScope.emulator;
 
@@ -1995,6 +2099,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     if(!this.objectId)
                                         this.objectId = $stateParams.objectId;
 
+
                                     this.changeMedium = function(newMediumLabel) {
                                         if (newMediumLabel == null) {
                                             growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
@@ -2004,7 +2109,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         this.isChangeMediaSubmitting = true;
 
                                         var postObj = {};
-                                        postObj.objectId = $stateParams.objectId;
+                                        postObj.objectId = this.objectId;
+
                                         postObj.driveId = window.eaasClient.driveId;
                                         postObj.label = newMediumLabel;
 
@@ -2329,8 +2435,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     vm.handle = $stateParams.handle;
 
                     vm.deleteHandle = function () {
-                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))
-                        $state.go('wf-s.handles', {reload: true});
+                        jQuery.when(
+                            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))).done(
+                            function () {
+                                $state.go('wf-s.handles', {reload: true});
+                            })
                     };
 
                     vm.showHandleValue = function () {
@@ -2340,14 +2449,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                     };
 
                     vm.editHandle = function () {
-                        $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/modifyHandle", encodeURI($stateParams.handle)), {
-                            handle: $stateParams.handle,
-                            handleValue: document.getElementById("newHandleValue").value
+                        jQuery.when(
+                            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/modifyHandle", encodeURI($stateParams.handle)), {
+                                handle: $stateParams.handle,
+                                handleValue: document.getElementById("newHandleValue").value
+                            }),
+                            vm.handleValue = $stateParams.handle
+                        ).done(function () {
+                            $state.go('wf-s.edit-handle', $stateParams, {reload: true})
                         });
 
-                        vm.handleValue = $stateParams.handle;
 
-                        $state.go('wf-s.edit-handle', $stateParams, {reload: true});
                     };
                 }],
                 controllerAs: "handleOverview"

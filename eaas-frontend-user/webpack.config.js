@@ -7,6 +7,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+var WriteFilePlugin = require ('write-file-webpack-plugin');
+
 
 /**
  * Env
@@ -15,7 +17,7 @@ var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var ENV = process.env.npm_lifecycle_event;
 var isProd = ENV === 'build';
 
-var PRODUCTION_BASE_PATH = '/';
+var PRODUCTION_BASE_PATH = '';
 
 module.exports = function makeWebpackConfig() {
   /**
@@ -161,7 +163,10 @@ module.exports = function makeWebpackConfig() {
     // Reference: https://github.com/webpack/extract-text-webpack-plugin
     // Extract css files
     // Disabled when in test mode or not in build mode
-    new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true})
+    new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
+      new CopyWebpackPlugin([{
+          from: '../common/eaas-client/xpra', to: 'xpra'
+      }])
   );
 
   // Add build specific plugins
@@ -183,7 +188,10 @@ module.exports = function makeWebpackConfig() {
       // Reference: https://github.com/kevlened/copy-webpack-plugin
       new CopyWebpackPlugin([{
         from: __dirname + '/src/public'
-      }])
+      }]),
+        new CopyWebpackPlugin([{
+            from: '../common/eaas-client/xpra', to: 'xpra'
+        }])
     )
   }
 

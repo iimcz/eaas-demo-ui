@@ -18,20 +18,20 @@
         padding: 0;
         max-height: none;
     }
-    
+
     .sidebar-nav .navbar ul {
         float: none;
     }
-    
+
     .sidebar-nav .navbar ul:not {
         display: block;
     }
-    
+
     .sidebar-nav .navbar li {
         float: none;
         display: block;
     }
-    
+
     .sidebar-nav .navbar li a {
         padding-top: 12px;
         padding-bottom: 12px;
@@ -74,54 +74,54 @@
         Object Overview Page
    ========================================================================== */
 #object-grid-container {
-  margin: 0 16px;
+    margin: 0 16px;
 }
 
 #object-grid-container .object-container {
-  height: 220px;
-  width: 150px;                  
-  display: inline-block;
-  margin-right: 30px;
-  margin-bottom: 30px;
-  overflow: hidden;
+    height: 220px;
+    width: 150px;
+    display: inline-block;
+    margin-right: 30px;
+    margin-bottom: 30px;
+    overflow: hidden;
 }
 
 #object-grid-container .object-container:last-child {
-  margin-right: 0;
+    margin-right: 0;
 }
 
 #object-grid-container .cover-container {
-  display: inline-block;
-  max-height: 100%;
-  max-width: 100%;
+    display: inline-block;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 #object-grid-container .cover {
-  max-height: 100%;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  display: inline-block;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
-  margin-bottom: 6px;
+    max-height: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    margin-bottom: 6px;
 }
 
 #object-grid-container .title-container {
-  display: block;
-  text-align: center;
+    display: block;
+    text-align: center;
 }
 
 #object-grid-container .title {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  display: inline-block;
-  max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    max-width: 100%;
 }
 
 #object-grid-container .description {
-  height: 50px;
+    height: 50px;
 }
 
 /* ==========================================================================
@@ -178,7 +178,7 @@ html.wait, body.wait {
 
 #error-loading-spinner {
     display: block;
-    margin: 30px auto;    
+    margin: 30px auto;
 }
 
 /* ==========================================================================
@@ -186,5 +186,5 @@ html.wait, body.wait {
    ========================================================================== */
 
 .m-t-0 {
-  margin-top: 0 !important;
+    margin-top: 0 !important;
 }

@@ -2,8 +2,14 @@ npm-debug.log
 node_modules
 dist
 coverage
+config.json
+
 
 .idea
+/sublime.sublime-workspace
+/sublime.sublime-project
+*.br
+*.gz
 config.json
 sublime.sublime-workspace
 sublime.sublime-project

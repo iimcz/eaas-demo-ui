@@ -173,6 +173,8 @@
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
+
+  "EDITENV_CANCONNECTENVS": "Umgebung verbinden (Experimental)",
   "EDITENV_ENABLE_INTERNET" : "Internetzugang aktivieren",
   "EDITENV_ENABLE_SERVERMODE" : "Nutzung als Server ermöglichen",
   "EDITENV_ENABLE_SOCKS" : "SOCKS5 Proxy aktivieren",
@@ -295,5 +297,7 @@
   "EDIT_CONTAINER_OUTPUT_PH" :  "Pfad im Container",
   "EDIT_CONTAINER_HELPTEXT" : "Beschreibung",
   "EDIT_CONTAINER_CANCEL" : "Abbrechen",
-  "EDIT_CONTAINER_SAVE" : "Speichern"
+  "EDIT_CONTAINER_SAVE" : "Speichern",
+  "CONFIRM_SNAPSHOT_CANCEL" : "Zurück zur Bereitstellung"
 }
+

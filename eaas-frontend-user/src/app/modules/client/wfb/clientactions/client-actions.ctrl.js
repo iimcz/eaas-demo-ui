@@ -72,13 +72,13 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         postReq.userId = $stateParams.userId;
         postReq.envId = $stateParams.envId;
 
-        waitModal = $uibModal.open({
+        var waitModal = $uibModal.open({
             animation: true,
             templateUrl: 'partials/save-wait-dialog.html'
         });
 
         window.onbeforeunload = null;
-        snapshotDoneFunc = function(data, status) {
+        var snapshotDoneFunc = function(data, status) {
             waitModal.close();
             $uibModal.open({
                 animation: true,
@@ -192,12 +192,12 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                         return;
                     }
 
-                    postObj = {};
+                    var postObj = {};
                     postObj.objectId = $stateParams.objectId;
                     postObj.driveId = window.eaasClient.driveId;
                     postObj.label = newMediumLabel;
 
-                    changeSuccsessFunc = function(data, status) {
+                    var changeSuccsessFunc = function(data, status) {
                         growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
                         currentMediumLabel = newMediumLabel;
                         $scope.$close();

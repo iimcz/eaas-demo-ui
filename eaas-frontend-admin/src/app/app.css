@@ -323,3 +323,19 @@ html.wait, body.wait {
 #object-grid-container .description {
   height: 50px;
 }
+
+.m-t-0 {
+  margin-top: 0 !important;
+}
+
+button#printerbutton    {
+    cursor: pointer;
+    background-image: none;
+    border: none;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+button:focus#printerbutton    {
+    background-color: #ededed;
+}

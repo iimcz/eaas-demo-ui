@@ -228,12 +228,15 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             abstract: true,
             url: "/wf-b?objectId",
             template: require('./modules/client/wfb/base/base.html'),
+            params: {
+                userId: null
+            },
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
                 objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.loadEnvsUrl, $stateParams.objectId)),
                 objMetadata: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.metadataUrl, $stateParams.objectId)),
                 allEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
-                userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, "testuser01", $stateParams.objectId)),
+                userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, $stateParams.userId, $stateParams.objectId)),
                 kbLayouts: function($http) {
                     return $http.get("kbLayouts.json");
                 }
