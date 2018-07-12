@@ -25,6 +25,8 @@
                             <li ng-if="baseCtrl.config.features.objectEnvironments"><a ui-sref="wf-s.standard-envs-overview({showObjects: true})" data-ui-sref-opts="{reload: true}" href="">{{'BASE_MENU_OBJENVS'| translate}}</a></li>
                             <li ng-if="baseCtrl.config.features.software"><a ui-sref="wf-i.sw-overview" href="">{{'BASE_MENU_SW'| translate}}</a></li>
                             <li ng-if="baseCtrl.config.features.objects"><a ui-sref="wf-s.object-overview" href="">{{'BASE_MENU_OBJECTS'| translate}}</a></li>
+                            <li ng-if="baseCtrl.config.features.containers"><a ui-sref="wf-s.standard-envs-overview({showContainers: true})" href="">{{'BASE_MENU_CONTAINER_ENVS'| translate}}</a></li>
+                            <hr/>
                             <li ng-if="baseCtrl.config.features.handle"><a ui-sref="wf-s.handles" href="">{{'BASE_MENU_HANDLE'| translate}}</a></li>
                             <hr/>
                             <li><a ui-sref="wf-s.user-session-overview" href="">{{'BASE_MENU_SESSIONS'| translate}}</a></li>
