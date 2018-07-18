@@ -59,6 +59,31 @@ EaasClient.Client = function (api_entrypoint, container) {
         return result;
     }
 
+    async function removeNetworkComponent(netid, compid) {
+        console.log("Removing component " + compid + " from network " + netid);
+        try {
+            await $.ajax({
+                type: "DELETE",
+                url: API_URL + formatStr("/networks/{0}/components/{1}", netid, compid),
+                timeout: 10000,
+                headers: localStorage.getItem('id_token') ? { "Authorization": "Bearer " + localStorage.getItem('id_token') } : {}
+            });
+        }
+        catch (xhr) {
+            const json = $.parseJSON(xhr.responseText);
+            if (json.error !== null)
+                console.error("Server-Error:" + json.error);
+            if (json.detail !== null)
+                console.error("Server-Error Details:" + json.detail);
+            if (json.stacktrace !== null)
+                console.error("Server-Error Stacktrace:" + json.stacktrace);
+
+            console.error("Removing component failed!");
+            throw undefined;
+        }
+
+        console.log("Component removed: " + compid);
+    }
 
     var isStarted = false;
     var isConnected = false;
@@ -304,10 +329,10 @@ EaasClient.Client = function (api_entrypoint, container) {
                 type: "POST",
                 url: API_URL + "/networks",
                 data: JSON.stringify({
-                    components,
+                    components: components,
                     hasInternet: args.hasInternet ? true : false,
-                    // hasTcpGateway: args.hasTcpGateway ? true : false,
-                    // tcpGatewayConfig : args.tcpGatewayConfig ? args.tcpGatewayConfig : {}
+                    hasTcpGateway: args.hasTcpGateway ? true : false,
+                    tcpGatewayConfig : args.tcpGatewayConfig ? args.tcpGatewayConfig : {}
                 }),
                 contentType: "application/json",
                 headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
@@ -337,7 +362,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                     success: function (envData, status2, xhr2) {
                         idsData.push(envData);
                         if(environments[i].visualize == true){
-                            console.log("_this.componentId "+ envData.id);
+                            console.log("_this.componentId "+ _this.componentId);
                             if(_this.componentId != null)
                                 console.error("We support visualization of only one environment at the time!! Visualizing the last specified...");
                             _this.componentId = envData.id;
@@ -370,7 +395,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                         _this.driveId = data.driveId;
 
                         if (args.tcpGatewayConfig || args.hasInternet) {
-                            connectNetwork(data);
+                            connectNetwork([data]);
                         } else {
                             console.log("Environment " + environments[0].data.environment + " started.");
                             _this.isStarted = true;
@@ -496,42 +521,40 @@ EaasClient.Client = function (api_entrypoint, container) {
     };
 
     // Checkpoints a running session
-    this.checkpoint = function (request) {
-        var deferred = $.Deferred();
-
+    this.checkpoint = async function (request) {
         if (!this.isStarted) {
             _this._onFatalError("Environment was not started properly!");
-            deferred.reject();
-            return deferred.promise();
+            throw undefined;
+        }
+
+        if (_this.networkId != null) {
+            // Remove the main component from the network group first!
+            await removeNetworkComponent(_this.networkId, _this.componentId);
         }
 
         console.log("Checkpointing session...");
-        $.ajax({
-            type: "POST",
-            url: API_URL + formatStr("/components/{0}/checkpoint", _this.componentId),
-            timeout: 30000,
-            contentType: "application/json",
-            data: JSON.stringify(request),
-            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
-        })
-            .done(function (data, status, xhr) {
-                var envid = data.envId;
-                console.log("Checkpoint created: " + envid);
-                deferred.resolve(envid);
-            })
-            .fail(function (xhr, status, error) {
-                var json = $.parseJSON(xhr.responseText);
-                if (json.message !== null)
-                    console.error("Server-Error:" + json.message);
-
-                if (error !== null)
-                    console.error("Ajax-Error: " + error);
-
-                console.error("Checkpointing failed!");
-                deferred.reject();
+        try {
+            const data = await $.ajax({
+                type: "POST",
+                url: API_URL + formatStr("/components/{0}/checkpoint", _this.componentId),
+                timeout: 30000,
+                contentType: "application/json",
+                data: JSON.stringify(request),
+                headers: localStorage.getItem('id_token') ? { "Authorization": "Bearer " + localStorage.getItem('id_token') } : {}
             });
 
-        return deferred.promise();
+            const envid = data.envId;
+            console.log("Checkpoint created: " + envid);
+            return envid;
+        }
+        catch (xhr) {
+            var json = $.parseJSON(xhr.responseText);
+            if (json.message !== null)
+                console.error("Server-Error:" + json.message);
+
+            console.error("Checkpointing failed!");
+            throw undefined;
+        }
     };
 
     this.getScreenshotUrl = function () {
@@ -760,231 +783,6 @@ EaasClient.Client = function (api_entrypoint, container) {
 
 };
 /*
- *  Example usage:
- *
- *      var centerOnScreen = function(width, height) {
- *          ...
- *      }
- *
- *      var resizeIFrame = function(width, height) {
- *          ...
- *      }
- *
- *      BWFLA.registerEventCallback(<target-1>, 'resize', centerOnScreen);
- *      BWFLA.registerEventCallback(<target-2>, 'resize', centerOnScreen);
- *      BWFLA.registerEventCallback(<target-2>, 'resize', resizeIFrame);
- */
-
-var BWFLA = BWFLA || {};
-
-// Method to attach a callback to an event
-BWFLA.registerEventCallback = function(target, eventName, callback)
-{
-    var event = 'on' + eventName;
-
-    if (!(event in target)) {
-        console.error('Event ' + eventName + ' not supported!');
-        return;
-    }
-
-    // Add placeholder for event-handlers to target's prototype
-    if (!('__bwFlaEventHandlers__' in target))
-        target.constructor.prototype.__bwFlaEventHandlers__ = {};
-
-    // Initialize the list for event's callbacks
-    if (!(event in target.__bwFlaEventHandlers__))
-        target.__bwFlaEventHandlers__[event] = [];
-
-    // Add the new callback to event's callback-list
-    var callbacks = target.__bwFlaEventHandlers__[event];
-    callbacks.push(callback);
-
-    // If required, initialize handler management function
-    if (target[event] == null) {
-        target[event] = function() {
-            var params = arguments;  // Parameters to the original callback
-
-            // Call all registered callbacks one by one
-            callbacks.forEach(function(func) {
-                func.apply(target, params);
-            });
-        };
-    }
-};
-
-
-// Method to unregister a callback for an event
-BWFLA.unregisterEventCallback = function(target, eventName, callback)
-{
-    // Look in the specified target for the callback and
-    // remove it from the execution chain for this event
-
-    if (!('__bwFlaEventHandlers__' in target))
-        return;
-
-    var callbacks = target.__bwFlaEventHandlers__['on' + eventName];
-    if (callbacks == null)
-        return;
-
-    var index = callbacks.indexOf(callback);
-    if (index > -1)
-        callbacks.splice(index, 1);
-};
-
-/** Custom mouse-event handlers for use with the Guacamole.Mouse */
-var BwflaMouse = function(client)
-{
-    var events = [];
-    var handler = null;
-    var waiting = false;
-
-
-    /** Adds a state's copy to the current event-list. */
-    function addEventCopy(state)
-    {
-        var copy = new Guacamole.Mouse.State(state.x, state.y, state.left,
-            state.middle, state.right, state.up, state.down);
-
-        events.push(copy);
-    }
-
-    /** Sets a new timeout-callback, replacing the old one. */
-    function setNewTimeout(callback, timeout)
-    {
-        if (handler != null)
-            window.clearTimeout(handler);
-
-        handler = window.setTimeout(callback, timeout);
-    }
-
-    /** Handler, called on timeout. */
-    function onTimeout()
-    {
-        while (events.length > 0)
-            client.sendMouseState(events.shift());
-
-        handler = null;
-        waiting = false;
-    };
-
-
-    /** Handler for mouse-down events. */
-    this.onmousedown = function(state)
-    {
-        setNewTimeout(onTimeout, 100);
-        addEventCopy(state);
-        waiting = true;
-    };
-
-    /** Handler for mouse-up events. */
-    this.onmouseup = function(state)
-    {
-        setNewTimeout(onTimeout, 150);
-        addEventCopy(state);
-        waiting = true;
-    };
-
-    /** Handler for mouse-move events. */
-    this.onmousemove = function(state)
-    {
-        if (waiting == true)
-            addEventCopy(state);
-        else client.sendMouseState(state);
-    };
-};
-
-var BWFLA = BWFLA || {};
-
-
-/** Requests a pointer-lock on given element, if supported by the browser. */
-BWFLA.requestPointerLock = function(target, event)
-{
-    function lockPointer() {
-        var havePointerLock = 'pointerLockElement' in document
-            || 'mozPointerLockElement' in document
-            || 'webkitPointerLockElement' in document;
-
-        if (!havePointerLock) {
-            var message = "Your browser does not support the PointerLock API!\n"
-                + "Using relative mouse is not possible.\n\n"
-                + "Mouse input will be disabled for this virtual environment.";
-
-            console.warn(message);
-            alert(message);
-            return;
-        }
-
-        // Activate pointer-locking
-        target.requestPointerLock = target.requestPointerLock
-            || target.mozRequestPointerLock
-            || target.webkitRequestPointerLock;
-
-        target.requestPointerLock();
-    };
-
-    function enableLockEventListener()
-    {
-        target.addEventListener(event, lockPointer, false);
-    };
-
-    function disableLockEventListener()
-    {
-        target.removeEventListener(event, lockPointer, false);
-    };
-
-    function onPointerLockChange() {
-        if (document.pointerLockElement === target
-            || document.mozPointerLockElement === target
-            || document.webkitPointerLockElement === target) {
-            // Pointer was just locked
-            console.debug("Pointer was locked!");
-            target.isPointerLockEnabled = true;
-            disableLockEventListener();
-        } else {
-            // Pointer was just unlocked
-            console.debug("Pointer was unlocked.");
-            target.isPointerLockEnabled = false;
-            enableLockEventListener();
-        }
-    };
-
-    function onPointerLockError(error) {
-        var message = "Pointer lock failed!";
-        console.warn(message);
-        alert(message);
-    }
-
-    // Hook for pointer lock state change events
-    document.addEventListener('pointerlockchange', onPointerLockChange, false);
-    document.addEventListener('mozpointerlockchange', onPointerLockChange, false);
-    document.addEventListener('webkitpointerlockchange', onPointerLockChange, false);
-
-    // Hook for pointer lock errors
-    document.addEventListener('pointerlockerror', onPointerLockError, false);
-    document.addEventListener('mozpointerlockerror', onPointerLockError, false);
-    document.addEventListener('webkitpointerlockerror', onPointerLockError, false);
-
-    enableLockEventListener();
-
-    // Set flag for relative-mouse mode
-    target.isRelativeMouse = true;
-};
-
-
-/** Hides the layer containing client-side mouse-cursor. */
-BWFLA.hideClientCursor = function(guac)
-{
-    var display = guac.getDisplay();
-    display.showCursor(false);
-};
-
-
-/** Shows the layer containing client-side mouse-cursor. */
-BWFLA.showClientCursor = function(guac)
-{
-    var display = guac.getDisplay();
-    display.showCursor(true);
-};/*
  *  Example usage:
  *
  *      var centerOnScreen = function(width, height) {
