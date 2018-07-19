@@ -103,11 +103,28 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             listEmptyNote: '@',
             inputPlaceholder: '@',
             addButtonText: '@',
+            newInputUrl: '=',
+            newInputName: '=',
+            uploadFiles: '=',
             inputSourceButtonText: '=',
             onInputSourceSelection: '<',
             onImportFileChosen: '<',
+            onFileUpload: '<',
             showDialogs: '='
         }
+    })
+    
+    .directive('onInputFileChange', function() {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var onChangeHandler = scope.$eval(attrs.onInputFileChange);
+                element.on('change', onChangeHandler);
+                element.on('$destroy', function() {
+                    element.off();
+                });
+            }
+        };
     })
 
     .run(function($rootScope, $state) {
@@ -2250,12 +2267,40 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             this.activeInputMethod = inputMethod;
                                             this.showDialogs[this.activeInputMethod] = true;
                                             this.inputSourceButtonText = obj.target.firstChild.data;
+                                            this.newInputUrl = "";
+                                            this.newInputName = "";
                                         }
                                     };
-                                    this.onImportFileChosen = function(file) {
-                                       alert(file)
-                                       this.newInputUrl = file.name;
-                                       this.newInputName = file.name;
+                                    this.onImportFileChosen = function(event) {
+                                        var files = event.target.files;
+                                        console.log(files);
+                                        $scope.$apply(function() {
+                                            console.log(files);
+                                            $scope.runContainerDlgCtrl.newInputUrl = files[0].name;
+                                            $scope.runContainerDlgCtrl.newInputName = files[0].name;
+                                            $scope.runContainerDlgCtrl.uploadFiles = files[0];
+                                        });
+                                    };
+                                    this.onFileUpload = function (event) {
+                                        console.log(this.uploadFiles);
+                                        var reader = new FileReader();
+
+                                        // Check if upload started
+                                        reader.onload = (function() {
+                                            return function(e) {
+                                                console.log("File Upload started");
+                                            };
+                                        });
+
+                                        // If we use onloadend, we need to check the readyState.
+                                        // Log read text to console to check if it worked
+                                        reader.onloadend = function(evt) {
+                                            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                                                console.log(evt.target.result);
+                                            }
+                                        };
+
+                                        reader.readAsText(this.uploadFiles, "utf8");
                                     };
                                     this.showDialogs = {
                                         "upload": false,
@@ -2264,8 +2309,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         "uniprot": false
                                     };
                                     this.inputs = [];
+                                    this.newInputUrl = "";
+                                    this.newInputName = "";
                                     this.inputSourceButtonText = "Choose Input Source";
                                     this.activeInputMethod = null;
+                                    this.uploadFiles = null;
                                 },
                                 controllerAs: "runContainerDlgCtrl"
                             });
