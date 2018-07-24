@@ -47,39 +47,31 @@
         <!-- Appropriate section for each input source -->
         <!-- Upload Files -->
         <div ng-if="$ctrl.showDialogs['upload']" >
-            <form method="post" enctype="multipart/form-data">
-                <label class="import-file">
-                    <input type="file" id="fileUpload" on-input-file-change="$ctrl.onImportFileChosen" style="display: none">
-                    <div>
-                        <button class="btn btn-default" type="button" onclick="document.querySelector('#fileUpload').click()">
-                        Choose File
-                        </button>
-                    </div>
-                </label>
-            </form>
-            <div class="input-group">
-                <input type="text" class="form-control" ng-readonly=true ng-model="$ctrl.newInputUrl" size="30">
-                <span class="input-group-addon">Chosen File</span>
-            </div>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
-                <span class="input-group-addon">Destination</span>
-            </div>
-            <div class="input-group">
-                <select class="form-control" theme="bootstrap" ng-model="$ctrl.newAction" >
-                    <option value="copy">copy</option>
-                    <option value="extract">extract</option>
-                </select>
-                <span class="input-group-addon">Action</span>
-            </div>
-            <div class="input-group">
-                <span class="input-group-btn">
-                     <button class="btn btn-default" type="button" ng-click="$ctrl.onFileUpload()">
-                         Upload
-                     </button>
-                 </span>
-            </div>
-        </div>                
+            <button type="button" class="btn btn-default" ngf-select="$ctrl.onImportFilesChosen($files)" multiple >Select Files</button>
+            <li class="list-group-item" ng-repeat="elem in $ctrl.uploadFiles track by $index">
+                <!-- Display uploaded files together with their upload status, and choose destination in Container -->
+                <!-- TODO: Save values of each field (Url, Destination, Action) upon click on 'Upload and Add files -->
+                <div class="input-group">
+                    <input type="text" class="form-control" value="{{elem.name}}" size="30">
+                    <span class="input-group-addon">Url</span>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" value="{{elem.name}}" size="30">
+                    <span class="input-group-addon">Destination</span>
+                </div>
+                <div class="input-group">
+                    <select class="form-control" theme="bootstrap" >
+                        <option value="copy">copy</option>
+                        <option value="extract">extract</option>
+                    </select>
+                    <span class="input-group-addon">Action</span>
+                </div>
+                <span class="progress" ng-show="progress >= 0">
+                    <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+                </span>
+            </li>
+            <button ng-show="$ctrl.uploadFiles.length > 0" type="button" class="btn btn-default" ng-click="$ctrl.onFileUpload()" >Upload and Add files</button>
+        </div>
         <!-- Import from URL -->
         <div ng-if="$ctrl.showDialogs['import']" >
             <div class="input-group">

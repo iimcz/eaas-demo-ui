@@ -24,6 +24,7 @@ import 'angular-wizard';
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
+import 'ng-file-upload';
 
 /*
  * Import legacy emulator libraries
@@ -71,7 +72,7 @@ import './app.css';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
-                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
+                                   'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'ngFileUpload', 'emilAdminUI.helpers', 'emilAdminUI.modules'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -108,7 +109,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             uploadFiles: '=',
             inputSourceButtonText: '=',
             onInputSourceSelection: '<',
-            onImportFileChosen: '<',
+            onImportFilesChosen: '<',
             onFileUpload: '<',
             showDialogs: '='
         }
@@ -2143,8 +2144,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             views: {
                 'wizard': {
                     templateUrl: "partials/wf-s/container.html",
-                    controller: ['$rootScope','$scope','$sce','$state','$stateParams','$translate','localConfig','growl','$uibModal','containerEnvironmentList',
-                        function ($rootScope, $scope, $sce, $state, $stateParams, $translate, localConfig, growl, $uibModal, containerEnvironmentList) {
+                    controller: ['$rootScope','$scope','$sce','$state', '$http', '$stateParams','$translate','Upload', 'localConfig','growl','$uibModal','containerEnvironmentList',
+                        function ($rootScope, $scope, $sce, $state, $http, $stateParams, $translate, Upload, localConfig, growl, $uibModal, containerEnvironmentList) {
                         var vm = this;
 
                         $("#container-stopped").hide();
@@ -2271,36 +2272,29 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             this.newInputName = "";
                                         }
                                     };
-                                    this.onImportFileChosen = function(event) {
-                                        var files = event.target.files;
+                                    this.onImportFilesChosen = function(files) {
                                         console.log(files);
-                                        $scope.$apply(function() {
-                                            console.log(files);
-                                            $scope.runContainerDlgCtrl.newInputUrl = files[0].name;
-                                            $scope.runContainerDlgCtrl.newInputName = files[0].name;
-                                            $scope.runContainerDlgCtrl.uploadFiles = files[0];
-                                        });
+                                        this.uploadFiles = files;
                                     };
-                                    this.onFileUpload = function (event) {
+                                    this.onFileUpload = function () {
                                         console.log(this.uploadFiles);
-                                        var reader = new FileReader();
 
-                                        // Check if upload started
-                                        reader.onload = (function() {
-                                            return function(e) {
-                                                console.log("File Upload started");
-                                            };
-                                        });
-
-                                        // If we use onloadend, we need to check the readyState.
-                                        // Log read text to console to check if it worked
-                                        reader.onloadend = function(evt) {
-                                            if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                                                console.log(evt.target.result);
-                                            }
-                                        };
-
-                                        reader.readAsText(this.uploadFiles, "utf8");
+                                        for (var i = 0; i < this.uploadFiles.length; i++) {
+                                            Upload.upload({
+                                                url: localConfig.data.eaasBackendURL + "/upload",
+                                                data: {file: this.uploadFiles[i]}
+                                            }).then(function (resp) {
+                                                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                                            }, function (resp) {
+                                                console.log('Error status: ' + resp.status);
+                                                $state.go('error', {errorMsg: {title: "Load Environments Error " + resp.data.status, message: resp.data.message}});
+                                            }, function (evt) {
+                                                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                                                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                                                //uploadInfo.title = "Uploading Object(s)" + evt.config.data.file.name;
+                                                //uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
+                                            });
+                                        }
                                     };
                                     this.showDialogs = {
                                         "upload": false,
@@ -2313,7 +2307,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     this.newInputName = "";
                                     this.inputSourceButtonText = "Choose Input Source";
                                     this.activeInputMethod = null;
-                                    this.uploadFiles = null;
+                                    this.uploadFiles = [];
                                 },
                                 controllerAs: "runContainerDlgCtrl"
                             });
