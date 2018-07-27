@@ -902,15 +902,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             },
             views: {
                 'wizard': {
-                    templateUrl: 'partials/wf-i/new-container.html',
-                    controller: ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout', 'helperFunctions', 'REST_URLS',
-                        function ($http, $scope, $state, $stateParams, runtimeList, growl, localConfig, $uibModal, $timeout, helperFunctions, REST_URLS) {
+                    templateUrl: 'partials/wf-i/new-container-wizard.html',
+                    controller: ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout' , 'WizardHandler', 'helperFunctions', 'REST_URLS',
+                        function ($http, $scope, $state, $stateParams, runtimeList, growl, localConfig, $uibModal, $timeout, WizardHandler, helperFunctions, REST_URLS) {
 
                         var container = this;
                         container.runtimes = runtimeList.data.runtimes;
                         console.log(container.runtimes);
+                            $stateParams.type = 'saveImport';
+                            window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
-                        // initialize default values of the form
+                            // initialize default values of the form
                         container.imageSize = 1024;
                         container.imageType = 'size';
 
@@ -952,19 +954,44 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             return true;
                         };
 
-                        container.checkState = function(_taskId)
+                        container.isMetaDataValid = function() {
+
+                            if(!container.title)
+                            {
+                                growl.error("Title is required");
+                                return false;
+                            }
+                            if(!container.containerDescription)
+                            {
+                                growl.error("Description is required");
+                                return false;
+                            }
+                            if(!container.author)
+                            {
+                                growl.error("Author is required");
+                                return false;
+                            }
+
+
+                            return true;
+                        };
+
+                        container.checkState = function(_taskId, stayAtPage)
                         {
                            var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function(response){
                                 if(response.data.status == "0")
                                 {
                                     if(response.data.isDone)
                                     {
+
+                                        container.id = response.data.userData.environmentId;
                                         container.modal.close();
                                         growl.success("import successful.");
+                                        if(typeof stayAtPage == "undefined" || !stayAtPage)
                                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                     }
                                     else
-                                        $timeout(function() {container.checkState(_taskId);}, 2500);
+                                        $timeout(function() {container.checkState(_taskId, stayAtPage);}, 2500);
                                 }
                                 else
                                 {
@@ -974,57 +1001,78 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             });
                         };
 
-                        //Next Step
-                        container.import = function() {
+                            container.saveImportedContainer = function () {
 
-                            if(!container.isValid())
-                                return;
+                                if (!container.isMetaDataValid())
+                                    return;
 
-                            var convertedEnv = [];
-                            var convertedArgs = [];
-                            var escapeEl = document.createElement('textarea');
-
-                            var unescape = function(html) {
-                                escapeEl.innerHTML = html;
-                                return escapeEl.textContent;
+                                $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.saveImportedContainer, container.id, container.title, container.containerDescription, container.author))
+                                    .then(function (response) {
+                                        if (response.data.status == "0") {
+                                            growl.success("import successful.");
+                                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                        }
+                                        else {
+                                            $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
+                                        }
+                                    });
                             };
 
-                            for(var _e in container.env)
-                            {
-                                convertedEnv.push(unescape(container.env[_e]));
-                            }
+                            //Next Step
+                            container.import = function () {
 
-                            for(var _a in container.args)
-                            {
-                                convertedArgs.push(unescape(container.args[_a]));
-                            }
+                                if (!container.isValid())
+                                    return;
 
-                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.importContainerUrl,
-                                {
-                                    urlString: container.imageUrl,
-                                    runtimeID: container.runtime,
-                                    name: container.name,
-                                    processArgs: container.args,
-                                    processEnvs: container.env,
-                                    inputFolder: container.imageInput,
-                                    outputFolder: container.imageOutput,
-                                    imageType: container.archiveType,
-                                    guiRequired: container.gui
-                                }).then(function(response) {
-                                if(response.data.status === "0") {
-                                    var taskId = response.data.taskId;
-                                    container.modal = $uibModal.open({
-                                        animation: true,
-                                        templateUrl: 'partials/import-wait.html'
-                                    });
-                                    container.checkState(taskId);
+                                var convertedEnv = [];
+                                var convertedArgs = [];
+                                var escapeEl = document.createElement('textarea');
+
+                                var unescape = function (html) {
+                                    escapeEl.innerHTML = html;
+                                    return escapeEl.textContent;
+                                };
+
+                                for (var _e in container.env) {
+                                    convertedEnv.push(unescape(container.env[_e]));
                                 }
-                                else {
-                                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
+
+                                for (var _a in container.args) {
+                                    convertedArgs.push(unescape(container.args[_a]));
                                 }
-                            });
-                        };
-                    }],
+
+                                $http.post(localConfig.data.eaasBackendURL + REST_URLS.importContainerUrl,
+                                    {
+                                        urlString: container.imageUrl,
+                                        runtimeID: container.runtime,
+                                        name: container.name,
+                                        processArgs: container.args,
+                                        processEnvs: container.env,
+                                        inputFolder: container.imageInput,
+                                        outputFolder: container.imageOutput,
+                                        imageType: container.archiveType,
+                                        title: container.title,
+                                        description: container.containerDescription,
+                                        author: container.author,
+                                        guiRequired: container.gui
+                                    }).then(function (response) {
+
+                                    if (response.data.status === "0") {
+
+                                        var taskId = response.data.taskId;
+                                        container.modal = $uibModal.open({
+                                            animation: true,
+                                            templateUrl: 'partials/import-wait.html'
+                                        });
+                                        container.checkState(taskId, true);
+                                        WizardHandler.wizard('containerImportWizard').next();
+                                    }
+                                    else {
+                                        $state.go('error', {errorMsg: {title: 'Error ' + response.data.message + "\n\n" + container.description}});
+                                    }
+                                });
+                            };
+                        }],
                     controllerAs: "newContainerCtrl"
                 }
             }
@@ -1745,7 +1793,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         }
 
                         this.envTitle = this.env.title;
-                        this.envHelpText = this.env.helpText;
+                        this.author = this.env.author;
+                        this.description = this.env.description;
                         this.envInput = this.env.input;
                         this.envOutput = this.env.output;
                         this.processArgs = this.env.processArgs; // todo deep copy
@@ -1756,14 +1805,16 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             this.env.title = this.envTitle;
                             this.env.input = this.envInput;
                             this.env.output = this.envOutput;
-                            this.env.helpText = this.envHelpText;
+                            this.env.author = this.author;
+                            this.env.description = this.description;
                             this.env.processArgs = this.processArgs;
                             this.env.processEnvs = this.processEnvs;
 
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
                                 id: $stateParams.envId,
                                 title: this.envTitle,
-                                helpText: this.envHelpText,
+                                author: this.author,
+                                description: this.description,
                                 outputFolder : this.envOutput,
                                 inputFolder : this.envInput,
                                 processEnvs : this.processEnvs,

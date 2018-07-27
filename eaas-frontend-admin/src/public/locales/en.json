@@ -1,4 +1,6 @@
 {
+  "NEW_CONTAINER_TITLE" : "Title",
+  "NEW_CONTAINER_AUTHOR" : "Author",
   "CHOOSE_ENV_L" : "Environments",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
@@ -289,7 +291,7 @@
 
   "EDIT_CONTAINER_L" : "Edit container",
   "EDIT_CONTAINER_ID" : "ID",
-  "EDIT_CONTAINER_NAME" : "Name",
+  "EDIT_CONTAINER_NAME" : "Title",
   "EDIT_CONTAINER_INPUT" : "Input folder",
   "EDIT_CONTAINER_INPUT_PH" : "path within the container",
   "EDIT_CONTAINER_OUTPUT" : "Output folder",

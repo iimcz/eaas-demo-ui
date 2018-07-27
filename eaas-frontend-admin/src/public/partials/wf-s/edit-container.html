@@ -12,6 +12,12 @@
 			class="form-control" ng-model="editContainerCtrl.envTitle"
 			placeholder="{{'EDIT_CONTAINER_NAME_PH' | translate}}" required>
 	</div>
+	<div class="form-group">
+		<label>{{'NEW_CONTAINER_AUTHOR' | translate}}</label>
+		<input type="text"
+			class="form-control" ng-model="editContainerCtrl.author"
+			placeholder="{{'EDIT_CONTAINER_NAME_PH' | translate}}" required>
+	</div>
 
 
 	<div class="form-group">
@@ -30,7 +36,7 @@
 
 	<p>
 		<b>{{'EDIT_CONTAINER_HELPTEXT' | translate}}:</b> <br />
-		<text-angular ng-model="editContainerCtrl.envHelpText" ></text-angular>
+		<text-angular ng-model="editContainerCtrl.description" ></text-angular>
 	</p>
 
 	<input-list list="editContainerCtrl.processEnvs"

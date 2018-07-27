@@ -1,4 +1,6 @@
 {
+  "NEW_CONTAINER_TITLE" : "Titel",
+  "NEW_CONTAINER_AUTHOR" : "Autor",
   "CHOOSE_ENV_L" : "Standardumgebungen",
   "CHOOSE_OBJENV_L" : "Objektumgebungen",
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
@@ -290,7 +292,7 @@
 
   "EDIT_CONTAINER_L" : "Container bearbeiten",
   "EDIT_CONTAINER_ID" : "ID",
-  "EDIT_CONTAINER_NAME" : "Name",
+  "EDIT_CONTAINER_NAME" : "Titel",
   "EDIT_CONTAINER_INPUT" : "Input Ordner",
   "EDIT_CONTAINER_INPUT_PH" : "Pfad im Container",
   "EDIT_CONTAINER_OUTPUT" : "Ouput Ordner",
