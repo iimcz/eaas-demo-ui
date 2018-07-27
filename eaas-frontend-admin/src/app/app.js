@@ -107,10 +107,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             newInputUrl: '=',
             newInputName: '=',
             uploadFiles: '=',
+            uniprotQuery: '=',
             inputSourceButtonText: '=',
             onInputSourceSelection: '<',
             onImportFilesChosen: '<',
             onFileUpload: '<',
+            onUniprotQuery: '<',
             showDialogs: '='
         }
     })
@@ -2200,6 +2202,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             input.content = inputs;
                             params.input_data.push(input);
 
+                            console.log(params.input_data);
+
                             $("#emulator-loading-container").show();
                             eaasClient.startContainer($stateParams.envId, params).then(function () {
                                 $("#emulator-loading-container").hide();
@@ -2280,11 +2284,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         console.log(this.uploadFiles);
 
                                         for (var i = 0; i < this.uploadFiles.length; i++) {
+                                            console.log(localConfig.data.eaasBackendURL);
                                             Upload.upload({
-                                                url: localConfig.data.eaasBackendURL + "/upload",
+                                                url: "http://132.230.4.15/emil/EmilContainerData/uploadUserInput",
                                                 data: {file: this.uploadFiles[i]}
                                             }).then(function (resp) {
                                                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                                                console.log(resp);
                                             }, function (resp) {
                                                 console.log('Error status: ' + resp.status);
                                                 $state.go('error', {errorMsg: {title: "Load Environments Error " + resp.data.status, message: resp.data.message}});
@@ -2294,8 +2300,29 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                                 //uploadInfo.title = "Uploading Object(s)" + evt.config.data.file.name;
                                                 //uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
                                             });
+
                                         }
                                     };
+                                    this.onUniprotQuery = function () {
+                                        var uniprotUrlPrefix = "https://www.uniprot.org/uniprot/?query=";
+                                        console.log(this.uniprotQuery);
+                                        // Build the query URL from the query string and push to input list
+                                        var queryUrl = uniprotUrlPrefix + this.uniprotQuery
+                                        // Check if query contains format information. Add "'" in the end, because the string can container whitespaces
+                                        if (!queryUrl.includes("format")) {
+                                            queryUrl += "&format=fasta";
+                                        // Replace spaces with %20
+                                        queryUrl = queryUrl.replace(/\s/g, "%20");
+                                        // Add the input query to the input list
+                                        this.list.push({url : queryUrl,
+                                                        name : this.newInputName ,
+                                                        action : this.newAction
+                                        });
+                                        this.newInputUrl = '';
+                                        this.newInputName= '';
+                                        this.newAction = '';
+                                        this.uniprotQuery = '';
+                                    }
                                     this.showDialogs = {
                                         "upload": false,
                                         "import": false,
@@ -2305,6 +2332,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     this.inputs = [];
                                     this.newInputUrl = "";
                                     this.newInputName = "";
+                                    this.uniprotQuery = "";
                                     this.inputSourceButtonText = "Choose Input Source";
                                     this.activeInputMethod = null;
                                     this.uploadFiles = [];

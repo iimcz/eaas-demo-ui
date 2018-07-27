@@ -165,11 +165,11 @@ https://www.uniprot.org/uniprot/P12345.rdf" cols="60" rows="5"></textarea>
             <!-- Uniprot queries -->
             <div ng-if="uniprotMode == 'query'">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="(e.g. https://www.uniprot.org/uniprot/?query=organism:9606+AND+antigen&format=fasta&compress=yes)" ng-model="$ctrl.uniprotQuery" size="30">
+                    <input type="text" class="form-control" placeholder="(e.g. organism:human AND antigen&format=fasta&compress=yes)" ng-model="$ctrl.uniprotQuery" title="If no format is chosen, format=fasta will be added" size="30">
                     <span class="input-group-addon">Query</span>
                 </div>
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" size="30">
+                    <input type="text" class="form-control" placeholder="{{$ctrl.inputPlaceholder}}" ng-model="$ctrl.newInputName" title="Filename or directory relative to the containers input directory" size="30">
                     <span class="input-group-addon">Destination</span>
                 </div>
                 <div class="input-group">
@@ -181,9 +181,7 @@ https://www.uniprot.org/uniprot/P12345.rdf" cols="60" rows="5"></textarea>
                 </div>
                 <div class="input-group">
                     <span class="input-group-btn">
-                         <button class="btn btn-default" type="button"
-                                ng-click="$ctrl.list.push({url : $ctrl.newInputUrl, name : $ctrl.newInputName , action : $ctrl.newAction});
-                                $ctrl.newInputUrl =''; $ctrl.newInputName=''; $ctrl.newAction =''">
+                         <button class="btn btn-default" type="button" ng-click="$ctrl.onUniprotQuery()">
                             {{$ctrl.addButtonText}}
                         </button>
                     </span>
