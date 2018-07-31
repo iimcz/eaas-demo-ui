@@ -2311,6 +2311,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         // Check if query contains format information. Add "'" in the end, because the string can container whitespaces
                                         if (!queryUrl.includes("format")) {
                                             queryUrl += "&format=fasta";
+                                        }
                                         // Replace spaces with %20
                                         queryUrl = queryUrl.replace(/\s/g, "%20");
                                         // Add the input query to the input list
