@@ -1741,6 +1741,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         this.processArgs = this.env.processArgs; // todo deep copy
                         this.processEnvs = this.env.processEnvs;
 
+                        console.log(this.processArgs);
+                        console.log(this.processEnvs);
+
                         this.saveEdit = function() {
 
                             this.env.title = this.envTitle;
@@ -1749,7 +1752,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             this.env.helpText = this.envHelpText;
                             this.env.processArgs = this.processArgs;
                             this.env.processEnvs = this.processEnvs;
-
+    
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
                                 id: $stateParams.envId,
                                 title: this.envTitle,
@@ -2169,7 +2172,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         };
 
                         var envList = containerEnvironmentList.data.environments;
-                        console.log(envList);
                         vm.env = null;
 
                         for(var i = 0; i < envList.length; i++) {
@@ -2201,8 +2203,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                             input.destination = vm.env.input;
                             input.content = inputs;
                             params.input_data.push(input);
-
-                            console.log(params.input_data);
 
                             $("#emulator-loading-container").show();
                             eaasClient.startContainer($stateParams.envId, params).then(function () {
@@ -2274,23 +2274,44 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             this.inputSourceButtonText = obj.target.firstChild.data;
                                             this.newInputUrl = "";
                                             this.newInputName = "";
+                                            this.uploadFiles = [];
                                         }
                                     };
                                     this.onImportFilesChosen = function(files) {
                                         console.log(files);
-                                        this.uploadFiles = files;
+                                        // The user chose files to upload
+                                        // Initialize the uploadFiles list with meaningful values for destination and action.
+                                        // Those are displayed in the view and can be changed by the user
+                                        for (i=0; i < files.length; i++) {
+                                            this.uploadFiles.push({file : files[i],
+                                                                   filename : files[i].name,
+                                                                   destination: files[i].name,
+                                                                   action: "copy"});
+                                        }
+                                        console.log("uploadFiles:");
+                                        console.log(this.uploadFiles);
                                     };
                                     this.onFileUpload = function () {
+                                        console.log("Upload files start");
                                         console.log(this.uploadFiles);
 
                                         for (var i = 0; i < this.uploadFiles.length; i++) {
                                             console.log(localConfig.data.eaasBackendURL);
+                                            console.log(this.uploadFiles);
+                                            // Have to remember the chosen destination and action for the file
                                             Upload.upload({
-                                                url: "http://132.230.4.15/emil/EmilContainerData/uploadUserInput",
-                                                data: {file: this.uploadFiles[i]}
+                                                url: "http://192.52.32.39/emil/EmilContainerData/uploadUserInput",
+                                                name: this.uploadFiles[i].filename,
+                                                destination: this.uploadFiles[i].destination,
+                                                action: this.uploadFiles[i].action,
+                                                data: {file: this.uploadFiles[i].file}
                                             }).then(function (resp) {
+                                                // Push the uploaded file to the input list
                                                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-                                                console.log(resp);
+                                                $scope.runContainerDlgCtrl.inputs.push({url : "file://" + resp.data.absolutePath,
+                                                                  name : resp.config.destination,
+                                                                  action : resp.config.action});
+                                                $scope.runContainerDlgCtrl.uploadFiles = [];
                                             }, function (resp) {
                                                 console.log('Error status: ' + resp.status);
                                                 $state.go('error', {errorMsg: {title: "Load Environments Error " + resp.data.status, message: resp.data.message}});
@@ -2300,7 +2321,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                                 //uploadInfo.title = "Uploading Object(s)" + evt.config.data.file.name;
                                                 //uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
                                             });
-
                                         }
                                     };
                                     this.onUniprotQuery = function () {
