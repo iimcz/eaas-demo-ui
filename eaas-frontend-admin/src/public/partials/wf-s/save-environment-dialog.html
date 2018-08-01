@@ -16,12 +16,21 @@
                                                                  placeholder="{{'SAVEENV_NAME_PH' | translate}}" required>
         </div>
 
+        <div class="form-group" ng-if="openSaveEnvironmentDialogCtrl.type == 'saveCreatedEnvironment'
+									|| openSaveEnvironmentDialogCtrl.type == 'saveImport'">
+            <label>{{'NEW_CONTAINER_AUTHOR' | translate}}</label>
+            <input type="text" class="form-control" ng-model="openSaveEnvironmentDialogCtrl.author" ng-required="true" />
+        </div>
+
         <div class="form-group">
             <label>{{'SAVEENV_DESC' | translate}}</label>
-            <textarea class="form-control" rows="3"
+            <text-angular
                       ng-model="openSaveEnvironmentDialogCtrl.envDescription"
-                      placeholder="{{'SAVEENV_DESC_PH' | translate}}" required></textarea>
+                      placeholder="{{'SAVEENV_DESC_PH' | translate}}" required></text-angular>
         </div>
+
+
+
 
         <div class="form-group" ng-if="openSaveEnvironmentDialogCtrl.type == 'newEnvironment'
 									|| openSaveEnvironmentDialogCtrl.type == 'saveRevision'">

@@ -1,0 +1,3 @@
+[submodule "citar-headless-client"]
+	path = citar-headless-client
+	url = https://git.eaas.uni-freiburg.de/eaas/citar-headless-client.git

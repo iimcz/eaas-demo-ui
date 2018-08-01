@@ -2220,7 +2220,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
                                         this.saveEnvironment = function() {
 
-
                                             this.isSavingEnvironment = true;
                                             window.onbeforeunload = null;
 
@@ -2234,6 +2233,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                             postReq.softwareId = $stateParams.softwareId;
                                             postReq.objectId = $stateParams.objectId;
                                             postReq.userId = $stateParams.userId;
+                                            postReq.author = this.author;
 
                                             var snapshotDoneFunc = (data, status) => {
                                                 console.log("error status: " + status);
@@ -2272,8 +2272,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                         this.showEmu = function() {
                                             $('#emulator-container').show();
                                         }
-
-
 
                                     },
                                     controllerAs: "openSaveEnvironmentDialogCtrl"
