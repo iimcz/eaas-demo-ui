@@ -1,7 +1,6 @@
-<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>
+<h3 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h3></br>
 
-<form id="editContainerForm" name="editContainerCtrl.editContainerForm">
-	<p>
+    <p>
 		<label>{{'EDIT_CONTAINER_ID' | translate}}:</label>
 		{{editContainerCtrl.env.envId}}
 	</p>
@@ -47,13 +46,11 @@
 				add-button-text="+">
 	</input-list>
 
-	<div style="text-align: right;">
-		<button type="submit" class="btn btn-default"
-			ui-sref="wf-s.standard-envs-overview({showObjects: false, showContainers: true})">{{'EDIT_CONTAINER_CANCEL' |
-			translate}}</button>
-		<button type="submit" class="btn btn-primary"
-			ng-click="editContainerCtrl.saveEdit()"
-			ng-disabled="!editContainerCtrl.editContainerForm.$valid">{{'EDIT_CONTAINER_SAVE'
-			| translate}}</button>
-	</div>
-</form>
+    <div style="text-align: right;">
+        <button type="button" class="btn btn-default" ui-sref="wf-s.standard-envs-overview({showObjects: false, showContainers: true})">
+            {{'EDIT_CONTAINER_CANCEL' | translate}}
+        </button>
+        <button type="button" class="btn btn-primary" ng-click="editContainerCtrl.saveEdit()">
+            {{'EDIT_CONTAINER_SAVE' | translate}}    
+        </button>
+    </div>
