@@ -237,9 +237,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
                 objMetadata: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.metadataUrl, $stateParams.objectId)),
                 allEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
                 userSession: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getUserSessionUrl, $stateParams.userId, $stateParams.objectId)),
-                kbLayouts: function($http) {
-                    return $http.get("kbLayouts.json");
-                }
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
             },
             controller: "BaseController as baseCtrl"
         })

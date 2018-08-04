@@ -2,7 +2,7 @@ import angular from 'angular';
 
 const emilUIModule = angular.module('emilUI.modules', []);
 
-emilUIModule.controller('ClientErrorController', require('./client/clienterror/client-error.ctrl'));
+emilUIModule.controller('ClientErrorController', require('./client/clienterror/client-error.ctrl.js'));
 emilUIModule.controller('ObjectOverviewController', require('./client/objectoverview/object-overview.ctrl.js'));
 
 emilUIModule.controller('BaseController', require('./client/wfb/base/base.ctrl'));
