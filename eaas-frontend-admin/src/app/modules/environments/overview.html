@@ -19,9 +19,9 @@
         <td>
             <b>{{row.title}}</b>
             <br/>
-            <a ui-sref="wf-s.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_PROPOSAL'
+            <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_PROPOSAL'
                 | translate}}</a>
-            <a ui-sref="wf-s.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
+            <a ui-sref="admin.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
                 | translate}}</a>
             <a href="#" ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a>
             <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'

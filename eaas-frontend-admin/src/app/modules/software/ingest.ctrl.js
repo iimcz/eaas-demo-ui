@@ -37,7 +37,7 @@ function ($stateParams, $state, $http, localConfig, growl, objectList, softwareO
           $http.post(localConfig.data.eaasBackendURL + REST_URLS.saveSoftwareUrl, vm.softwareObj).then(function(response) {
               if (response.data.status === "0") {
                   growl.success(response.data.message);
-                  $state.go('wf-i.sw-overview', {}, {reload: true});
+                  $state.go('admin.sw-overview', {}, {reload: true});
 
               } else {
                   growl.error(response.data.message, {title: 'Error ' + response.data.status});

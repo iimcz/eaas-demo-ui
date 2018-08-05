@@ -23,7 +23,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "so
                  {
                      _modal.close();
                      growl.success("import finished.");
-                     $state.go('wf-s.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
+                     $state.go('admin.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
                  }
                  else
                      $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
@@ -45,7 +45,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "so
              }).then(function(response) {
                  if (response.data.status !== "0")
                      growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                 $state.go('wf-s.emulator', {envId: response.data.id, type: 'saveCreatedEnvironment', softwareId: vm.selectedSoftware.id});
+                 $state.go('admin.emulator', {envId: response.data.id, type: 'saveCreatedEnvironment', softwareId: vm.selectedSoftware.id});
              });
          } else {
              $http.post(localConfig.data.eaasBackendURL + REST_URLS.importImageUrl,

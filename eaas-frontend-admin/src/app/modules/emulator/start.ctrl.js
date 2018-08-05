@@ -166,7 +166,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 let isObjectEnv = false;
                 if ($stateParams.objectId != null)
                     isObjectEnv = true;
-                $state.go('wf-s.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
+                $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
             });
         }
     }];

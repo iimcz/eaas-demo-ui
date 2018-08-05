@@ -25,7 +25,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            if(!this.env)
            {
                growl.error("Environment not found");
-               $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+               $state.go('admin.standard-envs-overview', {}, {reload: true});
            }
 
            this.envTitle = this.env.title;
@@ -89,9 +89,9 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    }
 
                    if (vm.isObjectEnv)
-                       $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                       $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                    else
-                       $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                       $state.go('admin.standard-envs-overview', {}, {reload: true});
                });
            };
 
@@ -101,11 +101,11 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
-                       $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                       $state.go('admin.standard-envs-overview', {}, {reload: true});
                    } else {
                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
                    }
-                   $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                   $state.go('admin.standard-envs-overview', {}, {reload: true});
                });
            };
 
@@ -116,11 +116,11 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
-                       $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                       $state.go('admin.standard-envs-overview', {}, {reload: true});
                    } else {
                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
                    }
-                   $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                   $state.go('admin.standard-envs-overview', {}, {reload: true});
                });
            };
 

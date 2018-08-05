@@ -115,7 +115,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
                      objectId: $stateParams.objectId,
                      environments: []
                  }).then(function() {
-                     $state.go('wf-s.object-overview');
+                     $state.go('admin.object-overview');
                  });
              }
          }
@@ -125,7 +125,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
              objectId: $stateParams.objectId,
              environments: vm.objEnvironments
          }).then(function() {
-             $state.go('wf-s.object-overview');
+             $state.go('admin.object-overview');
          });
      };
  }];

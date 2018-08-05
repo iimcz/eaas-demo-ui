@@ -50,12 +50,12 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
                      });
                      $rootScope.chk.transitionEnable = true;
                      growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                     $state.go('admin.standard-envs-overview', {}, {reload: true});
                  }
                  else {
                      $rootScope.chk.transitionEnable = true;
                      growl.error(_response.data.message, {title: 'Error ' + _response.data.status});
-                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                     $state.go('admin.standard-envs-overview', {}, {reload: true});
 
                  }
              });
@@ -78,7 +78,7 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
                          });
                          $rootScope.chk.transitionEnable = true;
                          growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                         $state.go('admin.standard-envs-overview', {}, {reload: true});
                      }
                      else if (response.data.status === "2") {
 
@@ -95,7 +95,7 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
                      else {
                          $rootScope.chk.transitionEnable = true;
                          growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                         $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                         $state.go('admin.standard-envs-overview', {}, {reload: true});
                      }
                  });
              }

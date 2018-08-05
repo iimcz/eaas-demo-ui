@@ -19,7 +19,7 @@
         <div style="text-align: right;">
             <button type="submit" class="btn btn-default" ng-click="$close()">{{'ADDSW_DIALOG_CANCEL' | translate}}</button>
             <button type="submit" class="btn btn-primary"
-                    ui-sref="wf-s.emulator({envId: addSoftwareDialogCtrl.envId, softwareId: addSoftwareDialogCtrl.selected_sw.id, returnToObjects: addSoftwareDialogCtrl.returnToObjects})"
+                    ui-sref="admin.emulator({envId: addSoftwareDialogCtrl.envId, softwareId: addSoftwareDialogCtrl.selected_sw.id, returnToObjects: addSoftwareDialogCtrl.returnToObjects})"
                     ng-click="$close()"
                     ng-disabled="!addSoftwareDialogCtrl.addSwForm.$valid">{{'ADDSW_DIALOG_SELECT' | translate}}</button>
         </div>

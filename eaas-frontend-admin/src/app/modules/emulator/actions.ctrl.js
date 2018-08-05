@@ -73,14 +73,14 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                             deleteImage: true
                         }).then(function(response) {
                             if (response.data.status === "0") {
-                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                $state.go('admin.standard-envs-overview', {}, {reload: true});
                             }
                         });
                     }
                     else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                        $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                        $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                     else
-                        $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                        $state.go('admin.standard-envs-overview', {}, {reload: true});
                 };
             },
             controllerAs: "confirmStopDialogCtrl"
@@ -153,13 +153,13 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             if(!newEnvId)
             {
                 growl.error(status, {title: "Snapshot failed"});
-                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                $state.go('admin.standard-envs-overview', {}, {reload: true});
                 window.eaasClient.release();
             }
             console.log("Checkpointed environment saved as: " + newEnvId);
             growl.success(status, {title: "New snapshot created."});
             window.eaasClient.release();
-            $state.go('wf-s.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
+            $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
        });
     };
 
@@ -209,9 +209,9 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                             growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
                             window.eaasClient.release();
                             if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                                $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                             else
-                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                $state.go('admin.standard-envs-overview', {}, {reload: true});
                             $scope.$close();
                             window.isSavingEnvironment = false;
                         };
@@ -220,9 +220,9 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                             console.log("given error: " + error);
                             growl.error(error, {title: 'Error ' + error});
                             if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                                $state.go('wf-s.standard-envs-overview', {showObjects: true}, {reload: true});
+                                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                             else
-                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                $state.go('admin.standard-envs-overview', {}, {reload: true});
                             $scope.$close();
                             window.isSavingEnvironment = false;
                         };

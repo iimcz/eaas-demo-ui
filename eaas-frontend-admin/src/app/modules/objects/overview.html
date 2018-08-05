@@ -16,11 +16,11 @@
         <tr>
             <td>
                 <div ng-repeat="object in displayObjects" class="object-container">
-                    <a class="cover-container" ui-sref="wf-s.edit-object-characterization({objectId: object.id})" >
+                    <a class="cover-container" ui-sref="admin.edit-object-characterization({objectId: object.id})" >
                         <img class="cover" ng-src="{{object.thumbnail ? object.thumbnail : 'img/empty-cover.png'}}"></img>
                     </a>
 
-                    <a class="title-container" ui-sref="wf-s.edit-object-characterization({objectId: object.id})" >
+                    <a class="title-container" ui-sref="admin.edit-object-characterization({objectId: object.id})" >
                         <span class="title">{{object.title}}</span>
                     </a>
 

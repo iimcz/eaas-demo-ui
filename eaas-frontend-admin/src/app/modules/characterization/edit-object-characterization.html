@@ -3,7 +3,7 @@
 <div style="text-align: right;">
     <button class="btn btn-primary" type="button" ng-click="editObjectCharacterizationCtrl.saveCharacterization()">{{'CHAR_SAVE' | translate}}</button>
     <button class="btn btn-primary" type="button" ng-click="editObjectCharacterizationCtrl.resetChanges()">{{'CHAR_RESET_CHANGES' | translate}}</button>
-    <button class="btn btn-default" type="button" ui-sref="wf-s.object-overview">{{'CHAR_CANCEL' | translate}}</button>
+    <button class="btn btn-default" type="button" ui-sref="admin.object-overview">{{'CHAR_CANCEL' | translate}}</button>
 </div>
 <br>
 <div class="panel panel-default">
@@ -47,7 +47,7 @@
                         <i class="glyphicon glyphicon-remove"></i>
                     </div>
                     <div style="float: right;"><button type="submit" class="btn btn-primary"
-                                                       ui-sref="wf-s.emulator({envId: env.id,
+                                                       ui-sref="admin.emulator({envId: env.id,
 												type: 'objectEnvironment',
 												objectId: editObjectCharacterizationCtrl.objectId,
 												returnToObjects: true})" >Run</button>

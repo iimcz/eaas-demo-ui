@@ -9,7 +9,7 @@ module.exports = ['$state', '$scope', '$stateParams', '$http', 'handleValue', 'l
          jQuery.when(
              $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/deleteHandle?handle={0}", encodeURI($stateParams.handle)))).done(
              function () {
-                 $state.go('wf-s.handles', {reload: true});
+                 $state.go('admin.handles', {reload: true});
              })
      };
 
@@ -27,7 +27,7 @@ module.exports = ['$state', '$scope', '$stateParams', '$http', 'handleValue', 'l
              }),
              vm.handleValue = $stateParams.handle
          ).done(function () {
-             $state.go('wf-s.edit-handle', $stateParams, {reload: true})
+             $state.go('admin.edit-handle', $stateParams, {reload: true})
          });
      };
  }];

@@ -11,10 +11,10 @@ module.exports = ['$scope' , '$state', '$stateParams', 'sessionList', '$translat
             .then(function(response) {
                 if (response.data.status === "0") {
                     growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                    $state.go('wf-s.user-session-overview', {});
+                    $state.go('admin.user-session-overview', {});
                 } else {
                     growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                    $state.go('wf-s.user-session-overview', {});
+                    $state.go('admin.user-session-overview', {});
                 }
             });
         }

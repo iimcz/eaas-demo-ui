@@ -7,7 +7,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
 
          $http.get(localConfig.data.eaasBackendURL + REST_URLS.initEmilEnvironmentsURL).then(function (response) {
                  if (response.data.status === "0") {
-                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                     $state.go('admin.standard-envs-overview', {}, {reload: true});
                      growl.success(response.data.message);
                  } else {
                      growl.error(response.data.message, {title: 'Error ' + response.data.status});
@@ -21,7 +21,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
 
          $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl).then(function (response) {
                  if (response.data.status === "0") {
-                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                     $state.go('admin.standard-envs-overview', {}, {reload: true});
                      growl.success(response.data.message);
                  } else {
                      growl.error(response.data.message, {title: 'Error ' + response.data.status});
@@ -35,7 +35,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
 
          $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncImagesUrl).then(function (response) {
                  if (response.data.status === "0") {
-                     $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                     $state.go('admin.standard-envs-overview', {}, {reload: true});
                      growl.success(response.data.message);
                  } else {
                      growl.error(response.data.message, {title: 'Error ' + response.data.status});

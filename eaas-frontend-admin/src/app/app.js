@@ -188,7 +188,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 
     // For any unmatched url
-    $urlRouterProvider.otherwise("/wf-i/dashboard");
+    $urlRouterProvider.otherwise("/admin/dashboard");
 
     // Now set up the states
     $stateProvider
@@ -200,7 +200,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             },
             controller: function($state, $stateParams) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
-                    $state.go('wf-s.standard-envs-overview');
+                    $state.go('admin.standard-envs-overview');
                     return;
                 }
 
@@ -208,19 +208,26 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             },
             controllerAs: "errorCtrl"
         })
-        .state('wf-i', {
+        .state('admin', {
             abstract: true,
-            url: "/wf-i",
+            url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
-                buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl)
+                buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
+
+                environmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
+                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "base")),
+
+                objectEnvironmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
+                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object")),
+
             },
             controller: "BaseController as baseCtrl"
         })
 
-        .state('wf-i.dashboard', {
+        .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
                 clusters: function($http, localConfig) {
@@ -249,7 +256,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-i.sw-overview', {
+        .state('admin.sw-overview', {
             url: "/sw-overview",
             resolve: {
                 softwareList: ($http, localConfig, REST_URLS) =>
@@ -262,7 +269,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-i.sw-ingest', {
+        .state('admin.sw-ingest', {
             url: "/sw-ingest",
             params: {
                 swId: "-1"
@@ -310,7 +317,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-i.new-image', {
+        .state('admin.new-image', {
             url: "/new-image",
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
@@ -327,27 +334,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s', {
-            abstract: true,
-            url: "/wf-s",
-            template: require('./modules/base/base.html'),
-            resolve: {
-                localConfig: ($http) => $http.get("config.json"),
-
-                environmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "base")),
-
-                objectEnvironmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object")),
-
-                buildInfo: ($http, localConfig, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
-
-                kbLayouts: ($http) => $http.get("kbLayouts.json")
-            },
-            controller: "BaseController as baseCtrl"
-        })
-        .state('wf-s.synchronize-image-archives', {
+        .state('admin.synchronize-image-archives', {
           url: "/synchronize-image-archives",
           views: {
               'wizard': {
@@ -356,7 +343,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
               }
           }
         })
-        .state('wf-s.object-overview', {
+        .state('admin.object-overview', {
             url: "/objects",
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
@@ -370,7 +357,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s.user-session-overview', {
+        .state('admin.user-session-overview', {
             url: "/user-sessions",
             resolve: {
                 localConfig: function($http) {
@@ -387,7 +374,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s.standard-envs-overview', {
+        .state('admin.standard-envs-overview', {
             url: "/standard-envs-overview",
             params: {
                 showObjects: false
@@ -405,7 +392,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             }
         })
 
-        .state('wf-s.edit-env', {
+        .state('admin.edit-env', {
             url: "/edit-env",
             params: {
                 envId: null,
@@ -422,7 +409,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s.emulator', {
+        .state('admin.emulator', {
             url: "/emulator",
             resolve: {
                 mediaCollection: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
@@ -458,7 +445,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s.edit-object-characterization', {
+        .state('admin.edit-object-characterization', {
             url: "/edit-object-characterization?objectId",
             resolve: {
                 objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
@@ -474,7 +461,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             }
         })
 
-        .state('wf-s.handles', {
+        .state('admin.handles', {
             url: "/handles",
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
@@ -487,7 +474,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-s.edit-handle', {
+        .state('admin.edit-handle', {
             url: "/edit-handle?handle",
             resolve: {
                 handleValue: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
