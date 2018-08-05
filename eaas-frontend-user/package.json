@@ -8,22 +8,22 @@
     "start": "npm run server"
   },
   "dependencies": {
-    "angular": "1.5.3",
-    "angular-animate": "1.5.3",
+    "angular": "^1",
+    "angular-animate": "^1",
     "angular-bootstrap-contextmenu": "^0.9.9",
     "angular-cookies": "1.5.8",
     "angular-ellipsis": "1.0.1",
     "angular-growl-v2": "0.7.5",
     "angular-loading-bar": "0.9.0",
-    "angular-sanitize": "1.5.3",
+    "angular-sanitize": "^1",
     "angular-smart-table": "2.1.8",
-    "angular-translate": "2.11.0",
-    "angular-translate-loader-static-files": "2.11.1",
-    "angular-ui-bootstrap": "1.2.5",
+    "angular-translate": "^2.18.1",
+    "angular-translate-loader-static-files": "^2.18.1",
+    "angular-ui-bootstrap": "^1",
     "angular-ui-router": "0.2.18",
     "ui-select": "0.16.0",
     "bootstrap": "3.3.7",
-    "jquery": "3.2.1"
+    "jquery": "latest"
   },
   "devDependencies": {
     "autoprefixer": "^6.0.3",

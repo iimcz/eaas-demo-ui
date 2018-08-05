@@ -9,7 +9,6 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var WriteFilePlugin = require ('write-file-webpack-plugin');
 
-
 /**
  * Env
  * Get npm lifecycle event to identify the environment
@@ -156,14 +155,14 @@ module.exports = function makeWebpackConfig() {
   config.plugins.push(
     new HtmlWebpackPlugin({
       template: './src/public/index.ejs',
-      baseUrl: isProd ? PRODUCTION_BASE_PATH : '/',
+	  baseUrl: isProd ? PRODUCTION_BASE_PATH : '/',
       inject: 'body'
     }),
 
     // Reference: https://github.com/webpack/extract-text-webpack-plugin
     // Extract css files
     // Disabled when in test mode or not in build mode
-    new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
+      new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       new CopyWebpackPlugin([{
           from: '../common/eaas-client/xpra', to: 'xpra'
       }])
@@ -180,15 +179,15 @@ module.exports = function makeWebpackConfig() {
       // Minify all javascript, disable renaming/mangling
       new UglifyJSPlugin({
         uglifyOptions: {
-		  mangle: false
+		  // mangle: false
 		}
       }),
 
       // Copy assets from the public folder
       // Reference: https://github.com/kevlened/copy-webpack-plugin
-      new CopyWebpackPlugin([{
-        from: __dirname + '/src/public'
-      }]),
+        new CopyWebpackPlugin([{
+            from: __dirname + '/src/public'
+        }]),
         new CopyWebpackPlugin([{
             from: '../common/eaas-client/xpra', to: 'xpra'
         }])
@@ -206,7 +205,7 @@ module.exports = function makeWebpackConfig() {
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
-    open: true
+	open: true
   };
 
   return config;
