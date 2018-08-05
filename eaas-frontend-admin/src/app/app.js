@@ -111,8 +111,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider) {
+
+
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -120,6 +122,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         taOptions.forceTextAngularSanitize = false;
         return taOptions;
     }]);
+
+    cfpLoadingBarProvider.includeSpinner = false;
+    cfpLoadingBarProvider.includeBar = true;
+    cfpLoadingBarProvider.loadingBarTemplate = '<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>';
 
     /*
      * Internationalization
@@ -170,19 +176,19 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         templateUrl: 'partials/server-error-dialog.html'
                     });
                 }
-
-                return $timeout(function() {
-                    var $http = $injector.get('$http');
-
-                    var req = $http(rejection.config);
-                    req.then(function() {
-                        if (httpResponseErrorModal !== null) {
-                            httpResponseErrorModal.close();
-                            httpResponseErrorModal = null;
-                        }
-                    });
-                    return req;
-                }, 5000);
+//
+//                return $timeout(function() {
+//                    var $http = $injector.get('$http');
+//
+//                    var req = $http(rejection.config);
+//                    req.then(function() {
+//                        if (httpResponseErrorModal !== null) {
+//                            httpResponseErrorModal.close();
+//                            httpResponseErrorModal = null;
+//                        }
+//                    });
+//                    return req;
+//                }, 5000);
             }
         };
     });
