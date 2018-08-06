@@ -1,4 +1,5 @@
-module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig, helperFunctions, REST_URLS) {
+module.exports = ["$scope", "$state", "$cookies", "objMetadata", "objEnvironments", "allEnvironments", "growl", "$translate", "userSession", "$uibModal", "$http", "localConfig", "helperFunctions", "REST_URLS",
+    function($scope, $state, $cookies, objMetadata, objEnvironments, allEnvironments, growl, $translate, userSession, $uibModal, $http, localConfig, helperFunctions, REST_URLS) {
     var vm = this;
 
     vm.noSuggestion = false;
@@ -108,4 +109,4 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
         growl.warning($translate.instant('CHOOSE_ENV_NO_KEYBOARD_LAYOUT_WARNING'));
         $scope.$emit('showSetKeyboardLayoutDialog');
     }
-};
+}];
