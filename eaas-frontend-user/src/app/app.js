@@ -178,18 +178,18 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
                     });
                 }
 
-                return $timeout(function() {
-                    var $http = $injector.get('$http');
-
-                    var req = $http(rejection.config);
-                    req.then(function() {
-                        if (httpResponseErrorModal !== null) {
-                            httpResponseErrorModal.close();
-                            httpResponseErrorModal = null;
-                        }
-                    });
-                    return req;
-                }, 5000);
+//                return $timeout(function() {
+//                    var $http = $injector.get('$http');
+//
+//                    var req = $http(rejection.config);
+//                    req.then(function() {
+//                        if (httpResponseErrorModal !== null) {
+//                            httpResponseErrorModal.close();
+//                            httpResponseErrorModal = null;
+//                        }
+//                    });
+//                    return req;
+//                }, 5000);
             }
         };
     });
@@ -203,31 +203,31 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             url: "/emulationSession?objectId&environmentId&userId",
             controller : function($state, $stateParams)
             {
-                $state.go('wf-b.emulator', {envId: $stateParams.environmentId, objectId: $stateParams.objectId, userId: $stateParams.userId});
+                $state.go('access.emulator', {envId: $stateParams.environmentId, objectId: $stateParams.objectId, userId: $stateParams.userId});
             },
             controllerAs: ""
         })
         .state('error', {
             url: "/error",
-            template: require('./modules/client/clienterror/client-error.html'),
+            template: require('./modules/emulator/error.html'),
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: 'ClientErrorController as errorCtrl'
+            controller: 'ErrorController as errorCtrl'
         })
         .state('object-overview', {
             url: "/object-overview",
-            template: require('./modules/client/objectoverview/object-overview.html'),
+            template: require('./modules/objects/overview.html'),
             resolve: {
                 localConfig: ($http) => $http.get("config.json"),
                 objectList: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getObjectListURL)
             },
-            controller: "ObjectOverviewController as objectOverviewCtrl"
+            controller: "ObjectsOverviewController as objectOverviewCtrl"
         })
-        .state('wf-b', {
+        .state('access', {
             abstract: true,
-            url: "/wf-b?objectId",
-            template: require('./modules/client/wfb/base/base.html'),
+            url: "/access?objectId",
+            template: require('./modules/base/base.html'),
             params: {
                 userId: null
             },
@@ -241,20 +241,20 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             },
             controller: "BaseController as baseCtrl"
         })
-        .state('wf-b.choose-env', {
+        .state('access.choose-env', {
             url: "/choose-environment",
             views: {
                 'wizard': {
-                    template: require('./modules/client/wfb/chooseenv/choose-env.html'),
+                    template: require('./modules/emulator/choose-env.html'),
                     controller: "ChooseEnvController as chooseEnvCtrl"
                 },
                 'metadata': {
-                    template: require('./modules/client/wfb/clientmetadata/client-metadata.html'),
-                    controller: 'ClientMetadataController as metadataCtrl'
+                    template: require('./modules/emulator/metadata.html'),
+                    controller: 'MetadataController as metadataCtrl'
                 }
             }
         })
-        .state('wf-b.emulator', {
+        .state('access.emulator', {
             url: "/emulator",
             resolve: {
                 chosenEnv: ($http, $stateParams, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId)),
@@ -272,16 +272,16 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             },
             views: {
                 'wizard': {
-                    template: require('./modules/client/wfb/clientemulator/client-emulator.html'),
-                    controller: 'ClientEmulatorController as startEmuCtrl'
+                    template: require('./modules/emulator/emulator.html'),
+                    controller: 'StartEmulatorController as startEmuCtrl'
                 },
                 'actions': {
-                    template: require('./modules/client/wfb/clientactions/client-actions.html'),
-                    controller: 'ClientActionsController as actionsCtrl'
+                    template: require('./modules/emulator/actions.html'),
+                    controller: 'ActionsController as actionsCtrl'
                 },
                 'metadata': {
-                    template: require('./modules/client/wfb/clientmetadata/client-metadata.html'),
-                    controller: 'ClientMetadataController as metadataCtrl'
+                    template: require('./modules/emulator/metadata.html'),
+                    controller: 'MetadataController as metadataCtrl'
                 }
             }
         });

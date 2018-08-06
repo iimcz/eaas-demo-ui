@@ -13,13 +13,13 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
     {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/user-session-dialog.html',
+            template: require('./modals/user-session-dialog.html'),
             controller: function($scope) {
                 this.startDefault = function() {
                     $scope.$close();
                     if (objEnvironments.data.environmentList.length === 1)
                     {
-                        $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+                        $state.go('access.emulator', {envId: objEnvironments.data.environmentList[0].id});
                         return;
                     }
 
@@ -43,7 +43,7 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
 
                 this.startSession = function() {
                     $scope.$close();
-                    $state.go('wf-b.emulator', {envId: userSession.data.envId, isUserSession: true});
+                    $state.go('access.emulator', {envId: userSession.data.envId, isUserSession: true});
                 };
 
                 this.deleteSession = function() {
@@ -54,7 +54,7 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
                             $scope.$close();
                             if (objEnvironments.data.environmentList.length === 1)
                             {
-                                $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+                                $state.go('access.emulator', {envId: objEnvironments.data.environmentList[0].id});
                                 return;
                             }
 
@@ -82,7 +82,7 @@ module.exports = function($scope, $state, $cookies, objMetadata, objEnvironments
     else {
         if (objEnvironments.data.environmentList.length === 1)
         {
-          $state.go('wf-b.emulator', {envId: objEnvironments.data.environmentList[0].id});
+          $state.go('access.emulator', {envId: objEnvironments.data.environmentList[0].id});
           return;
         }
 

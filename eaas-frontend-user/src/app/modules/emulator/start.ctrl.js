@@ -21,7 +21,7 @@ module.exports = function ($rootScope, $scope, $sce, $state, $stateParams, $cook
     {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/help-emil-dialog.html',
+            template: require('./modals/help-emil-dialog.html'),
             controller: function($scope) {
                 this.helpTitle = $translate.instant('TIMEOUT_DLG_TITLE');
                 this.helpText = $translate.instant('TIMEOUT_DLG_MESSAGE');

@@ -9,7 +9,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     function showHelpDialog(helpText) {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/help-emil-dialog.html',
+            template: require('./modals/help-emil-dialog.html'),
             controller: function($scope) {
                 this.helpText = helpText;
             },
@@ -34,7 +34,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     var printSuccessFn = function(data) {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/printed-list-dialog.html',
+            template: require('./modals/printed-list-dialog.html'),
             controller: function($scope) {
                 this.printJobs = data;
 
@@ -74,7 +74,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
 
         var waitModal = $uibModal.open({
             animation: true,
-            templateUrl: 'partials/save-wait-dialog.html'
+            template: require('./modals/save-wait-dialog.html')
         });
 
         window.onbeforeunload = null;
@@ -82,7 +82,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
             waitModal.close();
             $uibModal.open({
                 animation: true,
-                templateUrl: 'partials/save-done-dialog.html',
+                template: require('./modals/save-done-dialog.html'),
                 controller: function($scope) {
                     this.done = function () {
                         window.eaasClient.release();
@@ -93,7 +93,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     this.start = function() {
                         window.eaasClient.release();
                         $('#emulator-container').hide();
-                        $state.go('wf-b.choose-env', {objectId : $stateParams.objectId}, {reload: true});
+                        $state.go('access.choose-env', {objectId : $stateParams.objectId}, {reload: true});
                     }
                 },
                 controllerAs: "saveSessionWaitDlg"
@@ -106,7 +106,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
 
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/confirm-restart-dialog.html',
+            template: require('./modals/confirm-restart-dialog.html'),
             controller: function($scope) {
                 this.isUserSession = $stateParams.isUserSession;
 
@@ -117,7 +117,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     {
                         $http.get(localConfig.data.eaasBackendURL + formatStr(deleteSessionUrl, userSession.data.envId))
                             .then(function(response) {
-                                $state.go('wf-b.choose-env', {objectId : $stateParams.objectId}, {reload: true});
+                                $state.go('access.choose-env', {objectId : $stateParams.objectId}, {reload: true});
                             });
                     }
                     else
@@ -131,7 +131,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     vm.stopEmulator = function () {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/confirm-stop-dialog.html',
+            template: require('./modals/confirm-stop-dialog.html'),
             controller: function($scope) {
                 this.confirmed = function()
                 {
@@ -160,7 +160,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     vm.openChangeEnvDialog = function() {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/choose-env-dialog.html',
+            template: require('./modals/choose-env-dialog.html'),
             controller: function($scope) {
                 this.custom_env = null;
                 this.title = objMetadata.data.title;
@@ -169,7 +169,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                 this.changeEnv= function()
                 {
                     window.eaasClient.release();
-                    $state.go('wf-b.emulator', {envId: this.custom_env.id});
+                    $state.go('access.emulator', {envId: this.custom_env.id});
                 };
             },
             controllerAs: "changeEnvDialogCtrl"
@@ -180,7 +180,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     var changeMediaDlgFunc = function() {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/change-media-dialog.html',
+            template: require('./modals/change-media-dialog.html'),
             controller: function($scope) {
                 this.chosen_medium_label = currentMediumLabel;
                 this.media = mediaCollection.data.medium;
@@ -216,7 +216,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     var changeMediaNotAvailableDlgFunc = function () {
         $uibModal.open({
             animation: true,
-            templateUrl: 'partials/wf-b/help-emil-dialog.html',
+            template: require('./modals/help-emil-dialog.html'),
             controller: function($scope) {
                 this.helpTitle = $translate.instant('CHANGEM_TITLE');
                 this.helpText = $translate.instant('CHANGEM_ALT_TEXT');

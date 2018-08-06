@@ -19,11 +19,11 @@
                         <tr>
                             <td>
                                 <div ng-repeat="object in displayObjects" class="object-container">
-                                    <a class="cover-container" ui-sref="wf-b.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
+                                    <a class="cover-container" ui-sref="access.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
                                       <img class="cover" ng-src="{{object.thumbnail ? object.thumbnail : 'img/empty-cover.png'}}"></img>
                                     </a>
                                     
-                                    <a class="title-container" ui-sref="wf-b.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
+                                    <a class="title-container" ui-sref="access.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
                                       <span class="title">{{object.title}}</span>
                                     </a>
                                     
@@ -53,11 +53,11 @@
 
                                 <div ng-repeat="env in objectOverviewCtrl.environmentList" class="object-container">
                     <div ng-if="env.objectEnvironment">
-                                        <a class="cover-container" ui-sref="wf-b.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
+                                        <a class="cover-container" ui-sref="access.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
                                           <img class="cover" src="{{object.thumbnail ? object.thumbnail : 'img/empty-cover.png'}}"></img>
                                         </a>
 
-                                        <a class="title-container" ui-sref="wf-b.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
+                                        <a class="title-container" ui-sref="access.choose-env({objectId: object.id})" context-menu="objectOverviewCtrl.menuOptions">
                                           <span class="title">{{env.title}}</span>
                                         </a>
 
