@@ -170,13 +170,25 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     $httpProvider.interceptors.push(function($q, $injector, $timeout) {
         return {
             responseError: function(rejection) {
-                if (httpResponseErrorModal === null) {
-                    httpResponseErrorModal = $injector.get('$uibModal').open({
-                        animation: true,
-                        backdrop: 'static',
-                        templateUrl: 'partials/server-error-dialog.html'
-                    });
-                }
+                  if(rejection.status === 500 || rejection.status === -1) {
+                    var $state = $injector.get('$state'); // manually inject $state service using $injector
+                    var defer = $q.defer();
+                    if(rejection.status == 500 || rejection.status === -1){
+                        $state.go('error', {}, {reload: true, inherit: false});
+                    }
+                    defer.reject(rejection);
+                    return defer.promise;
+                  }
+                  return $q.reject(rejection);
+
+
+//                if (httpResponseErrorModal === null) {
+//                    httpResponseErrorModal = $injector.get('$uibModal').open({
+//                        animation: true,
+//                        backdrop: 'static',
+//                        templateUrl: 'partials/server-error-dialog.html'
+//                    });
+//                }
 
 //                return $timeout(function() {
 //                    var $http = $injector.get('$http');
