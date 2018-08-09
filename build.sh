@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cd eaas-frontend-admin
 npm install
