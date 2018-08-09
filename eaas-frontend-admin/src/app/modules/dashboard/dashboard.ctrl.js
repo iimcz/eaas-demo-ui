@@ -1,4 +1,4 @@
-module.exports = function (clusters, allClusterDetails) {
+module.exports = ["clusters", "allClusterDetails", function (clusters, allClusterDetails) {
      const getFirstNumber = (str) => parseInt(str.match(/\d+/)[0], 10);
 
      var allClusterProviders = allClusterDetails.reduce(function(result, clusterResponse, index) {
@@ -169,4 +169,4 @@ module.exports = function (clusters, allClusterDetails) {
              }
          }
      };
- };
+ }];
