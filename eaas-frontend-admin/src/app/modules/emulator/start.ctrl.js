@@ -136,7 +136,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
         else {
             let modal = $uibModal.open({
                 template: require('./modals/connected-envs.html'),
-                controller: function ($scope, $uibModalInstance) {
+                controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
                     $scope.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
                     $scope.selected = [];
                     $scope.ok = function () {
@@ -157,7 +157,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                         var index = $scope.selected.indexOf(item);
                         $scope.selected.splice(index, 1);
                     }
-                },
+                }],
                 controllerAs: "connectedEnvs"
             });
 

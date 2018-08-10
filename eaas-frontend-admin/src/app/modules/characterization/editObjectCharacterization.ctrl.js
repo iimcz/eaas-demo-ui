@@ -39,7 +39,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
          $uibModal.open({
              animation: true,
              template: require('./modals/set-default-environment.html'),
-             controller: function($scope, helperFunctions, REST_URLS) {
+             controller: ["$scope", "helperFunctions", "REST_URLS", function($scope, helperFunctions, REST_URLS) {
                  this.defaultEnv = null;
                  this.environments = environmentList.data.environments;
                  this.osId = osId;
@@ -61,7 +61,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
                      });
 
                  };
-             },
+             }],
              controllerAs: "setDefaultEnvDialogCtrl"
          });
      };
@@ -70,7 +70,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
          $uibModal.open({
              animation: true,
              template: require('./modals/add-environment.html'),
-             controller: function($scope) {
+             controller: ['$scope', function($scope) {
                  this.newEnv = null;
                  this.environments = environmentList.data.environments;
                  this.addEnvironment = function() {
@@ -88,7 +88,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
                      });
                      $scope.$close();
                  }
-             },
+             }],
              controllerAs: "addEnvDialogCtrl"
          });
      };

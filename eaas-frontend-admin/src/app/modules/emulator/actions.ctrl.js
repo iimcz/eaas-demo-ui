@@ -24,14 +24,14 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $uibModal.open({
             animation: true,
             template: require('./modals/printed-list.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.printJobs = data;
 
                 this.download = function(label)
                 {
                     window.open(window.eaasClient.downloadPrint(label));
                 }
-            },
+            }],
             controllerAs: "openPrintDialogCtrl"
         });
         // window.open(window.eaasClient.getPrintUrl());
@@ -58,7 +58,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-stop.html'),
-            controller: function($scope) {
+            controller: ['$scope', function($scope) {
                 this.confirmed = function()
                 {
                     window.onbeforeunload = null;
@@ -82,7 +82,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     else
                         $state.go('admin.standard-envs-overview', {}, {reload: true});
                 };
-            },
+            }],
             controllerAs: "confirmStopDialogCtrl"
         });
     };
@@ -102,7 +102,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $uibModal.open({
             animation: true,
             template: require('./modals/change-media.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.chosen_medium_label = currentMediumLabel;
                 this.media = mediaCollection.data.medium;
                 this.isChangeMediaSubmitting = false;
@@ -136,7 +136,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     $("html, body").addClass("wait");
                     eaasClient.changeMedia(postObj, changeSuccsessFunc);
                 };
-            },
+            }],
             controllerAs: "openChangeMediaDialogCtrl"
         });
     };
@@ -170,7 +170,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             $uibModal.open({
                 animation: true,
                 template: require('./modals/save-environment.html'),
-                controller: function($scope) {
+                controller: ["$scope", function($scope) {
 
                     this.type = $stateParams.type;
                     if(!this.type)
@@ -236,7 +236,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
 
 
-                },
+                }],
                 controllerAs: "openSaveEnvironmentDialogCtrl"
             });
         };
@@ -244,7 +244,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-snapshot.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.confirmed = function()
                 {
                     saveDialog();
@@ -252,7 +252,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 this.showEmu = function() {
                     $('#emulator-container').show();
                 }
-            },
+            }],
             controllerAs: "confirmSnapshotDialogCtrl"
         });
 

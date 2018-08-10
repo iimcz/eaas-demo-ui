@@ -25,11 +25,11 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
              $uibModal.open({
                  animation: true,
                  template: require('./modals/select-sw.html'),
-                 controller: function($scope) {
+                 controller: ["$scope", function($scope) {
                      this.envId = envId;
                      this.software = softwareList.data.descriptions;
                      this.returnToObjects = $stateParams.showObjects;
-                 },
+                 }],
                  controllerAs: "addSoftwareDialogCtrl"
              });
          };
@@ -85,10 +85,10 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
                          $uibModal.open({
                              animation: true,
                              templateUrl: './modals/confirm-delete.html',
-                             controller: function($scope) {
+                             controller: ["$scope", function($scope) {
                                  this.envId = envId;
                                  this.confirmed = confirmDeleteFn;
-                             },
+                             }],
                              controllerAs: "confirmDeleteDialogCtrl"
                          });
                      }
