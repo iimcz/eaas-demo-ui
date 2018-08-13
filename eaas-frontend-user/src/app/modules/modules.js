@@ -7,6 +7,7 @@ emilUIModule.controller('ObjectsOverviewController', require('./objects/overview
 
 // base
 emilUIModule.controller('BaseController', require('./base/base.ctrl.js'));
+emilUIModule.controller('KeyboardLayoutDialogController', require('./base/keyboardLayout.ctrl.js'));
 
 // emulator
 emilUIModule.controller('ChooseEnvController', require('./emulator/choose-env.ctrl'));

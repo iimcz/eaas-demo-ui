@@ -1,4 +1,5 @@
-module.exports = function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, chosenEnv, growl, localConfig) {
+module.exports = ["$rootScope", "$scope", "$sce", "$state", "$stateParams", "$cookies", "$translate", "chosenEnv", "growl", "localConfig",
+    function ($rootScope, $scope, $sce, $state, $stateParams, $cookies, $translate, chosenEnv, growl, localConfig) {
 
     if(!chosenEnv || chosenEnv.data.status === '1')
         $state.go('error', {errorMsg: {title: "Die Bereitstellungsumgebung konnte nicht geladen werden."}});
@@ -22,10 +23,10 @@ module.exports = function ($rootScope, $scope, $sce, $state, $stateParams, $cook
         $uibModal.open({
             animation: true,
             template: require('./modals/help-emil-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.helpTitle = $translate.instant('TIMEOUT_DLG_TITLE');
                 this.helpText = $translate.instant('TIMEOUT_DLG_MESSAGE');
-            },
+            }],
             controllerAs: "helpDialogCtrl"
         });
     }
@@ -79,4 +80,4 @@ module.exports = function ($rootScope, $scope, $sce, $state, $stateParams, $cook
             }
         });
     });
-};
+}];

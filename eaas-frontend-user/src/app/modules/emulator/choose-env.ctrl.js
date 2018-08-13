@@ -15,7 +15,7 @@ module.exports = ["$scope", "$state", "$cookies", "objMetadata", "objEnvironment
         $uibModal.open({
             animation: true,
             template: require('./modals/user-session-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.startDefault = function() {
                     $scope.$close();
                     if (objEnvironments.data.environmentList.length === 1)
@@ -76,7 +76,7 @@ module.exports = ["$scope", "$state", "$cookies", "objMetadata", "objEnvironment
                         });
                     }
                 };
-            },
+            }],
             controllerAs: "userSessionDialogCtrl"
         });
     }

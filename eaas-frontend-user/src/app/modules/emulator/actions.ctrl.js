@@ -1,4 +1,7 @@
-module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, $uibModal, $stateParams, $sce,
+module.exports = ["$rootScope", "$scope", "$window", "$state", "$http", "$timeout", "$uibModal", "$stateParams", "$sce",
+                  "mediaCollection", "growl", "localConfig", "$translate", "chosenEnv", "objMetadata", "objEnvironments",
+                  "userSession", "environmentMetaData",
+                   function($rootScope, $scope, $window, $state, $http, $timeout, $uibModal, $stateParams, $sce,
                           mediaCollection, growl, localConfig, $translate, chosenEnv, objMetadata, objEnvironments, userSession, environmentMetaData) {
 
     $scope.html = '<ul><li>render me please</li></ul>';
@@ -10,9 +13,9 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/help-emil-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.helpText = helpText;
-            },
+            }],
             controllerAs: "helpDialogCtrl"
         });
     }
@@ -35,14 +38,14 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/printed-list-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.printJobs = data;
 
                 this.download = function(label)
                 {
                     window.open(window.eaasClient.downloadPrint(label));
                 }
-            },
+            }],
             controllerAs: "openPrintDialogCtrl"
         });
         // window.open(window.eaasClient.getPrintUrl());
@@ -83,7 +86,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
             $uibModal.open({
                 animation: true,
                 template: require('./modals/save-done-dialog.html'),
-                controller: function($scope) {
+                controller: ["$scope", function($scope) {
                     this.done = function () {
                         window.eaasClient.release();
                         $('#emulator-container').hide();
@@ -95,7 +98,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                         $('#emulator-container').hide();
                         $state.go('access.choose-env', {objectId : $stateParams.objectId}, {reload: true});
                     }
-                },
+                }],
                 controllerAs: "saveSessionWaitDlg"
             });
         };
@@ -107,7 +110,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-restart-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.isUserSession = $stateParams.isUserSession;
 
                 this.confirmed = function(deleteUserSession)
@@ -123,7 +126,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     else
                         $state.reload();
                 };
-            },
+            }],
             controllerAs: "confirmRestartDialogCtrl"
         });
     };
@@ -132,7 +135,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-stop-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.confirmed = function()
                 {
                     window.onbeforeunload = null;
@@ -140,7 +143,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     $('#emulator-stopped-container').show();
                     window.location = localConfig.data.stopEmulatorRedirectURL;
                 };
-            },
+            }],
             controllerAs: "confirmStopDialogCtrl"
         });
     };
@@ -161,7 +164,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/choose-env-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.custom_env = null;
                 this.title = objMetadata.data.title;
                 this.environments = objEnvironments.data.environmentList;
@@ -171,7 +174,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     window.eaasClient.release();
                     $state.go('access.emulator', {envId: this.custom_env.id});
                 };
-            },
+            }],
             controllerAs: "changeEnvDialogCtrl"
         });
     };
@@ -181,7 +184,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/change-media-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.chosen_medium_label = currentMediumLabel;
                 this.media = mediaCollection.data.medium;
                 this.isChangeMediaSubmitting = false;
@@ -207,8 +210,7 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
                     $("html, body").addClass("wait");
                     eaasClient.changeMedia(postObj, changeSuccsessFunc);
                 };
-            }
-            ,
+            }],
             controllerAs: "openChangeMediaDialogCtrl"
         });
     };
@@ -217,10 +219,10 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
         $uibModal.open({
             animation: true,
             template: require('./modals/help-emil-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.helpTitle = $translate.instant('CHANGEM_TITLE');
                 this.helpText = $translate.instant('CHANGEM_ALT_TEXT');
-            },
+            }],
             controllerAs: "helpDialogCtrl"
         });
     };
@@ -235,4 +237,4 @@ module.exports = function($rootScope, $scope, $window, $state, $http, $timeout, 
     for(i = 0; i < mediaCollection.data.medium.length; i++)
         if(mediaCollection.data.medium[i].items.length > 1)
             vm.mediaChangeEnabled = true;
-};
+}];

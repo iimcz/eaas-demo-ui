@@ -1,11 +1,11 @@
-module.exports = function($scope, $uibModal, objMetadata) {
+module.exports = ["$scope", "$uibModal", "objMetadata", function($scope, $uibModal, objMetadata) {
     function showHelpDialog(helpText) {
         $uibModal.open({
             animation: true,
             template: require('./modals/help-emil-dialog.html'),
-            controller: function($scope) {
+            controller: ["$scope", function($scope) {
                 this.helpText = helpText;
-            },
+            }],
             controllerAs: "helpDialogCtrl"
         });
     }
@@ -26,15 +26,15 @@ module.exports = function($scope, $uibModal, objMetadata) {
             animation: true,
             template: require('./modals/set-keyboard-layout-dialog.html'),
             resolve: {
-                kbLayouts: function($http) {
+                kbLayouts: ($http) {
                     return $http.get("kbLayouts.json");
                 }
             },
-            controller: "setKeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
+            controller: "KeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
         });
     };
 
     $scope.$on('showSetKeyboardLayoutDialog', function(event, args) {
         vm.showSetKeyboardLayoutDialog();
     });
-};
+}];
