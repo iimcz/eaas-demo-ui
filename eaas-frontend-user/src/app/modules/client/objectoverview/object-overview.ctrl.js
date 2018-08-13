@@ -1,4 +1,4 @@
-module.exports = function($state, $stateParams, objectList, $translate, $uibModal) {
+module.exports = ["$state", "$stateParams", "objectList", "$translate", "$uibModal", function($state, $stateParams, objectList, $translate, $uibModal) {
     var vm = this;
 
     vm.objectList = objectList.data.objects;
@@ -23,4 +23,4 @@ module.exports = function($state, $stateParams, objectList, $translate, $uibModa
     //             });
     //     }]
     // ];
-};
+}];
