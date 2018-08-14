@@ -54,7 +54,8 @@
             <br>
             <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
 					| translate }}: {{row.version}}<br>
-            </span> <div ng-if="!standardEnvsOverviewCtrl.showContainers">{{row.description}} </div> <div ng-if="standardEnvsOverviewCtrl.showContainers">{{row.author}} </div>
+            </span> <div >{{row.author}} </div>
+            <!--<div ng-if="standardEnvsOverviewCtrl.showContainers">{{row.author}} </div>-->
         </td>
     </tr>
     </tbody>

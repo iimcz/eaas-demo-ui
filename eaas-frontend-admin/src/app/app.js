@@ -916,6 +916,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         container.imageSize = 1024;
                         container.imageType = 'size';
 
+
+                        container.landingPage = localConfig.data.landingPage;
+                        console.log("!!!!!! container.landingPage ", container.landingPage);
+
                         container.imageId = "";
                         container.env = [];
                         container.args = [];
@@ -1006,16 +1010,37 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                 if (!container.isMetaDataValid())
                                     return;
 
-                                $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.saveImportedContainer, container.id, container.title, container.containerDescription, container.author))
-                                    .then(function (response) {
+                                $http.post(localConfig.data.eaasBackendURL + REST_URLS.saveImportedContainer, {
+                                    id: container.id,
+                                    title: container.title,
+                                    description: container.containerDescription,
+                                    author: container.author
+                                }).then(function (response) {
                                         if (response.data.status == "0") {
                                             growl.success("import successful.");
-                                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                                            WizardHandler.wizard('containerImportWizard').next();
+                                            // $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                                         }
                                         else {
                                             $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
                                         }
                                     });
+                            };
+
+                            container.saveHandle = function () {
+                                $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
+                                    handle: "11270/" + container.id,
+                                    handleValue: localConfig.data.landingPage + "?id=" + container.id,
+                                }).then(function (response) {
+                                    console.log("response  ", response);
+                                    console.log("response.status   ", response.status);
+                                    if (response.status === 200) {
+                                        $("#handleLandingPageContainer").text("Your handle value: \n" + "11270/" + container.id);
+                                    } else {
+                                        growl.error('Handle is not defined!!');
+                                    }
+
+                                });
                             };
 
                             //Next Step
@@ -1300,7 +1325,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 'wizard': {
                     templateUrl: "partials/wf-s/handleList.html",
 
-                    controller: function($state, $stateParams, $http,  handles, localConfig, helperFunctions) {
+                    controller: function ($state, $stateParams, $http, handles, localConfig, growl, helperFunctions) {
                         var vm = this;
                         vm.handles = handles.data.handles;
 
@@ -1316,6 +1341,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                         };
 
                         vm.addHandle = function () {
+                            if(!document.getElementById("addHandleValue").value.includes("/[^a-zA-Z0-9 ]/")) {
+                                growl.error('handle contains illigal symbol', {title: 'Error '});
+                                return;
+                            }
                             jQuery.when(
                             $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
                                 handle: document.getElementById("addHandle").value,
@@ -1600,8 +1629,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             growl.error("Environment not found");
                             $state.go('wf-s.standard-envs-overview', {}, {reload: true});
                         }
-
+                        console.log("this.env.author ", this.env.author);
                         this.envTitle = this.env.title;
+                        this.author = this.env.author;
                         this.envDescription = this.env.description;
                         this.envHelpText = this.env.helpText;
                         this.enableRelativeMouse = this.env.enableRelativeMouse;
@@ -1636,6 +1666,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                                 envId: $stateParams.envId,
                                 title: this.envTitle,
+                                author: this.author,
                                 description: this.envDescription,
                                 helpText: this.envHelpText,
                                 time: timecontext,
@@ -1770,65 +1801,67 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             views: {
                 'wizard': {
                     templateUrl: 'partials/wf-s/edit-container.html',
-                    controller: ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS', function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
+                    controller: ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS',
+                        function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
                         var vm = this;
 
-                        vm.showDateContextPicker = false;
-                        var envList = null;
+                            vm.showDateContextPicker = false;
+                            var envList = null;
 
-                        envList = containerEnvironmentList.data.environments;
-                        this.env = null;
+                            envList = containerEnvironmentList.data.environments;
+                            vm.env = null;
 
-                        for(var i = 0; i < envList.length; i++) {
-                            if (envList[i].envId === $stateParams.envId) {
-                                this.env = envList[i];
-                                break;
-                            }
-                        }
-
-                        if(this.env === null)
-                        {
-                            growl.error("Container not found");
-                            $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                        }
-
-                        this.envTitle = this.env.title;
-                        this.author = this.env.author;
-                        this.description = this.env.description;
-                        this.envInput = this.env.input;
-                        this.envOutput = this.env.output;
-                        this.processArgs = this.env.processArgs; // todo deep copy
-                        this.processEnvs = this.env.processEnvs;
-
-                        this.saveEdit = function() {
-
-                            this.env.title = this.envTitle;
-                            this.env.input = this.envInput;
-                            this.env.output = this.envOutput;
-                            this.env.author = this.author;
-                            this.env.description = this.description;
-                            this.env.processArgs = this.processArgs;
-                            this.env.processEnvs = this.processEnvs;
-
-                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
-                                id: $stateParams.envId,
-                                title: this.envTitle,
-                                author: this.author,
-                                description: this.description,
-                                outputFolder : this.envOutput,
-                                inputFolder : this.envInput,
-                                processEnvs : this.processEnvs,
-                                processArgs : this.processArgs
-                            }).then(function(response) {
-                                if (response.data.status === "0") {
-                                    growl.success($translate.instant('JS_ENV_UPDATE'));
-                                } else {
-                                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                            for(var i = 0; i < envList.length; i++) {
+                                if (envList[i].envId === $stateParams.envId) {
+                                    vm.env = envList[i];
+                                    break;
                                 }
-                                $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: true});
-                            });
-                        };
-                    }],
+                            }
+
+                            if(vm.env === null)
+                            {
+                                growl.error("Container not found");
+                                $state.go('wf-s.standard-envs-overview', {}, {reload: true});
+                            }
+                            vm.envTitle = vm.env.title;
+                            vm.author = vm.env.author;
+                            vm.description = vm.env.description;
+                            vm.envInput = vm.env.input;
+                            vm.envOutput = vm.env.output;
+                            vm.processArgs = vm.env.processArgs; // todo deep copy
+                            vm.processEnvs = vm.env.processEnvs;
+
+                            console.log("vm.processArgs ", JSON.stringify(vm.processArgs));
+
+                            vm.saveEdit = function() {
+
+                                vm.env.title = vm.envTitle;
+                                vm.env.input = vm.envInput;
+                                vm.env.output = vm.envOutput;
+                                vm.env.author = vm.author;
+                                vm.env.description = vm.description;
+                                vm.env.processArgs = vm.processArgs;
+                                vm.env.processEnvs = vm.processEnvs;
+
+                                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
+                                    id: $stateParams.envId,
+                                    title: vm.envTitle,
+                                    author: vm.author,
+                                    description: vm.description,
+                                    outputFolder : vm.envOutput,
+                                    inputFolder : vm.envInput,
+                                    processEnvs : vm.processEnvs,
+                                    processArgs : vm.processArgs
+                                }).then(function(response) {
+                                    if (response.data.status === "0") {
+                                        growl.success($translate.instant('JS_ENV_UPDATE'));
+                                    } else {
+                                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                                    }
+                                    $state.go('wf-s.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: true});
+                                });
+                            };
+                        }],
                     controllerAs: "editContainerCtrl"
                 }
             }

@@ -13,10 +13,16 @@
     </div>
 
     <div class="form-group">
+        <label>{{'NEW_CONTAINER_AUTHOR' | translate}}</label> <input type="text"
+                                                             class="form-control" ng-model="editEnvCtrl.author"
+                                                            required>
+    </div>
+
+    <div class="form-group">
         <label>{{'EDITENV_DESC' | translate}}</label>
-        <textarea class="form-control" rows="3"
+        <text-angular
                   ng-model="editEnvCtrl.envDescription"
-                  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></textarea>
+                  placeholder="{{'EDITENV_DESC_PH' | translate}}" required></text-angular>
     </div>
 
     <p>

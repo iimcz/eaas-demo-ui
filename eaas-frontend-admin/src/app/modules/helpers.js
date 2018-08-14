@@ -40,7 +40,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.getContainerTaskState = "EmilContainerData/taskState?taskId={0}";
     this.updateContainerUrl = "EmilContainerData/updateContainer";
     this.deleteContainerUrl = "EmilContainerData/delete";
-    this.saveImportedContainer = "EmilContainerData/saveImportedContainer?id={0}&title={1}&description={2}&author={3}";
+    this.saveImportedContainer = "EmilContainerData/saveImportedContainer";
 
     this.userSessionListUrl = "EmilUserSession/list";
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";

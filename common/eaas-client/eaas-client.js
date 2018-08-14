@@ -417,12 +417,17 @@ EaasClient.Client = function (api_entrypoint, container) {
      * @Deprecated
      * @param environmentId
      * @param args
+     * @param input_data
      * @returns {*}
      */
-    this.startEnvironment = function (environmentId, args) {
+    this.startEnvironment = function (environmentId, args, input_data) {
         var data = {};
         data.type = "machine";
         data.environment = environmentId;
+        if (typeof input_data !== "undefined" && input_data !=  null) {
+            data.input_data = [];
+            data.input_data[0] = input_data;
+        }
 
         if (typeof args !== "undefined") {
             data.keyboardLayout = args.keyboardLayout;
