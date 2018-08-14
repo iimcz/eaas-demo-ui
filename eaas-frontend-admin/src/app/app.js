@@ -113,8 +113,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
 
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider) {
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -122,6 +122,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         taOptions.forceTextAngularSanitize = false;
         return taOptions;
     }]);
+
+    $locationProvider.hashPrefix('');
 
     cfpLoadingBarProvider.includeSpinner = false;
     cfpLoadingBarProvider.includeBar = true;
