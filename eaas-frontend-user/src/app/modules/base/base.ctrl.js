@@ -26,9 +26,7 @@ module.exports = ["$scope", "$uibModal", "objMetadata", function($scope, $uibMod
             animation: true,
             template: require('./modals/set-keyboard-layout-dialog.html'),
             resolve: {
-                kbLayouts: ($http) {
-                    return $http.get("kbLayouts.json");
-                }
+                kbLayouts: ($http) => $http.get("kbLayouts.json")
             },
             controller: "KeyboardLayoutDialogController as setKeyboardLayoutDialogCtrl"
         });
