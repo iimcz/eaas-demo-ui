@@ -4,12 +4,13 @@
   "dashboardClusterAPIBaseURL" : "http://127.0.0.1:8080/eaas/api/v1/clusters/",
   "dashboardAccessToken": "secret",
   "baseEmulatorUrl" : "http://localhost:8080/demo-ui/",
+  "landingPage": "http://localhost:8080/demo-ui/citar-headless-client/",
 
   "features" : {
       "screenshots" : false,
       "snapshots": false,
       "containers" : false,
-      "objectEnvironments": true,
+      "objectEnvironments": true,,
       "objects" : true,
       "network" : false,
       "software" : true,
