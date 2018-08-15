@@ -1,4 +1,4 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout' , 'WizardHandler', 'helperFunctions', 'REST_URLS',
+module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'helperFunctions', 'REST_URLS',
     function ($http, $scope, $state, $stateParams, runtimeList, growl, localConfig, $uibModal, $timeout, WizardHandler, helperFunctions, REST_URLS) {
 
         var container = this;
@@ -19,32 +19,28 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         container.args = [];
 
         //TODO: ?
-        container.onSelectRuntime = function(item, model) {
+        container.onSelectRuntime = function (item, model) {
             container.runtime = item.id;
         };
 
-        container.isValid = function() {
+        container.isValid = function () {
 
-            if(!container.imageInput || !container.imageOutput)
-            {
+            if (!container.imageInput || !container.imageOutput) {
                 growl.error("input / ouput folder are required");
                 return false;
             }
 
-            if(container.args.length == 0)
-            {
+            if (container.args.length == 0) {
                 growl.error("process is required");
                 return false;
             }
 
-            if(!container.name)
-            {
+            if (!container.name) {
                 growl.error("container name is required");
                 return false;
             }
 
-            if(!container.imageUrl)
-            {
+            if (!container.imageUrl) {
                 growl.error("image file / image URL is required");
                 return false;
             }
@@ -52,20 +48,17 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             return true;
         };
 
-        container.isMetaDataValid = function() {
+        container.isMetaDataValid = function () {
 
-            if(!container.title)
-            {
+            if (!container.title) {
                 growl.error("Title is required");
                 return false;
             }
-            if(!container.containerDescription)
-            {
+            if (!container.containerDescription) {
                 growl.error("Description is required");
                 return false;
             }
-            if(!container.author)
-            {
+            if (!container.author) {
                 growl.error("Author is required");
                 return false;
             }
@@ -74,25 +67,23 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             return true;
         };
 
-        container.checkState = function(_taskId, stayAtPage)
-        {
-            var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function(response){
-                if(response.data.status == "0")
-                {
-                    if(response.data.isDone)
-                    {
+        container.checkState = function (_taskId, stayAtPage) {
+            var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function (response) {
+                if (response.data.status == "0") {
+                    if (response.data.isDone) {
 
                         container.id = response.data.userData.environmentId;
                         container.modal.close();
                         growl.success("import successful.");
-                        if(typeof stayAtPage == "undefined" || !stayAtPage)
+                        if (typeof stayAtPage == "undefined" || !stayAtPage)
                             $state.go('admin.standard-envs-overview', {}, {reload: true});
                     }
                     else
-                        $timeout(function() {container.checkState(_taskId, stayAtPage);}, 2500);
+                        $timeout(function () {
+                            container.checkState(_taskId, stayAtPage);
+                        }, 2500);
                 }
-                else
-                {
+                else {
                     container.modal.close();
                     $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
                 }
@@ -181,7 +172,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                     var taskId = response.data.taskId;
                     container.modal = $uibModal.open({
                         animation: true,
-                        templateUrl: 'partials/import-wait.html'
+                        templateUrl: 'partials/wait.html'
                     });
                     container.checkState(taskId, true);
                     WizardHandler.wizard('containerImportWizard').next();

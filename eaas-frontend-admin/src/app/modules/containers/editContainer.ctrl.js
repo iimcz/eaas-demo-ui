@@ -8,15 +8,14 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
         envList = containerEnvironmentList.data.environments;
         vm.env = null;
 
-        for(var i = 0; i < envList.length; i++) {
+        for (var i = 0; i < envList.length; i++) {
             if (envList[i].envId === $stateParams.envId) {
                 vm.env = envList[i];
                 break;
             }
         }
 
-        if(vm.env === null)
-        {
+        if (vm.env === null) {
             growl.error("Container not found");
             $state.go('admin.standard-envs-overview', {}, {reload: true});
         }
@@ -27,8 +26,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
         vm.envOutput = vm.env.output;
         vm.processArgs = vm.env.processArgs; // todo deep copy
         vm.processEnvs = vm.env.processEnvs;
-        
-        vm.saveEdit = function() {
+
+        vm.saveEdit = function () {
 
             vm.env.title = vm.envTitle;
             vm.env.input = vm.envInput;
@@ -43,11 +42,11 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
                 title: vm.envTitle,
                 author: vm.author,
                 description: vm.description,
-                outputFolder : vm.envOutput,
-                inputFolder : vm.envInput,
-                processEnvs : vm.processEnvs,
-                processArgs : vm.processArgs
-            }).then(function(response) {
+                outputFolder: vm.envOutput,
+                inputFolder: vm.envInput,
+                processEnvs: vm.processEnvs,
+                processArgs: vm.processArgs
+            }).then(function (response) {
                 if (response.data.status === "0") {
                     growl.success($translate.instant('JS_ENV_UPDATE'));
                 } else {

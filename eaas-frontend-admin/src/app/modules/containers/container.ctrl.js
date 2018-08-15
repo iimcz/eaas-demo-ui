@@ -1,22 +1,22 @@
-module.exports = ['$rootScope','$scope','$sce','$state','$stateParams','$translate','localConfig','growl','$uibModal','containerEnvironmentList',
-    function ($rootScope, $scope, $sce, $state, $stateParams, $translate, localConfig, growl, $uibModal, containerEnvironmentList) {
+module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal', 'containerEnvironmentList',
+    function ($rootScope, $scope, $sce, $state, $http, $stateParams, $translate, Upload, localConfig, growl, $uibModal, containerEnvironmentList) {
         var vm = this;
 
         $("#container-stopped").hide();
 
         window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
-        eaasClient.onError = function(message) {
+        eaasClient.onError = function (message) {
             window.onbeforeunload = null;
             $state.go('error', {errorMsg: {title: "Error", message: message.error}});
         };
 
-        window.onbeforeunload = function(e) {
+        window.onbeforeunload = function (e) {
             var dialogText = $translate.instant('MESSAGE_QUIT');
             e.returnValue = dialogText;
             return dialogText;
         };
 
-        window.onunload = function() {
+        window.onunload = function () {
             window.onbeforeunload = null;
         };
 
@@ -24,14 +24,14 @@ module.exports = ['$rootScope','$scope','$sce','$state','$stateParams','$transla
         console.log(envList);
         vm.env = null;
 
-        for(var i = 0; i < envList.length; i++) {
+        for (var i = 0; i < envList.length; i++) {
             if (envList[i].envId === $stateParams.envId) {
                 vm.env = envList[i];
                 break;
             }
         }
 
-        window.eaasClient.onEmulatorStopped = function() {
+        window.eaasClient.onEmulatorStopped = function () {
             $("#emulator-loading-container").hide();
             $("#container-running").hide();
             $("#container-stopped").show();
@@ -39,13 +39,11 @@ module.exports = ['$rootScope','$scope','$sce','$state','$stateParams','$transla
 
         var params = {};
 
-        vm.downloadLink = function()
-        {
+        vm.downloadLink = function () {
             window.open(window.eaasClient.getContainerResultUrl());
         };
 
-        var confirmStartFn = function(inputs)
-        {
+        var confirmStartFn = function (inputs) {
             params.input_data = [];
             var input = {};
             input.size_mb = 512;
@@ -58,7 +56,7 @@ module.exports = ['$rootScope','$scope','$sce','$state','$stateParams','$transla
                 $("#emulator-loading-container").hide();
                 $("#container-running").show();
 
-                eaasClient.connect().then(function() {
+                eaasClient.connect().then(function () {
                     $("#emulator-container").show();
 
                     if (eaasClient.params.pointerLock === "true") {
@@ -67,35 +65,258 @@ module.exports = ['$rootScope','$scope','$sce','$state','$stateParams','$transla
                     }
 
                     // Fix to close emulator on page leave
-                    $scope.$on('$locationChangeStart', function(event) {
+                    $scope.$on('$locationChangeStart', function (event) {
                         eaasClient.release();
                     });
                 });
 
 
-                $scope.$on('$locationChangeStart', function(event) {
+                $scope.$on('$locationChangeStart', function (event) {
                     eaasClient.release();
                 });
             });
         };
 
-        $uibModal.open({
-            animation: true,
-            template: require('./modals/container-run-dialog.html'),
-            controller: function($scope) {
-                this.run = function()
-                {
-                    confirmStartFn(this.inputs);
-                };
-                this.cancel = function()
-                {
-                    $state.go('admin.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: false});
-                };
-                this.inputs = [];
-            },
-            controllerAs: "runContainerDlgCtrl"
-        });
+        if (!$stateParams.modifiedDialog) {
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/container-run-dialog.html'),
+                controller: function ($scope) {
+                    this.run = function () {
+                        confirmStartFn(this.inputs);
+                    };
+                    this.cancel = function () {
+                        $state.go('admin.standard-envs-overview', {
+                            showObjects: false,
+                            showContainers: true
+                        }, {reload: false});
+                    };
+                    this.inputs = [];
+                },
+                controllerAs: "runContainerDlgCtrl"
+            });
+        }
+        else {
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/container-run-dialog-modified.html'),
+                controller: function ($scope) {
+                    this.run = function () {
+                        confirmStartFn(this.inputs);
+                    };
+                    this.cancel = function () {
+                        $state.go('admin.standard-envs-overview', {
+                            showObjects: false,
+                            showContainers: true
+                        }, {reload: false});
+                    };
+                    this.onInputSourceSelection = function (obj) {
+                        // Get chosen input source
+                        var inputMethod = obj.target.attributes.method.value;
+                        // Show div corresponding to the chosen input type, hide all other
+                        if (inputMethod != this.activeInputMethod) {
+                            // Disable old input method, if one was set already
+                            if (typeof(this.activeInputMethod) != 'undefined') {
+                                this.showDialogs[this.activeInputMethod] = false;
+                            }
+                            // Enable new input method
+                            this.activeInputMethod = inputMethod;
+                            this.showDialogs[this.activeInputMethod] = true;
+                            this.inputSourceButtonText = obj.target.firstChild.data;
+                            this.newInputUrl = "";
+                            this.newInputName = "";
+                            this.uploadFiles = [];
+                            this.prideFiles = {};
+                            this.prideAccession = "";
+                        }
+                        console.log(this.showDialogs);
+                        console.log(inputMethod);
+                    };
+                    this.onImportFilesChosen = function (files) {
+                        // The user chose files to upload
+                        // Initialize the uploadFiles list with meaningful values for destination and action.
+                        // Those are displayed in the view and can be changed by the user
+                        for (i = 0; i < files.length; i++) {
+                            this.uploadFiles.push({
+                                file: files[i],
+                                filename: files[i].name,
+                                destination: files[i].name,
+                                action: "copy"
+                            });
+                        }
+                    };
+                    this.onFileUpload = function () {
+                        for (var i = 0; i < this.uploadFiles.length; i++) {
+                            // Have to remember the chosen destination and action for the file
+                            Upload.upload({
+                                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                                name: this.uploadFiles[i].filename,
+                                destination: this.uploadFiles[i].destination,
+                                action: this.uploadFiles[i].action,
+                                data: {file: this.uploadFiles[i].file}
+                            }).then(function (resp) {
+                                // Push the uploaded file to the input list
+                                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                                $scope.runContainerDlgCtrl.inputs.push({
+                                    url: "file://" + resp.data.absolutePath,
+                                    name: resp.config.destination,
+                                    action: resp.config.action
+                                });
+                                $scope.runContainerDlgCtrl.uploadFiles = [];
+                            }, function (resp) {
+                                console.log('Error status: ' + resp.status);
+                                $state.go('error', {
+                                    errorMsg: {
+                                        title: "Load Environments Error " + resp.data.status,
+                                        message: resp.data.message
+                                    }
+                                });
+                            }, function (evt) {
+                                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                            });
+                        }
+                    };
+                    this.onUniprotUrls = function () {
+                        // Strip all whitespaces and create list of URLs
+                        var urls = this.uniprotUrls.split("\n");
+                        // Add each URL to the list of inputs
+                        for (var i = 0; i < urls.length; i++) {
+                            var tmp = urls[i].split("/");
+                            var name = tmp[tmp.length - 1];
+                            if (this.newInputName != "" && this.newInputName.slice(-1) != "/") {
+                                this.newInputName = this.newInputName + "/";
+                            }
+                            this.list.push({
+                                url: urls[i],
+                                name: this.newInputName + name,
+                                action: 'copy'
+                            });
+                        }
+                        this.uniprotUrls = "";
+                    };
+                    this.onUniprotBatchFileChosen = function (files) {
+                        console.log(files);
+                        this.uniprotBatch = files[0];
+                    };
+                    this.onUniprotBatch = function () {
+                        console.log("onUniprotBatch");
+                        console.log(this.uniprotBatch);
+                        console.log($scope.runContainerDlgCtrl.uniprotBatch);
+                        var formdata = new FormData();
+                        formdata.append("file", this.uniprotBatch);
+                        formdata.append("format", "txt");
+                        formdata.append("from", "ACC+ID");
+                        formdata.append("to", "ACC");
+                        console.log(formdata);
+                        $http.post('https://www.uniprot.org/uploadlists/',
+                            formdata,
+                            {
+                                headers: {
+                                    'Content-Type': "multipart/form-data"
+                                }
+                            }).then(function (resp) {
+                            // Push the uploaded file to the input list
+                            console.log('Success ' + resp + 'uploaded. Response: ' + resp.data);
+                        });
+                    };
+                    this.onUniprotQuery = function () {
+                        var uniprotUrlPrefix = "http://www.uniprot.org/uniprot/?query=";
+                        // Build the query URL from the query string and push to input list
+                        var queryUrl = uniprotUrlPrefix + this.uniprotQuery
+                        // Check if query contains format information. Add "'" in the end, because the string can container whitespaces
+                        if (!queryUrl.includes("format")) {
+                            queryUrl += "&format=fasta";
+                        }
+                        // Replace spaces with %20
+                        queryUrl = queryUrl.replace(/\s/g, "%20");
+                        // Add the input query to the input list
+                        this.list.push({
+                            url: queryUrl,
+                            name: this.newInputName,
+                            action: this.newAction
+                        });
+                        this.newInputUrl = '';
+                        this.newInputName = '';
+                        this.newAction = '';
+                        this.uniprotQuery = '';
+                    };
+                    this.onPrideListFiles = function () {
+                        console.log(this.prideAccession);
 
+                        // Query for file list of project
+                        var pride_rest_project = "https://www.ebi.ac.uk:443/pride/ws/archive/file/list/project/"
+                        var rest_url = pride_rest_project + this.prideAccession;
+                        $http.get(rest_url).then(function (response) {
+                            console.log($scope.runContainerDlgCtrl.prideAccession);
+                            // Build list of files from response
+                            var files = response.data.list;
+                            var fileList = {};
+                            for (var i = 0; i < files.length; i++) {
+                                var fileType = files[i].fileType;
+                                // Check if this file type already exists
+                                if (typeof(fileList[fileType]) == 'undefined') {
+                                    fileList[fileType] = {
+                                        'checked': false,
+                                        'list': []
+                                    };
+                                }
+
+                                fileList[fileType].list.push({
+                                    "fileName": files[i].fileName,
+                                    "downloadLink": files[i].downloadLink,
+                                    "fileSize": files[i].fileSize,
+                                    "checked": false
+                                });
+                            }
+                            $scope.runContainerDlgCtrl.prideFiles = fileList;
+                        });
+                    };
+                    this.onPrideAddFiles = function () {
+                        // Add the checked files to the input list
+                        for (var fileType in this.prideFiles) {
+                            for (var i = 0; i < this.prideFiles[fileType].list.length; i++) {
+                                if (this.prideFiles[fileType].list[i].checked) {
+                                    this.list.push({
+                                        url: this.prideFiles[fileType].list[i].downloadLink,
+                                        name: this.prideFiles[fileType].list[i].fileName,
+                                        action: 'copy'
+                                    });
+                                }
+                            }
+                        }
+                        this.prideFiles = {};
+                        this.prideAccession = "";
+                    };
+                    this.onPrideMasterCheckbox = function (event) {
+                        // Get the file type that corresponds to this checkbox
+                        var fileType = event.target.attributes.data.nodeValue;
+                        var master_checked = this.prideFiles[fileType].checked;
+                        // Set all child checkboxes to the same as the master checkbox value
+                        for (var i = 0; i < this.prideFiles[fileType].list.length; i++) {
+                            this.prideFiles[fileType].list[i].checked = master_checked;
+                        }
+                    };
+                    this.showDialogs = {
+                        "upload": false,
+                        "import": false,
+                        "pride": false,
+                        "uniprot": false
+                    };
+                    this.inputs = [];
+                    this.newInputUrl = "";
+                    this.newInputName = "";
+                    this.uniprotUrls = "";
+                    this.uniprotBatch = "";
+                    this.uniprotQuery = "";
+                    this.prideAccession = "";
+                    this.prideFiles = {};
+                    this.inputSourceButtonText = "Choose Input Source";
+                    this.activeInputMethod = null;
+                    this.uploadFiles = [];
+                },
+                controllerAs: "runContainerDlgCtrl"
+            });
+        }
     }];
-
 

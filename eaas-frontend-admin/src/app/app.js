@@ -25,6 +25,7 @@ import 'angular-jwt'
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
+import 'ng-file-upload';
 
 
 /*
@@ -33,6 +34,8 @@ import 'sortablejs/ng-sortable';
 
 var $ = require('jquery');
 window.$ = window.jQuery = $; // publish jQuery into window scope for emulator libs
+window.Popper = require('popper.js').default;
+require('bootstrap');
 
 const appendScript = function(scriptText) {
     let script   = document.createElement("script");
@@ -72,7 +75,8 @@ import './app.css';
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
-                                   'emilAdminUI.modules', 'angular-jwt'])
+                                   'emilAdminUI.modules', 'ngFileUpload', 'angular-jwt'])
+
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -96,6 +100,50 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             inputPlaceholder: '@',
             addButtonText: '@'
         }
+    })
+
+    .component('containerInputListModified', {
+        templateUrl: 'partials/components/containerInputListModified.html',
+        bindings: {
+            list: '=',
+            heading: '@',
+            listEmptyNote: '@',
+            inputPlaceholder: '@',
+            addButtonText: '@',
+            newInputUrl: '=',
+            newInputName: '=',
+            uploadFiles: '=',
+            uniprotUrls: '=',
+            uniprotBatch: '=',
+            uniprotQuery: '=',
+            prideAccession: '=',
+            prideFiles: '=',
+            inputSourceButtonText: '=',
+            onInputSourceSelection: '<',
+            onImportFilesChosen: '<',
+            onFileUpload: '<',
+            onUniprotUrls: '<',
+            onUniprotBatchFileChosen: '<',
+            onUniprotBatch: '<',
+            onUniprotQuery: '<',
+            onPrideListFiles: '<',
+            onPrideAddFiles: '<',
+            onPrideMasterCheckbox: '<',
+            showDialogs: '='
+        }
+    })
+    
+    .directive('onInputFileChange', function() {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var onChangeHandler = scope.$eval(attrs.onInputFileChange);
+                element.on('change', onChangeHandler);
+                element.on('$destroy', function() {
+                    element.off();
+                });
+            }
+        };
     })
 
 .run(function($rootScope, $state) {
@@ -355,10 +403,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('wf-i.new-container', {
+        .state('admin.new-container', {
             url: "/new-container",
             resolve: {
-                // change for containers
                 runtimeList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOriginRuntimeList);
                 }
@@ -366,7 +413,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             views: {
                 'wizard': {
                     template: require('./modules/containers/new-container-wizard.html'),
-                    controller:  "NewContainerCtrl as newContCtrl"
+                    controller:  "NewContainerController as newContainerCtrl"
                 }
             }
         })
@@ -500,6 +547,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             },
             params: {
                 envId: null,
+                modifiedDialog: false,
             },
             views: {
                 'wizard': {

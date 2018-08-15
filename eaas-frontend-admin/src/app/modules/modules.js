@@ -42,4 +42,5 @@ emilUIModule.controller('ObjectsOverviewController', require('./objects/overview
 emilUIModule.controller('StartContainerController', require('./containers/container.ctrl.js'));
 emilUIModule.controller('ContainerActionsController', require('./containers/actions.ctrl.js'));
 emilUIModule.controller('EditContainerController', require('./containers/editContainer.ctrl.js'));
+emilUIModule.controller('NewContainerController', require('./containers/newContainer.ctrl'));
 
