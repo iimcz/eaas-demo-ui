@@ -107,12 +107,22 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
             newInputUrl: '=',
             newInputName: '=',
             uploadFiles: '=',
+            uniprotUrls: '=',
+            uniprotBatch: '=', 
             uniprotQuery: '=',
+            prideAccession: '=',
+            prideFiles: '=',
             inputSourceButtonText: '=',
             onInputSourceSelection: '<',
             onImportFilesChosen: '<',
             onFileUpload: '<',
+            onUniprotUrls: '<',
+            onUniprotBatchFileChosen: '<',
+            onUniprotBatch: '<',
             onUniprotQuery: '<',
+            onPrideListFiles: '<',
+            onPrideAddFiles: '<',
+            onPrideMasterCheckbox: '<',
             showDialogs: '='
         }
     })
@@ -1741,9 +1751,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                         this.processArgs = this.env.processArgs; // todo deep copy
                         this.processEnvs = this.env.processEnvs;
 
-                        console.log(this.processArgs);
-                        console.log(this.processEnvs);
-
                         this.saveEdit = function() {
 
                             this.env.title = this.envTitle;
@@ -2266,8 +2273,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         var inputMethod = obj.target.attributes.method.value;
                                         // Show div corresponding to the chosen input type, hide all other
                                         if (inputMethod != this.activeInputMethod) {
-                                            // Disable old input method
-                                            this.showDialogs[this.activeInputMethod] = false;
+                                            // Disable old input method, if one was set already
+                                            if (typeof(this.activeInputMethod) != 'undefined') {
+                                                this.showDialogs[this.activeInputMethod] = false;
+                                            }
                                             // Enable new input method
                                             this.activeInputMethod = inputMethod;
                                             this.showDialogs[this.activeInputMethod] = true;
@@ -2275,10 +2284,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             this.newInputUrl = "";
                                             this.newInputName = "";
                                             this.uploadFiles = [];
+                                            this.prideFiles = {};
+                                            this.prideAccession = "";
                                         }
+                                        console.log(this.showDialogs);
+                                        console.log(inputMethod);
                                     };
                                     this.onImportFilesChosen = function(files) {
-                                        console.log(files);
                                         // The user chose files to upload
                                         // Initialize the uploadFiles list with meaningful values for destination and action.
                                         // Those are displayed in the view and can be changed by the user
@@ -2288,19 +2300,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                                                    destination: files[i].name,
                                                                    action: "copy"});
                                         }
-                                        console.log("uploadFiles:");
-                                        console.log(this.uploadFiles);
                                     };
                                     this.onFileUpload = function () {
-                                        console.log("Upload files start");
-                                        console.log(this.uploadFiles);
-
                                         for (var i = 0; i < this.uploadFiles.length; i++) {
-                                            console.log(localConfig.data.eaasBackendURL);
-                                            console.log(this.uploadFiles);
                                             // Have to remember the chosen destination and action for the file
                                             Upload.upload({
-                                                url: "http://192.52.32.39/emil/EmilContainerData/uploadUserInput",
+                                                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
                                                 name: this.uploadFiles[i].filename,
                                                 destination: this.uploadFiles[i].destination,
                                                 action: this.uploadFiles[i].action,
@@ -2318,14 +2323,51 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                             }, function (evt) {
                                                 var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                                                 console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-                                                //uploadInfo.title = "Uploading Object(s)" + evt.config.data.file.name;
-                                                //uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
                                             });
                                         }
                                     };
+                                    this.onUniprotUrls = function () {
+                                        // Strip all whitespaces and create list of URLs
+                                        var urls = this.uniprotUrls.split("\n");
+                                        // Add each URL to the list of inputs
+                                        for (var i = 0; i < urls.length; i++) {
+                                            var tmp = urls[i].split("/");
+                                            var name = tmp[tmp.length-1];
+                                            if (this.newInputName != "" && this.newInputName.slice(-1) != "/") {
+                                                this.newInputName = this.newInputName + "/";
+                                            }
+                                            this.list.push({url : urls[i],
+                                                name : this.newInputName + name,
+                                                action : 'copy'
+                                            });
+                                        }
+                                        this.uniprotUrls = "";
+                                    };
+                                    this.onUniprotBatchFileChosen = function(files) {
+                                        console.log(files);
+                                        this.uniprotBatch = files[0];
+                                    };
+                                    this.onUniprotBatch = function () {
+                                        console.log("onUniprotBatch");
+                                        console.log(this.uniprotBatch);
+                                        console.log($scope.runContainerDlgCtrl.uniprotBatch);
+                                        var formdata = new FormData();
+                                        formdata.append("file", this.uniprotBatch);
+                                        formdata.append("format", "txt");
+                                        formdata.append("from", "ACC+ID");
+                                        formdata.append("to", "ACC");
+                                        console.log(formdata);
+                                        $http.post('https://www.uniprot.org/uploadlists/',
+                                                   formdata,
+                                                   {headers: {
+                                                    'Content-Type': "multipart/form-data"
+                                                }}).then(function (resp) {
+                                                    // Push the uploaded file to the input list
+                                                    console.log('Success ' + resp + 'uploaded. Response: ' + resp.data);
+                                            });
+                                    };
                                     this.onUniprotQuery = function () {
-                                        var uniprotUrlPrefix = "https://www.uniprot.org/uniprot/?query=";
-                                        console.log(this.uniprotQuery);
+                                        var uniprotUrlPrefix = "http://www.uniprot.org/uniprot/?query=";
                                         // Build the query URL from the query string and push to input list
                                         var queryUrl = uniprotUrlPrefix + this.uniprotQuery
                                         // Check if query contains format information. Add "'" in the end, because the string can container whitespaces
@@ -2343,7 +2385,60 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                         this.newInputName= '';
                                         this.newAction = '';
                                         this.uniprotQuery = '';
-                                    }
+                                    };
+                                    this.onPrideListFiles = function () {
+                                        console.log(this.prideAccession);
+
+                                        // Query for file list of project
+                                        var pride_rest_project = "https://www.ebi.ac.uk:443/pride/ws/archive/file/list/project/"
+                                        var rest_url = pride_rest_project + this.prideAccession;
+                                        $http.get(rest_url).
+                                            then(function(response) {
+                                                console.log($scope.runContainerDlgCtrl.prideAccession);
+                                                // Build list of files from response
+                                                var files = response.data.list;
+                                                var fileList = {};
+                                                for (var i = 0; i < files.length; i++) {
+                                                    var fileType = files[i].fileType;
+                                                    // Check if this file type already exists
+                                                    if(typeof(fileList[fileType]) == 'undefined') {
+                                                        fileList[fileType] = {'checked' : false,
+                                                                             'list' : []};
+                                                    }
+
+                                                    fileList[fileType].list.push({
+                                                        "fileName" : files[i].fileName,
+                                                        "downloadLink" : files[i].downloadLink,
+                                                        "fileSize" : files[i].fileSize,
+                                                        "checked" : false
+                                                    });
+                                                }
+                                                $scope.runContainerDlgCtrl.prideFiles = fileList;
+                                             });
+                                    };
+                                    this.onPrideAddFiles = function() {
+                                        // Add the checked files to the input list
+                                        for(var fileType in this.prideFiles) {
+                                            for(var i = 0; i < this.prideFiles[fileType].list.length; i++) {
+                                                if(this.prideFiles[fileType].list[i].checked) {
+                                                    this.list.push({url : this.prideFiles[fileType].list[i].downloadLink,
+                                                                    name : this.prideFiles[fileType].list[i].fileName,
+                                                                    action : 'copy'});
+                                                }
+                                            }
+                                        }
+                                        this.prideFiles = {};
+                                        this.prideAccession = "";
+                                    };
+                                    this.onPrideMasterCheckbox = function(event) {
+                                        // Get the file type that corresponds to this checkbox
+                                        var fileType = event.target.attributes.data.nodeValue;
+                                        var master_checked = this.prideFiles[fileType].checked;
+                                        // Set all child checkboxes to the same as the master checkbox value
+                                        for (var i = 0; i < this.prideFiles[fileType].list.length; i++) {
+                                            this.prideFiles[fileType].list[i].checked = master_checked;
+                                        }
+                                    };
                                     this.showDialogs = {
                                         "upload": false,
                                         "import": false,
@@ -2353,7 +2448,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar', 'ngSanitize
                                     this.inputs = [];
                                     this.newInputUrl = "";
                                     this.newInputName = "";
+                                    this.uniprotUrls = "";
+                                    this.uniprotBatch = "";
                                     this.uniprotQuery = "";
+                                    this.prideAccession = "";
+                                    this.prideFiles = {};
                                     this.inputSourceButtonText = "Choose Input Source";
                                     this.activeInputMethod = null;
                                     this.uploadFiles = [];
