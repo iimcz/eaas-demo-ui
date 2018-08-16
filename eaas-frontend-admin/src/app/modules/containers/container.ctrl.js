@@ -81,7 +81,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             $uibModal.open({
                 animation: true,
                 template: require('./modals/container-run-dialog.html'),
-                controller: function ($scope) {
+                controller:['$scope', function ($scope) {
                     this.run = function () {
                         confirmStartFn(this.inputs);
                     };
@@ -92,7 +92,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                         }, {reload: false});
                     };
                     this.inputs = [];
-                },
+                }],
                 controllerAs: "runContainerDlgCtrl"
             });
         }
@@ -100,7 +100,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             $uibModal.open({
                 animation: true,
                 template: require('./modals/container-run-dialog-modified.html'),
-                controller: function ($scope) {
+                controller:['$scope', function ($scope) {
                     this.run = function () {
                         confirmStartFn(this.inputs);
                     };
@@ -314,7 +314,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     this.inputSourceButtonText = "Choose Input Source";
                     this.activeInputMethod = null;
                     this.uploadFiles = [];
-                },
+                }],
                 controllerAs: "runContainerDlgCtrl"
             });
         }

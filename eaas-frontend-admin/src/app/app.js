@@ -264,14 +264,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: function($state, $stateParams) {
+            controller: ['$state', '$stateParams', function($state, $stateParams) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
                     $state.go('admin.standard-envs-overview');
                     return;
                 }
 
                 this.errorMsg = $stateParams.errorMsg;
-            },
+            }],
             controllerAs: "errorCtrl"
         })
         .state('admin', {
