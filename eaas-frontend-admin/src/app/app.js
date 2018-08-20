@@ -122,6 +122,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             onInputSourceSelection: '<',
             onImportFilesChosen: '<',
             onFileUpload: '<',
+            onUniprot: '<',
             onUniprotUrls: '<',
             onUniprotBatchFileChosen: '<',
             onUniprotBatch: '<',

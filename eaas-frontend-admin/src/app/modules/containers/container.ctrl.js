@@ -70,45 +70,18 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     });
                 });
 
-
                 $scope.$on('$locationChangeStart', function (event) {
                     eaasClient.release();
                 });
             });
         };
 
-        if (!$stateParams.modifiedDialog) {
-            $uibModal.open({
-                animation: true,
-                template: require('./modals/container-run-dialog.html'),
-                controller:['$scope', function ($scope) {
-                    this.run = function () {
-                        confirmStartFn(this.inputs);
-                    };
-                    this.cancel = function () {
-                        $state.go('admin.standard-envs-overview', {
-                            showObjects: false,
-                            showContainers: true
-                        }, {reload: false});
-                    };
-                    this.inputs = [];
-                }],
-                controllerAs: "runContainerDlgCtrl"
-            });
-        }
-        else {
-            $uibModal.open({
+        let modal = $uibModal.open({
                 animation: true,
                 template: require('./modals/container-run-dialog-modified.html'),
-                controller:['$scope', function ($scope) {
+                controller:['$scope' , 'growl', function ($scope, growl) {
                     this.run = function () {
                         confirmStartFn(this.inputs);
-                    };
-                    this.cancel = function () {
-                        $state.go('admin.standard-envs-overview', {
-                            showObjects: false,
-                            showContainers: true
-                        }, {reload: false});
                     };
                     this.onInputSourceSelection = function (obj) {
                         // Get chosen input source
@@ -177,6 +150,15 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                             });
                         }
                     };
+
+                    this.onUniprot = function (uniprotMode) {
+                        if (uniprotMode === 'individual') this.onUniprotUrls();
+                        else if (uniprotMode === 'batch') this.onUniprotBatch();
+                        else if (uniprotMode === 'query') this.onUniprotQuery();
+                        else
+                            growl.error('This uniprot type is not supported', {title: 'Error'});
+                    };
+
                     this.onUniprotUrls = function () {
                         // Strip all whitespaces and create list of URLs
                         var urls = this.uniprotUrls.split("\n");
@@ -223,7 +205,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     this.onUniprotQuery = function () {
                         var uniprotUrlPrefix = "http://www.uniprot.org/uniprot/?query=";
                         // Build the query URL from the query string and push to input list
-                        var queryUrl = uniprotUrlPrefix + this.uniprotQuery
+                        var queryUrl = uniprotUrlPrefix + this.uniprotQuery;
                         // Check if query contains format information. Add "'" in the end, because the string can container whitespaces
                         if (!queryUrl.includes("format")) {
                             queryUrl += "&format=fasta";
@@ -317,6 +299,13 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                 }],
                 controllerAs: "runContainerDlgCtrl"
             });
-        }
+
+        modal.result.then({}, function () {
+            $state.go('admin.standard-envs-overview', {
+                showObjects: false,
+                showContainers: true
+            }, {reload: false});
+        });
+
     }];
 

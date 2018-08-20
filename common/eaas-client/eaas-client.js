@@ -265,7 +265,11 @@ EaasClient.Client = function (api_entrypoint, container) {
                 deferred.resolve();
             },
             function (xhr) {
-                _this._onFatalError($.parseJSON(xhr.responseText));
+                if (xhr.responseText)
+                    _this._onFatalError($.parseJSON(xhr.responseText));
+                else
+                    _this._onFatalError();
+
                 deferred.reject();
             });
         return deferred.promise();
@@ -345,7 +349,11 @@ EaasClient.Client = function (api_entrypoint, container) {
                     deferred.resolve();
                 },
                 function (xhr) {
-                    _this._onFatalError($.parseJSON(xhr.responseText));
+                    if (xhr.responseText)
+                        _this._onFatalError($.parseJSON(xhr.responseText));
+                    else
+                        _this._onFatalError();
+
                     deferred.reject();
                 });
         };
@@ -404,7 +412,11 @@ EaasClient.Client = function (api_entrypoint, container) {
                         }
                     },
                     function (xhr) {
-                        _this._onFatalError($.parseJSON(xhr.responseText));
+                        if (xhr.responseText)
+                            _this._onFatalError($.parseJSON(xhr.responseText));
+                        else
+                            _this._onFatalError();
+
                         deferred.reject();
                     });
         }

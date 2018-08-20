@@ -21,8 +21,7 @@
             <b>{{row.title}}</b>
             <br/>
             <!--Start-->
-            <a ui-sref="admin.container({envId: row.envId, modifiedDialog: false})" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN' | translate}}</a>
-            <a ui-sref="admin.container({envId: row.envId,  modifiedDialog: true })" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN_MODIFIED'| translate}}</a>
+            <a ui-sref="admin.container({envId: row.envId,  modifiedDialog: true })" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN'| translate}}</a>
 
                 <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_PROPOSAL'
                 | translate}}</a>
