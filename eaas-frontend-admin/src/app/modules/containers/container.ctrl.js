@@ -151,32 +151,44 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                         }
                     };
 
+                    this.onImportFromUrl = function () {
+                        // Strip all whitespaces and create list of URLs
+                        var urls = this.importUrls.split("\n");
+                        // Check URLs
+                        // RegEx is taken from: https://gist.github.com/jpillora/7885636
+                        var regEx =  /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.​\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[​6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1​,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00​a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u​00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+                        var urlInvalid = false;
+                        for (var i = 0; i < urls.length; i++) {
+                            if (!regEx.test(urls[i])) {
+                                growl.error('Not a valid URL: ' + urls[i], {title: 'Error '});
+                                console.log('Not a valid URL: ' + urls[i]);
+                                urlInvalid = true;
+                            }
+                        }
+                        if (urlInvalid) {
+                            console.log("One URL was invalid. Do not add any URLs to the inputs.");
+                            return;
+                        }
+                        // We reach this code if all URLs are valid
+                        for (var i = 0; i < urls.length; i++) {
+                            var tmp = urls[i].split("/");
+                            var name = tmp[tmp.length - 1];
+                            this.list.push({
+                                url: urls[i],
+                                name: "",
+                                action: 'copy'
+                            });
+                        }
+                        this.importUrls = "";
+                    };
+
                     this.onUniprot = function (uniprotMode) {
-                        if (uniprotMode === 'individual') this.onUniprotUrls();
-                        else if (uniprotMode === 'batch') this.onUniprotBatch();
+                        if (uniprotMode === 'batch') this.onUniprotBatch();
                         else if (uniprotMode === 'query') this.onUniprotQuery();
                         else
                             growl.error('This uniprot type is not supported', {title: 'Error'});
                     };
 
-                    this.onUniprotUrls = function () {
-                        // Strip all whitespaces and create list of URLs
-                        var urls = this.uniprotUrls.split("\n");
-                        // Add each URL to the list of inputs
-                        for (var i = 0; i < urls.length; i++) {
-                            var tmp = urls[i].split("/");
-                            var name = tmp[tmp.length - 1];
-                            if (this.newInputName != "" && this.newInputName.slice(-1) != "/") {
-                                this.newInputName = this.newInputName + "/";
-                            }
-                            this.list.push({
-                                url: urls[i],
-                                name: this.newInputName + name,
-                                action: 'copy'
-                            });
-                        }
-                        this.uniprotUrls = "";
-                    };
                     this.onUniprotBatchFileChosen = function (files) {
                         console.log(files);
                         this.uniprotBatch = files[0];
@@ -288,7 +300,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     this.inputs = [];
                     this.newInputUrl = "";
                     this.newInputName = "";
-                    this.uniprotUrls = "";
+                    this.importUrls = "";
                     this.uniprotBatch = "";
                     this.uniprotQuery = "";
                     this.prideAccession = "";
