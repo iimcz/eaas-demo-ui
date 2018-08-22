@@ -113,7 +113,10 @@ module.exports = function makeWebpackConfig() {
       // Pass along the updated reference to your code
       // You can add here any file extension you want to get copied to your output
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
-      loader: 'file-loader'
+      loader: 'file-loader',
+        options: {
+            publicPath: '/admin-ui/'
+        },
     }, {
       // HTML LOADER
       // Reference: https://github.com/webpack/raw-loader

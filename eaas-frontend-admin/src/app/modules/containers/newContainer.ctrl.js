@@ -171,6 +171,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
 
                     var taskId = response.data.taskId;
                     container.modal = $uibModal.open({
+                        backdrop: 'static',
                         animation: true,
                         templateUrl: 'partials/wait.html'
                     });
