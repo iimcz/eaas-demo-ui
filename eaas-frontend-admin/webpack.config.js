@@ -18,6 +18,9 @@ var isProd = ENV === 'build';
 
 var PRODUCTION_BASE_PATH = '';
 
+var LOCAL_WEBSERVER_PATH = 'http://localhost:8081/';
+var PRODUCTION_PATH = '/admin-ui/';
+
 module.exports = function makeWebpackConfig() {
   /**
    * Config
@@ -44,7 +47,7 @@ module.exports = function makeWebpackConfig() {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8081/',
+    publicPath: isProd ? PRODUCTION_BASE_PATH : LOCAL_WEBSERVER_PATH,
 
     // Filename for entry points
     // Only adds hash in build mode
@@ -115,7 +118,7 @@ module.exports = function makeWebpackConfig() {
       test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/,
       loader: 'file-loader',
         options: {
-            publicPath: '/admin-ui/'
+            publicPath: isProd ? PRODUCTION_PATH : LOCAL_WEBSERVER_PATH
         },
     }, {
       // HTML LOADER
