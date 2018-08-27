@@ -45,6 +45,11 @@
             <!--Software-->
             <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
                 | translate}}</a>
+
+            <!--Landing page-->
+            <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'
+                | translate}}</a>
+
             <br>
             <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
 					| translate }}: {{row.version}}<br>

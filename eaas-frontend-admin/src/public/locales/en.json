@@ -1,6 +1,7 @@
 {
   "NEW_CONTAINER_TITLE" : "Title",
   "NEW_CONTAINER_AUTHOR" : "Author",
+  "CONTAINER_LANDING_PAGE" : "[Landing Page]",
   "CHOOSE_ENV_L" : "Environments",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",

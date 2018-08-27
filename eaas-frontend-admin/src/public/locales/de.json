@@ -1,6 +1,7 @@
 {
   "NEW_CONTAINER_TITLE" : "Titel",
   "NEW_CONTAINER_AUTHOR" : "Autor",
+  "CONTAINER_LANDING_PAGE" : "[Startseite]",
   "CHOOSE_ENV_L" : "Standardumgebungen",
   "CHOOSE_OBJENV_L" : "Objektumgebungen",
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
@@ -9,7 +10,7 @@
   "CHOOSE_HANDLE_EDIT" : "Handle URL bearbeiten",
   "CHOOSE_HANDLE_SHOW" : "Handle URL speichern",
   "ADD_HANDLE" : "Handle hinzufügen",
-  "SAVE_HANDLE" : "Save handle",
+  "SAVE_HANDLE" : "Handle speichern",
   "CHOOSE_ENV_DEL" : "[Löschen]",
   "HANDLE_DELETE" : "Handle löschen",
   "CHOOSE_ENV_VER" : "Version",
