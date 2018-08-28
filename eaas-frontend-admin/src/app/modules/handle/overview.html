@@ -3,6 +3,24 @@
 <div class="form-group">
 
     <div id="handles-grid-container">
+        <div  ng-hide="showHandle" style="display: inline-block;">
+            <button  id="show-addHandle-field" class="btn btn-default" ng-click="showHandle=true">
+                <span style="color: green" class="glyphicon glyphicon-plus"></span> {{'ADD_HANDLE' | translate}}</button>
+        </div>
+
+        <form  ng-if="showHandle" ng-submit="handleOverview.addHandle()">
+
+            <div style="display: inline-block;">
+                <button type="submit" id="save-addHandle-field" class="btn btn-default"">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> {{'SAVE_HANDLE' | translate}}</button>
+            </div>
+
+            <br>
+
+            <input required type="text" id="addHandle" placeholder="Handle name" style="width:700px;font-size:12pt;" >
+            <input required type="url" id="addHandleValue" placeholder="Handle value (your url)" style="width:700px;font-size:12pt;" >
+        </form>
+
         <table st-table="displayHandles" st-safe-src="handleOverview.handles">
             <thead>
             <tr>
@@ -11,20 +29,6 @@
                 </th>
             </tr>
             </thead>
-
-            <div style="display: inline-block;">
-                <button type="submit" id="show-addHandle-field" class="btn btn-default" ng-click="handleOverview.showAddHandleDialog()">
-                    <span style="color: green" class="glyphicon glyphicon-plus"></span> {{'ADD_HANDLE' | translate}}</button>
-            </div>
-            <div style="display: inline-block;">
-                <button type="submit" id="save-addHandle-field" class="btn btn-default" ng-click="handleOverview.addHandle()">
-                    <span class="glyphicon glyphicon-floppy-disk"></span> {{'SAVE_HANDLE' | translate}}</button>
-            </div>
-
-            <br>
-
-            <input type="text" id="addHandle" placeholder="Handle name" style="width:700px;font-size:12pt;" >
-            <input type="text" id="addHandleValue" placeholder="Handle value (your url)" style="width:700px;font-size:12pt;" >
 
             <tbody>
             <tr>
