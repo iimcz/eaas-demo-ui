@@ -58,10 +58,10 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 growl.error("Description is required");
                 return false;
             }
-            if (!container.author) {
-                growl.error("Author is required");
-                return false;
-            }
+            // if (!container.author) {
+            //     growl.error("Author is required");
+            //     return false;
+            // }
 
 
             return true;

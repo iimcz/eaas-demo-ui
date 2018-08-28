@@ -52,7 +52,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "so
                  {
                      urlString: vm.hdurl,
                      templateId: vm.selectedSystem.id,
-                     label: vm.name, urlString: vm.hdurl,
+                     label: vm.name,
                      nativeConfig: vm.native_config,
                      rom: vm.rom
                  }).then(function(response) {

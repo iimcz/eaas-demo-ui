@@ -2,6 +2,7 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
     '$uibModal', 'softwareList', 'helperFunctions', 'containerEnvironmentList', 'REST_URLS',
     function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
         var vm = this;
+        vm.landingPage = localConfig.data.landingPage;
 
         if (environmentList.data.status !== "0") {
             $state.go('error', {errorMsg: {title: "Load Environments Error " + environmentList.data.status, message: environmentList.data.message}});

@@ -109,7 +109,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                         // The user chose files to upload
                         // Initialize the uploadFiles list with meaningful values for destination and action.
                         // Those are displayed in the view and can be changed by the user
-                        for (i = 0; i < files.length; i++) {
+                        for (let i = 0; i < files.length; i++) {
                             this.uploadFiles.push({
                                 file: files[i],
                                 filename: files[i].name,
