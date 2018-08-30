@@ -1,5 +1,5 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "handles", "helperFunctions", "REST_URLS",
-            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, handles, helperFunctions, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "REST_URLS",
+            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, REST_URLS) {
 
            let handlePrefix = "11270/";
            var vm = this;
