@@ -3,66 +3,154 @@
 <h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showObjects">{{'CHOOSE_OBJENV_L' | translate}}</h2>
 <h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showContainers">{{'BASE_MENU_CONTAINER_ENVS' | translate}}</h2>
 
-<table id="standard-envs-overview-table" st-table="displayEnvs"
-       st-safe-src="standardEnvsOverviewCtrl.showObjects?standardEnvsOverviewCtrl.objEnvs:(standardEnvsOverviewCtrl.showContainers?standardEnvsOverviewCtrl.containerEnvs:standardEnvsOverviewCtrl.envs)"
-       class="table">
-    <thead>
-    <tr>
-        <th colspan="6">
-            <input st-search="" class="form-control"
-                   placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
-        </th>
-    </tr>
-    </thead>
+<uib-tabset active="standardEnvsOverviewCtrl.view">
+    <uib-tab index="0" heading="Base">
+        <table id="base" st-table="displayEnvs" st-safe-src="standardEnvsOverviewCtrl.envs" class="table">
+            <thead>
+            <tr>
+                <th colspan="6">
+                    <input st-search="" class="form-control" placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
+                </th>
+            </tr>
+            </thead>
 
-    <tbody>
-    <tr ng-repeat="row in displayEnvs">
-        <td>
-            <b>{{row.title}}</b>
-            <br/>
-            <!--Start-->
-            <a ui-sref="admin.container({envId: row.envId,  modifiedDialog: true })" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_RUN'| translate}}</a>
+            <tbody>
+            <tr ng-repeat="row in displayEnvs">
+                <td>
+                    <b>{{row.title}}</b>
+                    <br/>
+                    <!--Start-->
+                    <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId})">{{'CHOOSE_ENV_PROPOSAL'
+                        | translate}}</a>
 
-                <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: standardEnvsOverviewCtrl.showObjects})" ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_PROPOSAL'
-                | translate}}</a>
+                    <!--Edit-->
+                    <a ui-sref="admin.edit-env({envId: row.envId})">{{'CHOOSE_ENV_EDIT' | translate}}</a>
 
-            <!--Edit-->
-            <a  ng-if="!standardEnvsOverviewCtrl.showContainers" ui-sref="admin.edit-env({envId: row.envId, objEnv: standardEnvsOverviewCtrl.showObjects})">{{'CHOOSE_ENV_EDIT'
-                | translate}}</a>
+                    <!--Delete-->
+                    <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'| translate}}</a>
 
-            <a ui-sref="admin.edit-container({envId: row.envId})" ng-if="standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_EDIT'
-                | translate}}</a>
+                    <!--Software-->
+                    <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'| translate}}</a>
 
-            <!--Export-->
-            <a href="#" ng-click="standardEnvsOverviewCtrl.exportEnvironment(row.envId)">[export]</a>
+                    <!--Landing page-->
+                    <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'| translate}}</a>
 
-            <!--Delete-->
-            <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)"  ng-if="!standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_DEL'
-                | translate}}</a>
-            <a href="#" ng-if="standardEnvsOverviewCtrl.showContainers" ng-click="standardEnvsOverviewCtrl.deleteContainer(row.envId)">{{'CHOOSE_ENV_DEL'
-                | translate}}</a>
-
-            <!--Software-->
-            <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
-                | translate}}</a>
-
-            <!--Landing page-->
-            <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'
-                | translate}}</a>
-
-            <br>
-            <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
+                    <br>
+                    <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
 					| translate }}: {{row.version}}<br>
             </span> <div >{{row.author}} </div>
-        </td>
-    </tr>
-    </tbody>
+                </td>
+            </tr>
+            </tbody>
 
-    <tfoot>
-    <tr>
-        <td colspan="5" class="text-center">
-            <div st-pagination="" st-items-by-page="4" st-displayed-pages="7"></div>
-        </td>
-    </tr>
-    </tfoot>
-</table>
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Object Environments">
+        <table id="objects" st-table="displayObjEnvs" st-safe-src="standardEnvsOverviewCtrl.objEnvs" class="table">
+            <thead>
+            <tr>
+                <th colspan="6">
+                    <input st-search="" class="form-control"
+                           placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="row in displayObjEnvs">
+                <td>
+                    <b>{{row.title}}</b>
+                    <br/>
+                    <!--Start-->
+                    <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId, returnToObjects: true})">{{'CHOOSE_ENV_PROPOSAL'
+                        | translate}}</a>
+
+                    <!--Edit-->
+                    <a  ui-sref="admin.edit-env({envId: row.envId, objEnv: true})">{{'CHOOSE_ENV_EDIT'| translate}}</a>
+
+                    <!--Delete-->
+                    <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)" >{{'CHOOSE_ENV_DEL'| translate}}</a>
+
+                    <!--Software-->
+                    <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'
+                        | translate}}</a>
+
+                    <!--Landing page-->
+                    <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'
+                        | translate}}</a>
+
+                    <br>
+                    <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
+					| translate }}: {{row.version}}<br>
+            </span> <div >{{row.author}} </div>
+                </td>
+            </tr>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </uib-tab>
+    <uib-tab index="2" heading="Containers">
+        <table id="containers-table" st-table="displayContainerEnvs" st-safe-src="standardEnvsOverviewCtrl.containerEnvs" class="table">
+            <thead>
+            <tr>
+                <th colspan="6">
+                    <input st-search="" class="form-control"
+                           placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="row in displayContainerEnvs">
+                <td>
+                    <b>{{row.title}}</b>
+                    <br/>
+                    <!--Start-->
+                    <a ui-sref="admin.container({envId: row.envId,  modifiedDialog: true })">{{'CHOOSE_ENV_RUN'| translate}}</a>
+
+                    <!--Edit-->
+                    <a ui-sref="admin.edit-container({envId: row.envId})">{{'CHOOSE_ENV_EDIT'| translate}}</a>
+
+                    <!--Delete-->
+                    <a href="#" ng-click="standardEnvsOverviewCtrl.deleteContainer(row.envId)">{{'CHOOSE_ENV_DEL'
+                        | translate}}</a>
+
+                    <!--Landing page-->
+                    <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'
+                        | translate}}</a>
+
+                    <br>
+                    <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
+					| translate }}: {{row.version}}<br>
+            </span> <div >{{row.author}} </div>
+                </td>
+            </tr>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </uib-tab>
+
+</uib-tabset>
+
+
