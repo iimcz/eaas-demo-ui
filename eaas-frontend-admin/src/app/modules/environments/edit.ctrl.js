@@ -1,5 +1,7 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "REST_URLS",
-            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "handles", "helperFunctions", "REST_URLS",
+            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, handles, helperFunctions, REST_URLS) {
+
+           let handlePrefix = "11270/";
            var vm = this;
 
            vm.showDateContextPicker = false;
@@ -49,6 +51,13 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.os = this.env.os;
            this.userTag = this.env.userTag;
 
+           if(localConfig.data.features.handle) {
+               $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
+                   if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
+                       vm.handle = handlePrefix + vm.env.envId;
+                   }
+               });
+           }
            this.saveEdit = function() {
                var timecontext = null;
                if(this.showDateContextPicker)
