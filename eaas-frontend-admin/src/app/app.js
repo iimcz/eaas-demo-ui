@@ -75,8 +75,7 @@ import './app.css';
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
-                                   'emilAdminUI.modules', 'ngFileUpload', 'angular-jwt'])
-
+                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -152,6 +151,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
+    $rootScope.waitingForServer = true;
 
 //        localStorage.setItem('id_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE');
 //       localStorage.removeItem('id_token');
@@ -210,7 +210,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
-
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
       whiteListedDomains: "localhost",
@@ -222,36 +221,44 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     $httpProvider.interceptors.push('jwtInterceptor');
     // Add a global AJAX error handler
-    $httpProvider.interceptors.push(function($q, $injector, $timeout) {
+    $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                if (((rejection || {}).config || {}).method !== 'GET' || (rejection && rejection.data && rejection.data.status)) {
-                    $injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
-                    return $q.reject(rejection);
-                }
+                     if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
+                    var $http = $injector.get('$http');
 
-                if (httpResponseErrorModal === null) {
-                    httpResponseErrorModal = $injector.get('$uibModal').open({
-                        animation: true,
-                        backdrop: 'static',
-                        templateUrl: 'partials/server-error-dialog.html'
+                    if (httpResponseErrorModal === null) {
+                        httpResponseErrorModal = $injector.get('$uibModal').open({
+                            animation: true,
+                            backdrop: 'static',
+                            templateUrl: 'partials/server-error-dialog.html'
+                        });
+                    }
+
+                    var deferred = $q.defer();
+
+                    $timeout(function() {
+                        deferred.resolve(true);
+                    }, 5000);
+
+                    return deferred.promise.then(function() {
+                        var req = $http(rejection.config);
+                        req.then(function() {
+                            $rootScope.waitingForServer = false;
+                            if (httpResponseErrorModal !== null) {
+                                httpResponseErrorModal.close();
+                                httpResponseErrorModal = null;
+                            }
+                        });
+                        return req;
                     });
                 }
-//
-//                return $timeout(function() {
-//                    var $http = $injector.get('$http');
-//
-//                    var req = $http(rejection.config);
-//                    req.then(function() {
-//                        if (httpResponseErrorModal !== null) {
-//                            httpResponseErrorModal.close();
-//                            httpResponseErrorModal = null;
-//                        }
-//                    });
-//                    return req;
-//                }, 5000);
-            }
-        };
+                else {
+                     $injector.get('$state').go('error', {errorMsg: {title: "Server Error", message: rejection}});
+                     return $q.reject(rejection);
+                }
+          }
+       };
     });
 
     // For any unmatched url
@@ -441,6 +448,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
+        .state('admin.new-object', {
+            url: "/new-object",
+            resolve: {
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/objects/import.html'),
+                    controller: "ObjectsImportController as uploadCtrl"
+                }
+            }
+         })
         .state('admin.user-session-overview', {
             url: "/user-sessions",
             resolve: {

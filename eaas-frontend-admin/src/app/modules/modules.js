@@ -36,7 +36,6 @@ emilUIModule.controller('EditHandleController', require('./handle/edit.ctrl.js')
 
 // objects
 emilUIModule.controller('ObjectsOverviewController', require('./objects/overview.ctrl.js'));
-emilUIModule.controller('ObjectsOverviewController', require('./objects/overview.ctrl.js'));
 
 // container
 emilUIModule.controller('StartContainerController', require('./containers/container.ctrl.js'));
@@ -44,3 +43,4 @@ emilUIModule.controller('ContainerActionsController', require('./containers/acti
 emilUIModule.controller('EditContainerController', require('./containers/editContainer.ctrl.js'));
 emilUIModule.controller('NewContainerController', require('./containers/newContainer.ctrl'));
 
+emilUIModule.controller('ObjectsImportController', require('./objects/import.ctrl.js'));

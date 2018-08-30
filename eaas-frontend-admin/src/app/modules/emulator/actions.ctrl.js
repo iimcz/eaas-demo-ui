@@ -15,8 +15,12 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     else
         vm.enablePrinting = false;
 
-    vm.screenshot = function() {
-        window.open(window.eaasClient.getScreenshotUrl());
+     vm.screenshot = async function() {
+        const pic = await fetch(window.eaasClient.getScreenshotUrl());
+        //    , {headers : { authorization : "Bearer " +  localStorage.id_token}});
+
+        const picBlob = await pic.blob();
+        window.open(URL.createObjectURL(picBlob));
     };
 
 
@@ -149,7 +153,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             type: "newEnvironment",
             envId: $stateParams.envId,
        })
-       .done(function(newEnvId) {
+       .then(function(newEnvId) {
             if(!newEnvId)
             {
                 growl.error(status, {title: "Snapshot failed"});

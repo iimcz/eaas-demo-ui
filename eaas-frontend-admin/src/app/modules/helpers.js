@@ -11,6 +11,8 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
     this.metadataUrl = "EmilObjectData/metadata?objectId={0}";
     this.getHandleList = "components/handleList/get";
+    this.pushUploadUrl = "EmilObjectData/pushUpload";
+
     this.getHandleValue = "components/getHandleValue";
 
     // environment data api

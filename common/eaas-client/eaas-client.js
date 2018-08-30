@@ -101,19 +101,19 @@ EaasClient.Client = function (api_entrypoint, container) {
             headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
             async: false,
         }).then(function (data, status, xhr) {
-            emulatorState = data.state;
-            if (emulatorState == "OK")
-                _this.keepalive();
-            else if (emulatorState == "STOPPED" || emulatorState == "FAILED") {
-                _this.keepalive();
-                if(_this.onEmulatorStopped)
-                    _this.onEmulatorStopped();
-            }
-            else if (emulatorState == "INACTIVE") {
-                location.reload();
-            } else
-                _this._onFatalError("Invalid component state: " + this.emulatorState);
-        }).fail(function () {
+                emulatorState = data.state;
+                if (emulatorState == "OK")
+                    _this.keepalive();
+                else if (emulatorState == "STOPPED" || emulatorState == "FAILED") {
+                    _this.keepalive();
+                    if(_this.onEmulatorStopped)
+                        _this.onEmulatorStopped();
+                }
+                else if (emulatorState == "INACTIVE") {
+                    location.reload();
+                } else
+                    _this._onFatalError("Invalid component state: " + this.emulatorState);
+            }).fail(function () {
             _this._onFatalError("connection failed")
         });
     };
@@ -147,11 +147,11 @@ EaasClient.Client = function (api_entrypoint, container) {
             if (typeof _this.envsComponentsData != "undefined"){
                 //FIXME we should send only one keepalive
                 for (let i = 0; i < _this.envsComponentsData.length; i++) {
-                    $.ajax({
+                     $.ajax({
                         type: "POST",
                         url: API_URL + formatStr("/components/{0}/keepalive", _this.envsComponentsData[i].id),
                         headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
-                    });
+                     });
                 }
             }
             url = formatStr("/networks/{0}/keepalive", _this.networkId);
@@ -160,9 +160,9 @@ EaasClient.Client = function (api_entrypoint, container) {
         }
 
         $.ajax({
-            type: "POST",
-            url: API_URL + url,
-            headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
+           type: "POST",
+           url: API_URL + url,
+           headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         });
     };
 
@@ -250,7 +250,7 @@ EaasClient.Client = function (api_entrypoint, container) {
         var data = {};
         data.type = "container";
         data.environment = containerId;
-        data.input_data = args.input_data;
+	    data.input_data = args.input_data;
 
         console.log("Starting container " + containerId + "...");
         var deferred = $.Deferred();
@@ -262,20 +262,16 @@ EaasClient.Client = function (api_entrypoint, container) {
             contentType: "application/json",
             headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {}
         }).then(function (data, status, xhr) {
-                console.log("container " + containerId + " started.");
-                _this.componentId = data.id;
-                _this.isStarted = true;
-                _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
-                deferred.resolve();
-            },
-            function (xhr) {
-                if (xhr.responseText)
-                    _this._onFatalError($.parseJSON(xhr.responseText));
-                else
-                    _this._onFatalError();
-
-                deferred.reject();
-            });
+            console.log("container " + containerId + " started.");
+            _this.componentId = data.id;
+            _this.isStarted = true;
+            _this.pollStateIntervalId = setInterval(_this.pollState, 1500);
+            deferred.resolve();
+        },
+        function (xhr) {
+            _this._onFatalError($.parseJSON(xhr.responseText));
+            deferred.reject();
+        });
         return deferred.promise();
     };
 
@@ -353,11 +349,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                     deferred.resolve();
                 },
                 function (xhr) {
-                    if (xhr.responseText)
-                        _this._onFatalError($.parseJSON(xhr.responseText));
-                    else
-                        _this._onFatalError();
-
+                    _this._onFatalError($.parseJSON(xhr.responseText));
                     deferred.reject();
                 });
         };
@@ -416,11 +408,7 @@ EaasClient.Client = function (api_entrypoint, container) {
                         }
                     },
                     function (xhr) {
-                        if (xhr.responseText)
-                            _this._onFatalError($.parseJSON(xhr.responseText));
-                        else
-                            _this._onFatalError();
-
+                        _this._onFatalError($.parseJSON(xhr.responseText));
                         deferred.reject();
                     });
         }
@@ -433,7 +421,6 @@ EaasClient.Client = function (api_entrypoint, container) {
      * @Deprecated
      * @param environmentId
      * @param args
-     * @param input_data
      * @returns {*}
      */
     this.startEnvironment = function (environmentId, args, input_data) {
@@ -479,39 +466,39 @@ EaasClient.Client = function (api_entrypoint, container) {
             headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
             async: false,
         }).done(function (data, status, xhr) {
-            var connectViewerFunc;
-            var controlUrl;
+                var connectViewerFunc;
+                var controlUrl;
 
-            // Guacamole connector?
-            if (typeof data.guacamole !== "undefined") {
-                controlUrl = data.guacamole;
-                _this.params = strParamsToObject(data.guacamole.substring(data.guacamole.indexOf("#") + 1));
-                connectViewerFunc = _this.establishGuacamoleTunnel;
-            }
-            // XPRA connector
-            else if (typeof data.xpra !== "undefined") {
-                controlUrl = data.xpra;
-                _this.params = strParamsToObject(data.xpra.substring(data.xpra.indexOf("#") + 1));
-                connectViewerFunc = _this.prepareAndLoadXpra;
-            }
-            // WebEmulator connector
-            else if (typeof data.webemulator !== "undefined") {
-                controlUrl = encodeURIComponent(JSON.stringify(data));
-                _this.params = strParamsToObject(data.webemulator.substring(data.webemulator.indexOf("#") + 1));
-                connectViewerFunc = _this.prepareAndLoadWebEmulator;
-            }
-            else {
-                console.error("Unsupported connector type: " + data);
-                deferred.reject();
-                return;
-            }
+                // Guacamole connector?
+                if (typeof data.guacamole !== "undefined") {
+                    controlUrl = data.guacamole;
+                    _this.params = strParamsToObject(data.guacamole.substring(data.guacamole.indexOf("#") + 1));
+                    connectViewerFunc = _this.establishGuacamoleTunnel;
+                }
+                // XPRA connector
+                else if (typeof data.xpra !== "undefined") {
+                    controlUrl = data.xpra;
+                    _this.params = strParamsToObject(data.xpra.substring(data.xpra.indexOf("#") + 1));
+                    connectViewerFunc = _this.prepareAndLoadXpra;
+                }
+                // WebEmulator connector
+                else if (typeof data.webemulator !== "undefined") {
+                    controlUrl = encodeURIComponent(JSON.stringify(data));
+                    _this.params = strParamsToObject(data.webemulator.substring(data.webemulator.indexOf("#") + 1));
+                    connectViewerFunc = _this.prepareAndLoadWebEmulator;
+                }
+                else {
+                    console.error("Unsupported connector type: " + data);
+                    deferred.reject();
+                    return;
+                }
 
-            // Establish the connection
-            connectViewerFunc.call(_this, controlUrl);
-            console.log("Viewer connected successfully.");
-            _this.isConnected = true;
-            deferred.resolve();
-        })
+                // Establish the connection
+                connectViewerFunc.call(_this, controlUrl);
+                console.log("Viewer connected successfully.");
+                _this.isConnected = true;
+                deferred.resolve();
+            })
             .fail(function (xhr) {
                 console.error("Connecting viewer failed!")
                 _this._onFatalError($.parseJSON(xhr.responseText))
@@ -596,8 +583,8 @@ EaasClient.Client = function (api_entrypoint, container) {
         }).done(function (data, status, xhr) {
             successFn(data);
         }).fail(function (xhr) {
-            if(errorFn)
-                errorFn(xhr);
+        if(errorFn)
+            errorFn(xhr);
         });
     };
 
@@ -1028,4 +1015,229 @@ BWFLA.showClientCursor = function(guac)
 {
     var display = guac.getDisplay();
     display.showCursor(true);
+};/*
+ *  Example usage:
+ *
+ *      var centerOnScreen = function(width, height) {
+ *          ...
+ *      }
+ *
+ *      var resizeIFrame = function(width, height) {
+ *          ...
+ *      }
+ *
+ *      BWFLA.registerEventCallback(<target-1>, 'resize', centerOnScreen);
+ *      BWFLA.registerEventCallback(<target-2>, 'resize', centerOnScreen);
+ *      BWFLA.registerEventCallback(<target-2>, 'resize', resizeIFrame);
+ */
+
+var BWFLA = BWFLA || {};
+
+// Method to attach a callback to an event
+BWFLA.registerEventCallback = function(target, eventName, callback)
+{
+  var event = 'on' + eventName;
+
+  if (!(event in target)) {
+    console.error('Event ' + eventName + ' not supported!');
+    return;
+  }
+
+  // Add placeholder for event-handlers to target's prototype
+  if (!('__bwFlaEventHandlers__' in target))
+    target.constructor.prototype.__bwFlaEventHandlers__ = {};
+
+  // Initialize the list for event's callbacks
+  if (!(event in target.__bwFlaEventHandlers__))
+    target.__bwFlaEventHandlers__[event] = [];
+
+  // Add the new callback to event's callback-list
+  var callbacks = target.__bwFlaEventHandlers__[event];
+  callbacks.push(callback);
+
+  // If required, initialize handler management function
+  if (target[event] == null) {
+    target[event] = function() {
+      var params = arguments;  // Parameters to the original callback
+
+      // Call all registered callbacks one by one
+      callbacks.forEach(function(func) {
+        func.apply(target, params);
+      });
+    };
+  }
+};
+
+
+// Method to unregister a callback for an event
+BWFLA.unregisterEventCallback = function(target, eventName, callback)
+{
+  // Look in the specified target for the callback and
+  // remove it from the execution chain for this event
+
+  if (!('__bwFlaEventHandlers__' in target))
+    return;
+
+  var callbacks = target.__bwFlaEventHandlers__['on' + eventName];
+  if (callbacks == null)
+    return;
+
+  var index = callbacks.indexOf(callback);
+  if (index > -1)
+    callbacks.splice(index, 1);
+};
+
+/** Custom mouse-event handlers for use with the Guacamole.Mouse */
+var BwflaMouse = function(client)
+{
+  var events = [];
+  var handler = null;
+  var waiting = false;
+
+
+  /** Adds a state's copy to the current event-list. */
+  function addEventCopy(state)
+  {
+    var copy = new Guacamole.Mouse.State(state.x, state.y, state.left,
+        state.middle, state.right, state.up, state.down);
+
+    events.push(copy);
+  }
+
+  /** Sets a new timeout-callback, replacing the old one. */
+  function setNewTimeout(callback, timeout)
+  {
+    if (handler != null)
+      window.clearTimeout(handler);
+
+    handler = window.setTimeout(callback, timeout);
+  }
+
+  /** Handler, called on timeout. */
+  function onTimeout()
+  {
+    while (events.length > 0)
+      client.sendMouseState(events.shift());
+
+    handler = null;
+    waiting = false;
+  };
+
+
+  /** Handler for mouse-down events. */
+  this.onmousedown = function(state)
+  {
+    setNewTimeout(onTimeout, 100);
+    addEventCopy(state);
+    waiting = true;
+  };
+
+  /** Handler for mouse-up events. */
+  this.onmouseup = function(state)
+  {
+    setNewTimeout(onTimeout, 150);
+    addEventCopy(state);
+    waiting = true;
+  };
+
+  /** Handler for mouse-move events. */
+  this.onmousemove = function(state)
+  {
+    if (waiting == true)
+      addEventCopy(state);
+    else client.sendMouseState(state);
+  };
+};
+
+var BWFLA = BWFLA || {};
+
+
+/** Requests a pointer-lock on given element, if supported by the browser. */
+BWFLA.requestPointerLock = function(target, event)
+{
+  function lockPointer() {
+    var havePointerLock = 'pointerLockElement' in document
+                          || 'mozPointerLockElement' in document
+                          || 'webkitPointerLockElement' in document;
+
+    if (!havePointerLock) {
+      var message = "Your browser does not support the PointerLock API!\n"
+                + "Using relative mouse is not possible.\n\n"
+                + "Mouse input will be disabled for this virtual environment.";
+
+      console.warn(message);
+      alert(message);
+      return;
+    }
+
+    // Activate pointer-locking
+    target.requestPointerLock = target.requestPointerLock
+                                || target.mozRequestPointerLock
+                                || target.webkitRequestPointerLock;
+
+    target.requestPointerLock();
+  };
+
+  function enableLockEventListener()
+  {
+    target.addEventListener(event, lockPointer, false);
+  };
+
+  function disableLockEventListener()
+  {
+    target.removeEventListener(event, lockPointer, false);
+  };
+
+  function onPointerLockChange() {
+    if (document.pointerLockElement === target
+        || document.mozPointerLockElement === target
+        || document.webkitPointerLockElement === target) {
+      // Pointer was just locked
+      console.debug("Pointer was locked!");
+      target.isPointerLockEnabled = true;
+      disableLockEventListener();
+    } else {
+      // Pointer was just unlocked
+      console.debug("Pointer was unlocked.");
+      target.isPointerLockEnabled = false;
+      enableLockEventListener();
+    }
+  };
+
+  function onPointerLockError(error) {
+    var message = "Pointer lock failed!";
+    console.warn(message);
+    alert(message);
+  }
+
+  // Hook for pointer lock state change events
+  document.addEventListener('pointerlockchange', onPointerLockChange, false);
+  document.addEventListener('mozpointerlockchange', onPointerLockChange, false);
+  document.addEventListener('webkitpointerlockchange', onPointerLockChange, false);
+
+  // Hook for pointer lock errors
+  document.addEventListener('pointerlockerror', onPointerLockError, false);
+  document.addEventListener('mozpointerlockerror', onPointerLockError, false);
+  document.addEventListener('webkitpointerlockerror', onPointerLockError, false);
+
+  enableLockEventListener();
+
+  // Set flag for relative-mouse mode
+  target.isRelativeMouse = true;
+};
+
+
+/** Hides the layer containing client-side mouse-cursor. */
+BWFLA.hideClientCursor = function(guac)
+{
+  var display = guac.getDisplay();
+  display.showCursor(false);
+};
+
+
+/** Shows the layer containing client-side mouse-cursor. */
+BWFLA.showClientCursor = function(guac)
+{
+  var display = guac.getDisplay();
+  display.showCursor(true);
 };

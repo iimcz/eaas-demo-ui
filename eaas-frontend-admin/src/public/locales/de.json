@@ -56,6 +56,7 @@
   "BASE_MENU_UPLOAD" : "Upload / Export",
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Container",
+  "BASE_MENU_NEW_OBJECT" : "Objekt importieren",
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -303,5 +304,15 @@
   "EDIT_CONTAINER_SAVE" : "Speichern",
   "CONTAINER_RUN_L" : "Starte Container",
   "CONTAINER_RUN_RUN" : "Start",
-  "CONTAINER_RUN_CANCEL" : "Abbrechen"
+  "CONTAINER_RUN_CANCEL" : "Abbrechen",
+
+  "OBJECT_INGEST_HEADER" : "Objekt importieren",
+  "OBJECT_INGEST_ID" : "Object ID",
+  "OBJECT_INGEST_MEDIATYPE" : "Medientyp",
+  "OBJECT_INGEST_FILES" : "Dateien",
+  "OBJECT_INGEST_CANCEL_BUTTON" : "Abbrechen",
+  "OBJECT_INGEST_SAVE_BUTTON" : "Importieren",
+  "OBJECT_INGEST_NOTE": "Hinweis",
+  "OBJECT_INGEST_NOTE_OBJID": "ObjectID darf keine Sonderzeichen oder Leerzeichen enthalten",
+  "OBJECT_INGEST_NOTE_MEDIA" : "Derzeit werden nur Objekte mit einheitlichen Medientypen unterstützt"
 }
