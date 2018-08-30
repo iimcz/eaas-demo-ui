@@ -1,7 +1,14 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localConfig", "$timeout", "helperFunctions", "Upload", "REST_URLS", "$uibModal",
-    function($http, $scope, $state, $stateParams, growl, localConfig, $timeout, helperFunctions, Upload, REST_URLS, $uibModal) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localConfig", "$timeout", "helperFunctions", "Upload", "REST_URLS", "$uibModal", "repositoriesList",
+    function($http, $scope, $state, $stateParams, growl, localConfig, $timeout, helperFunctions, Upload, REST_URLS, $uibModal, repositoriesList) {
 
        var vm = this;
+
+       vm.importRequest = {
+          objectIDs : [],
+          archive: null
+       };
+
+       vm.repositories = repositoriesList.data.archives;
 
        vm.add = function()
        {
@@ -11,6 +18,24 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
 
            vm.allFiles = vm.allFiles.concat(vm.selectedFiles);
        };
+
+       vm.import = function()
+       {
+           vm.importRequest.archive = vm.selectedArchive;
+
+           console.log(vm.importRequest);
+
+           $http.post(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl, vm.importRequest).then(function(response) {
+              if (response.data.status === "0") {
+                  growl.success(response.data.message);
+                  $state.go('admin.object-overview', {}, {reload: true});
+
+              } else {
+                  growl.error(response.data.message, {title: 'Error ' + response.data.status});
+              }
+          });
+
+       }
 
        vm.upload = function()
        {

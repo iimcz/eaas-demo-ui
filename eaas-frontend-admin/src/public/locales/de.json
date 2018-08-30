@@ -2,7 +2,8 @@
   "NEW_CONTAINER_TITLE" : "Titel",
   "NEW_CONTAINER_AUTHOR" : "Autor",
   "CONTAINER_LANDING_PAGE" : "[Startseite]",
-  "CHOOSE_ENV_L" : "Standardumgebungen",
+  "CHOOSE_ENV_L" : "Umgebungen",
+  "CHOOSE_BASEENV_L" : "Standardumgebungen",
   "CHOOSE_OBJENV_L" : "Objektumgebungen",
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
   "CHOOSE_ENV_PROPOSAL" : "[Umgebung konfigurieren]",
@@ -314,5 +315,12 @@
   "OBJECT_INGEST_SAVE_BUTTON" : "Importieren",
   "OBJECT_INGEST_NOTE": "Hinweis",
   "OBJECT_INGEST_NOTE_OBJID": "ObjectID darf keine Sonderzeichen oder Leerzeichen enthalten",
-  "OBJECT_INGEST_NOTE_MEDIA" : "Derzeit werden nur Objekte mit einheitlichen Medientypen unterstützt"
+  "OBJECT_INGEST_NOTE_MEDIA" : "Derzeit werden nur Objekte mit einheitlichen Medientypen unterstützt",
+
+  "OBJECT_INGEST_CHOOSE_REPO_L" : "Import Archiv auswählen",
+  "OBJECT_INGEST_CHOOSE_REPO_PH" : "Archiv Name",
+  "OBJECT_INGEST_REPO_HEADER" : "Zu importierende Objekt IDs",
+  "OBJECT_INGEST_REPO_EMPTY" : "keine Objekte definiert",
+  "OBJECT_INGEST_REPO_PH" : "Objekt ID",
+  "OBJECT_INGEST_REPO_BUTTON" : "Hinzufügen"
 }

@@ -451,6 +451,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.new-object', {
             url: "/new-object",
             resolve: {
+                repositoriesList : ($http, localConfig, REST_URLS)  =>  $http.get(localConfig.data.eaasBackendURL + REST_URLS.repositoriesListUrl)
             },
             views: {
                 'wizard': {

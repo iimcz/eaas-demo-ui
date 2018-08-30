@@ -19,7 +19,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
      vm.syncObjects = function () {
          $scope.$close();
 
-         $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl).then(function (response) {
+         $http.get(localConfig.data.eaasBackendURL + REST_URLS.syncUrl).then(function (response) {
                  if (response.data.status === "0") {
                      $state.go('admin.standard-envs-overview', {}, {reload: true});
                      growl.success(response.data.message);

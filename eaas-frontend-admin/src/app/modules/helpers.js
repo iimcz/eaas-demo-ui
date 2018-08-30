@@ -7,11 +7,13 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.objectEnvironmentsUrl = "EmilObjectData/environments?objectId={0}&updateClassification={1}&updateProposal={2}";
     this.getObjectListURL = "EmilObjectData/list";
     this.getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
-    this.syncObjectsUrl = "EmilObjectData/sync";
+    this.syncUrl = "EmilObjectData/sync";
     this.mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
     this.metadataUrl = "EmilObjectData/metadata?objectId={0}";
     this.getHandleList = "components/handleList/get";
     this.pushUploadUrl = "EmilObjectData/pushUpload";
+    this.repositoriesListUrl = "EmilObjectData/archives";
+    this.syncObjectsUrl = "EmilObjectData/syncObjects";
 
     this.getHandleValue = "components/getHandleValue";
 

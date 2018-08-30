@@ -3,6 +3,7 @@
   "NEW_CONTAINER_AUTHOR" : "Author",
   "CONTAINER_LANDING_PAGE" : "[Landing Page]",
   "CHOOSE_ENV_L" : "Environments",
+  "CHOOSE_BASEENV_L" : "Base Environments",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
   "CHOOSE_ENV_PROPOSAL" : "[Configure environment]",
@@ -317,4 +318,11 @@
   "OBJECT_INGEST_NOTE": "Note",
   "OBJECT_INGEST_NOTE_OBJID": "Please do not use spaces or any special character for the ObjectID",
   "OBJECT_INGEST_NOTE_MEDIA" : "Without a proper object repository only uniform objects (single media type for all items) are supported."
+
+  "OBJECT_INGEST_CHOOSE_REPO_L" : "Choose repository to import from",
+  "OBJECT_INGEST_CHOOSE_REPO_PH" : "Repository name",
+  "OBJECT_INGEST_REPO_HEADER" : "Object IDs to be imported",
+  "OBJECT_INGEST_REPO_EMPTY" : "Empty list",
+  "OBJECT_INGEST_REPO_PH" : "Object ID",
+  "OBJECT_INGEST_REPO_BUTTON" : "Add"
 }

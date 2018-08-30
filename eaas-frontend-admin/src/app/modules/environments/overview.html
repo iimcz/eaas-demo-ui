@@ -1,10 +1,8 @@
 
-<h2 class="m-t-0" ng-if="!standardEnvsOverviewCtrl.showObjects && !standardEnvsOverviewCtrl.showContainers">{{'CHOOSE_ENV_L' | translate}}</h2>
-<h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showObjects">{{'CHOOSE_OBJENV_L' | translate}}</h2>
-<h2 class="m-t-0" ng-if="standardEnvsOverviewCtrl.showContainers">{{'BASE_MENU_CONTAINER_ENVS' | translate}}</h2>
+<h2 class="m-t-0">{{'CHOOSE_ENV_L' | translate}}</h2>
 
 <uib-tabset active="standardEnvsOverviewCtrl.view">
-    <uib-tab index="0" heading="Base">
+    <uib-tab index="0" heading="{{'CHOOSE_BASEENV_L' | translate}}">
         <table id="base" st-table="displayEnvs" st-safe-src="standardEnvsOverviewCtrl.envs" class="table">
             <thead>
             <tr>
@@ -52,7 +50,7 @@
             </tfoot>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="Object Environments">
+    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}">
         <table id="objects" st-table="displayObjEnvs" st-safe-src="standardEnvsOverviewCtrl.objEnvs" class="table">
             <thead>
             <tr>
