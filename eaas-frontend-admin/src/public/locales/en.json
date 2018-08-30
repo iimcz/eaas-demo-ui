@@ -317,7 +317,7 @@
   "OBJECT_INGEST_SAVE_BUTTON" : "Import",
   "OBJECT_INGEST_NOTE": "Note",
   "OBJECT_INGEST_NOTE_OBJID": "Please do not use spaces or any special character for the ObjectID",
-  "OBJECT_INGEST_NOTE_MEDIA" : "Without a proper object repository only uniform objects (single media type for all items) are supported."
+  "OBJECT_INGEST_NOTE_MEDIA" : "Without a proper object repository only uniform objects (single media type for all items) are supported.",
 
   "OBJECT_INGEST_CHOOSE_REPO_L" : "Choose repository to import from",
   "OBJECT_INGEST_CHOOSE_REPO_PH" : "Repository name",
