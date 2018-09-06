@@ -7,7 +7,9 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
      vm.objectId = $stateParams.objectId;
      vm.metadata = metadata.data;
      vm.suggested = objEnvironments.data.suggested;
-     vm.fileFormats = objEnvironments.data.fileFormats;
+     vm.fileFormatMap = objEnvironments.data.fileFormatMap;
+
+     console.log(vm.fileFormatMap);
 
      vm.hasEnvironments = false;
      if(objEnvironments && objEnvironments.length > 0)

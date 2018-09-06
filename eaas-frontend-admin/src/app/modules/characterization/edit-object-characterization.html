@@ -85,16 +85,20 @@
             </ul>
         </div>
 
-        <div ng-show="editObjectCharacterizationCtrl.fileFormats.length > 0">
+        <div ng-show="editObjectCharacterizationCtrl.fileFormatMap">
             <p >
                 <b>{{'CHAR_FORMATS' | translate}}:</b>
             </p>
             <ul>
-                <li ng-repeat="fmt in editObjectCharacterizationCtrl.fileFormats">
-                    <b>{{fmt.name}}</b> ({{fmt.puid}})
+                <li ng-repeat="(key, mediaItem) in editObjectCharacterizationCtrl.fileFormatMap"> <b>{{key}}</b>
                     <ul>
-                        <li><b>File count:</b> {{fmt.count}}</li>
-                        <li><b>File dates:</b> {{fmt.fromDate | date:'medium'}} - {{fmt.toDate | date:'medium'}}</li>
+                        <li ng-repeat="fmt in mediaItem.fileFormats">
+                            <b>{{fmt.name}}</b> ({{fmt.puid}})
+                            <ul>
+                                <li><b>File count:</b> {{fmt.count}}</li>
+                                <li><b>File dates:</b> {{fmt.fromDate | date:'medium'}} - {{fmt.toDate | date:'medium'}}</li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </ul>
