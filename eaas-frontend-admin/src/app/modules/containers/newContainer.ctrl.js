@@ -120,8 +120,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 console.log("response  ", response);
                 console.log("response.status   ", response.status);
                 if (response.status === 200) {
-                    $("#handleLandingPageContainer").text("Your handle value: \n" + "11270/" + container.id);
-                } else {
+                    container.handleValue = "http://hdl.handle.net/11270/" + container.id;} else {
                     growl.error('Handle is not defined!!');
                 }
 
