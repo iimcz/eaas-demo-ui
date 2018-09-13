@@ -50,7 +50,7 @@
             </tfoot>
         </table>
     </uib-tab>
-    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}">
+    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
         <table id="objects" st-table="displayObjEnvs" st-safe-src="standardEnvsOverviewCtrl.objEnvs" class="table">
             <thead>
             <tr>
