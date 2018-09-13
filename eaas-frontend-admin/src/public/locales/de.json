@@ -3,7 +3,7 @@
   "NEW_CONTAINER_AUTHOR" : "Autor",
   "CONTAINER_LANDING_PAGE" : "[Startseite]",
   "CHOOSE_ENV_L" : "Umgebungen",
-  "CHOOSE_BASEENV_L" : "Standardumgebungen",
+  "CHOOSE_BASEENV_L" : "Virtual machines",
   "CHOOSE_OBJENV_L" : "Objektumgebungen",
   "CHOOSE_ENV_SEARCH" : "Eintippen zum Suchen...",
   "CHOOSE_ENV_PROPOSAL" : "[Umgebung konfigurieren]",
