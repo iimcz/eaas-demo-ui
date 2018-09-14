@@ -240,6 +240,7 @@
   "SYNC_ENV_REMOTE_AVAILABLE_TH" : "Upload",
   "SYNC_ARCHIVES_OPTIONS" : "Objektmodus",
 
+  "JS_REVERT_ENV_OK" : "Wollen sie wirklich fortfahren?",
   "JS_DELENV_OK" : "Dies löscht die Umgebung unwiderruflich. Wollen sie wirklich fortfahren?",
   "JS_DELENV_SUCCESS" : "Umgebung wurde erfolgreich gelöscht",
   "JS_ENV_UPDATE" : "Daten erfolgreich gespeichert",
