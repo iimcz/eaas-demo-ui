@@ -14,6 +14,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.pushUploadUrl = "EmilObjectData/pushUpload";
     this.repositoriesListUrl = "EmilObjectData/archives";
     this.syncObjectsUrl = "EmilObjectData/syncObjects";
+    this.getObjectImportTaskState = "EmilEnvironmentData/objectImportTaskState?taskId={0}";
 
     this.getHandleValue = "components/getHandleValue";
 
