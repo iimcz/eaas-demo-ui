@@ -18,7 +18,7 @@
             <ui-select ng-model="newContainerCtrl.selectedSystem" on-select="newContainerCtrl.onSelectRuntime($item, $model)" theme="bootstrap"
                        title="{{'SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH' | translate}}" required>
                 <ui-select-match placeholder="{{'SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH' | translate}}">{{$select.selected.name}}</ui-select-match>
-                <ui-select-choices repeat="obj in newContainerCtrl.runtimes | filter: $select.search">
+                <ui-select-choices ui-disable-choice="obj.name == 'docker'" repeat="obj in newContainerCtrl.runtimes | filter: $select.search">
                     <span ng-bind-html="obj.name | highlight: $select.search"></span>
                 </ui-select-choices>
             </ui-select>
@@ -47,7 +47,7 @@
                 <label>{{'SW_NEW_CONTAINER_ARCHIVE_T' | translate}}</label>
                 <select style="max-width: 300px;" class="form-control" theme="bootstrap" ng-model="newContainerCtrl.archiveType" required ng-disabled="newContainerCtrl.imageType != 'url'">
                     <option value="rootfs">RootFS TAR(GZ/BZ2)</option>
-                    <option value="simg">Singularity Image (simg)</option>
+                    <option disabled value="simg">Singularity Image (simg)</option>
                 </select>
 
                 <br>
@@ -195,8 +195,19 @@
         </div>
 
         <div id="handleLandingPageContainer" class="modal-body">
+            <div ng-if="newContainerCtrl.handleValue">
+            Your handle value:
+            </div>
+            <div ng-if="!newContainerCtrl.handleValue">
             Do you want a handle value?
+            </div>
+
+            <div ng-if="newContainerCtrl.handleValue" class="modal-body">
+                <a href="{{newContainerCtrl.handleValue}}" target="_blank">{{newContainerCtrl.handleValue}}</a>
+            </div>
         </div>
+
+
 
         <div class="modal-footer">
             <button class="btn btn-default" ng-hide="hideme" type="button" ng-click="hideme=true;newContainerCtrl.saveHandle()" >Yes</button>

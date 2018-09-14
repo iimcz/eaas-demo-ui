@@ -242,6 +242,7 @@
   "SYNC_ENV_REMOTE_AVAILABLE_TH" : "Upload",
   "SYNC_ARCHIVES_OPTIONS" : "Object Upload Mode",
 
+  "JS_REVERT_ENV_OK" : "Do you really want to revert this environment",
   "JS_DELENV_OK" : "Do you really want to delete this environment",
   "JS_DELENV_SUCCESS" : "Environment has been deleted",
   "JS_ENV_UPDATE" : "Metadata has been updated",
