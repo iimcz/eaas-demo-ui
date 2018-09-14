@@ -121,18 +121,20 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            };
 
            this.revert = function(currentId, revId) {
-               $http.post(localConfig.data.eaasBackendURL + REST_URLS.revertRevisionUrl, {
-                   currentId: currentId,
-                   revId: revId
-               }).then(function(response) {
-                   if (response.data.status === "0") {
-                       growl.success($translate.instant('JS_ENV_UPDATE'));
+               if (window.confirm($translate.instant('JS_REVERT_ENV_OK'))) {
+                   $http.post(localConfig.data.eaasBackendURL + REST_URLS.revertRevisionUrl, {
+                       currentId: currentId,
+                       revId: revId
+                   }).then(function (response) {
+                       if (response.data.status === "0") {
+                           growl.success($translate.instant('JS_ENV_UPDATE'));
+                           $state.go('admin.standard-envs-overview', {}, {reload: true});
+                       } else {
+                           growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                       }
                        $state.go('admin.standard-envs-overview', {}, {reload: true});
-                   } else {
-                       growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                   }
-                   $state.go('admin.standard-envs-overview', {}, {reload: true});
-               });
+                   });
+               }
            };
 
            vm.isOpen = false;
