@@ -52,7 +52,14 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                   var taskId = response.data.taskId;
                   var modal = $uibModal.open({
                        animation: true,
-                       template: require('./modals/wait.html')
+                       template: require('./modals/wait.html'),
+                       controller : ["$scope", function($scope) {
+                           this.info = {};
+
+                           this.info.title = "Objekt Synchronisation";
+                           this.info.msg = "Objekte werden importiert. Dieser Vorgang kann einige Minuten dauern.";
+                       }],
+                       controllerAs: "waitMsgCtrl"
                    });
                    vm.checkState(taskId, modal);
                }
