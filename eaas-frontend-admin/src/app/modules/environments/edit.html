@@ -28,15 +28,13 @@
     </div>
 
     <p>
-        <label>{{'EDITENV_OS' | translate}}:</label> <span id="osl" ng-if="!editEnvCtrl.editOsMode">{{editEnvCtrl.os}}</span>
-        <span ng-if="editEnvCtrl.editOsMode">
-
-			<input id="osi" type="text" style="max-width: 300px;"
-                   ng-model="editEnvCtrl.os"
-                   placeholder="{{'EDITENV_OS_PH' | translate}}">
-		</span>
-        <button ng-if="!editEnvCtrl.editOsMode" ng-click="editEnvCtrl.editOsMode = true">{{'EDITENV_TAG_EDIT' | translate}}</button>
-        <button ng-if="editEnvCtrl.editOsMode" ng-click="editEnvCtrl.editOsMode = false">{{'EDITENV_TAG_DONE' | translate}}</button>
+        <label>{{'EDITENV_OS' | translate}}:</label>
+        <ui-select ng-model="editEnvCtrl.os" theme="bootstrap" title="{{'EDITENV_OS' | translate}}" required>
+            <ui-select-match placeholder="{{'EDITENV_OS' | translate}}">{{$select.selected.label}}</ui-select-match>
+            <ui-select-choices repeat="os in editEnvCtrl.operatingSystemsMetadata | filter: $select.search">
+                <span ng-bind-html="os.label | highlight: $select.search"></span>
+            </ui-select-choices>
+        </ui-select>
     </p>
 
     <p>

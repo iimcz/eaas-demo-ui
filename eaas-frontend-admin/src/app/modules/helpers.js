@@ -39,6 +39,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
     this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
+    this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";
 
     this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
     this.importContainerUrl = "EmilContainerData/importContainer";
