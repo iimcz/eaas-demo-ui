@@ -63,13 +63,14 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
 
            this.userTag = this.env.userTag;
 
-           // if(localConfig.data.features.handle) {
-           //     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
-           //         if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
-           //             vm.handle = handlePrefix + vm.env.envId;
-           //         }
-           //     });
-           // }
+           if(localConfig.data.features.handle) {
+               $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
+                   if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
+                       vm.handle = handlePrefix + vm.env.envId;
+                   }
+               });
+           }
+
            this.saveEdit = function() {
                var timecontext = null;
                if(this.showDateContextPicker)
