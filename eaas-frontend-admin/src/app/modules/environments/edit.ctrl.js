@@ -4,6 +4,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            let handlePrefix = "11270/";
            var vm = this;
 
+           vm.showAdvanced = false;
+
            vm.showDateContextPicker = false;
            var envList = null;
            vm.isObjectEnv = $stateParams.objEnv;
