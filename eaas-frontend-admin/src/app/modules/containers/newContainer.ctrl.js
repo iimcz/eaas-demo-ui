@@ -113,9 +113,9 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         };
 
         container.saveHandle = function () {
-            $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
+            $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
                 handle: "11270/" + container.id,
-                handleValue: localConfig.data.landingPage + "?id=" + container.id,
+                value: localConfig.data.landingPage + "?id=" + container.id,
             }).then(function (response) {
                 console.log("response  ", response);
                 console.log("response.status   ", response.status);
