@@ -1,5 +1,5 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "REST_URLS",
-            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "REST_URLS",
+            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, REST_URLS) {
 
            let handlePrefix = "11270/";
            var vm = this;
@@ -9,6 +9,11 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            vm.showDateContextPicker = false;
            var envList = null;
            vm.isObjectEnv = $stateParams.objEnv;
+
+           vm.operatingSystemsMetadata = {};
+           console.log(operatingSystemsMetadata);
+           if(operatingSystemsMetadata)
+             vm.operatingSystemsMetadata = operatingSystemsMetadata.data.operatingSystemInformations;
 
            this.dependencies = objectDependencies.data;
            vm.isObjectEnv = $stateParams.objEnv;
@@ -50,7 +55,14 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.connectEnvs = this.env.connectEnvs;
 
            this.shutdownByOs = this.env.shutdownByOs;
-           this.os = this.env.os;
+           for(var i=0; i < vm.operatingSystemsMetadata.length; i++) {
+                console.log(vm.operatingSystemsMetadata[i].id + " " + this.env.os)
+                if (vm.operatingSystemsMetadata[i].id === this.env.os)
+                {
+                    this.os = vm.operatingSystemsMetadata[i];
+                }
+           }
+
            this.userTag = this.env.userTag;
 
            if(localConfig.data.features.handle) {
@@ -60,6 +72,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    }
                });
            }
+
            this.saveEdit = function() {
                var timecontext = null;
                if(this.showDateContextPicker)
@@ -82,7 +95,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    enablePrinting: vm.enablePrinting,
                    enableRelativeMouse: this.enableRelativeMouse,
                    shutdownByOs: this.shutdownByOs,
-                   os: this.os,
+                   os: this.os.id,
                    userTag: this.userTag,
                    useXpra : this.useXpra,
                    enableInternet: this.enableInternet,

@@ -1,5 +1,5 @@
-module.exports = ["$state", "$stateParams", "$http", "handles", "localConfig", "helperFunctions","growl",
-    function ($state, $stateParams, $http, handles, localConfig, helperFunctions, growl) {
+module.exports = ["$state", "$stateParams", "$http", "handles", "localConfig", "helperFunctions","growl", "REST_URLS",
+    function ($state, $stateParams, $http, handles, localConfig, helperFunctions, growl, REST_URLS) {
 
         var vm = this;
         vm.handles = handles.data.handles;
@@ -23,9 +23,9 @@ module.exports = ["$state", "$stateParams", "$http", "handles", "localConfig", "
             }
 
             jQuery.when(
-                $http.post(localConfig.data.eaasBackendURL + helperFunctions.formatStr("components/createHandle", encodeURI($stateParams.handle)), {
+                $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
                     handle: "11270/" + document.getElementById("addHandle").value,
-                    handleValue: document.getElementById("addHandleValue").value
+                    value: document.getElementById("addHandleValue").value
                 })
             ).then(function (response) {
                 console.log("response  ", response);

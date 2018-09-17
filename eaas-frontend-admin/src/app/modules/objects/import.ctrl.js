@@ -19,6 +19,28 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
            vm.allFiles = vm.allFiles.concat(vm.selectedFiles);
        };
 
+       vm.checkState = function(_taskId, _modal)
+       {
+            var taskInfo = $http.get(localConfig.data.eaasBackendURL +
+            helperFunctions.formatStr(REST_URLS.getObjectImportTaskState, _taskId)).then(function(response){
+                if(response.data.status == "0")
+                {
+                    if(response.data.isDone)
+                    {
+                        _modal.close();
+                        growl.success("import finished.");
+                        $state.go('admin.object-overview', {}, {reload: true});
+                    }
+                    else
+                        $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                }
+                else
+                {
+                    _modal.close();
+                }
+            });
+       };
+
        vm.import = function()
        {
            vm.importRequest.archive = vm.selectedArchive;
@@ -26,15 +48,28 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
            console.log(vm.importRequest);
 
            $http.post(localConfig.data.eaasBackendURL + REST_URLS.syncObjectsUrl, vm.importRequest).then(function(response) {
-              if (response.data.status === "0") {
-                  growl.success(response.data.message);
-                  $state.go('admin.object-overview', {}, {reload: true});
+              if(response.data.status == "0") {
+                  var taskId = response.data.taskId;
+                  var modal = $uibModal.open({
+                       animation: true,
+                       template: require('./modals/wait.html'),
+                       controller : ["$scope", function($scope) {
+                           this.info = {};
 
-              } else {
-                  growl.error(response.data.message, {title: 'Error ' + response.data.status});
-              }
-          });
-
+                           this.info.title = "Objekt Synchronisation";
+                           this.info.msg = "Objekte werden importiert. Dieser Vorgang kann einige Minuten dauern.";
+                       }],
+                       controllerAs: "waitMsgCtrl"
+                   });
+                   vm.checkState(taskId, modal);
+               }
+               else
+               {
+                   growl.error(response.data.message, {title: 'Error ' + response.data.status});
+               }
+           }, function(response) {
+               console.log("error");
+           });
        }
 
        vm.upload = function()
