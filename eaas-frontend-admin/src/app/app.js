@@ -616,7 +616,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             url: "/edit-handle?handle",
             resolve: {
                 handleValue: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleValue + helperFunctions.formatStr("?handle={0}" , encodeURI($stateParams.handle)))
+                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleValue + $stateParams.handle)
             },
             views: {
                 'wizard': {

@@ -10,13 +10,15 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncUrl = "EmilObjectData/sync";
     this.mediaCollectionURL = "EmilObjectData/mediaDescription?objectId={0}";
     this.metadataUrl = "EmilObjectData/metadata?objectId={0}";
-    this.getHandleList = "components/handleList/get";
+    this.getHandleList = "handles/";
     this.pushUploadUrl = "EmilObjectData/pushUpload";
     this.repositoriesListUrl = "EmilObjectData/archives";
     this.syncObjectsUrl = "EmilObjectData/syncObjects";
     this.getObjectImportTaskState = "EmilObjectData/objectImportTaskState?taskId={0}";
 
-    this.getHandleValue = "components/getHandleValue";
+    this.getHandleValue = "handles/";
+    this.deleteHandle = "handles/";
+    this.postHandleValue = "handles/";
 
     // environment data api
     this.getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
