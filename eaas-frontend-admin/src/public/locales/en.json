@@ -166,7 +166,7 @@
   "EDITENV_OS" : "Operating System",
   "EDITENV_SW" : "Software",
   "EDITENV_SAVE" : "Save",
-  "EDITENV_HELPTEXT" : "Environment Help Text:",
+  "EDITENV_HELPTEXT" : "(Optional) Network Help Text:",
   "EDITENV_CANCEL" : "Cancel",
   "EDITENV_REVS" : "Revisions",
   "EDITENV_DATE_CONTEXT": "Date",
