@@ -113,7 +113,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    enablePrinting: vm.enablePrinting,
                    enableRelativeMouse: this.enableRelativeMouse,
                    shutdownByOs: this.shutdownByOs,
-                   os: this.os.id,
+                   os: this.os ? this.os.id : null,
                    userTag: this.userTag,
                    useXpra : this.useXpra,
                    enableInternet: this.enableInternet,

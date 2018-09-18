@@ -107,6 +107,12 @@
             <label>{{'EDITENV_GW_PRIVATE_MASK' | translate}}</label>
             <input type="text" class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
         </div>
+
+        <p>
+            <b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br />
+            <text-angular ng-model="editEnvCtrl.envHelpText" />
+        </p>
+
     </div>
 
     <div class="form-group" ng-if="editEnvCtrl.showAdvanced">
@@ -187,10 +193,6 @@
                                                                       placeholder="{{'EDITENV_NAME_PH' | translate}}" >
     </div>
 
-    <p ng-if="editEnvCtrl.showAdvanced">
-        <b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br />
-        <text-angular ng-model="editEnvCtrl.envHelpText" />
-    </p>
 
 
     <div style="text-align: right;">
