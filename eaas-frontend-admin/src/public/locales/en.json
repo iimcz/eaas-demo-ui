@@ -159,6 +159,7 @@
   "EDITENV_L" : "Edit Environment",
   "EDITENV_ID": "ID",
   "EDITENV_NAME" : "Name",
+  "EDITEN_CREATE_HANDLE" : "Create handle",
   "EDITENV_NAME_PH" : "Environment name",
   "EDITENV_DESC" : "Description",
   "EDITENV_DESC_PH" : "Environment description",

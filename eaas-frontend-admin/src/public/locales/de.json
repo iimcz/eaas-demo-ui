@@ -156,6 +156,7 @@
   "EDITENV_L" : "Umgebung bearbeiten",
   "EDITENV_ID" : "ID",
   "EDITENV_NAME" : "Name",
+  "EDITEN_CREATE_HANDLE" : "Handle erstellen",
   "EDITENV_NAME_PH" : "Name der Umgebung..",
   "EDITENV_DESC" : "Beschreibung",
   "EDITENV_DESC_PH" : "Beschreibung der Umgebung..",

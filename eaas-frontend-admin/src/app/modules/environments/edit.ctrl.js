@@ -5,6 +5,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            var vm = this;
 
            vm.showAdvanced = false;
+           vm.landingPage = localConfig.data.landingPage;
 
            vm.showDateContextPicker = false;
            var envList = null;
@@ -72,6 +73,23 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    }
                });
            }
+
+           vm.createHandle = function () {
+                    jQuery.when(
+                        $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
+                            handle: handlePrefix + vm.env.envId,
+                            value: vm.landingPage + "?id=" + vm.env.envId
+                        })
+                    ).then(function (response) {
+                        console.log("response  ", response);
+                        console.log("response.status   ", response.status);
+                        if (response.status === 200) {
+                            vm.handle = handlePrefix + vm.env.envId;
+                        } else {
+                            growl.error('Handle is not defined!!');
+                        }
+                    });
+           };
 
            this.saveEdit = function() {
                var timecontext = null;

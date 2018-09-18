@@ -9,7 +9,12 @@
         <label>Handle:</label> <span id="osl" ng-if="!editEnvCtrl.editOsMode">{{editEnvCtrl.handle}}</span>
     </p>
 
-    <div class="form-group">
+    <p ng-if="!editEnvCtrl.handle">
+    <label><a ng-if="editEnvCtrl.showAdvanced==false" ng-click="editEnvCtrl.createHandle()" style="cursor: pointer;">{{'EDITEN_CREATE_HANDLE' |
+        translate}}</a></label>
+    </p>
+
+    <div class="form-group" ng-if="editEnvCtrl.landingPage">
         <label>{{'EDITENV_NAME' | translate}}</label> <input required type="text"
                                                              class="form-control" ng-model="editEnvCtrl.envTitle"
                                                              placeholder="{{'EDITENV_NAME_PH' | translate}}" >
