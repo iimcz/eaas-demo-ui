@@ -1,6 +1,8 @@
 module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS',
     function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
         var vm = this;
+        let handlePrefix = "11270/";
+
 
         vm.showDateContextPicker = false;
         var envList = null;
@@ -13,6 +15,14 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
                 vm.env = envList[i];
                 break;
             }
+        }
+
+        if(localConfig.data.features.handle) {
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
+                if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
+                    vm.handle = handlePrefix + vm.env.envId;
+                }
+            });
         }
 
         if (vm.env === null) {
@@ -53,6 +63,23 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
                     growl.error(response.data.message, {title: 'Error ' + response.data.status});
                 }
                 $state.go('admin.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: true});
+            });
+        };
+
+        vm.createHandle = function () {
+            jQuery.when(
+                $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
+                    handle: handlePrefix + vm.env.envId,
+                    value: localConfig.data.landingPage + "?id=" + vm.env.envId
+                })
+            ).then(function (response) {
+                console.log("response  ", response);
+                console.log("response.status   ", response.status);
+                if (response.status === 200) {
+                    vm.handle = handlePrefix + vm.env.envId;
+                } else {
+                    growl.error('Handle is not defined!!');
+                }
             });
         };
     }];

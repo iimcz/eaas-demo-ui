@@ -5,6 +5,15 @@
 		<label>{{'EDIT_CONTAINER_ID' | translate}}:</label>
 		{{editContainerCtrl.env.envId}}
 	</p>
+
+    <p ng-if="editContainerCtrl.handle">
+        <label>Handle:</label> <span id="osl">{{editContainerCtrl.handle}}</span>
+    </p>
+
+    <p ng-if="!editContainerCtrl.handle">
+        <label><a ng-click="editContainerCtrl.createHandle()" style="cursor: pointer;">{{'EDITEN_CREATE_HANDLE' |
+            translate}}</a></label>
+    </p>
 	
 	<div class="form-group">
 		<label>{{'EDIT_CONTAINER_NAME' | translate}}</label>

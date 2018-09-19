@@ -54,8 +54,9 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.gwPrivateMask = this.env.gwPrivateMask;
            this.useXpra = this.env.useXpra;
            this.connectEnvs = this.env.connectEnvs;
-
+           this.canProcessAdditionalFiles = this.env.canProcessAdditionalFiles;
            this.shutdownByOs = this.env.shutdownByOs;
+
            for(var i=0; i < vm.operatingSystemsMetadata.length; i++) {
                 console.log(vm.operatingSystemsMetadata[i].id + " " + this.env.os)
                 if (vm.operatingSystemsMetadata[i].id === this.env.os)
@@ -102,7 +103,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
                this.env.helpText = this.envHelpText;
-
+               console.log("canProcessAdditionalFiles  " + vm.canProcessAdditionalFiles);
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                    envId: $stateParams.envId,
                    title: this.envTitle,
@@ -124,7 +125,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    gwPrivateIp: this.gwPrivateIp,
                    gwPrivateMask: this.gwPrivateMask,
                    nativeConfig: this.nativeConfig,
-                   connectEnvs : this.connectEnvs
+                   connectEnvs : this.connectEnvs,
+                   processAdditionalFiles : vm.canProcessAdditionalFiles
            }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
