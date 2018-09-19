@@ -74,6 +74,11 @@
         <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
     </div>
 
+    <div class="form-group">
+        <input type="checkbox" ng-model="editEnvCtrl.canProcessAdditionalFiles">
+        <label>Supports custom file-input</label>
+    </div>
+
     <div ng-if="editEnvCtrl.serverMode">
 
         <div class="form-group">

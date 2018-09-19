@@ -1,6 +1,8 @@
 module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS',
     function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
         var vm = this;
+        let handlePrefix = "11270/";
+
 
         vm.showDateContextPicker = false;
         var envList = null;
@@ -13,6 +15,14 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
                 vm.env = envList[i];
                 break;
             }
+        }
+
+        if(localConfig.data.features.handle) {
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
+                if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
+                    vm.handle = handlePrefix + vm.env.envId;
+                }
+            });
         }
 
         if (vm.env === null) {
