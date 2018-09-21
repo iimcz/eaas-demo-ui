@@ -87,7 +87,7 @@
         <label>Supports custom file-input</label>
     </div>
 
-    <div ng-if="editEnvCtrl.serverMode">
+    <div ng-show="editEnvCtrl.showAdvanced" ng-if="editEnvCtrl.serverMode">
 
         <div class="form-group">
             <input type="checkbox" ng-model="editEnvCtrl.enableSocks">
