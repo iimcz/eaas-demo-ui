@@ -354,3 +354,7 @@ button:focus#printerbutton    {
   position: fixed;
   background-color: rgba(0, 0, 0, 0.1);
 }
+.tekst {
+    display:block;
+    margin-bottom:5px;   /* adapt the margin value to the desire space between span and select box */
+}
