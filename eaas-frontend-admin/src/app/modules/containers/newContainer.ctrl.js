@@ -17,6 +17,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         container.imageId = "";
         container.env = [];
         container.args = [];
+        container.tag = "";
 
         //TODO: ?
         container.onSelectRuntime = function (item, model) {
@@ -37,6 +38,11 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
 
             if (!container.name) {
                 growl.error("container name is required");
+                return false;
+            }
+
+            if(container.args.length == 0 && newContainerCtrl.imageType == "dockerhub"){
+                growl.error("container tag is required");
                 return false;
             }
 
@@ -120,10 +126,10 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 console.log("response  ", response);
                 console.log("response.status   ", response.status);
                 if (response.status === 200) {
-                    container.handleValue = "http://hdl.handle.net/11270/" + container.id;} else {
+                    container.handleValue = "http://hdl.handle.net/11270/" + container.id;
+                } else {
                     growl.error('Handle is not defined!!');
                 }
-
             });
         };
 
@@ -136,6 +142,11 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             var convertedEnv = [];
             var convertedArgs = [];
             var escapeEl = document.createElement('textarea');
+
+            if (container.imageType === "dockerhub"){
+                container.archiveType = "dockerhub";
+            }
+
 
             var unescape = function (html) {
                 escapeEl.innerHTML = html;
@@ -155,6 +166,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                     urlString: container.imageUrl,
                     runtimeID: container.runtime,
                     name: container.name,
+                    tag: container.tag,
                     processArgs: container.args,
                     processEnvs: container.env,
                     inputFolder: container.imageInput,
