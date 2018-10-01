@@ -736,6 +736,7 @@ EaasClient.Client = function (api_entrypoint, container) {
          search for eaas-client.js path, in order to include it to filePath
          */
         var scripts = document.getElementsByTagName("script");
+        var eaasClientPath = "";
         for (var prop in scripts) {
             var searchingAim = "eaas-client.js";
             if (typeof(scripts[prop].src) != "undefined" && scripts[prop].src.indexOf(searchingAim) != -1) {
@@ -1018,7 +1019,8 @@ BWFLA.showClientCursor = function(guac)
 {
     var display = guac.getDisplay();
     display.showCursor(true);
-};/*
+};
+/*
  *  Example usage:
  *
  *      var centerOnScreen = function(width, height) {

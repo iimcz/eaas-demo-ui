@@ -6,15 +6,12 @@ NAME="eaas-client"
 
 build() {
   mvn package
-  rm -rf "$DEST/vendor/""$NAME"
-  cp -R target/"$NAME"-*/ "$DEST/vendor/""$NAME"
-  rm -rf "$DEST/admin/vendor/""$NAME"
-  cp -R target/"$NAME"-*/ "$DEST/admin/vendor/""$NAME"
+  rm -rf "$DEST/common/""$NAME"
+  cp -R target/"$NAME"-*/ "$DEST/common/""$NAME"
 }
 
 add() {
-  git add vendor/"$NAME"
-  git add admin/vendor/"$NAME"
+  git add common/"$NAME"
 }
 
 

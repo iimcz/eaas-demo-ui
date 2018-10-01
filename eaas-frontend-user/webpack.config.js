@@ -166,6 +166,8 @@ module.exports = function makeWebpackConfig() {
     new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       new CopyWebpackPlugin([{
           from: '../common/eaas-client/xpra', to: 'xpra'
+        }, {
+          from: '../common/eaas-client/webemulator', to: 'webemulator'
       }])
   );
 
@@ -191,6 +193,8 @@ module.exports = function makeWebpackConfig() {
       }]),
         new CopyWebpackPlugin([{
             from: '../common/eaas-client/xpra', to: 'xpra'
+          }, {
+            from: '../common/eaas-client/webemulator', to: 'webemulator'
         }])
     )
   }
