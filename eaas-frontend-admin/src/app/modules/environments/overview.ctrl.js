@@ -3,6 +3,7 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
     function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList,
         localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
         var vm = this;
+        vm.config = localConfig.data;
         vm.landingPage = localConfig.data.landingPage;
         vm.view = 0;
         if($stateParams.showContainers)
