@@ -175,9 +175,9 @@ module.exports = function makeWebpackConfig() {
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       new CopyWebpackPlugin([{
-          from: '../common/eaas-client/xpra', to: 'xpra'
+          from: '../eaas-client/xpra', to: 'xpra'
         }, {
-          from: '../common/eaas-client/webemulator', to: 'webemulator'
+          from: '../eaas-client/webemulator', to: 'webemulator'
       }])
   );
 
@@ -202,9 +202,9 @@ module.exports = function makeWebpackConfig() {
             from: __dirname + '/src/public'
         }]),
         new CopyWebpackPlugin([{
-            from: '../common/eaas-client/xpra', to: 'xpra'
+            from: '../eaas-client/xpra', to: 'xpra'
           }, {
-            from: '../common/eaas-client/webemulator', to: 'webemulator'
+            from: '../eaas-client/webemulator', to: 'webemulator'
         }])
     )
   }
