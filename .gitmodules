@@ -3,4 +3,4 @@
 	url = https://git.eaas.uni-freiburg.de/eaas/citar-headless-client.git
 [submodule "eaas-client"]
 	path = eaas-client
-	url = https://git.eaas.uni-freiburg.de/eaas/eaas-client.git
+	url = git@gitlab.com:openslx/eaas-client.git
