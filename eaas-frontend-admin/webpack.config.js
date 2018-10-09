@@ -18,7 +18,7 @@ var isProd = ENV === 'build';
 
 var PRODUCTION_BASE_PATH = '';
 
-var LOCAL_WEBSERVER_PATH = 'http://localhost:8081/';
+var LOCAL_WEBSERVER_PATH = '/';
 var PRODUCTION_PATH = '/admin-ui/';
 
 module.exports = function makeWebpackConfig() {
