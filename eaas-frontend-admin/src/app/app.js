@@ -5,7 +5,7 @@
 import angular from 'angular';
 import 'angular-loading-bar';
 import 'textangular';
-import ngSanitize from 'angular-sanitize';
+import ngSanitize from 'textangular/dist/textAngular-sanitize';
 import ngAnimate from 'angular-animate';
 import ngCookies from 'angular-cookies';
 import 'angular-ui-router';
