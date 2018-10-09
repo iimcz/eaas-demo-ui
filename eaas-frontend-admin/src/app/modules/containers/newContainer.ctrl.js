@@ -18,6 +18,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         container.env = [];
         container.args = [];
         container.tag = "";
+        container.imageInput = "/input";
+        container.imageOutput = "/output";
 
         //TODO: ?
         container.onSelectRuntime = function (item, model) {
@@ -31,7 +33,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if (container.args.length == 0) {
+            if (container.runtime !== "2" && container.args.length === 0) {
                 growl.error("process is required");
                 return false;
             }
@@ -41,7 +43,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if(container.args.length == 0 && newContainerCtrl.imageType == "dockerhub"){
+            if(container.args.length == 0 && container.imageType == "dockerhub"){
                 growl.error("container tag is required");
                 return false;
             }
@@ -147,6 +149,9 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 container.archiveType = "dockerhub";
             }
 
+            if (container.runtime === "2" && container.args.length === 0) {
+                container.args.push("/bin/sh", "-c", '. /environment; exec "$0" "$@"', "/singularity");
+            }
 
             var unescape = function (html) {
                 escapeEl.innerHTML = html;
