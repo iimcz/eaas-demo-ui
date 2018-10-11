@@ -1,8 +1,13 @@
-module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
+module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
     '$uibModal', 'softwareList', 'helperFunctions', 'containerEnvironmentList', 'REST_URLS',
-    function ($rootScope, $http, $state, $stateParams, environmentList, objectEnvironmentList,
-        localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
+    function ($rootScope, $http, $state, $scope, $stateParams, environmentList, objectEnvironmentList,
+              localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
+
+
+
+
         var vm = this;
+
         vm.config = localConfig.data;
         vm.landingPage = localConfig.data.landingPage;
         vm.view = 0;
@@ -147,4 +152,43 @@ module.exports = ['$rootScope', '$http', '$state', '$stateParams', 'environmentL
         vm.containerEnvs = containerEnvironmentList.data.environments;
         vm.showObjects = $stateParams.showObjects;
         vm.showContainers = $stateParams.showContainers;
+
+
+
+        var columnDefs = [
+            {headerName: "Name", field: "name"},
+            {headerName: "ID", field: "id"},
+            {headerName: "Emulator", field: "emulator"}
+        ];
+
+        var rowData = [];
+        vm.envs.forEach(function(element) {
+            rowData.push({name: element.title, id: element.envId, emulator: element.emulator })
+        });
+
+        $scope.onPageSizeChanged = function() {
+            var value = document.getElementById('page-size').value;
+            $scope.gridOptions.api.paginationSetPageSize(Number(value));
+        };
+
+        $scope.gridOptions = {
+            columnDefs: columnDefs,
+            rowData: rowData,
+            rowSelection: 'multiple',
+            rowMultiSelectWithClick: true,
+            enableColResize: true,
+            enableSorting: true,
+            enableFilter: true,
+            domLayout: 'autoHeight',
+            animateRows: true,
+            onGridReady: function (params) {
+                $scope.gridOptions.api.sizeColumnsToFit();
+            },
+            pagination: true,
+            paginationPageSize: 10,
+            paginationNumberFormatter: function(params) {
+                return '[' + params.value.toLocaleString() + ']';
+            },
+        };
+
     }];

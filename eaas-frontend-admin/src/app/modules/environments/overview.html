@@ -3,52 +3,79 @@
 
 <uib-tabset active="standardEnvsOverviewCtrl.view">
     <uib-tab index="0" heading="{{'CHOOSE_BASEENV_L' | translate}}">
-        <table id="base" st-table="displayEnvs" st-safe-src="standardEnvsOverviewCtrl.envs" class="table">
-            <thead>
-            <tr>
-                <th colspan="6">
-                    <input st-search="" class="form-control" placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>
-                </th>
-            </tr>
-            </thead>
+        <!--<table id="base" st-table="displayEnvs" st-safe-src="standardEnvsOverviewCtrl.envs" class="table">-->
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th colspan="6">-->
+                    <!--<input st-search="" class="form-control" placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>-->
+                <!--</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
 
-            <tbody>
-            <tr ng-repeat="row in displayEnvs">
-                <td>
-                    <b>{{row.title}}</b>
-                    <br/>
-                    <!--Start-->
-                    <a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId})">{{'CHOOSE_ENV_PROPOSAL'
-                        | translate}}</a>
+            <!--<tbody>-->
+            <!--<tr ng-repeat="row in displayEnvs">-->
+                <!--<td>-->
+                    <!--<b>{{row.title}}</b>-->
+                    <!--<br/>-->
+                    <!--&lt;!&ndash;Start&ndash;&gt;-->
+                    <!--<a ui-sref="admin.emulator({envId: row.envId, objectId: row.objectId, archiveId: row.archiveId})">{{'CHOOSE_ENV_PROPOSAL'-->
+                        <!--| translate}}</a>-->
 
-                    <!--Edit-->
-                    <a ui-sref="admin.edit-env({envId: row.envId})">{{'CHOOSE_ENV_EDIT' | translate}}</a>
+                    <!--&lt;!&ndash;Edit&ndash;&gt;-->
+                    <!--<a ui-sref="admin.edit-env({envId: row.envId})">{{'CHOOSE_ENV_EDIT' | translate}}</a>-->
 
-                    <!--Delete-->
-                    <a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'| translate}}</a>
+                    <!--&lt;!&ndash;Delete&ndash;&gt;-->
+                    <!--<a href="#" ng-click="standardEnvsOverviewCtrl.deleteEnvironment(row.envId)">{{'CHOOSE_ENV_DEL'| translate}}</a>-->
 
-                    <!--Software-->
-                    <a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'| translate}}</a>
+                    <!--&lt;!&ndash;Software&ndash;&gt;-->
+                    <!--<a ng-click="standardEnvsOverviewCtrl.addSoftware(row.envId)">{{'CHOOSE_ENV_ADDSW'| translate}}</a>-->
 
-                    <!--Landing page-->
-                    <a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'| translate}}</a>
+                    <!--&lt;!&ndash;Landing page&ndash;&gt;-->
+                    <!--<a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'| translate}}</a>-->
 
-                    <br>
-                    <span ng-show="row.version != null">{{'CHOOSE_ENV_VER'
-					| translate }}: {{row.version}}<br>
-            </span> <div >{{row.author}} </div>
-                </td>
-            </tr>
-            </tbody>
+                    <!--<br>-->
+                    <!--<span ng-show="row.version != null">{{'CHOOSE_ENV_VER'-->
+					<!--| translate }}: {{row.version}}<br>-->
+            <!--</span> <div >{{row.author}} </div>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tbody>-->
 
-            <tfoot>
-            <tr>
-                <td colspan="5" class="text-center">
-                    <div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>
-                </td>
-            </tr>
-            </tfoot>
-        </table>
+            <!--<tfoot>-->
+            <!--<tr>-->
+                <!--<td colspan="5" class="text-center">-->
+                    <!--<div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tfoot>-->
+        <!--</table>-->
+
+        <!--<div style="width: 800px;">-->
+            <!--<div style="padding: 4px">-->
+                <div style="float: right;">
+                    <input type="text" ng-model="gridOptions.quickFilterText" placeholder="Type text to filter..."/>
+                </div>
+                <div style="padding: 4px;">
+                    <b>Number of Environments: {{standardEnvsOverviewCtrl.envs.length;}}</b>
+                    <div style="top: 0; left: 0;">
+                        Page Size:
+                        <select ng-click="onPageSizeChanged()" id="page-size">
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--<div style="clear: both;"/>-->
+            <!--</div>-->
+            <div style="width: 100%;"
+                 ag-grid="gridOptions"
+                 class="ag-theme-balham">
+            </div>
+        <!--</div>-->
+
     </uib-tab>
     <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
         <table id="objects" st-table="displayObjEnvs" st-safe-src="standardEnvsOverviewCtrl.objEnvs" class="table">
