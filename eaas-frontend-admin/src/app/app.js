@@ -26,6 +26,8 @@ import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
 import 'ng-file-upload';
+import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.js';
+import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.css';
 
 
 /*

@@ -26,4 +26,20 @@ module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function
             controller: "SettingsDialogController as settingsDialogCtrl"
         });
     };
+
+    vm.showAdvancedDialog = function() {
+        $uibModal.open({
+            animation: false,
+            template: require('./modals/advancedDialog.html'),
+            resolve: {
+                localConfig: function () {
+                    return localConfig;
+                },
+                kbLayouts: function () {
+                    return kbLayouts;
+                }
+            },
+            controller: "AdvancedDialogController as advancedDialogCtrl"
+        });
+    };
 }];
