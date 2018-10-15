@@ -45,7 +45,7 @@ module.exports = function makeWebpackConfig() {
 
     // Output path from the view of the page
     // Uses webpack-dev-server in development
-    publicPath: isProd ? PRODUCTION_BASE_PATH : 'http://localhost:8081/',
+    publicPath: isProd ? PRODUCTION_BASE_PATH : '/',
 
     // Filename for entry points
     // Only adds hash in build mode
@@ -165,7 +165,9 @@ module.exports = function makeWebpackConfig() {
     // Disabled when in test mode or not in build mode
     new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       new CopyWebpackPlugin([{
-          from: '../common/eaas-client/xpra', to: 'xpra'
+          from: '../eaas-client/xpra', to: 'xpra'
+        }, {
+          from: '../eaas-client/webemulator', to: 'webemulator'
       }])
   );
 
@@ -190,7 +192,9 @@ module.exports = function makeWebpackConfig() {
         from: __dirname + '/src/public'
       }]),
         new CopyWebpackPlugin([{
-            from: '../common/eaas-client/xpra', to: 'xpra'
+            from: '../eaas-client/xpra', to: 'xpra'
+          }, {
+            from: '../eaas-client/webemulator', to: 'webemulator'
         }])
     )
   }

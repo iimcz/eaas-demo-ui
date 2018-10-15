@@ -10,6 +10,7 @@ module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function
 
     vm.config = localConfig.data;
     vm.buildInfo = buildInfo.data.version;
+    vm.uiCommitHash = __UI_COMMIT_HASH__;
 
     vm.showSettingsDialog = function() {
         $uibModal.open({
@@ -24,6 +25,22 @@ module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function
                 }
             },
             controller: "SettingsDialogController as settingsDialogCtrl"
+        });
+    };
+
+    vm.showAdvancedDialog = function() {
+        $uibModal.open({
+            animation: false,
+            template: require('./modals/advancedDialog.html'),
+            resolve: {
+                localConfig: function () {
+                    return localConfig;
+                },
+                kbLayouts: function () {
+                    return kbLayouts;
+                }
+            },
+            controller: "AdvancedDialogController as advancedDialogCtrl"
         });
     };
 }];

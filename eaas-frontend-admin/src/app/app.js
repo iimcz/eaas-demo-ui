@@ -5,7 +5,7 @@
 import angular from 'angular';
 import 'angular-loading-bar';
 import 'textangular';
-import ngSanitize from 'angular-sanitize';
+import ngSanitize from 'textangular/dist/textAngular-sanitize';
 import ngAnimate from 'angular-animate';
 import ngCookies from 'angular-cookies';
 import 'angular-ui-router';
@@ -26,6 +26,8 @@ import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
 import 'ng-file-upload';
+import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.js';
+import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.css';
 
 
 /*
@@ -44,10 +46,10 @@ const appendScript = function(scriptText) {
     document.body.appendChild(script);
 };
 
-import guacamolejs from 'raw-loader!../../../common/eaas-client/guacamole/guacamole.js';
+import guacamolejs from 'raw-loader!../../../eaas-client/guacamole/guacamole.js';
 appendScript(guacamolejs);
 
-import eaasclientjs from 'raw-loader!../../../common/eaas-client/eaas-client.js';
+import eaasclientjs from 'raw-loader!../../../eaas-client/eaas-client.js';
 appendScript(eaasclientjs);
 
 /*
@@ -68,8 +70,8 @@ import 'angular-loading-bar/build/loading-bar.css';
 import 'textangular/dist/textAngular.css'
 import 'font-awesome/css/font-awesome.css';
 import 'angular-wizard/dist/angular-wizard.css';
-import '../../../common/eaas-client/guacamole/guacamole.css';
-import '../../../common/eaas-client/eaas-client.css';
+import '../../../eaas-client/guacamole/guacamole.css';
+import '../../../eaas-client/eaas-client.css';
 import './app.css';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
