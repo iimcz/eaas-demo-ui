@@ -54,7 +54,7 @@
   "BASE_MENU_ADVANED_SETTINGS_DLG_EMIL_ENV": "Emil Umgebungen",
   "BASE_MENU_ADVANED_SETTINGS_DLG_OBJECT_ENV": "Objekt Umgebungen",
   "BASE_MENU_ADVANED_SETTINGS_DLG_CONTAINER_ENV": "Container Umgebungen",
-  "BASE_MENU_ADVANCED": "Erweitert/Debug",
+  "BASE_MENU_ADVANCED": "Erweitert / Debug",
   "BASE_MENU_NEW_ENV" : "Umgebung erstellen / importieren",
   "BASE_MENU_OBJECTS" : "Objekte",
   "BASE_MENU_SESSIONS" : "Nutzersitzungen",
@@ -70,6 +70,7 @@
   "SETTINGS_DLG_SYNC_IMAGES" : "Umgebungen sychronisieren",
 
   "SET_KEYBOARD_DLG_TITLE" : "Lokale Tastaturlayout ändern",
+  "ADVANCED_OPTIONS" : "Advanced Optionen",
   "SET_KEYBOARD_DLG_HELP" : "Um die Tasten Ihres Computers auf die richten Tasten des Emulators zu legen, wählen Sie bitte Ihre lokale Spracheinstellung und ihr Tastaturmodell. Wenn Sie bzgl. Ihres Tastaturmodells unsicher sind wählen Sie pc-105 (eine standard Windows tastatur).",
   "SET_KEYBOARD_DLG_CHOOSE_LANG" : "Sprache auswählen",
   "SET_KEYBOARD_DLG_CHOOSE_LANG_PH" : "Wählen oder suchen sie eine Sprache...",
