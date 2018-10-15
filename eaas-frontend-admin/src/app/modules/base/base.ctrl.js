@@ -10,6 +10,7 @@ module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function
 
     vm.config = localConfig.data;
     vm.buildInfo = buildInfo.data.version;
+    vm.uiCommitHash = __UI_COMMIT_HASH__;
 
     vm.showSettingsDialog = function() {
         $uibModal.open({
