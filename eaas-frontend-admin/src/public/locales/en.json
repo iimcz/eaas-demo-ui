@@ -145,6 +145,8 @@
   "SW_NEW_CONTAINER_CONFIG" : "Container Config",
   "SW_NEW_CONTAINER_IMAGE_SIZE" : "Size of finished Image",
   "SW_NEW_CONTAINER_DOCKER_IMAGE_URL" : "URL of tar-archive (docker save)",
+  "SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_URL" : "Link to image",
+  "SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_FILE" : "Upload image",
   "SW_NEW_CONTAINER_DOCKER_DOCKERHUB_NAME" : "Image Name (e.g phusion/baseimage)",
   "SW_NEW_CONTAINER_DOCKER_DOCKERHUB_TAG" : "Image Tag (e.g 0.9.22)",
   "SW_NEW_CONTAINER_RUNC_GUI" : "GUI is required",
