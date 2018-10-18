@@ -39,10 +39,22 @@
                 <p>{{'SW_NEW_CONTAINER_IMAGE_STRUCTURE' | translate}}</p>
 
                 <label>
-                    <input type="radio" ng-model="newContainerCtrl.imageType" value="url">
-                    <span>{{'SW_NEW_CONTAINER_IMAGE_URL' | translate}}</span>
+                    <input type="radio" ng-model="newContainerCtrl.importMethod" value="url">
+                    <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_URL' | translate}}</span>
                 </label>
-                <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_IMAGE_URL' | translate}}" class="form-control" ng-model="newContainerCtrl.imageUrl" ng-disabled="newContainerCtrl.imageType != 'url'" ng-required="newContainerCtrl.imageType == 'url'"/>
+                <br>
+
+                <label>
+                    <input type="radio" ng-model="newContainerCtrl.importMethod" value="file">
+                    <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_FILE' | translate}}</span>
+                </label>
+                <div class="tekst">
+                <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_IMAGE_URL' | translate}}" class="form-control" ng-model="newContainerCtrl.imageUrl" ng-disabled="newContainerCtrl.importMethod != 'url'" ng-required="newContainerCtrl.importMethod == 'url'"/>
+                </div>
+
+                <div class="tekst">
+                <button type="button" class="btn btn-default" ng-show="newContainerCtrl.importMethod == 'file'" ngf-select="newContainerCtrl.onImportFilesChosen($file)" >Select Files</button>
+                </div>
 
                 <label>{{'SW_NEW_CONTAINER_ARCHIVE_T' | translate}}</label>
                 <select style="max-width: 300px;" class="form-control" theme="bootstrap" ng-model="newContainerCtrl.archiveType" required ng-disabled="newContainerCtrl.imageType != 'url'">
@@ -165,14 +177,34 @@
 
 
                 <label>
-                    <input type="radio" ng-model="newContainerCtrl.imageType" value="url">
-                    <span>{{'SW_NEW_CONTAINER_IMAGE_URL' | translate}}</span>
+                    <input type="radio" ng-model="newContainerCtrl.importMethod" value="url">
+                    <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_URL' | translate}}</span>
                 </label>
-                <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_IMAGE_URL' | translate}}" class="form-control" ng-model="newContainerCtrl.imageUrl" ng-disabled="newContainerCtrl.imageType != 'url'" ng-required="newContainerCtrl.imageType == 'url'"/>
                 <br>
+                <label>
+                    <input type="radio" ng-model="newContainerCtrl.importMethod" value="file">
+                    <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_FILE' | translate}}</span>
+                </label>
+                <div class="tekst">
+                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_IMAGE_URL' | translate}}"
+                           class="form-control" ng-model="newContainerCtrl.imageUrl"
+                           ng-disabled="newContainerCtrl.importMethod != 'url'"
+                           ng-required="newContainerCtrl.importMethod == 'url'"/>
+                </div>
+                <div class="tekst">
+                    <button type="button" class="btn btn-default" ng-show="newContainerCtrl.importMethod == 'file'"
+                            ngf-select="newContainerCtrl.onImportFilesChosen($file)">Select Files
+                    </button>
+                </div>
+
+                <span class="progress" ng-show="progress >= 0">
+                    <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+                </span>
+
+
                 <label>{{'SW_NEW_CONTAINER_ARCHIVE_T' | translate}}</label>
 
-                <select style="max-width: 300px;" class="form-control" theme="bootstrap" ng-model="newContainerCtrl.archiveType" required ng-disabled="newContainerCtrl.imageType != 'url'">
+                <select style="max-width: 300px;" class="form-control" theme="bootstrap" ng-model="newContainerCtrl.archiveType" required ng-disabled="newContainerCtrl.importMethod == ''">
                     <option value="rootfs">RootFS TAR(GZ/BZ2)</option>
                     <option value="simg">Singularity Image (simg)</option>
                 </select>
@@ -192,13 +224,10 @@
 
 
 
-                <!--<label>{{'SW_NEW_CONTAINER_COMMAND' | translate}}</label>-->
-                <!--<input type="text" placeholder="{{'SW_NEW_CONTAINER_COMMAND_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageCommand" ng-disabled="newContainerCtrl.imageType != 'url'" ng-required="newContainerCtrl.imageType == 'url'"/>-->
                 <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
-                <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageInput" ng-disabled="newContainerCtrl.imageType != 'url'" ng-required="newContainerCtrl.imageType == 'url'"/>
+                <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageInput" ng-disabled="newContainerCtrl.importMethod == ''" ng-required="newContainerCtrl.importMethod != ''"/>
                 <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
-                <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageOutput" ng-disabled="newContainerCtrl.imageType != 'url'" ng-required="newContainerCtrl.imageType == 'url'"/>
-                <!--  <span ng-hide="newContainerCtrl.imageType != 'url' || !newContainerCtrl.form.$error.url">{{'SW_NEW_IMAGE_URL_VALIDATION_ERROR' | translate}}</span> -->
+                <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageOutput" ng-disabled="newContainerCtrl.importMethod == ''" ng-required="newContainerCtrl.importMethod != ''"/>
             </div>
         </div>
         <br>
