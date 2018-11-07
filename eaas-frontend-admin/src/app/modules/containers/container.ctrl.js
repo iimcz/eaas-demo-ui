@@ -131,7 +131,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                                 // Push the uploaded file to the input list
                                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                                 $scope.runContainerDlgCtrl.inputs.push({
-                                    url: "file://" + resp.data.absolutePath,
+                                    url: resp.data.userDataUrl,
                                     name: resp.config.destination,
                                     action: resp.config.action
                                 });

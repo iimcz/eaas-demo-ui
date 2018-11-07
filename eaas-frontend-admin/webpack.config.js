@@ -18,8 +18,11 @@ var isProd = ENV === 'build';
 
 var PRODUCTION_BASE_PATH = '';
 
-var LOCAL_WEBSERVER_PATH = 'http://localhost:8081/';
+var LOCAL_WEBSERVER_PATH = '/';
 var PRODUCTION_PATH = '/admin-ui/';
+
+// Include git commit hash
+var commitHash = require('child_process').execSync('git rev-parse HEAD').toString();
 
 module.exports = function makeWebpackConfig() {
   /**
@@ -158,6 +161,9 @@ module.exports = function makeWebpackConfig() {
       '$': "jquery",
       'jQuery': "jquery",
       'Popper': 'popper.js'
+    }),
+    new webpack.DefinePlugin({
+        __UI_COMMIT_HASH__: JSON.stringify(commitHash)
     })
   ];
 
