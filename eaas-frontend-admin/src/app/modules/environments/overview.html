@@ -15,51 +15,6 @@
 
     </uib-tab>
     <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateData()" heading="Containers">
-        <!--<table id="containers-table" st-table="displayContainerEnvs" st-safe-src="standardEnvsOverviewCtrl.containerEnvs" class="table">-->
-            <!--<thead>-->
-            <!--<tr>-->
-                <!--<th colspan="6">-->
-                    <!--<input st-search="" class="form-control"-->
-                           <!--placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" type="text" /><br>-->
-                <!--</th>-->
-            <!--</tr>-->
-            <!--</thead>-->
-
-            <!--<tbody>-->
-            <!--<tr ng-repeat="row in displayContainerEnvs">-->
-                <!--<td>-->
-                    <!--<b>{{row.title}}</b>-->
-                    <!--<br/>-->
-                    <!--&lt;!&ndash;Start&ndash;&gt;-->
-                    <!--<a ui-sref="admin.container({envId: row.envId,  modifiedDialog: true })">{{'CHOOSE_ENV_RUN'| translate}}</a>-->
-
-                    <!--&lt;!&ndash;Edit&ndash;&gt;-->
-                    <!--<a ui-sref="admin.edit-container({envId: row.envId})">{{'CHOOSE_ENV_EDIT'| translate}}</a>-->
-
-                    <!--&lt;!&ndash;Delete&ndash;&gt;-->
-                    <!--<a href="#" ng-click="standardEnvsOverviewCtrl.deleteContainer(row.envId)">{{'CHOOSE_ENV_DEL'-->
-                        <!--| translate}}</a>-->
-
-                    <!--&lt;!&ndash;Landing page&ndash;&gt;-->
-                    <!--<a ng-if="standardEnvsOverviewCtrl.landingPage" href="{{standardEnvsOverviewCtrl.landingPage}}?id={{row.envId}}" target="_blank">{{'CONTAINER_LANDING_PAGE'-->
-                        <!--| translate}}</a>-->
-
-                    <!--<br>-->
-                    <!--<span ng-show="row.version != null">{{'CHOOSE_ENV_VER'-->
-					<!--| translate }}: {{row.version}}<br>-->
-            <!--</span> <div >{{row.author}} </div>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--</tbody>-->
-
-            <!--<tfoot>-->
-            <!--<tr>-->
-                <!--<td colspan="5" class="text-center">-->
-                    <!--<div st-pagination="" st-items-by-page="10" st-displayed-pages="10"></div>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!--</tfoot>-->
-        <!--</table>-->
     </uib-tab>
 
 
