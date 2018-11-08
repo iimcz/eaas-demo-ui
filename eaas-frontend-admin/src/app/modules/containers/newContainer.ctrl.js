@@ -1,5 +1,5 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'helperFunctions', 'REST_URLS',
-    function ($http, $scope, $state, $stateParams, runtimeList, growl, localConfig, $uibModal, $timeout, WizardHandler, helperFunctions, REST_URLS) {
+module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'Upload', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'helperFunctions', 'REST_URLS',
+    function ($http, $scope, $state, $stateParams, runtimeList, growl, Upload, localConfig, $uibModal, $timeout, WizardHandler, helperFunctions, REST_URLS) {
 
         var container = this;
         container.runtimes = runtimeList.data.runtimes;
@@ -10,6 +10,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         // initialize default values of the form
         container.imageSize = 1024;
         container.imageType = 'size';
+        container.importMethod = '';
 
 
         container.landingPage = localConfig.data.landingPage;
@@ -18,6 +19,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         container.env = [];
         container.args = [];
         container.tag = "";
+        container.imageInput = "/input";
+        container.imageOutput = "/output";
 
         //TODO: ?
         container.onSelectRuntime = function (item, model) {
@@ -31,7 +34,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if (container.args.length == 0) {
+            if (container.runtime !== "2" && container.args.length === 0) {
                 growl.error("process is required");
                 return false;
             }
@@ -41,7 +44,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if(container.args.length == 0 && newContainerCtrl.imageType == "dockerhub"){
+            if(container.args.length == 0 && container.imageType == "dockerhub"){
                 growl.error("container tag is required");
                 return false;
             }
@@ -133,6 +136,35 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             });
         };
 
+        container.onImportFilesChosen = function (file) {
+            // The user chose files to upload
+            // Initialize the uploadFiles list with meaningful values for destination and action.
+            // Those are displayed in the view and can be changed by the user
+            Upload.upload({
+                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                name: file.filename,
+                destination: file.destination,
+                action: "copy",
+                data: {file: file}
+            }).then(function (resp) {
+                // Push the uploaded file to the input list
+                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                container.imageUrl = resp.data.userDataUrl;
+
+            }, function (resp) {
+                console.log('Error status: ' + resp.status);
+                $state.go('error', {
+                    errorMsg: {
+                        title: "Load Environments Error " + resp.data.status,
+                        message: resp.data.message
+                    }
+                });
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+            });
+        };
+
         //Next Step
         container.import = function () {
 
@@ -147,6 +179,9 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 container.archiveType = "dockerhub";
             }
 
+            if (container.runtime === "2" && container.args.length === 0) {
+                container.args.push("/bin/sh", "-c", '. /environment; exec "$0" "$@"', "/singularity");
+            }
 
             var unescape = function (html) {
                 escapeEl.innerHTML = html;

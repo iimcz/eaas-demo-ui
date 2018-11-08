@@ -18,8 +18,11 @@ var isProd = ENV === 'build';
 
 var PRODUCTION_BASE_PATH = '';
 
-var LOCAL_WEBSERVER_PATH = 'http://localhost:8081/';
+var LOCAL_WEBSERVER_PATH = '/';
 var PRODUCTION_PATH = '/admin-ui/';
+
+// Include git commit hash
+var commitHash = require('child_process').execSync('git rev-parse HEAD').toString();
 
 module.exports = function makeWebpackConfig() {
   /**
@@ -158,6 +161,9 @@ module.exports = function makeWebpackConfig() {
       '$': "jquery",
       'jQuery': "jquery",
       'Popper': 'popper.js'
+    }),
+    new webpack.DefinePlugin({
+        __UI_COMMIT_HASH__: JSON.stringify(commitHash)
     })
   ];
 
@@ -175,7 +181,9 @@ module.exports = function makeWebpackConfig() {
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       new CopyWebpackPlugin([{
-          from: '../common/eaas-client/xpra', to: 'xpra'
+          from: '../eaas-client/xpra', to: 'xpra'
+        }, {
+          from: '../eaas-client/webemulator', to: 'webemulator'
       }])
   );
 
@@ -200,7 +208,9 @@ module.exports = function makeWebpackConfig() {
             from: __dirname + '/src/public'
         }]),
         new CopyWebpackPlugin([{
-            from: '../common/eaas-client/xpra', to: 'xpra'
+            from: '../eaas-client/xpra', to: 'xpra'
+          }, {
+            from: '../eaas-client/webemulator', to: 'webemulator'
         }])
     )
   }
