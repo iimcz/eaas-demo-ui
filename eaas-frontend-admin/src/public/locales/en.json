@@ -20,6 +20,8 @@
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Run]",
   "CHOOSE_ENV_RUN_MODIFIED" : "[Run modified]",
+  "CHOOSE_ACTION" : "Choose action...",
+  "CHOOSE_DELETE_SELECTED" : "Delete selected",
 
   "ERROR_RETURN_BTN" : "Back to overview",
 

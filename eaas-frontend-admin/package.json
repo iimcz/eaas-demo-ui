@@ -8,6 +8,7 @@
     "start": "npm run server"
   },
   "dependencies": {
+    "ag-grid-community": "^19.0.0",
     "angular": "1.5.3",
     "angular-animate": "1.5.3",
     "angular-bootstrap-contextmenu": "^0.9.9",

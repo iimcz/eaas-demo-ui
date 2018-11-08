@@ -29,10 +29,18 @@ import 'ng-file-upload';
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.js';
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.css';
 
+import * as agGrid from 'ag-grid-community';
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
+
+
+
+agGrid.initialiseAgGridWithAngular1(angular);
 
 /*
  * Import legacy emulator libraries
  */
+
 
 var $ = require('jquery');
 window.$ = window.jQuery = $; // publish jQuery into window scope for emulator libs
@@ -77,7 +85,7 @@ import './app.css';
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
-                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload'])
+                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
