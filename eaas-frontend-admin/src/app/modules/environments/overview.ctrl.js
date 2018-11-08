@@ -242,7 +242,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         vm.edit = function (id) {
             if (vm.view == 1)
                 $state.go('admin.edit-env', {envId: id, objEnv: true});
-           else if (vm.view == 1)
+           else if (vm.view == 0)
                 $state.go('admin.edit-env', {envId: id});
            else if (vm.view == 2)
                 $state.go('admin.edit-container', {envId: id});

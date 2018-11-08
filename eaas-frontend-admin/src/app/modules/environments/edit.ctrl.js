@@ -47,6 +47,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.nativeConfig = this.env.nativeConfig;
            this.enableInternet = this.env.enableInternet;
            this.serverMode = this.env.serverMode;
+           this.localServerMode = this.env.localServerMode;
            this.enableSocks = this.env.enableSocks;
            this.serverIp = this.env.serverIp;
            this.serverPort = this.env.serverPort;
@@ -119,6 +120,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    useXpra : this.useXpra,
                    enableInternet: this.enableInternet,
                    serverMode: this.serverMode,
+                   localServerMode: this.localServerMode,
                    enableSocks: this.enableSocks,
                    serverIp : this.serverIp,
                    serverPort : this.serverPort,

@@ -41,6 +41,7 @@
                 <label>
                     <input type="radio" ng-model="newContainerCtrl.importMethod" value="url">
                     <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_URL' | translate}}</span>
+
                 </label>
                 <br>
 
@@ -48,6 +49,7 @@
                     <input type="radio" ng-model="newContainerCtrl.importMethod" value="file">
                     <span>{{'SW_NEW_CONTAINER_DOCKER_IMAGE_IMPORT_FILE' | translate}}</span>
                 </label>
+
                 <div class="tekst">
                 <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_IMAGE_URL' | translate}}" class="form-control" ng-model="newContainerCtrl.imageUrl" ng-disabled="newContainerCtrl.importMethod != 'url'" ng-required="newContainerCtrl.importMethod == 'url'"/>
                 </div>
