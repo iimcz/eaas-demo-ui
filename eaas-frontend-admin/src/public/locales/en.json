@@ -201,6 +201,7 @@
   "EDITENV_ENABLE_INTERNET" : "Enable Internet access",
   "EDITENV_ENABLE_SERVERMODE" : "Enable server mode",
   "EDITENV_ENABLE_SOCKS" : "use SOCKS5",
+  "EDITENV_ENABLE_LOCAL_MODE" : "Enable Local Mode",
   "EDITENV_SERVER_IP" : "Internal server IP",
   "EDITENV_SERVER_PORT" : "Internal server port",
   "EDITENV_GW_PRIVATE_IP" : "Internal gateway IP",
