@@ -19,16 +19,18 @@
            placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}"/>
 </div>
 <div style="padding: 4px;">
-    <b>Number of Environments: {{standardEnvsOverviewCtrl.initRowData().length;}}</b>
+    <div class="ag-theme-balham"><b>Number of Environments: {{standardEnvsOverviewCtrl.initRowData().length;}}</b></div>
+
     <div style="top: 0; left: 0;">
-        Page Size:
-        <select ng-click="onPageSizeChanged()" ng-model="standardEnvsOverviewCtrl.pageSize">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="100">100</option>
-            <option value="500">500</option>
-        </select>
+        <div class="ag-theme-balham"> Page Size:
+            <select ng-click="onPageSizeChanged()" ng-model="standardEnvsOverviewCtrl.pageSize">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+            </select>
+        </div>
     </div>
 </div>
 
