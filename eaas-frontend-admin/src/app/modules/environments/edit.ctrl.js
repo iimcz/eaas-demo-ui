@@ -80,7 +80,6 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            }
 
            this.userTag = this.env.userTag;
-           console.log("this.env ", this.env);
 
            if(localConfig.data.features.handle) {
                $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {

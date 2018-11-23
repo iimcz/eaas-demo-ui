@@ -232,10 +232,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                     break;
                 }
             }
-
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-
+            $rootScope.nativeConfig = env.nativeConfig;
             $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, archiveId: env.archiveId});
         };
 
