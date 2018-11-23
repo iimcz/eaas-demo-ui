@@ -63,6 +63,13 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Container",
   "BASE_MENU_NEW_OBJECT" : "Objekt importieren",
+  "ADVANCED_IMPORT_EMULATOR": "Emulator importieren",
+  "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS": "Emulator Alias",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS_PLC": "latest",
+  "ADVANCED_IMPORT_EMULATOR_TYPE": "Emulator type",
+  "ADVANCED_IMPORT_EMULATOR_VERSION_PLC": "v1.25_5678",
+
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -190,6 +197,7 @@
   "EDITENV_TAG_DONE" : "Fertig",
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
+  "EDITENV_CONTAINER_EMULATOR" : "Container Emulator",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
 
   "EDITENV_CANCONNECTENVS": "Umgebung verbinden (Experimental)",

@@ -515,7 +515,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 objectDependencies: ($http, localConfig, $stateParams, helperFunctions, REST_URLS) =>
                      $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getObjectDependencies, $stateParams.envId)),
                 operatingSystemsMetadata : ($http, localConfig, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOperatingSystemsMetadata)
+                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOperatingSystemsMetadata),
+                nameIndexes : ($http, localConfig, REST_URLS) =>
+                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getNameIndexes)
             },
             views: {
                 'wizard': {

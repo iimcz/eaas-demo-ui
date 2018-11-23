@@ -66,6 +66,12 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Containers",
   "BASE_MENU_NEW_OBJECT" : "Import Object",
+  "ADVANCED_IMPORT_EMULATOR": "Import Emulator",
+  "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS": "Emulator alias",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS_PLC": "latest",
+  "ADVANCED_IMPORT_EMULATOR_TYPE": "Emulator type",
+  "ADVANCED_IMPORT_EMULATOR_VERSION_PLC": "v1.25_5678",
 
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
@@ -195,6 +201,7 @@
   "EDITENV_TAG_DONE" : "done",
   "EDITENV_OBJ_DEPENDENCIES" : "Manually assigned objects",
   "EDITENV_NATIVE_CONFIG" : "Native config",
+  "EDITENV_CONTAINER_EMULATOR" : "Container Emulator",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
 
   "EDITENV_CANCONNECTENVS": "Can be connected with other environments (Experimental)",
