@@ -65,4 +65,21 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
                 $state.go('admin.standard-envs-overview', {showObjects: false, showContainers: true}, {reload: true});
             });
         };
+
+        vm.createHandle = function () {
+            jQuery.when(
+                $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
+                    handle: handlePrefix + vm.env.envId,
+                    value: localConfig.data.landingPage + "?id=" + vm.env.envId
+                })
+            ).then(function (response) {
+                console.log("response  ", response);
+                console.log("response.status   ", response.status);
+                if (response.status === 200) {
+                    vm.handle = handlePrefix + vm.env.envId;
+                } else {
+                    growl.error('Handle is not defined!!');
+                }
+            });
+        };
     }];

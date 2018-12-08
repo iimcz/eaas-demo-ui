@@ -19,7 +19,8 @@
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Start]",
   "CHOOSE_ENV_RUN_MODIFIED" : "[Start modifiziert]",
-
+  "CHOOSE_ACTION" : "Aktion wählen...",
+  "CHOOSE_DELETE_SELECTED" : "Auswahl löschen",
 
   "ERROR_RETURN_BTN" : "Zurück zur Übersicht",
 
@@ -62,6 +63,13 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Container",
   "BASE_MENU_NEW_OBJECT" : "Objekt importieren",
+  "ADVANCED_IMPORT_EMULATOR": "Emulator importieren",
+  "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS": "Emulator Alias",
+  "ADVANCED_IMPORT_EMULATOR_ALIAS_PLC": "latest",
+  "ADVANCED_IMPORT_EMULATOR_TYPE": "Emulator type",
+  "ADVANCED_IMPORT_EMULATOR_VERSION_PLC": "v1.25_5678",
+
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -189,12 +197,14 @@
   "EDITENV_TAG_DONE" : "Fertig",
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
+  "EDITENV_CONTAINER_EMULATOR" : "Container Emulator",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
 
   "EDITENV_CANCONNECTENVS": "Umgebung verbinden (Experimental)",
   "EDITENV_ENABLE_INTERNET" : "Internetzugang aktivieren",
   "EDITENV_ENABLE_SERVERMODE" : "Nutzung als Server ermöglichen",
   "EDITENV_ENABLE_SOCKS" : "SOCKS5 Proxy aktivieren",
+  "EDITENV_ENABLE_LOCAL_MODE" : "Nutzung als lokalen Server aktivieren",
   "EDITENV_SERVER_IP" : "Interne Server Address",
   "EDITENV_SERVER_PORT" : "Interner Server Port",
   "EDITENV_GW_PRIVATE_IP" : "Interne IP des Gateways",

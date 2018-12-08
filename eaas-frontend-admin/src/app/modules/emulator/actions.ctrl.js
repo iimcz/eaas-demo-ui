@@ -7,7 +7,16 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
 
-    if(chosenEnv.data)
+
+    console.log("$rootScope.nativeConfig  ", $rootScope.nativeConfig);
+
+    if(typeof $rootScope.nativeConfig !== 'undefined')
+        vm.isKVM = ($rootScope.nativeConfig.includes('-enable-kvm'));
+    else
+        vm.isKVM = false;
+
+
+    if (chosenEnv.data)
     {
         vm.enablePrinting = chosenEnv.data.enablePrinting;
         vm.shutdownByOs = chosenEnv.data.shutdownByOs;

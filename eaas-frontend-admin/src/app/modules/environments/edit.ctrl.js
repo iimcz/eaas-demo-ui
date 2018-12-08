@@ -1,15 +1,18 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "REST_URLS",
-            function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata","nameIndexes", "REST_URLS",
+    function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, nameIndexes, REST_URLS) {
 
            let handlePrefix = "11270/";
            var vm = this;
 
-           vm.showDateContextPicker = false;
+           let emulatorContainerVersionSpillter = "|"
+
+           vm.showAdvanced = false;
+           vm.landingPage = localConfig.data.landingPage;
+
            var envList = null;
            vm.isObjectEnv = $stateParams.objEnv;
 
            vm.operatingSystemsMetadata = {};
-           console.log(operatingSystemsMetadata);
            if(operatingSystemsMetadata)
              vm.operatingSystemsMetadata = operatingSystemsMetadata.data.operatingSystemInformations;
 
@@ -35,6 +38,19 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                $state.go('admin.standard-envs-overview', {}, {reload: true});
            }
 
+        vm.emulator = this.env.emulator;
+
+        console.log("vm.emulator ", vm.emulator);
+
+        vm.showDateContextPicker = false;
+        Object.keys(nameIndexes.data.entries).forEach(function (element) {
+            if (!element.toLowerCase().includes(vm.emulator.toLowerCase()))
+                delete nameIndexes.data.entries[element];
+        });
+        vm.nameIndexes = Object.keys(nameIndexes.data.entries);
+        vm.emulatorContainer = this.env.containerName + "|" + this.env.containerVersion;
+        console.log(" vm.nameIndexes ",  vm.nameIndexes);
+
            this.envTitle = this.env.title;
            this.author = this.env.author;
            this.envDescription = this.env.description;
@@ -44,6 +60,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.nativeConfig = this.env.nativeConfig;
            this.enableInternet = this.env.enableInternet;
            this.serverMode = this.env.serverMode;
+           this.localServerMode = this.env.localServerMode;
            this.enableSocks = this.env.enableSocks;
            this.serverIp = this.env.serverIp;
            this.serverPort = this.env.serverPort;
@@ -54,8 +71,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            this.canProcessAdditionalFiles = this.env.canProcessAdditionalFiles;
            this.shutdownByOs = this.env.shutdownByOs;
 
-           for(var i=0; i < vm.operatingSystemsMetadata.length; i++) {
-                console.log(vm.operatingSystemsMetadata[i].id + " " + this.env.os)
+           for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
+                console.log(vm.operatingSystemsMetadata[i].id + " " + this.env.os);
                 if (vm.operatingSystemsMetadata[i].id === this.env.os)
                 {
                     this.os = vm.operatingSystemsMetadata[i];
@@ -72,6 +89,23 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                });
            }
 
+           vm.createHandle = function () {
+                    jQuery.when(
+                        $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
+                            handle: handlePrefix + vm.env.envId,
+                            value: vm.landingPage + "?id=" + vm.env.envId
+                        })
+                    ).then(function (response) {
+                        console.log("response  ", response);
+                        console.log("response.status   ", response.status);
+                        if (response.status === 200) {
+                            vm.handle = handlePrefix + vm.env.envId;
+                        } else {
+                            growl.error('Handle is not defined!!');
+                        }
+                    });
+           };
+
            this.saveEdit = function() {
                var timecontext = null;
                if(this.showDateContextPicker)
@@ -83,7 +117,6 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
                this.env.helpText = this.envHelpText;
-               console.log("canProcessAdditionalFiles  " + vm.canProcessAdditionalFiles);
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                    envId: $stateParams.envId,
                    title: this.envTitle,
@@ -99,6 +132,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    useXpra : this.useXpra,
                    enableInternet: this.enableInternet,
                    serverMode: this.serverMode,
+                   localServerMode: this.localServerMode,
                    enableSocks: this.enableSocks,
                    serverIp : this.serverIp,
                    serverPort : this.serverPort,
@@ -106,7 +140,9 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    gwPrivateMask: this.gwPrivateMask,
                    nativeConfig: this.nativeConfig,
                    connectEnvs : this.connectEnvs,
-                   processAdditionalFiles : vm.canProcessAdditionalFiles
+                   processAdditionalFiles : vm.canProcessAdditionalFiles,
+                   containerEmulatorName : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[0],
+                   containerEmulatorVersion : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[1]
            }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));

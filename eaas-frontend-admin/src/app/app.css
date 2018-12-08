@@ -358,3 +358,15 @@ button:focus#printerbutton    {
     display:block;
     margin-bottom:5px;   /* adapt the margin value to the desire space between span and select box */
 }
+.tekstMore {
+    display:block;
+    margin-bottom:10px;   /* adapt the margin value to the desire space between span and select box */
+}
+
+.ag-theme-balham {
+    font-size: 14px;
+}
+
+.ag-header-cell-label{
+    font-size: 14px;
+}
