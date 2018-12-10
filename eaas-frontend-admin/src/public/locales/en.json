@@ -141,6 +141,7 @@
   "SW_NEW_IMAGE_CANCEL_BUTTON" : "Cancel",
   "SW_NEW_IMAGE_START_BUTTON" : "Start",
   "SW_NEW_IMAGE_ROM_LBL" : "ROM File",
+  "SW_NEW_IMAGE_KVM" : "Enable kvm (Kernel-based Virtual Machine)",
 
   "SW_NEW_CONTAINER_HEADER" : "Create new Container",
   "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Choose Origin Runtime",
@@ -166,7 +167,7 @@
   "SW_NEW_CONTAINER_FORMAT_DOCKER" : "EaaS can process Docker images from the Docker Hub or in the form of tar-archives generated with docker save. Hub hosted images are referenced via its name and tag, tar-archives via an URL pointing towards it. Additionally a command can be specified. If no command is given the default image entrypoint is used.",
   "SW_NEW_CONTAINER_DOCKER" : "Specify your image name and tag in Docker Hub:",
   "SW_NEW_CONTAINER_FORMAT_SINGULARITY" : "EaaS processes Singularity images in the standard Singularity Format (http://singularity.lbl.gov/docs-build-container). Additionally a command can be specified, otherwise the default singularity runscript is used.",
-  "SW_NEW_CONTAINER_FORMAT_RUNC" : "(WIP) needs clarification, tar-archive or image file",
+  "SW_NEW_CONTAINER_FORMAT_RUNC" : "Please provide a tar.gz archive with RunC rootfs filesystem without corresponding parent directory.",
   "SW_NEW_CONTAINER_ARCHIVE_T" : "Type",
   "SW_NEW_CONTAINER_ENVIRONMENT_H" : "Environment variables",
   "SW_NEW_CONTAINER_ENVIRONMENT_NOTE" : "Enter environment variables for to be set inside the container",

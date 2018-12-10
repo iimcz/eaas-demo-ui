@@ -1,10 +1,14 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata","nameIndexes", "REST_URLS",
-    function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, nameIndexes, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata",
+    // "nameIndexes",
+    "REST_URLS",
+    function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata,
+              // nameIndexes,
+              REST_URLS) {
 
            let handlePrefix = "11270/";
            var vm = this;
 
-           let emulatorContainerVersionSpillter = "|"
+           let emulatorContainerVersionSpillter = "|";
 
            vm.showAdvanced = false;
            vm.landingPage = localConfig.data.landingPage;
@@ -43,12 +47,14 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
         console.log("vm.emulator ", vm.emulator);
 
         vm.showDateContextPicker = false;
-        Object.keys(nameIndexes.data.entries).forEach(function (element) {
-            if (!element.toLowerCase().includes(vm.emulator.toLowerCase()))
-                delete nameIndexes.data.entries[element];
-        });
-        vm.nameIndexes = Object.keys(nameIndexes.data.entries);
-        vm.emulatorContainer = this.env.containerName + "|" + this.env.containerVersion;
+        if (typeof nameIndexes != "undefined") {
+            Object.keys(nameIndexes.data.entries).forEach(function (element) {
+                if (!element.toLowerCase().includes(vm.emulator.toLowerCase()))
+                    delete nameIndexes.data.entries[element];
+            });
+            vm.nameIndexes = Object.keys(nameIndexes.data.entries);
+            vm.emulatorContainer = this.env.containerName + "|" + this.env.containerVersion;
+        }
         console.log(" vm.nameIndexes ",  vm.nameIndexes);
 
            this.envTitle = this.env.title;
@@ -141,8 +147,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    nativeConfig: this.nativeConfig,
                    connectEnvs : this.connectEnvs,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
-                   containerEmulatorName : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[0],
-                   containerEmulatorVersion : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[1]
+                   // containerEmulatorName : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[0],
+                   // containerEmulatorVersion : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[1]
            }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
