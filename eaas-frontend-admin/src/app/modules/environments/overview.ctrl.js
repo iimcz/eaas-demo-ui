@@ -135,15 +135,14 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
 
                         $uibModal.open({
                             animation: true,
-                            templateUrl: './modals/confirm-delete.html',
+                            template: require ('./modals/confirm-delete.html'),
                             controller: ["$scope", function($scope) {
                                 this.envId = envId;
                                 this.confirmed = confirmDeleteFn;
                             }],
                             controllerAs: "confirmDeleteDialogCtrl"
                         });
-                    }
-                    else {
+                    } else {
                         $rootScope.chk.transitionEnable = true;
                         growl.error(response.data.message, {title: 'Error ' + response.data.status});
                         $state.go('admin.standard-envs-overview', {}, {reload: true});
