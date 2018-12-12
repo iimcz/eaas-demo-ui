@@ -1,5 +1,5 @@
-module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localConfig', 'kbLayouts', 'growl', '$uibModalStack', 'REST_URLS', 'helperFunctions',
-    function ($state, $http, $scope, $uibModal, $timeout, localConfig, kbLayouts, growl, $uibModalStack, REST_URLS, helperFunctions) {
+module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localConfig', 'kbLayouts', 'Upload', 'growl', '$uibModalStack', 'REST_URLS', 'helperFunctions',
+    function ($state, $http, $scope, $uibModal, $timeout, localConfig, kbLayouts, Upload, growl, $uibModalStack, REST_URLS, helperFunctions) {
         var vm = this;
         vm.emulator = null;
         vm.emulatorType = null;
@@ -61,7 +61,34 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
                 }
             });
         };
+        this.onImportFilesChosen = function (file) {
+            // The user chose files to upload
+            // Initialize the uploadFiles list with meaningful values for destination and action.
+            // Those are displayed in the view and can be changed by the user
+            Upload.upload({
+                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                name: file.filename,
+                destination: file.destination,
+                action: "copy",
+                data: {file: file}
+            }).then(function (resp) {
+                // Push the uploaded file to the input list
+                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                vm.imageUrl = resp.data.userDataUrl;
 
+            }, function (resp) {
+                console.log('Error status: ' + resp.status);
+                $state.go('error', {
+                    errorMsg: {
+                        title: "Load Environments Error " + resp.data.status,
+                        message: resp.data.message
+                    }
+                });
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+            });
+        };
         //Next Step
         vm.import = function () {
 
