@@ -325,7 +325,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 $scope.gridOptions.api.sizeColumnsToFit();
             },
             pagination: true,
-            paginationPageSize: 10,
+            paginationPageSize: 20,
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },
