@@ -96,9 +96,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
             var convertedArgs = [];
             var escapeEl = document.createElement('textarea');
 
-            if (vm.imageType === "dockerhub") {
-                vm.archiveType = "dockerhub";
-            }
+
 
             var unescape = function (html) {
                 escapeEl.innerHTML = html;
@@ -120,7 +118,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
                     processEnvs: vm.env,
                     inputFolder: vm.imageInput,
                     outputFolder: vm.imageOutput,
-                    imageType: vm.archiveType,
+                    imageType: vm.imageType,
                     title: vm.title,
                     description: vm.containerDescription,
                     author: vm.author,
