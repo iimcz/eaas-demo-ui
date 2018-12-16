@@ -172,7 +172,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             console.log("Checkpointed environment saved as: " + newEnvId);
             growl.success(status, {title: "New snapshot created."});
             window.eaasClient.release();
-            $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
+            $state.go('admin.edit-env', {envId: newEnvId}, {reload: true});
        });
     };
 
