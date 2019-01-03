@@ -163,7 +163,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $rootScope.chk.transitionEnable = true;
     $rootScope.waitingForServer = true;
 
-//        localStorage.setItem('id_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE');
 //       localStorage.removeItem('id_token');
 
 
@@ -542,6 +541,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             url: "/emulator",
             resolve: {
                 mediaCollection: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
+                    if( $stateParams.softwareId == null && $stateParams.objectId == null)
+                        return null;
                     return $http.get(localConfig.data.eaasBackendURL +
                         (($stateParams.softwareId != null) ?
                             helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.softwareId) :
