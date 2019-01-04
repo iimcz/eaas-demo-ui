@@ -17,4 +17,9 @@
       "handle" : false,
       "advanced": true
     }
+
+    "auth0Config" : {
+        clientID: '',
+        domain: '.auth0.com',
+    }
 }

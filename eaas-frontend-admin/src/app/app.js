@@ -18,6 +18,7 @@ import 'angular-translate';
 import 'angular-translate-loader-static-files';
 import 'angular-smart-table';
 import 'chart.js';
+import 'angular-auth0/src';
 import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
@@ -85,7 +86,7 @@ import './app.css';
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
-                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid'])
+                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -163,6 +164,25 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $rootScope.chk.transitionEnable = true;
     $rootScope.waitingForServer = true;
 
+    $http.get("config.json")
+      .success(function(data, status, headers, config) {
+          if(data.id_token)
+          {
+            console.log(data.id_token);
+            localStorage.setItem('id_token', data.id_token);
+          }
+          else
+            localStorage.removeItem('id_token');
+      });
+
+
+      // var params = new URLSearchParams(location.hash.slice(1).substring(1));
+             // var token = params.get("id_token")
+             // if(token)
+             // {
+             //     localStorage.setItem('id_token', token);
+             // }
+
 //       localStorage.removeItem('id_token');
 
 
@@ -179,10 +199,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
-
-
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider) {
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider'
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -219,10 +237,29 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
+    $http.get("config.json")
+          .success(function(data, status, headers, config) {
+
+        if(data.auth0Config) {
+            angularAuth0Provider.init({
+                clientID: data.auth0Config.clientID,
+                domain: data.auth0Config.domain,
+                responseType: 'id_token',
+                scope: 'openid'
+            });
+        }
+    });
+
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
       whiteListedDomains: "localhost",
-      tokenGetter: [ function() {
+      tokenGetter: [ 'options', function(options) {
+        if (options.url.substr(options.url.length - 5) == '.html') {
+            return null;
+        }
+        if (options.url.substr(options.url.length - 5) == '.json') {
+            return null;
+        }
         return localStorage.getItem('id_token');
       }]
     });
@@ -233,7 +270,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                     if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
+                if (rejection && rejection.status === 401) {
+                    $injector.get('$state').go('login');
+                    return $q.reject(rejection);
+                }
+                if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
                     if (httpResponseErrorModal === null) {
@@ -291,6 +332,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             }],
             controllerAs: "errorCtrl"
         })
+        .state('login', {
+            url: "/login",
+            templateUrl: "partials/login.html",
+            controller: function(angularAuth0) {
+                var vm = this;
+                vm.angularAuth0 = angularAuth0;
+                console.log(vm);
+              //  vm.angularAuth0.authorize({connection: 'twitter'});
+            },
+            controllerAs: "loginCtrl"
+        })
         .state('admin', {
             abstract: true,
             url: "/admin",
@@ -312,7 +364,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             },
             controller: "BaseController as baseCtrl"
         })
-
         .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
