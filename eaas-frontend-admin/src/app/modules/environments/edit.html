@@ -47,9 +47,9 @@
     <p ng-if="editEnvCtrl.showAdvanced">
         <label>{{'EDITENV_CONTAINER_EMULATOR' | translate}}:</label>
         <ui-select ng-model="editEnvCtrl.emulatorContainer" theme="bootstrap" title="{{'EDITENV_CONTAINER_EMULATOR' | translate}}" required>
-            <ui-select-match placeholder="{{'EDITENV_CONTAINER_EMULATOR' | translate}}">{{$select.selected}}</ui-select-match>
+            <ui-select-match placeholder="{{'EDITENV_CONTAINER_EMULATOR' | translate}}">{{$select.selected.key}}</ui-select-match>
             <ui-select-choices repeat="index in editEnvCtrl.nameIndexes  | filter: $select.search">
-                <span ng-bind-html="index
+                <span ng-bind-html="index.key
                  | highlight: $select.search"></span>
             </ui-select-choices>
         </ui-select>

@@ -4,7 +4,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
            let handlePrefix = "11270/";
            var vm = this;
 
-           let emulatorContainerVersionSpillter = "|"
+           let emulatorContainerVersionSpillter = "|";
 
            vm.showAdvanced = false;
            vm.landingPage = localConfig.data.landingPage;
@@ -43,13 +43,37 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
         console.log("vm.emulator ", vm.emulator);
 
         vm.showDateContextPicker = false;
-        Object.keys(nameIndexes.data.entries).forEach(function (element) {
-            if (!element.toLowerCase().includes(vm.emulator.toLowerCase()))
-                delete nameIndexes.data.entries[element];
+
+        nameIndexes.data.entries.entry.forEach(function (element, i) {
+            console.log("element.key ", element.key);
+            console.log("element ", element);
+            if (!element.key.toLowerCase().includes(vm.emulator.toLowerCase()))
+                delete nameIndexes.data.entries.entry[i];
         });
-        vm.nameIndexes = Object.keys(nameIndexes.data.entries);
-        vm.emulatorContainer = this.env.containerName + "|" + this.env.containerVersion;
+
+        vm.nameIndexes = nameIndexes.data.entries.entry;
+        vm.getNameIndexObj = function(key, name, version){
+            return             {
+                key: key,
+                value: {
+                    name: name,
+                    value: version
+                }
+            }
+        };
+        // Since the values are null, EmuBean would decide to use latest version from aliases
+        vm.nameIndexes.unshift(vm.getNameIndexObj("latest", null, null));
+
+        if (typeof this.env.containerName !== "undefined" && typeof this.env.containerVersion !== "undefined")
+            vm.emulatorContainer = vm.getNameIndexObj(this.env.containerName + "|" + this.env.containerVersion,
+                this.env.containerName,
+                this.env.containerVersion);
+        else  vm.emulatorContainer = vm.getNameIndexObj("latest", null, null);
+
+
         console.log(" vm.nameIndexes ",  vm.nameIndexes);
+        console.log(" nameIndexes ",  nameIndexes);
+        console.log(" vm.vm.emulatorContainer ",  vm.emulatorContainer);
 
            this.envTitle = this.env.title;
            this.author = this.env.author;
@@ -141,8 +165,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    nativeConfig: this.nativeConfig,
                    connectEnvs : this.connectEnvs,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
-                   containerEmulatorName : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[0],
-                   containerEmulatorVersion : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[1]
+                   containerEmulatorName : vm.emulatorContainer.value.name,
+                   containerEmulatorVersion : vm.emulatorContainer.value.version
            }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
