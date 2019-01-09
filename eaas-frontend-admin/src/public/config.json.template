@@ -18,7 +18,8 @@
       "software" : true,
       "handle" : false,
       "advanced": true,
-      "objectUpload" : true
+      "objectUpload" : true,
+      "oaipmh" : true
     },
 
     "auth0Config" : {

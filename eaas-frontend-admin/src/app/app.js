@@ -157,7 +157,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         };
     })
 
-.run(function($rootScope, $state) {
+.run(function($rootScope, $state, $http) {
     $rootScope.emulator = {state : ''};
 
     $rootScope.chk = {};
@@ -199,8 +199,22 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
+.provider('localConfig', function() {
+      var localConfig = {};
+
+      var loadConfig = ['$http', function($http) {
+            $http.get('/config.json').success(function(data) {
+             localConfig = data;
+          });
+
+         return localConfig;
+      }];
+
+      this.$get = loadConfig;
+})
+
+.config(['localConfigProvider','$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
+        function(localConfigProvider, $stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -237,18 +251,20 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
-    $http.get("config.json")
-          .success(function(data, status, headers, config) {
+    console.log(localConfigProvider.$get);
 
-        if(data.auth0Config) {
-            angularAuth0Provider.init({
-                clientID: data.auth0Config.clientID,
-                domain: data.auth0Config.domain,
-                responseType: 'id_token',
-                scope: 'openid'
-            });
-        }
-    });
+//    $http.get("config.json")
+//          .success(function(data, status, headers, config) {
+//
+//        if(data.auth0Config) {
+//            angularAuth0Provider.init({
+//                clientID: data.auth0Config.clientID,
+//                domain: data.auth0Config.domain,
+//                responseType: 'id_token',
+//                scope: 'openid'
+//            });
+//        }
+//    });
 
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
@@ -360,7 +376,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 containerEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "container"))
                 },
-
+                softwareList: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
+                },
             },
             controller: "BaseController as baseCtrl"
         })
@@ -552,6 +570,19 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 'wizard': {
                     template: require('./modules/environments/overview.html'),
                     controller: "EnvironmentsOverviewController as standardEnvsOverviewCtrl"
+                }
+            }
+        })
+        .state('admin.metadata', {
+            url: "/metadata",
+            resolve : {
+                oaiHarvesterList: ($http, localConfig, helperFunctions, REST_URLS) =>
+                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters")
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/metadata/metadata.html'),
+                    controller: "MetadataController as metadataCtrl"
                 }
             }
         })

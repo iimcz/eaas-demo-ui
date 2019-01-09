@@ -264,15 +264,15 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             var rowData = [];
             if (vm.view == 0)
                 vm.envs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator})
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator})
                 });
             else if (vm.view == 1) {
                 vm.objEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator, objectId : element.objectId})
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator, objectId : element.objectId})
                 })
             } else if (vm.view == 2) {
                 vm.containerEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator, objectId : element.objectId})
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator, objectId : element.objectId})
                 })
             }
             return rowData;
@@ -285,6 +285,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                     suppressMenu: true},
                 {headerName: "Name", field: "name"},
                 {headerName: "ID", field: "id"},
+                {headerName: "Archive", field: "archive"}
             ];
 
             if (vm.view == 0 || vm.view == 1) {
@@ -326,7 +327,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 $scope.gridOptions.api.sizeColumnsToFit();
             },
             pagination: true,
-            paginationPageSize: 10,
+            paginationPageSize: 20,
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },

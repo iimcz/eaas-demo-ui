@@ -6,7 +6,7 @@
   "CHOOSE_BASEENV_L" : "Virtual machines",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
-  "CHOOSE_ENV_PROPOSAL" : "[Run]",
+  "CHOOSE_ENV_PROPOSAL" : "Run Environment",
   "CHOOSE_ENV_EDIT" : "[Edit description]",
   "CHOOSE_HANDLE_EDIT" : "Edit handle value",
   "CHOOSE_HANDLE_SHOW" : "save handle value",
@@ -16,7 +16,7 @@
   "SAVE_HANDLE" : "Save handle",
   "CHOOSE_ENV_DEL" : "[Delete]",
   "CHOOSE_ENV_VER" : "Version",
-  "CHOOSE_ENV_ADDSW" : "[Add software]",
+  "CHOOSE_ENV_ADDSW" : "Add Software",
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Run]",
   "CHOOSE_ENV_RUN_MODIFIED" : "[Run modified]",
@@ -66,6 +66,8 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Containers",
   "BASE_MENU_NEW_OBJECT" : "Import Object",
+  "BASE_MENU_MD" : "OAI PMH",
+
   "ADVANCED_IMPORT_EMULATOR": "Import Emulator",
   "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
   "ADVANCED_IMPORT_EMULATOR_ALIAS": "Emulator alias",
@@ -347,5 +349,8 @@
   "OBJECT_INGEST_REPO_HEADER" : "Object IDs to be imported",
   "OBJECT_INGEST_REPO_EMPTY" : "Empty list",
   "OBJECT_INGEST_REPO_PH" : "Object ID",
-  "OBJECT_INGEST_REPO_BUTTON" : "Add"
+  "OBJECT_INGEST_REPO_BUTTON" : "Add",
+
+  "METADATA_L" : "Metadata Harvesting",
+  "METADATA_PROVIDER_TH" : "Configured Endpoints"
 }
