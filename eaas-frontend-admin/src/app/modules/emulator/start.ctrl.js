@@ -100,7 +100,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").show();
-
+                    $rootScope.emulator.mode = eaasClient.mode;
+                    console.log( $rootScope.emulator);
                     console.log(eaasClient.networkTcpInfo);
                     if (eaasClient.networkTcpInfo) {
                         var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));

@@ -15,6 +15,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     else
         vm.isKVM = false;
 
+    vm.mode = $rootScope.emulator.mode;
 
     if (chosenEnv.data)
     {
@@ -55,8 +56,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     {
         window.eaasClient.getPrintJobs(printSuccessFn);
     };
-
-
 
     vm.restartEmulator = function() {
         window.eaasClient.release();

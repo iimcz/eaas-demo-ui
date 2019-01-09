@@ -158,7 +158,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     })
 
 .run(function($rootScope, $state, $http) {
-    $rootScope.emulator = {state : ''};
+    $rootScope.emulator = {
+        state : '',
+        mode : null
+    };
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
