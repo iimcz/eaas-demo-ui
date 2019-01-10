@@ -17,4 +17,3 @@ build:
  cache:
   paths:
   - eaas-frontend-admin/node_modules
-  - citar-headless-client/node_modules
