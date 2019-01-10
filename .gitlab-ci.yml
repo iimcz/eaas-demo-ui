@@ -3,13 +3,13 @@ image: node:8
 build:
  stage: build
  script:
- - cd eaas-frontend-admin
- - git submodule init
- - git submodule update
- - npm install
- - npm run build
+ - git submodule init && git submodule update
+ - echo $CONFIG > eaas-frontend-admin/src/public/config.json
+ - echo $CONFIG > citar-headless-client/src/public/config.json
+ - ./build-citar.sh
  
  
  cache:
   paths:
-  - demo-ui/eaas-frontend-admin/node_modules
+  - eaas-frontend-admin/node_modules
+  - citar-headless-client/node_modules
