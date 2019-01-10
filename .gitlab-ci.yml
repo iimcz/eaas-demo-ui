@@ -4,6 +4,8 @@ build:
  stage: build
  script:
  - cd eaas-frontend-admin
+ - node -v 
+ - npm -v
  - npm install
  - npm run build
  
