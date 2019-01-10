@@ -1,9 +1,11 @@
-FROM node:8
+image: node:8
 
 build:
  stage: build
  script:
- - cd demo-ui/eaas-frontend-admin
+ - cd eaas-frontend-admin
+ - git submodule init
+ - git submodule update
  - npm install
  - npm run build
  
@@ -11,4 +13,3 @@ build:
  cache:
   paths:
   - demo-ui/eaas-frontend-admin/node_modules
-
