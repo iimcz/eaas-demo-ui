@@ -13,4 +13,6 @@ build:
  - sshpass -p $gitlab rsync -e "ssh -o StrictHostKeyChecking=no" -rltvz -O /builds/openslx/demo-ui/eaas-frontend-admin/dist/ gitlab@$CITAR_SERVER:/mnt/data/citar-demo/demo-ui/eaas-frontend-admin/dist/
  - sshpass -p $gitlab rsync -e "ssh -o StrictHostKeyChecking=no" -rltvz -O /builds/openslx/demo-ui/citar-headless-client/dist/ gitlab@$CITAR_SERVER:/mnt/data/citar-demo/demo-ui/citar-headless-client/dist/
 
- 
+ cache:
+  paths:
+  - eaas-frontend-admin/node_modules
