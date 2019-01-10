@@ -1,4 +1,4 @@
-FROM node:8
+image: node:8
 
 build:
  stage: build
@@ -11,4 +11,3 @@ build:
  cache:
   paths:
   - demo-ui/eaas-frontend-admin/node_modules
-
