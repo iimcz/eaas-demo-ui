@@ -3,7 +3,7 @@ image: node:8
 build:
  stage: build
  script:
- - cd demo-ui/eaas-frontend-admin
+ - cd eaas-frontend-admin
  - npm install
  - npm run build
  
