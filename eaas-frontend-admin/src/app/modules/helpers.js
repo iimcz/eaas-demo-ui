@@ -58,6 +58,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 
     this.buildVersionUrl = "Emil/buildInfo";
+    this.getUserInfo = "Emil/userInfo";
 
     // Software archive api
     this.getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";

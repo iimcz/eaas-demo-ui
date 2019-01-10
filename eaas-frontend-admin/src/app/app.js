@@ -382,6 +382,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
+                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo)
             },
             controller: "BaseController as baseCtrl"
         })
