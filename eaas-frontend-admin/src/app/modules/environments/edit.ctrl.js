@@ -1,7 +1,7 @@
-module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig",
+module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "environmentList", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "softwareList", "$uibModal",
              "$timeout", "nameIndexes", "REST_URLS",
-            function ($http, $rootScope, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig,
+            function ($http, $rootScope, $scope, $state, $stateParams, environmentList, localConfig,
             growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, softwareList, $uibModal,
             $timeout, nameIndexes, REST_URLS) {
 
@@ -22,11 +22,8 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "en
 
            this.dependencies = objectDependencies.data;
            vm.isObjectEnv = $stateParams.objEnv;
-           if($stateParams.objEnv)
-               envList = objectEnvironmentList.data.environments;
-           else
-               envList = environmentList.data.environments;
 
+           envList = environmentList.data.environments;
            this.env = null;
 
            for(var i = 0; i < envList.length; i++) {

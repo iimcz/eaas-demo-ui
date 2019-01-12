@@ -1,5 +1,5 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnvironmentList', 'localConfig', 'growl', '$translate', 'REST_URLS',
-    function ($http, $scope, $state, $stateParams, containerEnvironmentList, localConfig, growl, $translate, REST_URLS) {
+module.exports = ['$http', '$scope', '$state', '$stateParams', 'environmentList', 'localConfig', 'growl', '$translate', 'REST_URLS',
+    function ($http, $scope, $state, $stateParams, environmentList, localConfig, growl, $translate, REST_URLS) {
         var vm = this;
         let handlePrefix = "11270/";
 
@@ -7,7 +7,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'containerEnviron
         vm.showDateContextPicker = false;
         var envList = null;
 
-        envList = containerEnvironmentList.data.environments;
+        envList = environmentList.data.environments;
         vm.env = null;
 
         for (var i = 0; i < envList.length; i++) {

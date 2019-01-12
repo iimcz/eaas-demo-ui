@@ -372,13 +372,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
 
                 environmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "base")),
+                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
 
-                objectEnvironmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object")),
-                containerEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "container"))
-                },
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
@@ -418,8 +413,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.sw-overview', {
             url: "/sw-overview",
             resolve: {
-                softwareList: ($http, localConfig, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
+
             },
             views: {
                 'wizard': {
@@ -481,9 +475,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
-                },
-                softwareList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
                 }
             },
             views: {
@@ -566,9 +557,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 showContainers: false
             },
             resolve : {
-                softwareList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
-                }
+
             },
             views: {
                 'wizard': {

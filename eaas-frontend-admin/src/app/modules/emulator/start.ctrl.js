@@ -1,7 +1,7 @@
-module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList','objectEnvironmentList','$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
-                                    function ($rootScope, $uibModal, $scope, $sce, environmentList, objectEnvironmentList, $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
+module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
+                                    function ($rootScope, $uibModal, $scope, $sce, environmentList,  $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
         var vm = this;
-        vm.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
+        vm.envs = environmentList.data.environments;
 
         vm.runEmulator = function(selectedEnvs) {
 
@@ -139,7 +139,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
             let modal = $uibModal.open({
                 template: require('./modals/connected-envs.html'),
                 controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
-                    $scope.envs = environmentList.data.environments.concat(objectEnvironmentList.data.environments);
+                    $scope.envs = environmentList.data.environments;
                     $scope.selected = [];
                     $scope.ok = function () {
                         $uibModalInstance.close();

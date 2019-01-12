@@ -21,7 +21,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.postHandleValue = "handles/";
 
     // environment data api
-    this.getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
+    this.getAllEnvsUrl = "EmilEnvironmentData/list";
     this.getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
     this.updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
     this.deleteEnvironmentUrl = "EmilEnvironmentData/delete";

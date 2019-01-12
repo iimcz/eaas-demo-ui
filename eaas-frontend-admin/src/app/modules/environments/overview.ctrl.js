@@ -1,7 +1,7 @@
-module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
-    '$uibModal', 'softwareList', 'helperFunctions', 'containerEnvironmentList', 'REST_URLS',
-    function ($rootScope, $http, $state, $scope, $stateParams, environmentList, objectEnvironmentList,
-              localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
+module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'environmentList', 'localConfig', 'growl', '$translate',
+    '$uibModal', 'softwareList', 'helperFunctions', 'userInfo', 'REST_URLS',
+    function ($rootScope, $http, $state, $scope, $stateParams, environmentList,
+              localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, userInfo, REST_URLS) {
         var vm = this;
 
         vm.config = localConfig.data;
@@ -157,8 +157,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         };
 
         vm.envs = environmentList.data.environments;
-        vm.objEnvs = objectEnvironmentList.data.environments;
-        vm.containerEnvs = containerEnvironmentList.data.environments;
         vm.showObjects = $stateParams.showObjects;
         vm.showContainers = $stateParams.showContainers;
 
@@ -225,10 +223,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             }
 
             var env = {};
-            var concatenatedEnvs = vm.envs.concat(vm.objEnvs);
-            for (let i = 0; i < concatenatedEnvs.length; i++) {
-                if (id == concatenatedEnvs[i].envId) {
-                    env = concatenatedEnvs[i];
+            for (let i = 0; i < vm.envs.length; i++) {
+                if (id == vm.envs[i].envId) {
+                    env = vm.envs[i];
                     break;
                 }
             }
@@ -264,15 +261,21 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             var rowData = [];
             if (vm.view == 0)
                 vm.envs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator})
-                });
+                    if(element.envType != 'base')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared"})
+                })
             else if (vm.view == 1) {
-                vm.objEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator, objectId : element.objectId})
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'object')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                 })
             } else if (vm.view == 2) {
-                vm.containerEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, archive: element.archive, emulator: element.emulator, objectId : element.objectId})
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'container')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                 })
             }
             return rowData;
@@ -289,7 +292,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             ];
 
             if (vm.view == 0 || vm.view == 1) {
-                columnDefs.push({headerName: "Emulator", field: "emulator"},);
+                columnDefs.push({headerName: "Owner", field: "owner"},);
                 if (vm.view == 1) {
                     columnDefs.push({headerName: "ObjectID", field: "objectId"});
                 }

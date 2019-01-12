@@ -1,5 +1,5 @@
-module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal', 'containerEnvironmentList',
-    function ($rootScope, $scope, $sce, $state, $http, $stateParams, $translate, Upload, localConfig, growl, $uibModal, containerEnvironmentList) {
+module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal', 'environmentList',
+    function ($rootScope, $scope, $sce, $state, $http, $stateParams, $translate, Upload, localConfig, growl, $uibModal, environmentList) {
         var vm = this;
 
         $("#container-stopped").hide();
@@ -20,7 +20,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             window.onbeforeunload = null;
         };
 
-        var envList = containerEnvironmentList.data.environments;
+        var envList = environmentList.data.environments;
         console.log(envList);
         vm.env = null;
 
