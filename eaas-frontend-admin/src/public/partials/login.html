@@ -1,16 +1,24 @@
 <div>
-    <button ng-click="loginCtrl.angularAuth0.authorize({
+    <button ng-click="loginCtrl.authService.login({
         connection: 'twitter',
-        redirectUri: 'http://localhost:8080/demo-ui/admin',
+        redirectUri: 'http://localhost:8080/admin-ui/',
         scope: 'openid profile email'
     })">Log In with Twitter</button>
 </div>
 
 
 <div>
-    <button ng-click="loginCtrl.angularAuth0.authorize({
+    <button ng-click="loginCtrl.authService.login({
         connection: 'google-oauth2',
-        redirectUri: 'http://localhost:8080/demo-ui/admin',
+        redirectUri: 'http://localhost:8080/admin-ui',
         scope: 'openid profile email'
     })">Log In with Google</button>
+</div>
+
+<div>
+    <button ng-click="loginCtrl.authService.login({
+        connection: 'Username-Password-Authentication',
+        redirectUri: 'http://localhost:8080/admin-ui',
+        scope: 'openid profile email'
+       })">Log In</button>
 </div>

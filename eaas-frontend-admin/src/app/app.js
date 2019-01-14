@@ -157,11 +157,15 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         };
     })
 
-.run(function($rootScope, $state, $http) {
+.run(function($rootScope, $state, $http, authService) {
     $rootScope.emulator = {
         state : '',
         mode : null
     };
+
+    if(auth0config.AUTH_ENABLED) {
+        authService.handleAuthentication();
+    }
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
@@ -178,17 +182,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             localStorage.removeItem('id_token');
       });
 
-
-      // var params = new URLSearchParams(location.hash.slice(1).substring(1));
-             // var token = params.get("id_token")
-             // if(token)
-             // {
-             //     localStorage.setItem('id_token', token);
-             // }
-
-//       localStorage.removeItem('id_token');
-
-
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
             event.preventDefault();
@@ -202,22 +195,54 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
-.provider('localConfig', function() {
-      var localConfig = {};
+.service('authService', function($state, angularAuth0, $timeout) {
 
-      var loadConfig = ['$http', function($http) {
-            $http.get('/config.json').success(function(data) {
-             localConfig = data;
+      this.login = function (data) {
+          angularAuth0.authorize(data);
+      };
+
+      this.handleAuthentication = function () {
+          angularAuth0.parseHash(function(err, authResult) {
+            if (authResult && authResult.idToken && authResult.accessToken) {
+              setSession(authResult);
+              $state.go('admin.dashboard');
+            } else if (err) {
+              $timeout(function() {
+                $state.go('login');
+               });
+              console.log(err);
+              alert('Error: ' + err.error + '. Check the console for further details.');
+            }
           });
+     }
 
-         return localConfig;
-      }];
+    function setSession(authResult) {
+           // Set the time that the access token will expire at
+           let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+           localStorage.setItem('access_token', authResult.accessToken);
+           localStorage.setItem('id_token', authResult.idToken);
+           localStorage.setItem('expires_at', expiresAt);
+           console.log(authResult.idToken);
+     }
 
-      this.$get = loadConfig;
+     this.logout = function () {
+           // Remove tokens and expiry time from localStorage
+           localStorage.removeItem('access_token');
+           localStorage.removeItem('id_token');
+           localStorage.removeItem('expires_at');
+           $state.go('login');
+     }
+
+     this.isAuthenticated = function() {
+           // Check whether the current time is past the
+           // access token's expiry time
+           let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+           return new Date().getTime() < expiresAt;
+     }
 })
 
-.config(['localConfigProvider','$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
-        function(localConfigProvider, $stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -254,37 +279,29 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
-    console.log(localConfigProvider.$get);
-
-//    $http.get("config.json")
-//          .success(function(data, status, headers, config) {
-//
-//        if(data.auth0Config) {
-//            angularAuth0Provider.init({
-//                clientID: data.auth0Config.clientID,
-//                domain: data.auth0Config.domain,
-//                responseType: 'id_token',
-//                scope: 'openid'
-//            });
-//        }
-//    });
+    console.log(auth0config.CLIENT_ID);
+    angularAuth0Provider.init({
+        clientID: auth0config.CLIENT_ID,
+        domain: auth0config.DOMAIN,
+        responseType: 'token id_token',
+    });
 
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      whiteListedDomains: "localhost",
+      // whiteListedDomains: "localhost",
       tokenGetter: [ 'options', function(options) {
-        if (options.url.substr(options.url.length - 5) == '.html') {
+        if (options && options.url.substr(options.url.length - 5) == '.html') {
             return null;
         }
-        if (options.url.substr(options.url.length - 5) == '.json') {
+        if (options && options.url.substr(options.url.length - 5) == '.json') {
             return null;
         }
         return localStorage.getItem('id_token');
       }]
     });
 
-
     $httpProvider.interceptors.push('jwtInterceptor');
+
     // Add a global AJAX error handler
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
@@ -354,10 +371,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('login', {
             url: "/login",
             templateUrl: "partials/login.html",
-            controller: function(angularAuth0) {
+            controller: function(authService) {
                 var vm = this;
-                vm.angularAuth0 = angularAuth0;
-                console.log(vm);
+                vm.authService = authService;
               //  vm.angularAuth0.authorize({connection: 'twitter'});
             },
             controllerAs: "loginCtrl"
