@@ -30,9 +30,11 @@ var auth0config = {
     DOMAIN : JSON.stringify('not configured')
 };
 try {
-  auth0config  = require('./auth0.env');
+  auth0config  = require('./auth.env');
 }
-catch(err) {}
+catch(err) {
+    console.log(err);
+}
 
 module.exports = function makeWebpackConfig() {
   /**
