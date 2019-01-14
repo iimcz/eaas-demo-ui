@@ -32,7 +32,9 @@ var auth0config = {
 try {
   auth0config  = require('./auth.env');
 }
-catch(err) {}
+catch(err) {
+    console.log(err);
+}
 
 module.exports = function makeWebpackConfig() {
   /**
