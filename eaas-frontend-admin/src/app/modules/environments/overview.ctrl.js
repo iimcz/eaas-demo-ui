@@ -188,7 +188,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
 
-            let environmentRenderer = '<select ng-model="selected" ng-change="switchAction(data.id, selected)">' +
+            let environmentRenderer = '<select ng-model="selected" ng-click="switchAction(data.id, selected)">' +
                 '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
                 '  <option value="run">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</option>' +
                 '  <option value="edit">{{\'CHOOSE_ENV_EDIT\'| translate}}</option>' +
@@ -197,7 +197,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 '  <option ng-if="landingPage" value="openLandingPage">{{\'CONTAINER_LANDING_PAGE\'| translate}}</option>' +
                 '</select>';
 
-            let container = '<select ng-model="selected" ng-change="switchAction(data.id, selected)">' +
+            let container = '<select ng-model="selected" ng-click="switchAction(data.id, selected)">' +
                 '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
                 '  <option value="run">{{\'CHOOSE_ENV_RUN\'| translate}}</option>' +
                 '  <option value="edit">{{\'CHOOSE_ENV_EDIT\'| translate}}</option>' +
