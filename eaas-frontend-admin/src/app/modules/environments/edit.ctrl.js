@@ -52,7 +52,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "en
                 delete nameIndexes.data.entries.entry[i];
         });
 
-        vm.nameIndexes = nameIndexes.data.entries.entry;
+        vm.nameIndexes = nameIndexes.data.entries.entry ?  nameIndexes.data.entries.entry : [];
         vm.getNameIndexObj = function(key, name, version){
             return             {
                 key: key,

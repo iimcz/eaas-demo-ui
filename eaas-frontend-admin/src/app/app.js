@@ -163,7 +163,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         mode : null
     };
 
-    if(auth0config.AUTH_ENABLED) {
+    if(auth0config.AUTH_CONFIGURED) {
+        console.log("checking token");
         authService.handleAuthentication();
     }
 
@@ -279,7 +280,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
-    console.log(auth0config.CLIENT_ID);
     angularAuth0Provider.init({
         clientID: auth0config.CLIENT_ID,
         domain: auth0config.DOMAIN,
