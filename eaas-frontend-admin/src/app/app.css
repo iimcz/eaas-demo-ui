@@ -379,7 +379,7 @@ button:focus#printerbutton    {
     background-color: #4CAF50;
     color: white;
     padding: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border: none;
     cursor: pointer;
 }
