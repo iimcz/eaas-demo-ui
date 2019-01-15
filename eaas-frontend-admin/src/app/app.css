@@ -414,3 +414,11 @@ button:focus#printerbutton    {
 .dropdown:hover .dropbtn {
     background-color: #3e8e41;
 }
+
+.ag-row-hover {
+    z-index: 1000;
+}
+
+.ag-cell:last-child {
+    overflow: visible;
+}
