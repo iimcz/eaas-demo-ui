@@ -36,6 +36,7 @@ import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
 import "ag-grid-community/dist/styles/ag-theme-blue.css";
 import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
+import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
 
 

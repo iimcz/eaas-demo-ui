@@ -105,10 +105,10 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 });
             } else {
                 $rootScope.chk.transitionEnable = true;
-                $state.go('admin.standard-envs-overview', {
-                    showContainers: true,
-                    showObjects: false
-                }, {reload: true});
+                // $state.go('admin.standard-envs-overview', {
+                //     showContainers: true,
+                //     showObjects: false
+                // }, {reload: false});
             }
         };
 
@@ -151,7 +151,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             } else {
                 $rootScope.chk.transitionEnable = true;
                 $state.go('admin.standard-envs-overview', {showContainers: false,
-                    showObjects: false}, {reload: true});
+                    showObjects: false}, {reload: false});
             }
         };
 
@@ -189,24 +189,27 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             params.$scope.switchAction = switchAction;
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
-            params.$scope.$ = $;
 
             let environmentRenderer = '<div class="dropdown">\n' +
-                '  <button class="dropbtn">Dropdown</button>\n' +
+                '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
                 '  <div class="dropdown-content">\n' +
-                '  <a href="#">Link 1</a>\n' +
-                '  <a href="#">Link 2</a>\n' +
-                '  <a href="#">Link 3</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a>\n' +
+                '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
                 '  </div>\n' +
                 '</div>';
 
-            let container = '<select ng-model="selected" ng-click="switchAction(data.id, selected)">' +
-                '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
-                '  <option value="run">{{\'CHOOSE_ENV_RUN\'| translate}}</option>' +
-                '  <option value="edit">{{\'CHOOSE_ENV_EDIT\'| translate}}</option>' +
-                '  <option value="deleteContainer">{{\'CHOOSE_ENV_DEL\'| translate}}</option>' +
-                '  <option ng-if="landingPage" value="openLandingPage">{{\'CONTAINER_LANDING_PAGE\'| translate}}</option>' +
-                '</select>';
+            let container = '<div class="dropdown">\n' +
+                '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
+                '  <div class="dropdown-content">\n' +
+                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
+                '  <a ng-click="switchAction(data.id, \'deleteContainer\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
+                '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
+                '  </div>\n' +
+                '</div>';
 
             if (vm.view == 2)
                 return container;
@@ -215,11 +218,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         }
 
 
-
-
         function switchAction(id, selected) {
-            console.log(id);
-            console.log(selected);
             vm[selected](id);
         }
 
@@ -260,9 +259,17 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
 
 
         vm.updateData = function () {
+            $scope.gridOptions.api.setDomLayout('null');
+
             $scope.gridOptions.api.setRowData(vm.initRowData());
             $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
             $scope.gridOptions.api.sizeColumnsToFit();
+
+            $scope.gridOptions.api.redrawRows();
+
+            $scope.gridOptions.api.setDomLayout('print');
+
+
         };
 
         vm.initRowData = function () {
@@ -316,8 +323,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
             rowData: vm.initRowData(),
-            rowHeight: 150,
-            // rowStyle:  { overflow: 'visible' },
+            rowHeight: 30,
             groupUseEntireRow:  true,
             rowSelection: 'multiple',
             angularCompileRows: true,
@@ -328,10 +334,14 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             enableCellChangeFlash: true,
             onRowSelected: onRowSelected,
             suppressRowClickSelection: true,
-            domLayout: 'autoHeight',
+            domLayout: 'print',
+            suppressHorizontalScroll: true,
             animateRows: true,
             onGridReady: function (params) {
-                $scope.gridOptions.api.sizeColumnsToFit();
+                vm.updateData();
+                window.onresize = () => {
+                    this.gridApi.sizeColumnsToFit();
+                }
             },
             pagination: true,
             paginationPageSize: 20,

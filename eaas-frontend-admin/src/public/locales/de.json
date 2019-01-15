@@ -19,7 +19,7 @@
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "[Start]",
   "CHOOSE_ENV_RUN_MODIFIED" : "[Start modifiziert]",
-  "CHOOSE_ACTION" : "Aktion wählen...",
+  "CHOOSE_ACTION" : "Aktion wählen",
   "CHOOSE_DELETE_SELECTED" : "Auswahl löschen",
 
   "ERROR_RETURN_BTN" : "Zurück zur Übersicht",

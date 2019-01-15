@@ -376,26 +376,28 @@ button:focus#printerbutton    {
 }
 
 .dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    font-size: 12px;
+    color: black;
     border: none;
     cursor: pointer;
+    margin: auto;
+    width: 100%;
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
+    width: 100%;
 }
 
 .dropdown-content {
     display: none;
-    position: absolute;
+    position: fixed;
     background-color: #f9f9f9;
-    min-width: 160px;
+    /*min-width: 70%;*/
+    cursor: pointer;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    /*font-size: 15px;*/
 }
 
 .dropdown-content a {
@@ -405,20 +407,14 @@ button:focus#printerbutton    {
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1}
+.dropdown-content a:hover {color: #0000FF;
+    background-color: #f1f1f1}
 
 .dropdown:hover .dropdown-content {
     display: block;
 }
 
 .dropdown:hover .dropbtn {
-    background-color: #3e8e41;
-}
-
-.ag-row-hover {
-    z-index: 1000;
-}
-
-.ag-cell:last-child {
-    overflow: visible;
+    background-color: black;
+    color: whitesmoke;
 }
