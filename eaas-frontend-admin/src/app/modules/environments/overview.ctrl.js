@@ -105,10 +105,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 });
             } else {
                 $rootScope.chk.transitionEnable = true;
-                // $state.go('admin.standard-envs-overview', {
-                //     showContainers: true,
-                //     showObjects: false
-                // }, {reload: false});
             }
         };
 
@@ -259,17 +255,16 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
 
 
         vm.updateData = function () {
-            $scope.gridOptions.api.setDomLayout('null');
-
             $scope.gridOptions.api.setRowData(vm.initRowData());
             $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+            vm.updateLayout();
+        };
+
+        vm.updateLayout = function () {
+            $scope.gridOptions.api.setDomLayout('null');
             $scope.gridOptions.api.sizeColumnsToFit();
-
             $scope.gridOptions.api.redrawRows();
-
             $scope.gridOptions.api.setDomLayout('print');
-
-
         };
 
         vm.initRowData = function () {
@@ -338,9 +333,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             suppressHorizontalScroll: true,
             animateRows: true,
             onGridReady: function (params) {
-                vm.updateData();
+                vm.updateLayout();
                 window.onresize = () => {
-                    this.gridApi.sizeColumnsToFit();
+                    $scope.gridApi.sizeColumnsToFit();
                 }
             },
             pagination: true,

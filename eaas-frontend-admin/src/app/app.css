@@ -381,6 +381,7 @@ button:focus#printerbutton    {
     cursor: pointer;
     margin: auto;
     width: 100%;
+    padding: -1px;
 }
 
 .dropdown {
@@ -393,11 +394,10 @@ button:focus#printerbutton    {
     display: none;
     position: fixed;
     background-color: #f9f9f9;
-    /*min-width: 70%;*/
     cursor: pointer;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    /*font-size: 15px;*/
+    min-width: 186px;
 }
 
 .dropdown-content a {
@@ -405,10 +405,14 @@ button:focus#printerbutton    {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    left: 0px;
+    right: 0px;
+    width: inherit;
 }
 
 .dropdown-content a:hover {color: #0000FF;
-    background-color: #f1f1f1}
+    background-color: #f1f1f1;
+}
 
 .dropdown:hover .dropdown-content {
     display: block;
