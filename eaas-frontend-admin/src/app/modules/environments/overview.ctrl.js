@@ -183,19 +183,22 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         };
         $scope.selected = "";
 
+
+
         function actionsCellRendererFunc(params) {
             params.$scope.switchAction = switchAction;
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
+            params.$scope.$ = $;
 
-            let environmentRenderer = '<select ng-model="selected" ng-click="switchAction(data.id, selected)">' +
-                '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
-                '  <option value="run">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</option>' +
-                '  <option value="edit">{{\'CHOOSE_ENV_EDIT\'| translate}}</option>' +
-                '  <option value="deleteEnvironment">{{\'CHOOSE_ENV_DEL\'| translate}}</option>' +
-                '  <option value="addSoftware">{{\'CHOOSE_ENV_ADDSW\'| translate}}</option>' +
-                '  <option ng-if="landingPage" value="openLandingPage">{{\'CONTAINER_LANDING_PAGE\'| translate}}</option>' +
-                '</select>';
+            let environmentRenderer = '<div class="dropdown">\n' +
+                '  <button class="dropbtn">Dropdown</button>\n' +
+                '  <div class="dropdown-content">\n' +
+                '  <a href="#">Link 1</a>\n' +
+                '  <a href="#">Link 2</a>\n' +
+                '  <a href="#">Link 3</a>\n' +
+                '  </div>\n' +
+                '</div>';
 
             let container = '<select ng-model="selected" ng-click="switchAction(data.id, selected)">' +
                 '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
@@ -210,6 +213,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             else
                 return environmentRenderer;
         }
+
+
+
 
         function switchAction(id, selected) {
             console.log(id);
@@ -310,6 +316,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
             rowData: vm.initRowData(),
+            rowHeight: 150,
+            // rowStyle:  { overflow: 'visible' },
+            groupUseEntireRow:  true,
             rowSelection: 'multiple',
             angularCompileRows: true,
             rowMultiSelectWithClick: true,
@@ -337,6 +346,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             else
                 $('#overviewDeleteButton').hide();
         }
+        // setup the grid after the page has finished loading
+        document.addEventListener('DOMContentLoaded', function () {
+            var gridDiv = document.querySelector('#myGrid');
+            new agGrid.Grid(gridDiv, gridOptions);
+            gridOptions.api.sizeColumnsToFit();
+        });
+
 
 
     }];
