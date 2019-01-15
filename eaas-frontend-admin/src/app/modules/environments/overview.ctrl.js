@@ -186,6 +186,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
 
+
+            $(function() {
+                $("#dropdown-content").width(300);
+            });
+
             let environmentRenderer = '<div class="dropdown">\n' +
                 '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
                 '  <div class="dropdown-content">\n' +
@@ -339,7 +344,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 }
             },
             pagination: true,
-            paginationPageSize: 20,
+            paginationPageSize: 15,
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },

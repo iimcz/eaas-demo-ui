@@ -382,12 +382,14 @@ button:focus#printerbutton    {
     margin: auto;
     width: 100%;
     padding: -1px;
+    max-width:190px;
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
     width: 100%;
+    max-width:190px;
 }
 
 .dropdown-content {
@@ -397,7 +399,7 @@ button:focus#printerbutton    {
     cursor: pointer;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    min-width: 186px;
+    /*min-width: 185px;*/
 }
 
 .dropdown-content a {
