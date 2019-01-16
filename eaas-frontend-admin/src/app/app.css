@@ -381,7 +381,8 @@ button:focus#printerbutton    {
     cursor: pointer;
     margin: auto;
     width: 100%;
-    padding: -1px;
+    padding: 0px;
+    text-indent:0px;
     max-width:190px;
 }
 
