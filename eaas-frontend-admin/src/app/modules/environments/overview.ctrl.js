@@ -201,6 +201,20 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 '    <a class="dropdown-item" href="#">Something else here</a>\n' +
                 '  </div>\n' +
                 '</div>';
+            environmentRenderer = `
+                <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
+                <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+                  Button dropdown <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                  <li role="menuitem"><a href="#">Action</a></li>
+                  <li role="menuitem"><a href="#">Another action</a></li>
+                  <li role="menuitem"><a href="#">Something else here</a></li>
+                  <li class="divider"></li>
+                  <li role="menuitem"><a href="#">Separated link</a></li>
+                </ul>
+              </div>
+            `;
 
             let container = '<div class="dropdown">\n' +
                 '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
@@ -321,7 +335,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
             rowData: vm.initRowData(),
-            rowHeight: 150,
+            rowHeight: 30,
             groupUseEntireRow:  true,
             rowSelection: 'multiple',
             angularCompileRows: true,
