@@ -192,13 +192,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             });
 
             let environmentRenderer = '<div class="dropdown">\n' +
-                '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
-                '  <div class="dropdown-content">\n' +
-                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a>\n' +
-                '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
+                '  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                '    Dropdown button\n' +
+                '  </button>\n' +
+                '  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">\n' +
+                '    <a class="dropdown-item" href="#">Action</a>\n' +
+                '    <a class="dropdown-item" href="#">Another action</a>\n' +
+                '    <a class="dropdown-item" href="#">Something else here</a>\n' +
                 '  </div>\n' +
                 '</div>';
 
@@ -321,7 +321,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
             rowData: vm.initRowData(),
-            rowHeight: 30,
+            rowHeight: 150,
             groupUseEntireRow:  true,
             rowSelection: 'multiple',
             angularCompileRows: true,
