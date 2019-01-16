@@ -405,7 +405,7 @@ button:focus#printerbutton    {
 
 .dropdown-content a {
     color: black;
-    padding: 12px 16px;
+    padding: 5px 6px;
     text-decoration: none;
     display: block;
     left: 0px;
@@ -413,7 +413,8 @@ button:focus#printerbutton    {
     width: inherit;
 }
 
-.dropdown-content a:hover {color: #0000FF;
+.dropdown-content a:hover {
+    color: #0000FF;
     background-color: #f1f1f1;
 }
 
