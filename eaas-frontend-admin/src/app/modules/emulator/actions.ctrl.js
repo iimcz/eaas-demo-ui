@@ -177,13 +177,9 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 window.eaasClient.release();
                 $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
             });
-            }
-            console.log("Checkpointed environment saved as: " + newEnvId);
-            growl.success(status, {title: "New snapshot created."});
-            window.eaasClient.release();
-            $state.go('admin.edit-env', {envId: newEnvId}, {reload: true});
-       });
-    };
+        });
+    }
+
 
     vm.openSaveEnvironmentDialog = function() {
         $('#emulator-container').hide();
