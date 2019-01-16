@@ -254,8 +254,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
 
         vm.openLandingPage = function (id) {
             window.open(vm.landingPage + "?id=" + id);
-            $state.go('admin.standard-envs-overview', {showContainers: false,
-                showObjects: false}, {reload: true});
         };
 
 
