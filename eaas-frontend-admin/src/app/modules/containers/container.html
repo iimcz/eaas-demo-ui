@@ -16,6 +16,5 @@
 
 	<p>{{'CONTAINER_STOPPED_T' | translate}}</p>
 
-	<button ng-click="startContainerCtrl.downloadLink()">Download result</button>
+	<button ng-hide="hideme" ng-click="hideme=true;startContainerCtrl.downloadLink()">Download result</button>
 </div>
-
