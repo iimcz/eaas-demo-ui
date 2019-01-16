@@ -24,6 +24,18 @@ var PRODUCTION_PATH = '/admin-ui/';
 // Include git commit hash
 var commitHash = require('child_process').execSync('git rev-parse HEAD').toString();
 
+var auth0config = {
+    AUTH_CONFIGURED: false,
+    CLIENT_ID : JSON.stringify('not configured'),
+    DOMAIN : JSON.stringify('not configured')
+};
+try {
+  auth0config  = require('./auth.env');
+}
+catch(err) {
+    console.log(err);
+}
+
 module.exports = function makeWebpackConfig() {
   /**
    * Config
@@ -163,7 +175,8 @@ module.exports = function makeWebpackConfig() {
       'Popper': 'popper.js'
     }),
     new webpack.DefinePlugin({
-        __UI_COMMIT_HASH__: JSON.stringify(commitHash)
+        __UI_COMMIT_HASH__: JSON.stringify(commitHash),
+        'auth0config': auth0config
     })
   ];
 

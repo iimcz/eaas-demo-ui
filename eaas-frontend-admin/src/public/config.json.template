@@ -5,6 +5,8 @@
   "dashboardAccessToken": "secret",
   "baseEmulatorUrl" : "http://localhost:8080/demo-ui/",
   "landingPage": "http://localhost:8080/demo-ui/citar-headless-client/",
+  "oaipmhServiceBaseUrl" : "http://localhost:8080/oaipmh/",
+
 
   "features" : {
       "screenshots" : false,
@@ -15,6 +17,13 @@
       "network" : false,
       "software" : true,
       "handle" : false,
-      "advanced": true
+      "advanced": true,
+      "objectUpload" : true,
+      "oaipmh" : true
+    },
+
+    "auth0Config" : {
+        clientID: '',
+        domain: '.auth0.com',
     }
 }

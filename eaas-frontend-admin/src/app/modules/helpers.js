@@ -21,7 +21,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.postHandleValue = "handles/";
 
     // environment data api
-    this.getAllEnvsUrl = "EmilEnvironmentData/list?type={0}";
+    this.getAllEnvsUrl = "EmilEnvironmentData/list";
     this.getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
     this.updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
     this.deleteEnvironmentUrl = "EmilEnvironmentData/delete";
@@ -43,6 +43,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";
+    this.replicateImage = "EmilEnvironmentData/replicateImage";
     this.getNameIndexes = "EmilEnvironmentData/getNameIndexes";
 
     this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
@@ -57,6 +58,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.deleteSessionUrl = "EmilUserSession/delete?sessionId={0}";
 
     this.buildVersionUrl = "Emil/buildInfo";
+    this.getUserInfo = "Emil/userInfo";
 
     // Software archive api
     this.getSoftwarePackageDescriptions = "EmilSoftwareData/getSoftwarePackageDescriptions";

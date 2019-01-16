@@ -63,6 +63,7 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Container",
   "BASE_MENU_NEW_OBJECT" : "Objekt importieren",
+  "BASE_MENU_MD" : "OAI PMH",
   "ADVANCED_IMPORT_EMULATOR": "Emulator importieren",
   "ADVANCED_IMPORT_EMULATOR_READYMADE": "URL zu fertigem Images",
   "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
@@ -70,7 +71,6 @@
   "ADVANCED_IMPORT_EMULATOR_ALIAS_PLC": "latest",
   "ADVANCED_IMPORT_EMULATOR_TYPE": "Emulator type",
   "ADVANCED_IMPORT_EMULATOR_VERSION_PLC": "v1.25_5678",
-
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT" : "Tastaturlayout ändern",
   "SETTINGS_DLG_IMPORT_ENVS" : "Umgebungen importieren",
@@ -347,5 +347,9 @@
   "OBJECT_INGEST_REPO_HEADER" : "Zu importierende Objekt IDs",
   "OBJECT_INGEST_REPO_EMPTY" : "keine Objekte definiert",
   "OBJECT_INGEST_REPO_PH" : "Objekt ID",
-  "OBJECT_INGEST_REPO_BUTTON" : "Hinzufügen"
+  "OBJECT_INGEST_REPO_BUTTON" : "Hinzufügen",
+
+  "METADATA_L" : "Metadata Harvesting",
+  "METADATA_PROVIDER_TH" : "Konfigurierte Endpunkte"
+
 }

@@ -1,4 +1,4 @@
-module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function($uibModal, localConfig, kbLayouts, buildInfo) {
+module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", "userInfo", function($uibModal, localConfig, kbLayouts, buildInfo, userInfo) {
     var vm = this;
 
     vm.open = function() {
@@ -11,6 +11,7 @@ module.exports = ["$uibModal", "localConfig", "kbLayouts", "buildInfo", function
     vm.config = localConfig.data;
     vm.buildInfo = buildInfo.data.version;
     vm.uiCommitHash = __UI_COMMIT_HASH__;
+    vm.userInfo = userInfo.data;
 
     vm.showSettingsDialog = function() {
         $uibModal.open({

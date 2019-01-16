@@ -15,6 +15,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     else
         vm.isKVM = false;
 
+    vm.mode = $rootScope.emulator.mode;
 
     if (chosenEnv.data)
     {
@@ -55,8 +56,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     {
         window.eaasClient.getPrintJobs(printSuccessFn);
     };
-
-
 
     vm.restartEmulator = function() {
         window.eaasClient.release();
@@ -100,7 +99,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
-    var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
+    if(mediaCollection != null)
+        var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
 
     var eaasClientReadyTimer = function() {
         if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
@@ -117,13 +117,14 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             template: require('./modals/change-media.html'),
             controller: ["$scope", function($scope) {
                 this.chosen_medium_label = currentMediumLabel;
-                this.media = mediaCollection.data.medium;
+
+                if(mediaCollection != null && mediaCollection.data != null)
+                  this.media = mediaCollection.data.medium;
                 this.isChangeMediaSubmitting = false;
 
                 this.objectId = $stateParams.softwareId;
                 if(!this.objectId)
                     this.objectId = $stateParams.objectId;
-
 
                 this.changeMedium = function(newMediumLabel) {
                     if (newMediumLabel == null) {
@@ -177,7 +178,11 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
             });
             }
-        )
+            console.log("Checkpointed environment saved as: " + newEnvId);
+            growl.success(status, {title: "New snapshot created."});
+            window.eaasClient.release();
+            $state.go('admin.edit-env', {envId: newEnvId}, {reload: true});
+       });
     };
 
     vm.openSaveEnvironmentDialog = function() {

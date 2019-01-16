@@ -1,7 +1,7 @@
-module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'environmentList', 'objectEnvironmentList', 'localConfig', 'growl', '$translate',
-    '$uibModal', 'softwareList', 'helperFunctions', 'containerEnvironmentList', 'REST_URLS',
-    function ($rootScope, $http, $state, $scope, $stateParams, environmentList, objectEnvironmentList,
-              localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, containerEnvironmentList, REST_URLS) {
+module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'environmentList', 'localConfig', 'growl', '$translate',
+    '$uibModal', 'softwareList', 'helperFunctions', 'userInfo', 'REST_URLS',
+    function ($rootScope, $http, $state, $scope, $stateParams, environmentList,
+              localConfig, growl, $translate, $uibModal, softwareList, helperFunctions, userInfo, REST_URLS) {
         var vm = this;
 
         vm.config = localConfig.data;
@@ -152,8 +152,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         };
 
         vm.envs = environmentList.data.environments;
-        vm.objEnvs = objectEnvironmentList.data.environments;
-        vm.containerEnvs = containerEnvironmentList.data.environments;
         vm.showObjects = $stateParams.showObjects;
         vm.showContainers = $stateParams.showContainers;
 
@@ -194,23 +192,21 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             let environmentRenderer = '<div class="dropdown">\n' +
                 '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
                 '  <div class="dropdown-content">\n' +
-                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
+                '  <a ng-if="data.archive !=\'remote\'" ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
                 '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a>\n' +
+                '  <a ng-if="data.archive ==\'default\'" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
+                '  <a ng-if="data.archive !=\'remote\'" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a>\n' +
                 '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
                 '  </div>\n' +
                 '</div>';
 
-            let container = '<div class="dropdown">\n' +
-                '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
-                '  <div class="dropdown-content">\n' +
-                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'deleteContainer\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
-                '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
-                '  </div>\n' +
-                '</div>';
+            let container = '<select ng-model="selected" ng-change="switchAction(data.id, selected)">' +
+                            '  <option disabled hidden selected value="">{{\'CHOOSE_ACTION\'| translate}}</option>' +
+                            '  <option value="run">{{\'CHOOSE_ENV_RUN\'| translate}}</option>' +
+                            '  <option value="edit">{{\'CHOOSE_ENV_EDIT\'| translate}}</option>' +
+                            '  <option value="deleteContainer">{{\'CHOOSE_ENV_DEL\'| translate}}</option>' +
+                            '  <option ng-if="landingPage" value="openLandingPage">{{\'CONTAINER_LANDING_PAGE\'| translate}}</option>' +
+                            '</select>';
 
             if (vm.view == 2)
                 return container;
@@ -230,10 +226,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             }
 
             var env = {};
-            var concatenatedEnvs = vm.envs.concat(vm.objEnvs);
-            for (let i = 0; i < concatenatedEnvs.length; i++) {
-                if (id == concatenatedEnvs[i].envId) {
-                    env = concatenatedEnvs[i];
+            for (let i = 0; i < vm.envs.length; i++) {
+                if (id == vm.envs[i].envId) {
+                    env = vm.envs[i];
                     break;
                 }
             }
@@ -274,15 +269,21 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             var rowData = [];
             if (vm.view == 0)
                 vm.envs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator})
-                });
+                    if(element.envType != 'base')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared"})
+                })
             else if (vm.view == 1) {
-                vm.objEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator, objectId : element.objectId})
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'object')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                 })
             } else if (vm.view == 2) {
-                vm.containerEnvs.forEach(function (element) {
-                    rowData.push({name: element.title, id: element.envId, emulator: element.emulator, objectId : element.objectId})
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'container')
+                        return;
+                    rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                 })
             }
             return rowData;
@@ -295,10 +296,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                     suppressMenu: true},
                 {headerName: "Name", field: "name"},
                 {headerName: "ID", field: "id"},
+                {headerName: "Archive", field: "archive"}
             ];
 
             if (vm.view == 0 || vm.view == 1) {
-                columnDefs.push({headerName: "Emulator", field: "emulator"},);
+                columnDefs.push({headerName: "Owner", field: "owner"},);
                 if (vm.view == 1) {
                     columnDefs.push({headerName: "ObjectID", field: "objectId"});
                 }
@@ -342,7 +344,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 }
             },
             pagination: true,
-            paginationPageSize: 15,
+            paginationPageSize: 20,
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },

@@ -6,8 +6,8 @@
   "CHOOSE_BASEENV_L" : "Virtual machines",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
-  "CHOOSE_ENV_PROPOSAL" : "[Run]",
-  "CHOOSE_ENV_EDIT" : "[Edit description]",
+  "CHOOSE_ENV_PROPOSAL" : "Run Environment",
+  "CHOOSE_ENV_EDIT" : "Details",
   "CHOOSE_HANDLE_EDIT" : "Edit handle value",
   "CHOOSE_HANDLE_SHOW" : "save handle value",
   "HANDLES_L" : "Handles",
@@ -16,9 +16,9 @@
   "SAVE_HANDLE" : "Save handle",
   "CHOOSE_ENV_DEL" : "[Delete]",
   "CHOOSE_ENV_VER" : "Version",
-  "CHOOSE_ENV_ADDSW" : "[Add software]",
+  "CHOOSE_ENV_ADDSW" : "Add Software",
   "CHOOSE_CONTAINER_L" : "Container",
-  "CHOOSE_ENV_RUN" : "[Run]",
+  "CHOOSE_ENV_RUN" : "Run",
   "CHOOSE_ENV_RUN_MODIFIED" : "[Run modified]",
   "CHOOSE_ACTION" : "Choose action",
   "CHOOSE_DELETE_SELECTED" : "Delete selected",
@@ -66,6 +66,8 @@
   "BASE_MENU_CONTAINER" : "Import Container",
   "BASE_MENU_CONTAINER_ENVS" : "Containers",
   "BASE_MENU_NEW_OBJECT" : "Import Object",
+  "BASE_MENU_MD" : "OAI PMH",
+
   "ADVANCED_IMPORT_EMULATOR": "Import Emulator",
   "ADVANCED_IMPORT_EMULATOR_READYMADE": "URL to read-made image",
   "ADVANCED_IMPORT_EMULATOR_VERSION": "Emulator version",
@@ -73,7 +75,6 @@
   "ADVANCED_IMPORT_EMULATOR_ALIAS_PLC": "latest",
   "ADVANCED_IMPORT_EMULATOR_TYPE": "Emulator type",
   "ADVANCED_IMPORT_EMULATOR_VERSION_PLC": "v1.25_5678",
-
 
   "SETTINGS_DLG_SET_KEYBOARD_LAYOUT": "Change Keyboard layout",
   "SETTINGS_DLG_IMPORT_ENVS" : "Import Environments",
@@ -165,8 +166,8 @@
   "SW_NEW_CONTAINER_INPUT" : "Input path",
   "SW_NEW_CONTAINER_OUTPUT" : "Output path",
   "SW_NEW_CONTAINER_IMAGE_STRUCTURE" : "Additionally, paths for input and output directories are required.",
-  "SW_NEW_CONTAINER_FORMAT_DOCKER" : "EaaS can process Docker images from the Docker Hub or in the form of tar-archives generated with docker save. Hub hosted images are referenced via its name and tag, tar-archives via an URL pointing towards it. Additionally a command can be specified. If no command is given the default image entrypoint is used.",
-  "SW_NEW_CONTAINER_DOCKER" : "Specify your image name and tag in Docker Hub:",
+  "SW_NEW_CONTAINER_FORMAT_DOCKER" : "EaaS can process Docker images from Docker registries. Registry hosted images are referenced via name and tag.",
+  "SW_NEW_CONTAINER_DOCKER" : "Specify container name and tag:",
   "SW_NEW_CONTAINER_READYMADE" : "Upload your ready-made image or provide a URL",
   "SW_NEW_CONTAINER_FORMAT_SINGULARITY" : "EaaS processes Singularity images in the standard Singularity Format (http://singularity.lbl.gov/docs-build-container). Additionally a command can be specified, otherwise the default singularity runscript is used.",
   "SW_NEW_CONTAINER_FORMAT_RUNC" : "Please provide a tar.gz archive with RunC rootfs filesystem without corresponding parent directory.",
@@ -351,5 +352,8 @@
   "OBJECT_INGEST_REPO_HEADER" : "Object IDs to be imported",
   "OBJECT_INGEST_REPO_EMPTY" : "Empty list",
   "OBJECT_INGEST_REPO_PH" : "Object ID",
-  "OBJECT_INGEST_REPO_BUTTON" : "Add"
+  "OBJECT_INGEST_REPO_BUTTON" : "Add",
+
+  "METADATA_L" : "Metadata Harvesting",
+  "METADATA_PROVIDER_TH" : "Configured Endpoints"
 }

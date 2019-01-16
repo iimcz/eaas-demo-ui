@@ -1,6 +1,6 @@
-[submodule "citar-headless-client"]
-	path = citar-headless-client
-	url = ../citar-headless-client.git
 [submodule "eaas-client"]
 	path = eaas-client
 	url = https://gitlab.com/emulation-as-a-service/eaas-client.git
+[submodule "citar-headless-client"]
+	path = citar-headless-client
+	url = https://gitlab.com/CiTAR/citar-headless-client.git

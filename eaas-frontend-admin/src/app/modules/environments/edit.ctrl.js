@@ -1,9 +1,9 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList", "objectEnvironmentList", "localConfig", "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata",
-    // "nameIndexes",
-    "REST_URLS",
-    function ($http, $scope, $state, $stateParams, environmentList, objectEnvironmentList, localConfig, growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata,
-              // nameIndexes,
-              REST_URLS) {
+module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "environmentList", "localConfig",
+            "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "softwareList", "$uibModal",
+             "$timeout", "nameIndexes", "REST_URLS",
+            function ($http, $rootScope, $scope, $state, $stateParams, environmentList, localConfig,
+            growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, softwareList, $uibModal,
+            $timeout, nameIndexes, REST_URLS) {
 
            let handlePrefix = "11270/";
            var vm = this;
@@ -22,11 +22,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
 
            this.dependencies = objectDependencies.data;
            vm.isObjectEnv = $stateParams.objEnv;
-           if($stateParams.objEnv)
-               envList = objectEnvironmentList.data.environments;
-           else
-               envList = environmentList.data.environments;
 
+           envList = environmentList.data.environments;
            this.env = null;
 
            for(var i = 0; i < envList.length; i++) {
@@ -47,15 +44,36 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
         console.log("vm.emulator ", vm.emulator);
 
         vm.showDateContextPicker = false;
-        if (typeof nameIndexes != "undefined") {
-            Object.keys(nameIndexes.data.entries).forEach(function (element) {
-                if (!element.toLowerCase().includes(vm.emulator.toLowerCase()))
-                    delete nameIndexes.data.entries[element];
-            });
-            vm.nameIndexes = Object.keys(nameIndexes.data.entries);
-            vm.emulatorContainer = this.env.containerName + "|" + this.env.containerVersion;
-        }
+
+        nameIndexes.data.entries.entry.forEach(function (element, i) {
+            console.log("element.key ", element.key);
+            console.log("element ", element);
+            if (!element.key.toLowerCase().includes(vm.emulator.toLowerCase()))
+                delete nameIndexes.data.entries.entry[i];
+        });
+
+        vm.nameIndexes = nameIndexes.data.entries.entry ?  nameIndexes.data.entries.entry : [];
+        vm.getNameIndexObj = function(key, name, version){
+            return             {
+                key: key,
+                value: {
+                    name: name,
+                    value: version
+                }
+            }
+        };
+        // Since the values are null, EmuBean would decide to use latest version from aliases
+        vm.nameIndexes.unshift(vm.getNameIndexObj("latest", null, null));
+
+        if (typeof this.env.containerName !== "undefined" && typeof this.env.containerVersion !== "undefined")
+            vm.emulatorContainer = vm.getNameIndexObj(this.env.containerName + "|" + this.env.containerVersion,
+                this.env.containerName,
+                this.env.containerVersion);
+        else  vm.emulatorContainer = vm.getNameIndexObj("latest", null, null);
+
         console.log(" vm.nameIndexes ",  vm.nameIndexes);
+        console.log(" nameIndexes ",  nameIndexes);
+        console.log(" vm.vm.emulatorContainer ",  vm.emulatorContainer);
 
            this.envTitle = this.env.title;
            this.author = this.env.author;
@@ -112,6 +130,19 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                     });
            };
 
+           vm.addSoftware = function(envId) {
+                 $uibModal.open({
+                     animation: true,
+                     template: require('./modals/select-sw.html'),
+                     controller: ["$scope", function($scope) {
+                         this.envId = envId;
+                         this.software = softwareList.data.descriptions;
+                         this.returnToObjects = $stateParams.showObjects;
+                     }],
+                     controllerAs: "addSoftwareDialogCtrl"
+                 });
+            };
+
            this.saveEdit = function() {
                var timecontext = null;
                if(this.showDateContextPicker)
@@ -147,8 +178,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
                    nativeConfig: this.nativeConfig,
                    connectEnvs : this.connectEnvs,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
-                   // containerEmulatorName : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[0],
-                   // containerEmulatorVersion : vm.emulatorContainer.split(emulatorContainerVersionSpillter)[1]
+                   containerEmulatorName : vm.emulatorContainer.value.name,
+                   containerEmulatorVersion : vm.emulatorContainer.value.version
            }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -253,4 +284,127 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "environmentList"
 
                vm.isOpen = true;
            };
-       }];
+
+          vm.checkState = function(_taskId, _modal)
+          {
+              var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function(response)
+              {
+                  if(response.data.status == "0")
+                  {
+                       if(response.data.isDone)
+                       {
+                          console.log("task finished " + _taskId);
+                          growl.success("replication finished.");
+                          $state.go('admin.standard-envs-overview', { }, {reload: true});
+                          _modal.close();
+                       }
+                       else
+                           $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                   }
+                   else
+                   {
+                      growl.error("error replicating image " + response.data.message);
+                      _modal.close();
+                   }
+              });
+          };
+
+          vm.replicateImage = function(envId) {
+              if (!window.confirm(`Resources published to the EaaSI network cannot be easily removed.
+Do not share software or environments with existing access or license restrictions.
+
+Do you want to publish this environment to the network?`))
+                   return false;
+
+              console.log("replicating " + envId);
+              var modal = $uibModal.open({
+                   animation: true,
+                   template: require('./modals/wait.html')
+               });
+              $http.post(localConfig.data.eaasBackendURL + REST_URLS.replicateImage,
+              {
+                  replicateList : [envId],
+                  destArchive : "public"
+              }).then(function(response) {
+                  if(response.data.status === "0")
+                  {
+                       var taskId = response.data.taskList[0];
+                       vm.checkState(taskId, modal);
+                  }
+                  else
+                  {
+                      modal.close();
+                      growl.error("error replicating image");
+                      $state.go('admin.standard-envs-overview');
+                  }
+              }, function(response) {
+                   modal.close();
+                   growl.error("error replicating image: " + response.data.message);
+                   $state.go('admin.standard-envs-overview');
+              });
+          };
+
+          var confirmDeleteFn = function(envId)
+          {
+              $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+                  envId: envId,
+                  deleteMetaData: true,
+                  deleteImage: true,
+                  force: true
+              }).then(function(_response) {
+                  if (_response.data.status === "0") {
+                      // remove env locally
+                      vm.envs = vm.envs.filter(function(env) {
+                          return env.envId !== envId;
+                      });
+                      $rootScope.chk.transitionEnable = true;
+                      growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                      $state.go('admin.standard-envs-overview', {}, {reload: true});
+                  }
+                  else {
+                      $rootScope.chk.transitionEnable = true;
+                      growl.error(_response.data.message, {title: 'Error ' + _response.data.status});
+                      $state.go('admin.standard-envs-overview', {}, {reload: true});
+                  }
+              });
+          };
+
+          vm.deleteEnvironment = function(envId) {
+              $rootScope.chk.transitionEnable = false;
+              if (window.confirm($translate.instant('JS_DELENV_OK'))) {
+                  $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+                      envId: envId,
+                      deleteMetaData: true,
+                      deleteImage: true,
+                      force: false
+                  }).then(function(response) {
+                      if (response.data.status === "0") {
+                          $rootScope.chk.transitionEnable = true;
+                          growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                          $state.go('admin.standard-envs-overview', {}, {reload: true});
+                      }
+                      else if (response.data.status === "2") {
+                          $uibModal.open({
+                              animation: true,
+                              templateUrl: './modals/confirm-delete.html',
+                              controller: ["$scope", function($scope) {
+                                  this.envId = envId;
+                                  this.confirmed = confirmDeleteFn;
+                              }],
+                              controllerAs: "confirmDeleteDialogCtrl"
+                          });
+                      }
+                      else {
+                          $rootScope.chk.transitionEnable = true;
+                          growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                          $state.go('admin.standard-envs-overview', {}, {reload: true});
+                      }
+                  }, function (response) {
+                      $rootScope.chk.transitionEnable = true;
+                      growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                      $state.go('admin.standard-envs-overview', {}, {reload: true});
+                  });
+              }
+          };
+}];
+

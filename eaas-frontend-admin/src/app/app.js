@@ -18,6 +18,7 @@ import 'angular-translate';
 import 'angular-translate-loader-static-files';
 import 'angular-smart-table';
 import 'chart.js';
+import 'angular-auth0/src';
 import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
@@ -91,7 +92,7 @@ import './app.css';
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
-                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid'])
+                                   'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
@@ -162,16 +163,30 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         };
     })
 
-.run(function($rootScope, $state) {
-    $rootScope.emulator = {state : ''};
+.run(function($rootScope, $state, $http, authService) {
+    $rootScope.emulator = {
+        state : '',
+        mode : null
+    };
+
+    if(auth0config.AUTH_CONFIGURED) {
+        authService.handleAuthentication();
+    }
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
     $rootScope.waitingForServer = true;
 
-//        localStorage.setItem('id_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE');
-//       localStorage.removeItem('id_token');
-
+    $http.get("config.json")
+      .success(function(data, status, headers, config) {
+          if(data.id_token)
+          {
+            console.log(data.id_token);
+            localStorage.setItem('id_token', data.id_token);
+          }
+         // else
+         //   localStorage.removeItem('id_token');
+      });
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
@@ -186,10 +201,54 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
+.service('authService', function($state, angularAuth0, $timeout) {
 
+      this.login = function (data) {
+          angularAuth0.authorize(data);
+      };
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider) {
+      this.handleAuthentication = function () {
+          angularAuth0.parseHash(function(err, authResult) {
+            if (authResult && authResult.idToken && authResult.accessToken) {
+              setSession(authResult);
+              $state.go('admin.dashboard');
+            } else if (err) {
+              $timeout(function() {
+                $state.go('login');
+               });
+              console.log(err);
+              alert('Error: ' + err.error + '. Check the console for further details.');
+            }
+          });
+     }
+
+    function setSession(authResult) {
+           // Set the time that the access token will expire at
+           let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+           localStorage.setItem('access_token', authResult.accessToken);
+           localStorage.setItem('id_token', authResult.idToken);
+           localStorage.setItem('expires_at', expiresAt);
+           console.log(authResult.idToken);
+     }
+
+     this.logout = function () {
+           // Remove tokens and expiry time from localStorage
+           localStorage.removeItem('access_token');
+           localStorage.removeItem('id_token');
+           localStorage.removeItem('expires_at');
+           $state.go('login');
+     }
+
+     this.isAuthenticated = function() {
+           // Check whether the current time is past the
+           // access token's expiry time
+           let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+           return new Date().getTime() < expiresAt;
+     }
+})
+
+.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
+        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -226,21 +285,37 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     var httpResponseErrorModal = null;
 
+    angularAuth0Provider.init({
+        clientID: auth0config.CLIENT_ID,
+        domain: auth0config.DOMAIN,
+        responseType: 'token id_token',
+    });
+
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      whiteListedDomains: "localhost",
-      tokenGetter: [ function() {
+      // whiteListedDomains: "localhost",
+      tokenGetter: [ 'options', function(options) {
+        if (options && options.url.substr(options.url.length - 5) == '.html') {
+            return null;
+        }
+        if (options && options.url.substr(options.url.length - 5) == '.json') {
+            return null;
+        }
         return localStorage.getItem('id_token');
       }]
     });
 
-
     $httpProvider.interceptors.push('jwtInterceptor');
+
     // Add a global AJAX error handler
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                     if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
+                if (rejection && rejection.status === 401) {
+                    $injector.get('$state').go('login');
+                    return $q.reject(rejection);
+                }
+                if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
                     if (httpResponseErrorModal === null) {
@@ -298,6 +373,16 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             }],
             controllerAs: "errorCtrl"
         })
+        .state('login', {
+            url: "/login",
+            templateUrl: "partials/login.html",
+            controller: function(authService) {
+                var vm = this;
+                vm.authService = authService;
+              //  vm.angularAuth0.authorize({connection: 'twitter'});
+            },
+            controllerAs: "loginCtrl"
+        })
         .state('admin', {
             abstract: true,
             url: "/admin",
@@ -308,18 +393,15 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
 
                 environmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "base")),
+                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
 
-                objectEnvironmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "object")),
-                containerEnvironmentList: function($http, localConfig, helperFunctions, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getAllEnvsUrl, "container"))
+                softwareList: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
-
+                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo)
             },
             controller: "BaseController as baseCtrl"
         })
-
         .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
@@ -352,8 +434,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.sw-overview', {
             url: "/sw-overview",
             resolve: {
-                softwareList: ($http, localConfig, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
+
             },
             views: {
                 'wizard': {
@@ -415,9 +496,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
-                },
-                softwareList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
                 }
             },
             views: {
@@ -500,14 +578,25 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 showContainers: false
             },
             resolve : {
-                softwareList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions);
-                }
+
             },
             views: {
                 'wizard': {
                     template: require('./modules/environments/overview.html'),
                     controller: "EnvironmentsOverviewController as standardEnvsOverviewCtrl"
+                }
+            }
+        })
+        .state('admin.metadata', {
+            url: "/metadata",
+            resolve : {
+                oaiHarvesterList: ($http, localConfig, helperFunctions, REST_URLS) =>
+                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters")
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/metadata/metadata.html'),
+                    controller: "MetadataController as metadataCtrl"
                 }
             }
         })
@@ -548,6 +637,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             url: "/emulator",
             resolve: {
                 mediaCollection: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
+                    if( $stateParams.softwareId == null && $stateParams.objectId == null)
+                        return null;
                     return $http.get(localConfig.data.eaasBackendURL +
                         (($stateParams.softwareId != null) ?
                             helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.softwareId) :
