@@ -186,45 +186,41 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
 
+            let environmentRenderer = `
+             <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
+                <button id="single-button" type="button"  ng-class="{true: 'dropbtn2', false: 'dropbtn'}[status.isopen]" uib-dropdown-toggle ng-disabled="disabled">
+                  Button dropdown <span class="caret"></span>
+                </button>
+               
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                  <li role="menuitem dropdown-content"><a class="dropdown-content" ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a></li>
+                  
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
+                  <li class="divider">                 
+                  <li role="menuitem"><a ng-if="landingPage" target="_blank" class="dropdown-content"
+                  ng-click="switchAction(data.id, \'openLandingPage\')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
+                
+                </ul>
+                
+             </div>`;
 
-            $(function() {
-                $("#dropdown-content").width(300);
-            });
-
-            let environmentRenderer = '<div class="dropdown">\n' +
-                '  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
-                '    Dropdown button\n' +
-                '  </button>\n' +
-                '  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">\n' +
-                '    <a class="dropdown-item" href="#">Action</a>\n' +
-                '    <a class="dropdown-item" href="#">Another action</a>\n' +
-                '    <a class="dropdown-item" href="#">Something else here</a>\n' +
-                '  </div>\n' +
-                '</div>';
-            environmentRenderer = `
-                <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
-                <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+            let container = `
+             <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
+                <button id="single-button" type="button"  ng-class="{true: 'dropbtn2', false: 'dropbtn'}[status.isopen]" uib-dropdown-toggle ng-disabled="disabled">
                   Button dropdown <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                  <li role="menuitem"><a href="#">Action</a></li>
-                  <li role="menuitem"><a href="#">Another action</a></li>
-                  <li role="menuitem"><a href="#">Something else here</a></li>
+                
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'deleteContainer\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li class="divider"></li>
-                  <li role="menuitem"><a href="#">Separated link</a></li>
+                  <li role="menuitem"><a ng-if="landingPage" target="_blank" class="dropdown-content"
+                  ng-click="switchAction(data.id, \'openLandingPage\')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
                 </ul>
-              </div>
-            `;
-
-            let container = '<div class="dropdown">\n' +
-                '  <button class="dropbtn">{{\'CHOOSE_ACTION\'| translate}}</button>\n' +
-                '  <div class="dropdown-content">\n' +
-                '  <a ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a>\n' +
-                '  <a ng-click="switchAction(data.id, \'deleteContainer\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a>\n' +
-                '  <a ng-if="landingPage" target="_blank" ng-click="switchAction(data.id, \'openLandingPage\')">{{\'CONTAINER_LANDING_PAGE\'| translate}}</a>\n' +
-                '  </div>\n' +
-                '</div>';
+             </div>`;
 
             if (vm.view == 2)
                 return container;
@@ -272,17 +268,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
 
 
         vm.updateData = function () {
-            $scope.gridOptions.api.setRowData(vm.initRowData());
-            $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-            vm.updateLayout();
+            if ($scope.gridOptions.api != null) {
+                $scope.gridOptions.api.setRowData(vm.initRowData());
+                $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+                $scope.gridOptions.api.sizeColumnsToFit();
+            }
         };
 
-        vm.updateLayout = function () {
-            $scope.gridOptions.api.setDomLayout('null');
-            $scope.gridOptions.api.sizeColumnsToFit();
-            $scope.gridOptions.api.redrawRows();
-            $scope.gridOptions.api.setDomLayout('print');
-        };
 
         vm.initRowData = function () {
             var rowData = [];
@@ -335,7 +327,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
             rowData: vm.initRowData(),
-            rowHeight: 30,
+            rowHeight: 31,
             groupUseEntireRow:  true,
             rowSelection: 'multiple',
             angularCompileRows: true,
@@ -346,14 +338,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             enableCellChangeFlash: true,
             onRowSelected: onRowSelected,
             suppressRowClickSelection: true,
-            domLayout: 'print',
+            domLayout: 'autoHeight',
             suppressHorizontalScroll: true,
             animateRows: true,
             onGridReady: function (params) {
-                vm.updateLayout();
-                window.onresize = () => {
-                    $scope.gridApi.sizeColumnsToFit();
-                }
+                $scope.gridOptions.api.sizeColumnsToFit();
             },
             pagination: true,
             paginationPageSize: 15,
