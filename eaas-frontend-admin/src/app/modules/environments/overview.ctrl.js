@@ -189,7 +189,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             let environmentRenderer = `
              <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
                 <button id="single-button" type="button"  ng-class="{true: 'dropbtn2', false: 'dropbtn'}[status.isopen]" uib-dropdown-toggle ng-disabled="disabled">
-                  Button dropdown <span class="caret"></span>
+                  {{'CHOOSE_ACTION'| translate}} <span class="caret"></span>
                 </button>
                
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
@@ -209,7 +209,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             let container = `
              <div class="btn-group" uib-dropdown dropdown-append-to-body is-open="status.isopen">
                 <button id="single-button" type="button"  ng-class="{true: 'dropbtn2', false: 'dropbtn'}[status.isopen]" uib-dropdown-toggle ng-disabled="disabled">
-                  Button dropdown <span class="caret"></span>
+                  {{\'CHOOSE_ACTION\'| translate}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                 
