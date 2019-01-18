@@ -383,7 +383,8 @@ button:focus#printerbutton    {
     width: 100%;
     padding: 0px;
     text-indent:0px;
-    background-color: #A9A9A9
+    background-color: #A9A9A9;
+    max-width: 190px;
 ;
 
 }
@@ -395,13 +396,13 @@ button:focus#printerbutton    {
     width: 100%;
     background-color: black;
     color: whitesmoke;
+    max-width: 190px;
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
     width: 100%;
-    max-width:190px;
 }
 
 .dropdown-content {
