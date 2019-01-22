@@ -1,12 +1,28 @@
 <h1 class="m-t-0">{{'SW_OVERVIEW_HEADER' | translate}}</h1>
 
+<div style="margin-bottom: 15px;" class="ag-theme-balham">
+    <div style="text-align: justify; text-align-last: justify">
+        <span style="display: inline-block; vertical-align: text-bottom;"> Page Size:
+            <select ng-click="onPageSizeChanged()" ng-model="swOverviewCtrl.pageSize">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+            </select>
+            </span>
 
-<div style="text-align: right; margin-bottom: 15px;">
-    <button type="submit" class="btn btn-default" ui-sref="admin.sw-ingest"><span style="color: green"
-                                                                                  class="glyphicon glyphicon-plus"></span>
-        {{'SW_OVERVIEW_ADD' | translate}}
-    </button>
+        <span style="vertical-align: text-bottom; display: inline-block">
+                    <button type="submit" class="btn btn-default"
+                            ui-sref="admin.sw-ingest"><span style="color: green"
+                                                            class="glyphicon glyphicon-plus"></span>
+                                                            {{'SW_OVERVIEW_ADD' | translate}}
+                    </button>
+            </span>
+    </div>
 </div>
+
 
 <div style="text-align: right; margin-bottom: 15px;">
     <input type="text" class="form-control" ng-model="gridOptions.quickFilterText"
@@ -14,9 +30,3 @@
 </div>
 
 <div ag-grid="gridOptions" class="ag-theme-balham"></div>
-
-<div id="overviewDeleteButton" hidden class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="standardEnvsOverviewCtrl.deleteSelected()">
-        {{'CHOOSE_DELETE_SELECTED' | translate}}
-    </button>
-</div>
