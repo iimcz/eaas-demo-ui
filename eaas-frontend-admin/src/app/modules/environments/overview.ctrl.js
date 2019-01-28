@@ -355,6 +355,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             animateRows: true,
             onGridReady: function (params) {
                 $scope.gridOptions.api.sizeColumnsToFit();
+                $scope.gridOptions.api.redrawRows();
             },
             pagination: true,
             paginationPageSize: 20,
