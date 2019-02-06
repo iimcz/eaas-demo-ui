@@ -108,7 +108,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     console.log( $rootScope.emulator);
                     console.log(eaasClient.networkTcpInfo);
                     $scope.$apply();
-                    if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) {
+                    if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
                         var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
 
                         console.log(url.hostname);
@@ -123,9 +123,9 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                                 target: "_blank", rel: "noopener"}),
                             ' // ',
                             Object.assign(document.createElement("a"),
-                                {textContent: "start eaas-proxy", href: eaasClient.getProxyURL()}),
+                                {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL()}),
                         );
-                    }
+                    })();
 
                     if (eaasClient.params.pointerLock === "true") {
                         growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
