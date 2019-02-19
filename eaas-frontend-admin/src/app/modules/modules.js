@@ -48,3 +48,5 @@ emilUIModule.controller('EditContainerController', require('./containers/editCon
 emilUIModule.controller('NewContainerController', require('./containers/newContainer.ctrl'));
 
 emilUIModule.controller('ObjectsImportController', require('./objects/import.ctrl.js'));
+emilUIModule.controller('EmulatorsController', require('./emulators/overview.ctrl.js'));
+emilUIModule.controller('EmulatorsDetailsController', require('./emulators/details.ctrl.js'));

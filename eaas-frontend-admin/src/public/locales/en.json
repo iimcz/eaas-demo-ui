@@ -67,6 +67,7 @@
   "BASE_MENU_CONTAINER_ENVS" : "Containers",
   "BASE_MENU_NEW_OBJECT" : "Import Object",
   "BASE_MENU_MD" : "OAI PMH",
+  "BASE_EMULATORS" : "Emulators",
 
   "ADVANCED_IMPORT_EMULATOR": "Import Emulator",
   "ADVANCED_IMPORT_EMULATOR_READYMADE": "URL to read-made image",
@@ -364,6 +365,9 @@
   "METADATA_ADD_HOSTNAME" : "Name",
   "METADATA_OK" : "Add",
   "METADATA_CANCEL" : "Cancel",
-  "METADATA_PROVIDER_LIST_H" : "Metadata provider"
-
+  "METADATA_PROVIDER_LIST_H" : "Metadata provider",
+  "EMULATORS_TITLE": "Supported Emulators",
+  "EMULATORS_AVAILABLE_NUMBER": "Available emulators:",
+  "EMULATORS_SHOW_NUMBER": "Shown emulators:",
+  "EMULATORS_DETAILS": "Details"
 }
