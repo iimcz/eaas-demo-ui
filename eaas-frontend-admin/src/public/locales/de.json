@@ -364,5 +364,6 @@
   "EMULATORS_TITLE": "Unterstützt Emulators",
   "EMULATORS_AVAILABLE_NUMBER": "Verfügbar Emulators:",
   "EMULATORS_SHOW_NUMBER": "Anzahl der angezeigten Emulatoren:",
-  "EMULATORS_DETAILS": "Einzelheiten"
+  "EMULATORS_DETAILS": "Einzelheiten",
+  "EMULATORS_BACK" : "Zurück zur Emulatoren Übersicht"
 }

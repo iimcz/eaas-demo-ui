@@ -5,7 +5,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         var vm = this;
         vm.nameIndexes = nameIndexes.data;
         vm.emulators = window.EMULATORS_LIST;
-        console.log(vm.nameIndexes);
         vm.initRowData = function () {
             let rowData = [];
             for (let i = 0; i < window.EMULATORS_LIST.length; i++) {
@@ -19,7 +18,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                         }
                     }
                 );
-                // rowElement.emuCount = emuCount;
                 rowData.push(rowElement);
             }
             return rowData;
@@ -27,7 +25,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
 
         function editBtnRenderer(params) {
             params.$scope.selected = $scope.selected;
-            return `<button id="single-button" ui-sref="admin.emulators_details({entries: data.entries})" type="button" class="dropbtn">
+            return `<button id="single-button" ui-sref="admin.emulators_details({entries: data.entries, emuName: data.name})" type="button" class="dropbtn">
                   {{'EMULATORS_DETAILS'| translate}}
                 </button>`;
         }
@@ -44,7 +42,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 }
             ];
         };
-
 
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
@@ -70,5 +67,4 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 return '[' + params.value.toLocaleString() + ']';
             },
         };
-
     }];

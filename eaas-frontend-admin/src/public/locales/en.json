@@ -369,5 +369,6 @@
   "EMULATORS_TITLE": "Supported Emulators",
   "EMULATORS_AVAILABLE_NUMBER": "Available emulators:",
   "EMULATORS_SHOW_NUMBER": "Shown emulators:",
-  "EMULATORS_DETAILS": "Details"
+  "EMULATORS_DETAILS": "Details",
+  "EMULATORS_BACK" : "Back to emulators-list"
 }

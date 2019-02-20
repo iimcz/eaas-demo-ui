@@ -768,7 +768,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         })
         .state('admin.emulators_details', {
             url: "/emulators",
-            params: {entries: null},
+            params: {entries: null, emuName: null},
             resolve: {
                 nameIndexes: ($http, localConfig, REST_URLS) =>
                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getNameIndexes)
