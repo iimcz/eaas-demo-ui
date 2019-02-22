@@ -67,6 +67,7 @@
   "BASE_MENU_CONTAINER_ENVS" : "Containers",
   "BASE_MENU_NEW_OBJECT" : "Import Object",
   "BASE_MENU_MD" : "OAI PMH",
+  "BASE_EMULATORS" : "Emulators",
 
   "ADVANCED_IMPORT_EMULATOR": "Import Emulator",
   "ADVANCED_IMPORT_EMULATOR_READYMADE": "URL to read-made image",
@@ -207,6 +208,7 @@
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_CONTAINER_EMULATOR" : "Emulator Version",
   "EDITENV_XPRA": "XPRA Video (Experimental)",
+  "EDITENV_XPRA_ENCODING": "XPRA Encoding",
   "EDITENV_CLOSE" : "Back to overview",
 
   "EDITENV_CANCONNECTENVS": "Can be connected with other environments (Experimental)",
@@ -363,6 +365,10 @@
   "METADATA_ADD_HOSTNAME" : "Name",
   "METADATA_OK" : "Add",
   "METADATA_CANCEL" : "Cancel",
-  "METADATA_PROVIDER_LIST_H" : "Metadata provider"
-
+  "METADATA_PROVIDER_LIST_H" : "Metadata provider",
+  "EMULATORS_TITLE": "Supported Emulators",
+  "EMULATORS_AVAILABLE_NUMBER": "Available emulators:",
+  "EMULATORS_SHOW_NUMBER": "Shown emulators:",
+  "EMULATORS_DETAILS": "Details",
+  "EMULATORS_BACK" : "Back to emulators-list"
 }
