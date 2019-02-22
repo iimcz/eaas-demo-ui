@@ -25,7 +25,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 rowData.push({
                     version: entry.value.version,
                     id: entry.value.image.id,
-                    type: entry.value.image.type,
+                    ociSourceUrl: entry.value.provenance.ociSourceUrl.replace('docker://',''),
                     versionTag: entry.value.provenance.versionTag,
                     isLatest: entry.value.version === vm.latestVersion,
                     entry: entry
@@ -47,7 +47,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             return [
                 {headerName: "User version", field: "version"},
                 {headerName: "ID", field: "id"},
-                {headerName: "ImageType", field: "type"},
+                {headerName: "ociSourceUrl", field: "ociSourceUrl"},
                 {headerName: "Docker tag", field: "versionTag"},
                 {
                     headerName: "Latest", field: "isLatest",
