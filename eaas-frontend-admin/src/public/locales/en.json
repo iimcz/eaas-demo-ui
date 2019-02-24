@@ -33,6 +33,7 @@
   "ACTIONS_SAVE_ENV" : "Save Environment",
   "ACTIONS_CHANGE_MEDIA" : "Change media",
   "ACTIONS_CTRLALTDEL" : "Send Ctr-Alt-Del",
+  "ACTIONS_ESC" : "Send Esc",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   "ACTIONS_SNAPSHOT": "Snapshot",
 
