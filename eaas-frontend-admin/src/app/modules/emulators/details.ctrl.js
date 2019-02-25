@@ -13,7 +13,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         vm.nameIndexes = nameIndexes.data;
         if ($stateParams.entries.length > 0)
             vm.nameIndexes.aliases.entry.find(function (aliasElement) {
-                if (aliasElement.value.name === $stateParams.entries[0].value.name) {
+                if (aliasElement.value.name === $stateParams.entries[0].value.name && aliasElement.value.alias === "latest") {
                     vm.latestVersion = aliasElement.value.version;
                     return;
                 }
