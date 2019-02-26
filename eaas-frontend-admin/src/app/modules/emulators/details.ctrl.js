@@ -13,7 +13,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         vm.nameIndexes = nameIndexes.data;
         if ($stateParams.entries.length > 0)
             vm.nameIndexes.aliases.entry.find(function (aliasElement) {
-                if (aliasElement.value.name === $stateParams.entries[0].value.name) {
+                if (aliasElement.value.name === $stateParams.entries[0].value.name && aliasElement.value.alias === "latest") {
                     vm.latestVersion = aliasElement.value.version;
                     return;
                 }
@@ -34,13 +34,23 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             return rowData;
         };
 
-        function editBtnRenderer(params) {
+        function JSONBtnRenderer(params) {
             params.$scope.selected = $scope.selected;
             params.$scope.showJsonDialog = vm.showJsonDialog;
 
             return `<button id="single-button" type="button" ng-click="showJsonDialog(data.entry)" class="dropbtn">
                   JSON
                 </button>`;
+        }
+
+        function latestEditorBtnRenderer(params) {
+            params.$scope.selected = $scope.selected;
+            params.$scope.makeLatest = vm.makeLatest;
+
+            return `<button id="single-button" ng-if="!data.isLatest" type="button" ng-click="makeLatest(data.entry.value.name, data.entry.value.version)" class="dropbtn">
+                  Make Latest
+                </button>
+                <div ng-if="data.isLatest">The Latest!</div>`;
         }
 
         vm.initColumnDefs = function () {
@@ -54,12 +64,16 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     cellStyle: function (params) {
                         if (params.value)
                             return {
-                                backgroundColor: '#aaffaa' // light green
+
+                                backgroundColor: '#aaffaa', // light green
+                                "text-align": "center",
+                                border: "1.5px solid #FFD700 !important"
                             }
-                    }
+                    },
+                    cellRenderer: latestEditorBtnRenderer
                 },
                 {
-                    headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
+                    headerName: "", field: "edit", cellRenderer: JSONBtnRenderer, suppressSorting: true,
                     suppressMenu: true
                 }
             ];
@@ -76,6 +90,25 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 template: require('./modals/emulators-json.modal.html'),
                 controller: "EmulatorsJsonModalController as jsonDialogCtrl"
             });
+        };
+
+        vm.makeLatest = function (emulatorName, version) {
+            $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateLatestEmulator,
+                {
+                    emulatorName: emulatorName,
+                    version: version
+                }).then(function (response) {
+                console.log("!!!!!!");
+                console.log(response);
+                if (response.status === 200 || response.status === 204) {
+                    growl.success('done!');
+                    $state.go('admin.emulators_details', {entries: $stateParams.entries, emuName: $stateParams.emuName}, {reload: true});
+                }
+                else {
+                    $state.go('error', {errorMsg: {title: 'Error ' + response.message + "\n\n" + response}});
+                }
+            });
+
         };
 
 
