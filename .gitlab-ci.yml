@@ -10,3 +10,4 @@ build:
     paths:
     - eaas-frontend-admin/dist/
     - eaas-frontend-user/dist/
+    - citar-headless-client/dist/
