@@ -15,7 +15,7 @@ build:
 build_multi_user_admin_ui:
   script:
   - cd eaas-frontend-admin
-  - mv src/public/auth.env.template auth.env
+  - mv auth.env.template auth.env
   - sed 's/myClientId/'"$UI_CLIENT_ID"'/g' auth.env
   - npm install
   - npm run build
@@ -24,8 +24,6 @@ build_multi_user_admin_ui:
      - master
    variables:
      - $CI_PROJECT_NAMESPACE == "openslx"
-
-
   artifacts:
     paths:
     - eaas-frontend-admin/dist/
