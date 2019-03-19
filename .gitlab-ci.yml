@@ -16,7 +16,7 @@ build_multi_user_admin_ui:
   script:
   - cd eaas-frontend-admin
   - mv auth.env.template auth.env
-  - sed 's/myClientId/'"$UI_CLIENT_ID"'/g' auth.env
+  - sed -i 's/myClientId/'"$UI_CLIENT_ID"'/g' auth.env
   - npm install
   - npm run build
   only:
