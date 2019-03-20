@@ -14,11 +14,9 @@ build:
 
 build_multi_user_admin_ui:
   script:
-  - cd eaas-frontend-admin
-  - mv auth.env.template auth.env
-  - sed -i 's/myClientId/'"$UI_CLIENT_ID"'/g' auth.env
-  - npm install
-  - npm run build
+  - mv eaas-frontend-admin/auth.env.template eaas-frontend-admin/auth.env
+  - sed -i 's/myClientId/'"$UI_CLIENT_ID"'/g' eaas-frontend-admin/auth.env
+  - ./build.sh
   only:
    refs:
      - master
@@ -27,3 +25,5 @@ build_multi_user_admin_ui:
   artifacts:
     paths:
     - eaas-frontend-admin/dist/
+    - eaas-frontend-user/dist/
+    - citar-headless-client/dist/
