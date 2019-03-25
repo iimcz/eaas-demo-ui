@@ -212,7 +212,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 .service('authService', function($state, angularAuth0, $timeout) {
 
       this.login = function (data) {
-          data.redirectUri = auth0config.REDIRECT_URL;
+          data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
       };
 
