@@ -18,7 +18,7 @@ var isProd = ENV === 'build';
 var PRODUCTION_BASE_PATH = '';
 
 var LOCAL_WEBSERVER_PATH = '/';
-var PRODUCTION_PATH = '/citar-headless-client/';
+var PRODUCTION_PATH = '/landing-page/';
 
 // Include git commit hash
 var commitHash = require('child_process').execSync('git rev-parse HEAD').toString();
