@@ -2,12 +2,13 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
                      'localConfig', 'objEnvironments', 'environmentList', 'growl', '$translate', 'metadata', 'helperFunctions', 'REST_URLS',
                       function ($scope, $state, $stateParams, $uibModal, $http, localConfig, objEnvironments, environmentList, growl, $translate, metadata, helperFunctions, REST_URLS) {
      var vm = this;
-
+    console.log("$stateParams.userDescription", $stateParams.userDescription);
      vm.objEnvironments = objEnvironments.data.environmentList;
      vm.objectId = $stateParams.objectId;
      vm.metadata = metadata.data;
      vm.suggested = objEnvironments.data.suggested;
      vm.fileFormatMap = objEnvironments.data.fileFormatMap;
+     vm.description = $stateParams.userDescription;
 
      console.log(vm.fileFormatMap);
 
@@ -123,9 +124,11 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http',
          }
 
      vm.saveCharacterization = function() {
+             console.log("vm.description " , vm.description);
          $http.post(localConfig.data.eaasBackendURL + REST_URLS.overrideObjectCharacterizationUrl, {
              objectId: $stateParams.objectId,
-             environments: vm.objEnvironments
+             environments: vm.objEnvironments,
+             description: vm.description,
          }).then(function() {
              $state.go('admin.object-overview');
          });

@@ -218,6 +218,8 @@
   "EDITENV_GW_PRIVATE_MASK" : "Interne IP Maske des Gateways (dezimal)",
   "EDITENV_CLOSE" : "Zurück zur Übersicht",
 
+  "OBJECTS_NEW_OBJECT" : "Objekt importieren",
+  "OBJECTS_CLASSIFY" : "Klassifizieren",
   "CHAR_L" : "Objektcharakterisierung",
   "CHAR_UPDATE_PROPOSAL" : "Umgebungen neu berechnen",
   "CHAR_UPDATE_CLASS" : "Erneut klassifizieren",
