@@ -224,7 +224,7 @@
   "EDITENV_GW_PRIVATE_MASK" : "Internal gateway IP mask(decimal)",
 
   "OBJECTS_NEW_OBJECT" : "Import Object",
-  "OBJECTS_CLASSIFY" : "Classify",
+  "OBJECTS_DETAILS" : "Details",
   "CHAR_L" : "Characterize object",
   "CHAR_ADD" : "Add environment",
   "CHAR_UPDATE_PROPOSAL" : "Detect/find environments",

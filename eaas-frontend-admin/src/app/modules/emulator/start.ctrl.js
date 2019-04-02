@@ -3,6 +3,9 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
         var vm = this;
         vm.envs = environmentList.data.environments;
 
+        window.isCollapsed = true;
+        console.log(window.isCollapsed, window.isCollapsed);
+
         vm.runEmulator = function(selectedEnvs) {
 
             let type = "machine";

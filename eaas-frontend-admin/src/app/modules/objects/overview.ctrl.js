@@ -1,5 +1,7 @@
-module.exports = ['$state', '$scope', '$stateParams', 'objectList', function ($state, $scope, $stateParams, objectList) {
+module.exports = ['$state', '$scope', '$stateParams', 'objectList', 'localConfig', function ($state, $scope, $stateParams, objectList, localConfig) {
+    console.log("local ", localConfig);
     var vm = this;
+    vm.config = localConfig.data;
     vm.objectList = objectList.data.objects;
 
     if (objectList.data.status !== "0") {
@@ -22,6 +24,9 @@ module.exports = ['$state', '$scope', '$stateParams', 'objectList', function ($s
         return [
             {headerName: "ID", field: "id"},
             {
+                headerName: "title", field: "title"
+            },
+            {
                 headerName: "description", field: "description", cellRenderer: descriptiponRenderer, suppressSorting: true,
                 suppressMenu: true
             },
@@ -35,7 +40,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'objectList', function ($s
     function editBtnRenderer(params) {
         params.$scope.selected = $scope.selected;
         return `<button id="single-button" ui-sref="admin.edit-object-characterization({objectId: data.id, userDescription: data.description})" type="button" class="dropbtn">
-                  {{'OBJECTS_CLASSIFY'| translate}}
+                  {{'OBJECTS_DETAILS'| translate}}
                 </button>`;
     }
     function descriptiponRenderer(params) {
