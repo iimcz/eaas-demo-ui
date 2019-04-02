@@ -158,8 +158,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     $scope.envs = environmentList.data.environments;
                     $scope.selected = [];
                     $scope.ok = function () {
-                        $uibModalInstance.close();
-                        vm.runEmulator($scope.selected);
+                        jQuery.when(
+                            $uibModalInstance.close(),
+                            jQuery.Deferred(function (deferred) {
+                                jQuery(deferred.resolve);
+                            })).done(function () {
+                            vm.runEmulator($scope.selected);
+                        });
                     };
 
                     $scope.cancel = function () {
