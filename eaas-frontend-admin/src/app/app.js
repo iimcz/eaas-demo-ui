@@ -727,6 +727,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
         .state('admin.edit-object-characterization', {
             url: "/edit-object-characterization?objectId",
+            params: {userDescription: null},
             resolve: {
                 objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
                     $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.objectEnvironmentsUrl, $stateParams.objectId, "false", "false")),

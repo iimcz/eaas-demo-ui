@@ -439,6 +439,11 @@ pre#json-renderer {
 	margin-top: 80px;
   margin-bottom: 80px;
 }
+abbr[title] {
+    /*border-bottom: none !important;*/
+    /*cursor: inherit !important;*/
+    text-decoration: none !important;
+}
 
 .form-signin {
   max-width: 380px;
