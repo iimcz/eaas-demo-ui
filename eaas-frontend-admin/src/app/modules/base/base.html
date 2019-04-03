@@ -9,15 +9,16 @@
             <div class="sidebar-nav">
                 <div class="navbar navbar-default" role="navigation">
                     <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
-                            <span class="sr-only">{{'BASE_SHOW_MENU' | translate}}</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
                         <span class="visible-xs navbar-brand">{{'BASE_MENU_L' | translate}}</span>
                     </div>
-                    <div class="navbar-collapse collapse sidebar-navbar-collapse" collapse="isCollapsed">
+                    <button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed">
+                        <span class="sr-only">{{'BASE_SHOW_MENU' | translate}}</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="menuTitle" ng-show="isCollapsed" >Menu</div>
+                    <div uib-collapse="isCollapsed" >
                         <ul class="nav navbar-nav">
                             <!-- <li><a ng-click="baseCtrl.open()" href="">{{'BASE_MENU_HELP'| translate}}</a></li>  -->
                             <li><a ui-sref="admin.standard-envs-overview({showObjects: false, showContainers: false})" data-ui-sref-opts="{reload: true}" href="">{{'BASE_MENU_ENVS'| translate}}</a></li>

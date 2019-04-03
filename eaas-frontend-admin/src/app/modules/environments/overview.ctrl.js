@@ -257,7 +257,8 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
             $rootScope.nativeConfig = env.nativeConfig;
-            $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, archiveId: env.archiveId});
+            window.isCollapsed = true;
+            $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, archiveId: env.archiveId}, {reload: true});
         };
 
         vm.edit = function (id) {
