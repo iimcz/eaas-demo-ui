@@ -45,10 +45,10 @@
     .navbar-toggle {
         display: block;
         z-index: 1000001;
-        background-color: transparent;
+        background-color: transparent !important;
     }
     .navbar-collapse.collapse {
-        display: none!important;
+        display: none !important;
     }
     .navbar-nav {
         float: none!important;
@@ -58,6 +58,9 @@
     }
     .navbar-collapse.collapse.in{
         display:block !important;
+    }
+    .navbar-toggle:hover {
+        background-color: #ddd !important;
     }
 }
 
