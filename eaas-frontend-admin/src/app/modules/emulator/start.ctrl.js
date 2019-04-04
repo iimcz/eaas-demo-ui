@@ -1,9 +1,9 @@
-module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
-                                    function ($rootScope, $uibModal, $scope, $sce, environmentList,  $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
+module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environmentList', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'REST_URLS', 'chosenEnv',
+                                    function ($rootScope, $uibModal, $scope, $http, $sce, environmentList,  $state, $stateParams, $cookies, $translate, localConfig, growl, REST_URLS, chosenEnv) {
         var vm = this;
         vm.envs = environmentList.data.environments;
 
-        vm.runEmulator = function(selectedEnvs) {
+        vm.runEmulator = function(selectedEnvs, attachId) {
 
             let type = "machine";
 
@@ -102,7 +102,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
 
             envs.push({data, visualize: true});
 
-            eaasClient.start(envs, params).then(function () {
+            eaasClient.start(envs, params, attachId).then(function () {
                 eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").show();
@@ -154,12 +154,45 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
         else {
             let modal = $uibModal.open({
                 template: require('./modals/connected-envs.html'),
-                controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
+                controller: ["$scope", "$uibModalInstance", "$uibModalStack", function ($scope, $uibModalInstance, $uibModalStack) {
+                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds).then(function (response) {
+                        if (response.status === 200) {
+                            console.log("!!! response.data", response.data);
+                            $scope.availableGroupIds = response.data;
+                        } else {
+                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                        }
+                    });
                     $scope.envs = environmentList.data.environments;
                     $scope.selected = [];
+                    var self = this;
+
+
+                    $scope.attachComponentId;
                     $scope.ok = function () {
-                        $uibModalInstance.close();
+                        jQuery.when(
+                            $uibModalInstance.close(),
+                            jQuery.Deferred(function (deferred) {
+                                jQuery(deferred.resolve);
+                            })).done(function () {
+                            runSelectedEmulators()
+                        });
+                    };
+
+                    function runSelectedEmulators() {
                         vm.runEmulator($scope.selected);
+                    }
+
+                    $scope.connectToExistentComponent = function () {
+                        console.log("$scope.attachComponentId", $scope.attachComponentId);
+                        jQuery.when(
+                            jQuery.Deferred(function (deferred) {
+                                jQuery(deferred.resolve);
+                            })).done(function () {
+                            $uibModalInstance.close();
+                        });
+                        console
+                        vm.runEmulator($scope.selected, $scope.attachComponentId);
                     };
 
                     $scope.cancel = function () {
@@ -174,6 +207,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     $scope.OnRemoveSelect = function (item) {
                         var index = $scope.selected.indexOf(item);
                         $scope.selected.splice(index, 1);
+                    };
+                    $scope.OnClickSelectAttachID = function (item) {
+                        $scope.attachComponentId = item;
+                    };
+
+                    $scope.OnRemoveSelectAttachID = function (item) {
+                        delete $scope.attachComponentId
                     }
                 }],
                 controllerAs: "connectedEnvs"

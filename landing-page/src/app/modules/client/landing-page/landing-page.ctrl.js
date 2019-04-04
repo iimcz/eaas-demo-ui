@@ -273,6 +273,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                                 }
                             ]
                         }).then(function (response) {
+                            modalCtrl.detachedComponentId = eaasClient.networkId;
                             if (response.status === 200) {
                                 window.onbeforeunload = function () {
                                     eaasClient.disconnect();
@@ -288,7 +289,6 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     this.localConnectionPort = 8080;
 
                     this.getLocalProxy = function () {
-                        console.log("!!! modalCtrl.port " + modalCtrl.localConnectionPort);
                         return eaasClient.getProxyURL({localPort:modalCtrl.localConnectionPort}).then(
                             function (result) {
                                 // use the result here

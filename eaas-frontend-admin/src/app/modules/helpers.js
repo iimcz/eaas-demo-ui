@@ -45,6 +45,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";
     this.replicateImage = "EmilEnvironmentData/replicateImage";
     this.getNameIndexes = "EmilEnvironmentData/getNameIndexes";
+    this.getGroupIds = "networks/";
 
     this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
     this.importContainerUrl = "EmilContainerData/importContainer";
