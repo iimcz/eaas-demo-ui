@@ -4,6 +4,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
         vm.envs = environmentList.data.environments;
 
         window.isCollapsed = true;
+        window.$rootScope = $rootScope;
         console.log(window.isCollapsed, window.isCollapsed);
 
         vm.runEmulator = function(selectedEnvs) {
@@ -102,7 +103,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 }
                 return data;
             };
-
+            let envTitle = environmentList.data.environments.find(element => element.envId === $stateParams.envId);
             envs.push({data, visualize: true});
 
             eaasClient.start(envs, params).then(function () {
@@ -110,16 +111,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").show();
                     $rootScope.emulator.mode = eaasClient.mode;
-                    console.log( $rootScope.emulator);
-                    console.log(eaasClient.networkTcpInfo);
                     $scope.$apply();
                     if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
                         var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
 
-                        console.log(url.hostname);
-                        console.log(url.pathname);
                         var pathArray = url.pathname.split('/');
-                        console.log(pathArray);
 
                         document.querySelector("#emulator-info-container").append(
                             Object.assign(document.createElement("a"),
@@ -142,6 +138,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     $scope.$on('$locationChangeStart', function (event) {
                         eaasClient.release();
                     });
+                    $scope.$apply();
                 });
             });
         };

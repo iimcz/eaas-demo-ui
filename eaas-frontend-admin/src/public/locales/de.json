@@ -235,6 +235,7 @@
   "CHAR_CONFIRM_RESET_T" : "Alle manuellen Umgebungs-Zuordnungen löschen? Die Daten werden endgültig gelöscht.",
 
   "EMU_TITLE" : "Das Emulationsystem wird gestartet...",
+  "EMU_VIDEO_CABLE" : "Videokabel wechseln",
   "EMU_STOPPED" : "Das Emulationsystem wurde gestoppt.",
   "EMU_POINTER_LOCK_AVAILABLE" : "Klicken sie auf den Emulator für die Maussteuerung.",
   "EMU_LINK": "Direktlink zu dieser Umgebung",

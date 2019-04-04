@@ -2,14 +2,10 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         '$timeout', '$translate', 'chosenEnv', 'helperFunctions', 'REST_URLS',
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
     var vm = this;
-
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
-
-
-    console.log("$rootScope.nativeConfig  ", $rootScope.nativeConfig);
-
+    
     if(typeof $rootScope.nativeConfig !== 'undefined')
         vm.isKVM = ($rootScope.nativeConfig.includes('-enable-kvm'));
     else
@@ -188,7 +184,74 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
             });
         });
-    }
+    };
+
+    vm.switchEmulators = function (emulatorId)
+    {
+        var eaasClient = window.eaasClient;
+        let loadingElement = $("#emulator-loading-connections");
+        $("#emulator-container").hide();
+
+        var attr = loadingElement.attr('width');
+        loadingElement.attr("hidden", false);
+
+
+        jQuery.when(
+        window.eaasClient.disconnect(),
+        jQuery.Deferred(function (deferred) {
+            jQuery(deferred.resolve);
+        })).done(function () {
+
+
+            eaasClient.componentId = emulatorId;
+
+            eaasClient.connect().then(function () {
+
+                jQuery.when(
+                    loadingElement.animate({width: "100%"}, 750),
+                    jQuery.Deferred(function (deferred) {
+                        jQuery(deferred.resolve);
+                    })).done(function () {
+                    loadingElement.attr("hidden", true);
+                });
+
+
+                $("#emulator-container").show();
+                $rootScope.emulator.mode = eaasClient.mode;
+                console.log( $rootScope.emulator);
+                console.log(eaasClient.networkTcpInfo);
+                $scope.$apply();
+                if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
+                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
+                    var pathArray = url.pathname.split('/');
+                    document.querySelector("#emulator-info-container").append(
+                        Object.assign(document.createElement("a"),
+                            {textContent: `connect to: ${url.hostname} protocol ${pathArray[1]} port ${pathArray[2]}`,
+                                href: `http://${url.hostname}:${pathArray[2]}`,
+                                target: "_blank", rel: "noopener"}),
+                        ' // ',
+                        Object.assign(document.createElement("a"),
+                            {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL(),
+                                target: "_blank",}),
+                    );
+                })();
+
+                if (eaasClient.params.pointerLock === "true") {
+                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                    BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                }
+
+                // Fix to close emulator on page leave
+                $scope.$on('$locationChangeStart', function (event) {
+                    window.$rootScope.idsData = [];
+                    eaasClient.release();
+
+                });
+
+            });
+
+        });
+    };
 
 
     vm.openSaveEnvironmentDialog = function() {

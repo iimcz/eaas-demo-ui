@@ -371,6 +371,7 @@
   "METADATA_CANCEL" : "Cancel",
   "METADATA_PROVIDER_LIST_H" : "Metadata provider",
   "EMULATORS_TITLE": "Supported Emulators",
+  "EMU_VIDEO_CABLE" : "Changing Video Cables",
   "EMULATORS_AVAILABLE_NUMBER": "Available emulators:",
   "EMULATORS_SHOW_NUMBER": "Shown emulators:",
   "EMULATORS_DETAILS": "Details",
