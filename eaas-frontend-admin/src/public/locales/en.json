@@ -1,7 +1,7 @@
 {
   "NEW_CONTAINER_TITLE" : "Title",
   "NEW_CONTAINER_AUTHOR" : "Author",
-  "CONTAINER_LANDING_PAGE" : "[Landing Page]",
+  "CONTAINER_LANDING_PAGE" : "Landing Page",
   "CHOOSE_ENV_L" : "Environments",
   "CHOOSE_BASEENV_L" : "Virtual machines",
   "CHOOSE_OBJENV_L" : "Object Environments",
@@ -14,12 +14,12 @@
   "HANDLE_DELETE" : "Delete handle",
   "ADD_HANDLE" : "Add handle",
   "SAVE_HANDLE" : "Save handle",
-  "CHOOSE_ENV_DEL" : "[Delete]",
+  "CHOOSE_ENV_DEL" : "Delete",
   "CHOOSE_ENV_VER" : "Version",
   "CHOOSE_ENV_ADDSW" : "Add Software",
   "CHOOSE_CONTAINER_L" : "Container",
   "CHOOSE_ENV_RUN" : "Run",
-  "CHOOSE_ENV_RUN_MODIFIED" : "[Run modified]",
+  "CHOOSE_ENV_RUN_MODIFIED" : "Run modified",
   "CHOOSE_ACTION" : "Choose action",
   "CHOOSE_DELETE_SELECTED" : "Delete selected",
 
