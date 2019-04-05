@@ -117,9 +117,10 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     };
     $timeout(eaasClientReadyTimer);
 
-    $scope.updateTitle =function() {
-        if(typeof window.$rootScope.idsData[0].title === "undefined"){
-            $rootScope.idsData.forEach(function(idData) {
+    $scope.initTitles =function() {
+        // check if titles were introduced already
+        if (typeof window.$rootScope.idsData[0].title === "undefined") {
+            $rootScope.idsData.forEach(function (idData) {
                 idData.title = $rootScope.environments.find(element => element.envId === idData.env.data.environment).title;
             })
         }

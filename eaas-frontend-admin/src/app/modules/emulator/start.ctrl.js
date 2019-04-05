@@ -157,7 +157,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 animation: true,
                 controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
                     $scope.isModuleVisible = true;
-                    $scope.envs = environmentList.data.environments;
+                    $scope.envs = [];
+                    console.log(environmentList.data.environments);
+                    environmentList.data.environments.forEach(function (env) {
+                        if (env.connectEnvs || env.serverMode)
+                            $scope.envs.push(env);
+                    });
+
                     $scope.selected = [];
                     $scope.ok = function () {
                         $scope.isModuleVisible = false;
