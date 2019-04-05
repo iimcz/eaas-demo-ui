@@ -103,7 +103,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 }
                 return data;
             };
-            let envTitle = environmentList.data.environments.find(element => element.envId === $stateParams.envId);
+            $rootScope.environments = environmentList.data.environments;
             envs.push({data, visualize: true});
 
             eaasClient.start(envs, params).then(function () {
@@ -156,10 +156,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                 template: require('./modals/connected-envs.html'),
                 animation: true,
                 controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
+                    $scope.isModuleVisible = true;
                     $scope.envs = environmentList.data.environments;
                     $scope.selected = [];
                     $scope.ok = function () {
-                        $scope.showModal = false;
+                        $scope.isModuleVisible = false;
                         jQuery.when(
                             $uibModalInstance.close(),
                             $(".modal-backdrop").hide(),

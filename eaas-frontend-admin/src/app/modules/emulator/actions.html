@@ -26,11 +26,11 @@
 
         <button type="submit" class="btn btn-default" ng-click="actionsCtrl.stopEmulator()">{{'ACTIONS_STOP' | translate}}</button>
 
-        <button  class="btn btn-default" uib-dropdown-toggle ng-if="idsData.length > 1" uib-dropdown on-toggle="toggled(open)">
+        <button  class="btn btn-default" ng-click="updateTitle()" uib-dropdown-toggle ng-if="idsData.length > 1" uib-dropdown on-toggle="toggled(open)">
             <div>Switch View</div>
             <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
                 <li ng-repeat="choice in idsData">
-                    <a ng-click="actionsCtrl.switchEmulators(choice.id)" href>{{choice.env.data.environment}}</a>
+                    <a ng-click="actionsCtrl.switchEmulators(choice.id)" href>{{choice.title}}</a>
                 </li>
             </ul>
         </button>
