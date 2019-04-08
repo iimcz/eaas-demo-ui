@@ -195,8 +195,10 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
-    vm.switchEmulators = function (emulatorId)
+    vm.switchEmulators = function (component)
     {
+        $stateParams.envId = component.env.data.environment;
+        console.log("!! component ", component.env.data.environment);
         var eaasClient = window.eaasClient;
         let loadingElement = $("#emulator-loading-connections");
         $("#emulator-container").hide();
@@ -212,7 +214,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         })).done(function () {
 
 
-            eaasClient.componentId = emulatorId;
+            eaasClient.componentId = component.id;
 
             eaasClient.connect().then(function () {
 
@@ -227,8 +229,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
                 $("#emulator-container").show();
                 $rootScope.emulator.mode = eaasClient.mode;
-                console.log( $rootScope.emulator);
-                console.log(eaasClient.networkTcpInfo);
                 $scope.$apply();
                 if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
                     var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
