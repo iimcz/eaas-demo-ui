@@ -318,13 +318,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             columnDefs = [
                 {headerName: '', width: 41, checkboxSelection: true, suppressSorting: true,
                     suppressMenu: true},
-                {headerName: "Name", field: "name"},
-                {headerName: "ID", field: "id"},
+                {headerName: "Name", field: "name", width: 400},
+                {headerName: "ID", field: "id", width: 100},
                 {headerName: "Archive", field: "archive", hide: true}
             ];
 
             if (vm.view == 0 || vm.view == 1) {
-                columnDefs.push({headerName: "Owner", field: "owner"},);
+                columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
                 if (vm.view == 1) {
                     columnDefs.push({headerName: "ObjectID", field: "objectId"});
                 }
