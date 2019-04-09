@@ -1,13 +1,12 @@
-module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'chosenEnv',
-                                    function ($rootScope, $uibModal, $scope, $sce, environmentList,  $state, $stateParams, $cookies, $translate, localConfig, growl, chosenEnv) {
+module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environmentList', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'REST_URLS', 'chosenEnv',
+                                    function ($rootScope, $uibModal, $scope, $http, $sce, environmentList,  $state, $stateParams, $cookies, $translate, localConfig, growl, REST_URLS, chosenEnv) {
         var vm = this;
         vm.envs = environmentList.data.environments;
 
         window.isCollapsed = true;
         window.$rootScope = $rootScope;
         console.log(window.isCollapsed, window.isCollapsed);
-
-        vm.runEmulator = function(selectedEnvs) {
+        vm.runEmulator = function(selectedEnvs, attachId) {
 
             let type = "machine";
 
@@ -106,7 +105,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
             $rootScope.environments = environmentList.data.environments;
             envs.push({data, visualize: true});
 
-            eaasClient.start(envs, params).then(function () {
+            eaasClient.start(envs, params, attachId).then(function () {
                 eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").show();
@@ -155,18 +154,26 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
             let modal = $uibModal.open({
                 template: require('./modals/connected-envs.html'),
                 animation: true,
-                controller: ["$scope", "$uibModalInstance", function ($scope, $uibModalInstance) {
-                    $scope.isModuleVisible = true;
+                controller: ["$scope", "$uibModalInstance", "$uibModalStack", function ($scope, $uibModalInstance, $uibModalStack) {
+                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds).then(function (response) {
+                        if (response.status === 200) {
+                            console.log("!!! response.data", response.data);
+                            $scope.availableGroupIds = response.data;
+                        } else {
+                            growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                        }
+                    });
                     $scope.envs = [];
                     console.log(environmentList.data.environments);
                     environmentList.data.environments.forEach(function (env) {
                         if (env.connectEnvs || env.serverMode)
                             $scope.envs.push(env);
                     });
-
                     $scope.selected = [];
+
+                    $scope.attachComponentId;
                     $scope.ok = function () {
-                        $scope.isModuleVisible = false;
+                    $scope.isModuleVisible = false;
                         jQuery.when(
                             $uibModalInstance.close(),
                             $(".modal-backdrop").hide(),
@@ -174,8 +181,24 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                             jQuery.Deferred(function (deferred) {
                                 jQuery(deferred.resolve);
                             })).done(function () {
-                            vm.runEmulator($scope.selected);
+                            runSelectedEmulators()
                         });
+
+                    };
+
+                    function runSelectedEmulators() {
+                        vm.runEmulator($scope.selected);
+                    }
+
+                    $scope.connectToExistentComponent = function () {
+                        console.log("$scope.attachComponentId", $scope.attachComponentId);
+                        jQuery.when(
+                            jQuery.Deferred(function (deferred) {
+                                jQuery(deferred.resolve);
+                            })).done(function () {
+                            $uibModalInstance.close();
+                        });
+                        vm.runEmulator($scope.selected, $scope.attachComponentId);
                     };
 
                     $scope.cancel = function () {
@@ -190,6 +213,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$sce', 'environmentList'
                     $scope.OnRemoveSelect = function (item) {
                         var index = $scope.selected.indexOf(item);
                         $scope.selected.splice(index, 1);
+                    };
+                    $scope.OnClickSelectAttachID = function (item) {
+                        $scope.attachComponentId = item;
+                    };
+
+                    $scope.OnRemoveSelectAttachID = function (item) {
+                        delete $scope.attachComponentId
                     }
                 }],
                 controllerAs: "connectedEnvs"

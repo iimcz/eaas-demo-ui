@@ -50,7 +50,12 @@
             </div>
             <b class="tekst">You would be able to close this windows after detach</b>
 
-            <button class="btn btn-primary" type="submit">Detach</button>
+            <button ng-if="!networkModalCtrl.detachedComponentId" class="btn btn-primary" type="submit">Detach</button>
+
+            <div ng-if="networkModalCtrl.detachedComponentId">
+                You can connect other environments with <br>
+                NetworkID: <b>{{networkModalCtrl.detachedComponentId}}</b>
+            </div>
         </form>
     </div>
 

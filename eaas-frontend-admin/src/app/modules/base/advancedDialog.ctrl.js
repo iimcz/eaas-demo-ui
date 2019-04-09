@@ -52,6 +52,20 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
                 }
             });
         };
+        vm.groupIds = function () {
+            $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds).then(function (response) {
+                if (response.status === 200) {
+                    console.log("!!! response.data", response.data);
+                    let toShow = "";
+                    for (let i = 0; i < response.data.length; i++) {
+                        toShow += response.data[i] + "\n"
+                    }
+                    alert(toShow);
+                } else {
+                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                }
+            });
+        };
         this.onImportFilesChosen = function (file) {
             // The user chose files to upload
             // Initialize the uploadFiles list with meaningful values for destination and action.
