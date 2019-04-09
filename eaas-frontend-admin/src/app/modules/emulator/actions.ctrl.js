@@ -198,7 +198,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     vm.switchEmulators = function (component)
     {
         $stateParams.envId = component.env.data.environment;
-        console.log("!! component ", component.env.data.environment);
         var eaasClient = window.eaasClient;
         let loadingElement = $("#emulator-loading-connections");
         $("#emulator-container").hide();
@@ -219,7 +218,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             eaasClient.connect().then(function () {
 
                 jQuery.when(
-                    loadingElement.animate({width: "100%"}, 750),
+                    loadingElement.animate({width: "100%"}, 700),
                     jQuery.Deferred(function (deferred) {
                         jQuery(deferred.resolve);
                     })).done(function () {
