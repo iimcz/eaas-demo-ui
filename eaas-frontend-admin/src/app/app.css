@@ -471,6 +471,21 @@ pre#json-renderer {
 .ag-ltr .ag-cell-focus{
     border: none !important;
 }
+div.ex1, div.ex2 {
+    /*margin: auto;*/
+}
+div.ex1{
+    padding: 10px;
+    border: 0.5px solid #D3D3D3;
+}
+div.ex3{
+    margin:5px 8% 5px 5%;
+}
+
+div.ex4{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
 
 .wrapper-signin {
 	margin-top: 80px;
