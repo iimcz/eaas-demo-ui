@@ -5,7 +5,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
-    
+    $scope.chosenEnv = chosenEnv;
+
     if(typeof $rootScope.nativeConfig !== 'undefined')
         vm.isKVM = ($rootScope.nativeConfig.includes('-enable-kvm'));
     else
@@ -261,6 +262,21 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
+    vm.openNetworkDialog = function() {
+        $uibModal.open({
+            animation: true,
+            template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/network.html'),
+            resolve: {
+                currentEnv: function () {
+                    return chosenEnv.data;
+                },
+                localConfig: function () {
+                    return localConfig;
+                }
+            },
+            controller: "NetworkModalController as networkModalCtrl"
+        });
+    };
 
     vm.openSaveEnvironmentDialog = function() {
         $('#emulator-container').hide();

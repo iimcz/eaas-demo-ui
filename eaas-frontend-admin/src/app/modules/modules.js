@@ -52,3 +52,4 @@ emilUIModule.controller('EmulatorsController', require('./emulators/overview.ctr
 emilUIModule.controller('EmulatorsDetailsController', require('./emulators/details.ctrl.js'));
 emilUIModule.controller('EmulatorsDetailsController', require('./emulators/details.ctrl.js'));
 emilUIModule.controller('EmulatorsJsonModalController', require('./emulators/modals/emulators-json.modal'));
+emilUIModule.controller('NetworkModalController', require('../../../../landing-page/src/app/modules/client/landing-page/modals/network-modal.ctrl.js'));

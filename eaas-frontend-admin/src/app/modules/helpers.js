@@ -27,6 +27,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.deleteEnvironmentUrl = "EmilEnvironmentData/delete";
     this.initEmilEnvironmentsURL = "EmilEnvironmentData/init";
     this.getDatabaseContent = "EmilEnvironmentData/getDatabaseContent?type={0}&className={1}";
+    this.detachSessionUrl = "sessions";
     this.getEnvironmentTemplates = "EmilEnvironmentData/getEnvironmentTemplates";
     this.createImageUrl = "EmilEnvironmentData/createImage?size={0}";
     this.prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
