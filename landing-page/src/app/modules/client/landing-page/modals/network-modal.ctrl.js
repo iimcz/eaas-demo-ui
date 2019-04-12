@@ -39,6 +39,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
             }).then(function (response) {
                 modalCtrl.detachedComponentId = eaasClient.networkId;
                 if (response.status === 204) {
+                    eaas.deleteOnUnload = false;
                     window.onbeforeunload = function () {
                         eaasClient.disconnect();
                     }.bind(eaasClient);
