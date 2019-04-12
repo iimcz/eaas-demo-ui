@@ -14,6 +14,12 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
             modalCtrl.network = "//" + modalCtrl.hostname + ":" + modalCtrl.port;
         }
 
+        function formatStr(format) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            return format.replace(/{(\d+)}/g, function (match, number) {
+                return typeof args[number] != 'undefined' ? args[number] : match;
+            });
+        }
 
         function replaceMulti(text, searchGoal, replacement) {
             if (text)
