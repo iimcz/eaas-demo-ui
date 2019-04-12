@@ -26,34 +26,21 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
         this.networkHelp = helptext;
         this.detachTime;
         this.detach = function () {
-            $http.post(localConfig.data.eaasBackendURL + REST_URLS.detachSessionUrl, {
+            let url = localConfig.data.eaasBackendURL + formatStr("/sessions/{0}/detach", eaasClient.networkId);
+            $http.post(url, {
                 lifetime: this.detachTime,
                 lifetime_unit: "minutes",
-                resources: [
-                    {
-                        id: eaasClient.networkId,
-                        type: "component",
-                        keepalive_url: localConfig.data.eaasBackendURL + "components/" + eaasClient.componentId + "/keepalive"
-                    },
-                    {
-                        id: eaasClient.componentId,
-                        type: "network",
-                        keepalive_url: localConfig.data.eaasBackendURL + "sessions/" + eaasClient.networkId + "/keepalive"
-                    }
-                ]
             }).then(function (response) {
                 modalCtrl.detachedComponentId = eaasClient.networkId;
                 if (response.status === 200) {
                     window.onbeforeunload = function () {
                         eaasClient.disconnect();
                     }.bind(eaasClient);
-
                     growl.success('Detached! You can easily close this window now');
                 } else {
                     growl.error('Unfortunately, this session can not be detached!');
                 }
             });
-
         };
         this.localConnectionPort = 8080;
 
