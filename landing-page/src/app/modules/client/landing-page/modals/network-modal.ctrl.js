@@ -38,7 +38,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
                 lifetime_unit: "minutes",
             }).then(function (response) {
                 modalCtrl.detachedComponentId = eaasClient.networkId;
-                if (response.status === 200) {
+                if (response.status === 204) {
                     window.onbeforeunload = function () {
                         eaasClient.disconnect();
                     }.bind(eaasClient);
