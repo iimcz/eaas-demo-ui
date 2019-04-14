@@ -278,6 +278,22 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
+    vm.openDetachDialog = function() {
+        $uibModal.open({
+            animation: true,
+            template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),
+            resolve: {
+                currentEnv: function () {
+                    return chosenEnv.data;
+                },
+                localConfig: function () {
+                    return localConfig;
+                }
+            },
+            controller: "DetachModalController as detachModalCtrl"
+        });
+    };
+
     vm.openSaveEnvironmentDialog = function() {
         $('#emulator-container').hide();
         var saveDialog = function()
