@@ -5,6 +5,14 @@
 <div class="modal-body">
         <form id="inputForm" name="contentForm"
               ng-submit="detachModalCtrl.detach()">
+
+            <div class="form-group">
+                <label>Session Name</label> <input type="text"
+                     class="form-control"
+                     ng-model="detachModalCtrl.sessionName"
+                     placeholder="Session Name" required>
+            </div>
+
             <div class="tekst">
                 <div class="input-group">
                     Detach session for:
