@@ -279,6 +279,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     };
 
     vm.openDetachDialog = function() {
+        $('#emulator-container').hide();
         $uibModal.open({
             animation: true,
             template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),

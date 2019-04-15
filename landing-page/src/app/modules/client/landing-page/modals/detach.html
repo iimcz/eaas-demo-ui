@@ -25,7 +25,7 @@
                         <option value="60">1 hour</option>
                         <option value="120">2 hours</option>
                         <option value="-1">Forever</option>
-                    </select>^
+                    </select>
                 </div>
             </div>
             <b class="tekst">You would be able to close this windows after detach</b>
@@ -40,5 +40,5 @@
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="$close()">OK</button>
+    <button class="btn btn-primary" type="button" ng-click="$close();detachModalCtrl.showEmu()">Cancel</button>
 </div>

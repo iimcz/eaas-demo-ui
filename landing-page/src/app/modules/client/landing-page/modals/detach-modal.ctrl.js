@@ -13,6 +13,10 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
             });
         }
 
+        this.showEmu = function() {
+            $('#emulator-container').show();
+        }
+
         this.detachTime;
         this.sessionName;
         this.detach = function () {
