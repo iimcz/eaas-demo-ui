@@ -33,7 +33,6 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
                         eaasClient.disconnect();
                     }.bind(eaasClient);
                     growl.success('Session detached!');
-                    $state.go('admin.standard-envs-overview', {showObjects: false}, {reload: false});
                 } else {
                     growl.error('Unfortunately, this session can not be detached!');
                 }
