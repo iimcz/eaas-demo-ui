@@ -1,11 +1,24 @@
-module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'mediaCollection',
+module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'helperFunctions', 'REST_URLS',
-                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, mediaCollection, $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
+                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
+                        $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
     var vm = this;
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
     $scope.chosenEnv = chosenEnv;
+
+    console.log($stateParams.objectArchive);
+    vm.currentMediumLabel = null;
+    var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
+    console.log(objectId);
+    if(objectId) {
+        Objects.get({archiveId: $stateParams.objectArchive, objectId: objectId}).$promise.then(function(response) {
+            vm.mediaCollection = response.mediaItems;
+                if(vm.mediaCollection)
+                    vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
+        });
+    }
 
     if(typeof $rootScope.nativeConfig !== 'undefined')
         vm.isKVM = ($rootScope.nativeConfig.includes('-enable-kvm'));
@@ -21,7 +34,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         vm.enablePrinting = false;
 
      vm.screenshot = async function() {
-
         let _header = localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {};
         const pic = await fetch(window.eaasClient.getScreenshotUrl(), {
             headers: _header,
@@ -81,7 +93,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 this.confirmed = function()
                 {
                     window.onbeforeunload = null;
-                    // window.eaasClient.release();
+                    window.eaasClient.release();
                     $('#emulator-stopped-container').show();
 
                     if($stateParams.isTestEnv)
@@ -106,9 +118,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
-    if(mediaCollection != null)
-        var currentMediumLabel = mediaCollection.data.medium.length > 0 ? mediaCollection.data.medium[0].items[0].label : null;
-
     var eaasClientReadyTimer = function() {
         if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
             vm.driveId = window.eaasClient.driveId;
@@ -132,10 +141,34 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             animation: true,
             template: require('./modals/change-media.html'),
             controller: ["$scope", function($scope) {
-                this.chosen_medium_label = currentMediumLabel;
+                this.chosen_medium_label = vm.currentMediumLabel;
 
-                if(mediaCollection != null && mediaCollection.data != null)
-                  this.media = mediaCollection.data.medium;
+                if(vm.mediaCollection != null)
+                {
+                  this.media = vm.mediaCollection.file;
+
+                  this.mediumTypes = [];
+                  for(var i = 0; i < this.media.length; i++)
+                  {
+                    if(!this.mediumTypes.includes(this.media[i].type))
+                    {
+                        this.mediumTypes.push(this.media[i].type);
+                    }
+                  }
+                  console.log(this.mediumTypes);
+                }
+
+                this.entriesByMedia = function(m)
+                {
+                    var result = [];
+                    for(var i = 0; i < this.media.length; i++)
+                    {
+                        if(this.media[i].type === m)
+                             result.push(this.media[i]);
+                    }
+                    return result;
+                }
+
                 this.isChangeMediaSubmitting = false;
 
                 this.objectId = $stateParams.softwareId;
@@ -158,7 +191,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
                     var changeSuccsessFunc = function(data, status) {
                         growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
-                        currentMediumLabel = newMediumLabel;
+                        vm.currentMediumLabel = newMediumLabel;
                         $scope.$close();
                         $("html, body").removeClass("wait");
                     };

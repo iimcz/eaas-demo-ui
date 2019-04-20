@@ -225,7 +225,7 @@
 
   "OBJECTS_NEW_OBJECT" : "Import Object",
   "OBJECTS_DETAILS" : "Details",
-  "CHAR_L" : "Characterize object",
+  "CHAR_L" : "Object Details",
   "CHAR_ADD" : "Add environment",
   "CHAR_UPDATE_PROPOSAL" : "Detect/find environments",
   "CHAR_UPDATE_CLASS" : "Re-classify object",
@@ -234,10 +234,11 @@
   "CHAR_FORMATS" : "File formats",
   "CHAR_MISSING": "Suggested environments",
   "CHAR_OBJ_INFORMATION": "Object Details",
-  "CHAR_ENV_LIST": "Configured Environments",
+  "CHAR_ENV_LIST": "Rendering Environments",
   "CHAR_CLASS_INFORMATION": "Classification Details",
   "CHAR_RESET_CHANGES": "Reset",
   "CHAR_CONFIRM_RESET_T" : "Delete all manual assignments? Cannot be undone.",
+  "CHAR_SW_INFORMATION": "Software Properties",
 
   "EMU_TITLE" : "Preparing emulation session",
   "EMU_STOPPED" : "Emulator stopped",

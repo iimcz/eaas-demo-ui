@@ -16,7 +16,6 @@ emilUIModule.controller('DashboardController', require('./dashboard/dashboard.ct
 
 // software
 emilUIModule.controller('SoftwareOverviewController', require('./software/overview.ctrl.js'));
-emilUIModule.controller('SoftwareIngestController', require('./software/ingest.ctrl.js'));
 
 // sync
 emilUIModule.controller('SyncImageArchivesController', require('./sync/syncImageArchives.ctrl.js'));

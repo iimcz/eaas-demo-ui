@@ -23,6 +23,7 @@ import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
 import 'angular-jwt'
+import ngResource from 'angular-resource'
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
@@ -98,7 +99,7 @@ import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
 import './app.css';
 
-export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap',
+export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
@@ -259,6 +260,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
            let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
            return new Date().getTime() < expiresAt;
      }
+})
+
+.factory('Objects', function($http, $resource) {
+    return $resource('http://localhost:8080/emil/objects/:archiveId/:objectId', {archiveId : "default"});
 })
 
 .config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
@@ -462,54 +467,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 }
             }
         })
-        .state('admin.sw-ingest', {
-            url: "/sw-ingest",
-            params: {
-                swId: "-1"
-            },
-            resolve: {
-                objectList: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
-                    // Don't fetch list for edit
-                    if ($stateParams.swId != "-1") {
-                        return null;
-                    }
-                    if("softwareArchiveId" in localConfig.data)
-                    {
-                        return $http.get(localConfig.data.eaasBackendURL +
-                            helperFunctions.formatStr(REST_URLS.getSoftwareListURL, localConfig.data.softwareArchiveId));
-                    }
-                    else {
-                        return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getObjectListURL);
-                    }
-                },
-                osList : ($http) => $http.get("osList.json"),
-
-                softwareObj: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
-                    // return empty object for new software
-                    if ($stateParams.swId === "-1") {
-                        return {
-                            data: {
-                                objectId: null,
-                                licenseInformation: "",
-                                allowedInstances: -1,
-                                isOperatingSystem: false,
-                                nativeFMTs: [],
-                                importFMTs: [],
-                                exportFMTs: [],
-                            }
-                        };
-                    }
-
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getSoftwareObjectURL, $stateParams.swId));
-                },
-            },
-            views: {
-                'wizard': {
-                    template: require('./modules/software/ingest.html'),
-                    controller: "SoftwareIngestController as swIngestCtrl"
-                }
-            }
-        })
         .state('admin.import-image', {
             url: "/import-image",
             resolve: {
@@ -565,8 +522,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             url: "/objects",
             resolve: {
                 localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
-                objectList: ($http, localConfig, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getObjectListURL)
+                archives: ($http, localConfig, REST_URLS)  =>  $http.get(localConfig.data.eaasBackendURL + REST_URLS.repositoriesListUrl),
             },
             views: {
                 'wizard': {
@@ -669,14 +625,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.emulator', {
             url: "/emulator",
             resolve: {
-                mediaCollection: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
-                    if( $stateParams.softwareId == null && $stateParams.objectId == null)
-                        return null;
-                    return $http.get(localConfig.data.eaasBackendURL +
-                        (($stateParams.softwareId != null) ?
-                            helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.softwareId) :
-                            helperFunctions.formatStr(REST_URLS.mediaCollectionURL, $stateParams.objectId)));
-                },
                 chosenEnv: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
                     if($stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                         return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId));
@@ -690,6 +638,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 softwareId: null,
                 isUserSession: false,
                 objectId: null,
+                objectArchive: null,
                 userId: null,
                 returnToObjects: false
             },
@@ -726,13 +675,26 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         })
 
         .state('admin.edit-object-characterization', {
-            url: "/edit-object-characterization?objectId",
-            params: {userDescription: null},
+            url: "/edit-object-characterization?objectId&objectArchive",
+            params: {userDescription: null, swId: "-1"},
             resolve: {
-                objEnvironments: ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.objectEnvironmentsUrl, $stateParams.objectId, "false", "false")),
-                metadata : ($stateParams, $http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.metadataUrl, $stateParams.objectId))
+                osList : ($http) => $http.get("osList.json"),
+                softwareObj: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
+                    // return empty object for new software
+                    if ($stateParams.swId === "-1") {
+                        return {
+                            data: {
+                                licenseInformation: "",
+                                allowedInstances: -1,
+                                isOperatingSystem: false,
+                                nativeFMTs: [],
+                                importFMTs: [],
+                                exportFMTs: [],
+                            }
+                        };
+                    }
+                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getSoftwareObjectURL, $stateParams.swId));
+                },
             },
             views: {
                 'wizard': {

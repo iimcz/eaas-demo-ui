@@ -1,9 +1,27 @@
-module.exports = ['$state', '$scope', '$stateParams', 'objectList', 'localConfig', function ($state, $scope, $stateParams, objectList, localConfig) {
-    console.log("local ", localConfig);
+module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 'archives',
+    function ($state, $scope, $stateParams, Objects, localConfig, archives)
+{
+
     var vm = this;
     vm.config = localConfig.data;
-    vm.objectList = objectList.data.objects;
+    Objects.query().$promise.then(function(response) {
+        vm.objectList = response;
+        vm.updateData();
+    });
+    vm.activeView = 0;
+    vm.archives = archives.data.archives;
 
+    vm.updateTable = function(index, archive)
+    {
+        console.log(archive);
+        vm.objectList = Objects.query({archiveId: archive}).$promise.then(function(response) {
+            vm.objectList = response;
+            vm.updateData();
+        });
+        vm.activeView = index;
+    };
+
+    /*
     if (objectList.data.status !== "0") {
         $state.go('error', {
             errorMsg: {
@@ -13,8 +31,16 @@ module.exports = ['$state', '$scope', '$stateParams', 'objectList', 'localConfig
         });
         return;
     }
+    */
 
-    console.log(vm.objectList);
+    vm.updateData = function () {
+        console.log("view: " + vm.viewArchive);
+        if ($scope.gridOptions.api != null) {
+            $scope.gridOptions.api.setRowData(vm.objectList);
+            $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+            $scope.gridOptions.api.sizeColumnsToFit();
+        }
+    };
 
     $scope.onPageSizeChanged = function () {
         $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
@@ -39,7 +65,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'objectList', 'localConfig
 
     function editBtnRenderer(params) {
         params.$scope.selected = $scope.selected;
-        return `<button id="single-button" ui-sref="admin.edit-object-characterization({objectId: data.id, userDescription: data.description})" type="button" class="dropbtn">
+        return `<button id="single-button" ui-sref="admin.edit-object-characterization({objectId: data.id, objectArchive: data.archiveId, userDescription: data.description})" type="button" class="dropbtn">
                   {{'OBJECTS_DETAILS'| translate}}
                 </button>`;
     }
@@ -50,7 +76,6 @@ module.exports = ['$state', '$scope', '$stateParams', 'objectList', 'localConfig
 
     $scope.gridOptions = {
         columnDefs: vm.initColumnDefs(),
-        rowData: vm.objectList,
         rowHeight: 31,
         groupUseEntireRow: true,
         rowSelection: 'multiple',

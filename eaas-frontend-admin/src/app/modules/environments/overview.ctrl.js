@@ -258,7 +258,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
             $rootScope.nativeConfig = env.nativeConfig;
             window.isCollapsed = true;
-            $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, archiveId: env.archiveId}, {reload: true});
+            $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, objectArchive: env.objectArchive}, {reload: true});
         };
 
         vm.edit = function (id) {
@@ -384,7 +384,4 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'en
             new agGrid.Grid(gridDiv, gridOptions);
             gridOptions.api.sizeColumnsToFit();
         });
-
-
-
     }];

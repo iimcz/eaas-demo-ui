@@ -23,6 +23,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environ
             };
 
             window.onunload = function () {
+                if(eaasClient)
+                   eaasClient.release();
                 window.onbeforeunload = null;
             };
 
@@ -105,6 +107,14 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environ
             $rootScope.environments = environmentList.data.environments;
             envs.push({data, visualize: true});
 
+             // Fix to close emulator on page leave
+            $scope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
+                if(!newUrl.endsWith("emulator")) {
+                    eaasClient.release();
+                    window.onbeforeunload = null;
+                }
+            });
+
             eaasClient.start(envs, params, attachId).then(function () {
                 eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();
@@ -118,12 +128,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environ
                         growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
                         BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
                     }
-
-                    // Fix to close emulator on page leave
-                    $scope.$on('$locationChangeStart', function (event) {
-                        eaasClient.release();
-                    });
-                    $scope.$apply();
                 });
             });
         };
@@ -179,12 +183,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environ
                     $scope.connectToExistentComponent = function () {
                         console.log("$scope.attachComponentId", $scope.attachComponentId);
                         jQuery.when(
+                            $uibModalInstance.close(),
                             jQuery.Deferred(function (deferred) {
                                 jQuery(deferred.resolve);
                             })).done(function () {
-                            $uibModalInstance.close();
+                            vm.runEmulator($scope.selected, $scope.attachComponentId);
                         });
-                        vm.runEmulator($scope.selected, $scope.attachComponentId);
+
                     };
 
                     $scope.cancel = function () {
