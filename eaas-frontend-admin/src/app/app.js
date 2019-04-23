@@ -105,13 +105,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
-// .constant('kbLayouts', require('./../public/kbLayouts.json'))
-
     .constant('localConfig', (() => {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
         xhr.send();
-        return xhr.responseText;
+        var ret = {};
+        ret.data = JSON.parse(xhr.responseText);
+        return ret;
     })())
 
     .component('inputList', {
@@ -185,8 +185,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         state : '',
         mode : null
     };
-
-    console.log(localConfig);
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
