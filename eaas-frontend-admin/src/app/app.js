@@ -100,13 +100,6 @@ import '../../../eaas-client/eaas-client.css';
 import './app.css';
 
 
-var env = {};
-
-// Import variables if present (from env.js)
-if(window){
-  Object.assign(env, window.__env);
-}
-
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
@@ -114,7 +107,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
 // .constant('kbLayouts', require('./../public/kbLayouts.json'))
 
-    .constant('localConfig', env)
+    .constant('localConfig', (() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
+        xhr.send();
+        return xhr.responseText;
+    })())
 
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
