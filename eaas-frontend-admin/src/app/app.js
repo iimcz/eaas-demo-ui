@@ -100,21 +100,19 @@ import '../../../eaas-client/eaas-client.css';
 import './app.css';
 
 
-var env = {};
-
-// Import variables if present (from env.js)
-if(window){
-  Object.assign(env, window.__env);
-}
-
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
-// .constant('kbLayouts', require('./../public/kbLayouts.json'))
-
-    .constant('localConfig', env)
+    .constant('localConfig', (() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
+        xhr.send();
+        var ret = {};
+        ret.data = JSON.parse(xhr.responseText);
+        return ret;
+    })())
 
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
@@ -187,8 +185,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         state : '',
         mode : null
     };
-
-    console.log(localConfig);
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
