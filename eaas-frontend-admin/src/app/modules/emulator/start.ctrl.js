@@ -121,6 +121,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', 'environ
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").show();
                     $rootScope.emulator.mode = eaasClient.mode;
+                    $rootScope.emulator.state = 'STARTED';
+                    $scope.$apply();
                     if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) {
                         $rootScope.networkTcpInfo = eaasClient.networkTcpInfo;
                         $rootScope.tcpGatewayConfig = eaasClient.tcpGatewayConfig;
