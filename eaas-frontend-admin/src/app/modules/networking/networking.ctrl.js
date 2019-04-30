@@ -68,6 +68,9 @@ module.exports = ['$state', '$scope', '$stateParams', '$uibModal', 'groupdIds', 
                     groupId: function () {
                         return id;
                     },
+                    groupName: function() {
+                        return $scope.groupdIds.find(element => element.id === id).name;
+                    },
                     localConfig: function () {
                         return localConfig;
                     },

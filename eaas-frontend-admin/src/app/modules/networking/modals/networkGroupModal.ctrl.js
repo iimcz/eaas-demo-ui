@@ -1,5 +1,5 @@
-module.exports = ['$state', '$http', '$scope', '$uibModalInstance', 'growl', 'groupId','groupComponents', 'localConfig', 'REST_URLS', 'helperFunctions',
-    function ($state, $http, $scope, $uibModalInstance, growl,  groupId, groupComponents, localConfig, REST_URLS, helperFunctions) {
+module.exports = ['$state', '$rootScope' ,'$http', '$scope', '$uibModalInstance', 'growl', 'groupId','groupName', 'groupComponents', 'localConfig', 'REST_URLS', 'helperFunctions',
+    function ($state, $rootScope, $http, $scope, $uibModalInstance, growl,  groupId, groupName, groupComponents, localConfig, REST_URLS, helperFunctions) {
         console.log("groupEnvs",groupComponents);
         $scope.groupId = groupId;
         $scope.groupComponents = [];
