@@ -75,13 +75,23 @@
         </button>
 
         <button class="btn btn-default"
-                ng-if="(chosenEnv.data.serverMode || chosenEnv.data.localServerMode)"
+                ng-if="!actionsCtrl.emulator.detached"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openDetachDialog()" >
             Detach Network
         </button>
 
-        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.stopEmulator()">{{'ACTIONS_STOP' | translate}}</button>
+        <button type="submit" class="btn btn-default"
+                ng-if="!actionsCtrl.emulator.detached"
+                ng-click="actionsCtrl.stopEmulator()">
+            {{'ACTIONS_STOP' | translate}}
+        </button>
+
+        <button type="submit" class="btn btn-default"
+                ng-if="actionsCtrl.emulator.detached"
+                ng-click="actionsCtrl.close()">
+            Close
+        </button>
 
         <button  class="btn btn-default"
                  ng-click="initTitles()"

@@ -183,7 +183,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 .run(async function($rootScope, $state, $http, authService, localConfig) {
     $rootScope.emulator = {
         state : '',
-        mode : null
+        mode : null,
+        detached : false
     };
 
     $rootScope.chk = {};
@@ -662,7 +663,10 @@ function($stateProvider,
                 objectId: null,
                 objectArchive: null,
                 userId: null,
-                returnToObjects: false
+                returnToObjects: false,
+                isStarted: false,
+                isDetached: false,
+                networkInfo: null
             },
             views: {
                 'wizard': {
@@ -735,6 +739,19 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/handle/overview.html'),
                     controller: "HandleOverviewController as handleOverview",
+                }
+            }
+        })
+            .state('admin.networking', {
+            url: "/networking",
+            resolve: {
+                localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
+                groupdIds: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/networking/overview.html'),
+                    controller: "NetworkingCtrl as netCtrl",
                 }
             }
         })

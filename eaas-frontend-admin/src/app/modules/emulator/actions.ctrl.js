@@ -6,7 +6,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
-    $scope.chosenEnv = chosenEnv;
+    $rootScope.chosenEnv = chosenEnv;
 
 
     vm.currentMediumLabel = null;
@@ -86,6 +86,11 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     vm.sendCtrlAltDel = function() {
         window.eaasClient.sendCtrlAltDel();
+    };
+
+    vm.close = function () {
+        window.onbeforeunload = null;
+        $state.go('admin.standard-envs-overview', {}, {reload: true});
     };
 
     vm.stopEmulator = function () {
