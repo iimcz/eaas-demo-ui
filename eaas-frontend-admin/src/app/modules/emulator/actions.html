@@ -94,8 +94,7 @@
         </button>
 
         <button  class="btn btn-default"
-                 ng-click="initTitles()"
-                 uib-dropdown-toggle ng-if="idsData.length > 1"
+                 uib-dropdown-toggle ng-if="$root.idsData.length > 1"
                  uib-dropdown on-toggle="toggled(open)">
             <div>Switch View</div>
             <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
