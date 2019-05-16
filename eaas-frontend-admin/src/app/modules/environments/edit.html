@@ -126,6 +126,35 @@
                 <textarea ng-if="editEnvCtrl.editMode" type="text"
                           class="form-control" ng-model="editEnvCtrl.nativeConfig"></textarea>
             </div>
+            <br>
+        </div>
+
+        <div uib-accordion-group class="panel-default" is-open="status.openDrives">
+            <uib-accordion-heading>
+                Configured Drives
+                <i class="pull-right glyphicon"
+                   ng-class="{'glyphicon-chevron-down': status.openDrives, 'glyphicon-chevron-right': !status.openDrives}"></i>
+            </uib-accordion-heading>
+            <!-- Drives go here -->
+
+            <div style="text-align: right; margin-bottom: 15px;">
+                <div style="display: inline-block;">
+                    <button type="button" class="btn btn-default" ng-click="editEnvCtrl.showDriveDetails(-1)">
+                        <span style="color: green" class="glyphicon glyphicon-plus"></span> Add Drive</button>
+                </div>
+            </div>
+
+            <ul class="list-group-item" >
+                <li class="list-group-item" ng-repeat="drive in editEnvCtrl.drives">
+                    <div style="display: inline-block;">{{drive.type}}</div>
+                    <div class="btn btn-default" style="float: right; color: #CC322E;" ng-click="editEnvCtrl.deleteDrive($index)">
+                        <i class="glyphicon glyphicon-remove" ></i>
+                    </div>
+                    <div class="btn btn-default" style="float: right; color: #CC322E;" ng-click="editEnvCtrl.showDriveDetails($index)">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </div>
+                </li>
+            </ul>
         </div>
 
         <div uib-accordion-group class="panel-default" is-open="status.openUI">
@@ -135,27 +164,25 @@
                    ng-class="{'glyphicon-chevron-down': status.openUI, 'glyphicon-chevron-right': !status.openUI}"></i>
             </uib-accordion-heading>
 
-
-
             <div class="form-group" >
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.enablePrinting">
+                <input type="checkbox" ng-model="editEnvCtrl.enablePrinting">
                 <label>{{'EDITENV_PRINTING' | translate}}</label>
             </div>
 
             <div class="form-group">
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.enableRelativeMouse">
+                <input type="checkbox"  ng-model="editEnvCtrl.enableRelativeMouse">
                 <label>{{'EDITENV_RELMOUSE' | translate}}</label>
             </div>
 
             <div class="form-group">
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.canProcessAdditionalFiles">
+                <input type="checkbox"  ng-model="editEnvCtrl.canProcessAdditionalFiles">
                 <label>User file upload</label>
             </div>
 
             <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.useXpra" ng-disabled="!editEnvCtrl.editMode">
+                <input type="checkbox" ng-model="editEnvCtrl.useXpra" >
                 <label>{{'EDITENV_XPRA' | translate}}</label>
-                <select ng-if="editEnvCtrl.useXpra" ng-model="editEnvCtrl.xpraEncoding" ng-disabled="!editEnvCtrl.editMode">
+                <select ng-if="editEnvCtrl.useXpra" ng-model="editEnvCtrl.xpraEncoding">
                     <option value="jpeg">jpeg</option>
                     <option value="png">png</option>
                     <option value="rgb24">rgb24</option>
@@ -166,7 +193,7 @@
             </div>
 
             <div class="form-group" >
-                <input type="checkbox" ng-model="editEnvCtrl.shutdownByOs" ng-disabled="!editEnvCtrl.editMode">
+                <input type="checkbox" ng-model="editEnvCtrl.shutdownByOs" >
                 <label>{{'EDITENV_SHUTDOWNBYOS' | translate}}</label>
             </div>
         </div>
@@ -180,50 +207,50 @@
 
 
             <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.connectEnvs" ng-disabled="!editEnvCtrl.editMode">
+                <input type="checkbox" ng-model="editEnvCtrl.connectEnvs" >
                 <label>Enable networking</label>
             </div>
 
             <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.enableInternet" >
+                <input type="checkbox"  ng-model="editEnvCtrl.enableInternet" >
                 <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
             </div>
 
             <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.serverMode">
+                <input type="checkbox"  ng-model="editEnvCtrl.serverMode">
                 <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
             </div>
 
             <div ng-if="editEnvCtrl.serverMode && editEnvCtrl.connectEnvs">
 
                 <div class="form-group">
-                    <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.enableSocks">
+                    <input type="checkbox"  ng-model="editEnvCtrl.enableSocks">
                     <label>{{'EDITENV_ENABLE_SOCKS' | translate}}</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="checkbox"  ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.localServerMode">
+                    <input type="checkbox"   ng-model="editEnvCtrl.localServerMode">
                     <label>{{'EDITENV_ENABLE_LOCAL_MODE' | translate}}</label>
                 </div>
 
                 <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
                     <label>{{'EDITENV_SERVER_IP' | translate}}</label>
-                    <input type="text" ng-disabled="!editEnvCtrl.editMode" class="form-control" ng-model="editEnvCtrl.serverIp">
+                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverIp">
                 </div>
 
                 <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
                     <label>{{'EDITENV_SERVER_PORT' | translate}}</label>
-                    <input type="text" ng-disabled="!editEnvCtrl.editMode" class="form-control" ng-model="editEnvCtrl.serverPort">
+                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverPort">
                 </div>
 
                 <div class="form-group">
                     <label>{{'EDITENV_GW_PRIVATE_IP' | translate}}</label>
-                    <input type="text" ng-disabled="!editEnvCtrl.editMode"  class="form-control" ng-model="editEnvCtrl.gwPrivateIp">
+                    <input type="text"   class="form-control" ng-model="editEnvCtrl.gwPrivateIp">
                 </div>
 
                 <div class="form-group">
                     <label>{{'EDITENV_GW_PRIVATE_MASK' | translate}}</label>
-                    <input type="text" ng-disabled="!editEnvCtrl.editMode"  class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
+                    <input type="text"  class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
                 </div>
 
                 <p>
@@ -306,11 +333,11 @@
              <button class="btn btn-danger" type="button" ng-click="editEnvCtrl.deleteEnvironment(editEnvCtrl.env.envId)">Delete Environment</button>
         </span>
         <span style="float: right;">
-            <button class="btn btn-default" ng-if="editEnvCtrl.editMode" type="button"
+            <button class="btn btn-default" type="button"
                     ui-sref="admin.edit-env({envId: editEnvCtrl.env.envId, objEnv: editEnvCtrl.isObjectEnv})" ui-sref-opts="{reload: true}">
-                    {{'EDITENV_CANCEL' |translate}}</button>
+                    Reset</button>
 
-            <button type="submit" ng-if="editEnvCtrl.editMode" class="btn btn-primary">{{'EDITENV_SAVE'| translate}}</button>
+            <button type="submit" ng-if="editEnvCtrl.env.archive != 'remote'" class="btn btn-primary">{{'EDITENV_SAVE'| translate}}</button>
 
             <button type="button" class="btn btn-primary"
                     ui-sref="admin.standard-envs-overview({showObjects: editEnvCtrl.isObjectEnv})">{{'ERROR_RETURN_BTN' | translate}}</button>

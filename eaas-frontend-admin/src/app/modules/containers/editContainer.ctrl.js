@@ -3,7 +3,6 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
         var vm = this;
         let handlePrefix = "11270/";
 
-
         vm.showDateContextPicker = false;
         Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
             vm.env = response;
@@ -24,7 +23,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
             vm.processArgs = vm.env.processArgs; // todo deep copy
             vm.processEnvs = vm.env.processEnvs;
         });
-        
+
         vm.saveEdit = function () {
 
             vm.env.title = vm.envTitle;

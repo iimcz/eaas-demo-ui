@@ -15,7 +15,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             vm.envs = Environments.query().$promise.then(function(response) {
                 var rowData = [];
                 vm.view = index;
-
+                vm.rowCount = 0;
                 vm.envs = response;
                 if (vm.view == 0)
                     vm.envs.forEach(function (element) {
@@ -39,7 +39,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                         rowData.push({name: element.title, id: element.envId, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                     })
                 }
-
+                vm.rowCount = rowData.length;
                 vm.gridOptions.api.setRowData(rowData);
                 vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
                 vm.gridOptions.api.sizeColumnsToFit();

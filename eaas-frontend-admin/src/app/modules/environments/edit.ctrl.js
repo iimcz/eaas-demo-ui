@@ -74,6 +74,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
+            vm.drives = vm.env.drives;
 
             for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
                 if (vm.operatingSystemsMetadata[i].id === vm.env.os)
@@ -182,7 +183,8 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
                    containerEmulatorName : vm.emulatorContainer.value.name,
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
-                   xpraEncoding: vm.xpraEncoding
+                   xpraEncoding: vm.xpraEncoding,
+                   drives : vm.drives
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -413,6 +415,32 @@ Do you want to publish this environment to the network?`))
                       $state.go('admin.standard-envs-overview', {}, {reload: true});
                   });
               }
+          };
+
+          vm.deleteDrive = function(index)
+          {
+              vm.drives.splice(index, 1);
+          };
+
+          vm.showDriveDetails = function(driveIdx) {
+              $uibModal.open({
+                  animation: true,
+                  template: require('./modals/drive-details.html'),
+                  controller: ["$scope", function($scope) {
+                    this.drive = {};
+                    if(driveIdx >= 0)
+                       this.drive = vm.drives[driveIdx];
+
+                    this.saveEdit = function()
+                    {
+                        if(driveIdx < 0)
+                            vm.drives.push(this.drive);
+
+                        console.log(vm.drives);
+                    }
+                  }],
+                  controllerAs: "editDriveCtrl"
+              });
           };
 }];
 
