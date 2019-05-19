@@ -52,6 +52,9 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             let params = {};
             if (chosenEnv) {
+                if (chosenEnv.connectEnvs)
+                    params.enableNetwork = true;
+                    
                 if (chosenEnv.localServerMode) {
                     params.hasTcpGateway = false;
                 } else {
@@ -164,13 +167,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     $rootScope.idsData = eaasClient.envsComponentsData;
 
                     $rootScope.idsData.forEach(function (idData) {
-                        console.log(idData);
                         Environments.get({envId: idData.env.data.environment}).$promise.then(function(response) {
                             idData.title = response.title;
                         });
                     });
 
-                    console.log($rootScope.idsData);
                     $scope.$apply();
                     if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) {
                         $rootScope.networkTcpInfo = eaasClient.networkTcpInfo;

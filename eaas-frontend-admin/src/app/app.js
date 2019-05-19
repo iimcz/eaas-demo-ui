@@ -650,7 +650,7 @@ function($stateProvider,
             url: "/emulator",
             resolve: {
                 chosenEnv: function($stateParams, Environments) {
-                    if($stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                    if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                         return  Environments.get({envId: $stateParams.envId}).$promise;
                     else
                         return {};

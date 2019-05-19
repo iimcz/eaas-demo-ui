@@ -68,14 +68,14 @@
         </button>
 
         <button class="btn btn-default"
-                ng-if="(chosenEnv.data.serverMode || chosenEnv.data.localServerMode)"
+                ng-if="(chosenEnv.serverMode || chosenEnv.localServerMode)"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openNetworkDialog()">
             Connection Info
         </button>
 
         <button class="btn btn-default"
-                ng-if="!actionsCtrl.emulator.detached"
+                ng-if="!actionsCtrl.emulator.detached && chosenEnv.connectEnvs"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openDetachDialog()" >
             Detach Network

@@ -12,6 +12,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         vm.updateTable = function(index)
         {
             vm.gridOptions.api.setRowData(null);
+            
             vm.envs = Environments.query().$promise.then(function(response) {
                 var rowData = [];
                 vm.view = index;
