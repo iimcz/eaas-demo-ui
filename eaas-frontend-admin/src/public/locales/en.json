@@ -36,6 +36,7 @@
   "ACTIONS_ESC" : "Send Esc",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   "ACTIONS_SNAPSHOT": "Snapshot",
+  "ACTIONS_PRINT_READY" : "A new print job is ready.",
 
   "CONTAINER_ACTIONS_ABORT" : "Abort",
 

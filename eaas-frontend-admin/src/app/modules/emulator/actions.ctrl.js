@@ -9,6 +9,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     $rootScope.chosenEnv = chosenEnv;
     vm.currentMediumLabel = null;
     $scope.idsData;
+    vm.printJobsAvailable = false;
 
     var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
     var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
@@ -34,7 +35,16 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     else
         vm.enablePrinting = false;
 
-     vm.screenshot = async function() {
+    if(vm.enablePrinting) {
+        $rootScope.$on('emulatorStart', function(event, args) {
+            window.eaasClient.eventSource.addEventListener('PrintJobObserver', function(e) {
+                vm.printJobsAvailable = true;
+                growl.info($translate.instant('ACTIONS_PRINT_READY'));
+            });
+        });
+    }
+
+    vm.screenshot = async function() {
         let _header = localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {};
         const pic = await fetch(window.eaasClient.getScreenshotUrl(), {
             headers: _header,

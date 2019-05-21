@@ -35,6 +35,7 @@
   "ACTIONS_ESC" : "Esc",
   "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
   "ACTIONS_SNAPSHOT": "Snapshot",
+  "ACTIONS_PRINT_READY" : "Ein neuer Druckauftrag liegt vor",
 
   "CONTAINER_ACTIONS_ABORT" : "Abbrechen",
   "CONTAINER_STOPPED" : "Beendet",
