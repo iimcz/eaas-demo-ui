@@ -85,8 +85,15 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers', 'mgo-angular-wizard',
     'textAngular', 'ngFileUpload', 'angular-jwt'])
 
-    .constant('localConfig', env)
-    
+    .constant('localConfig', (() => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
+            xhr.send();
+            var ret = {};
+            ret.data = JSON.parse(xhr.responseText);
+            return ret;
+     })())
+
     .component('containerInputList', {
         templateUrl: 'partials/containerInputList.html',
         bindings: {
