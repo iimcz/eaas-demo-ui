@@ -37,6 +37,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     vm.envs.forEach(function (element) {
                         if(element.envType != 'container')
                             return;
+                        if((element.archive == 'default' && vm.viewArchive === 0) ||
+                            ((element.archive == "public" || element.archive == 'container') && vm.viewArchive === 1) ||
+                            (element.archive == "remote" && vm.viewArchive === 2))
                         rowData.push({name: element.title, id: element.envId, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                     })
                 }

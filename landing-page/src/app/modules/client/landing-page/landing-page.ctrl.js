@@ -4,6 +4,14 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
 
     console.log("!!!" , chosenEnvId);
+        if (chosenEnvId == null) {
+            $state.go('error', {
+                errorMsg: {
+                    title: "Error ",
+                    message: "ID is not found. Please follow the pattern: {SERVER_URL}?id={containerId}"
+                }
+            });
+        }
         var vm = this;
 
 
@@ -11,21 +19,13 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
 
             vm.env = response;
+
+            vm.env.isContainer = vm.env.envType ==="container";
             vm.network = "";
             vm.buildInfo = buildInfo.data.version;
             vm.uiCommitHash = __UI_COMMIT_HASH__;
 
             console.log("vm.env 2", vm.env);
-
-
-            if (vm.env == null) {
-                $state.go('error', {
-                    errorMsg: {
-                        title: "Error ",
-                        message: "ID is not found. Please follow the pattern: {SERVER_URL}?id={containerId}"
-                    }
-                });
-            }
 
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.inputs = [];
