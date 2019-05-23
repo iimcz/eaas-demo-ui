@@ -22,6 +22,7 @@ import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
 import 'angular-jwt'
+import ngResource from 'angular-resource';
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
@@ -81,7 +82,7 @@ if(window){
   Object.assign(env, window.__env);
 }
 
-export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl',
+export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl',
     'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers', 'mgo-angular-wizard',
     'textAngular', 'ngFileUpload', 'angular-jwt'])
 
@@ -219,15 +220,17 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
         $scope.$close();
     };
 })
-    .config( [
+    .factory('Environments', function ($http, $resource, localConfig) {
+        return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
+    })
+    .config([
         '$compileProvider',
-        function( $compileProvider )
-        {
+        function ($compileProvider) {
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|web\+eaas-proxy):/);
             // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
         }
     ])
-.config(function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, localConfig) {
+    .config(function ($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, localConfig) {
 
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
@@ -304,8 +307,8 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             url: "/container-landing-page",
             template: require('./modules/client/landing-page/landing-page.html'),
             resolve: {
-                chosenEnv: function($http, localConfig, helperFunctions, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEnvById, new URLSearchParams(window.location.search).get('id')))
+                chosenEnvId: function() {
+                    return new URLSearchParams(window.location.search).get('id')
                 },
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
             },
