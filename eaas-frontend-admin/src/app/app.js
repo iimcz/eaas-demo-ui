@@ -193,8 +193,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     if(localConfig.data.id_token)
     {
-        console.log(data.id_token);
-        localStorage.setItem('id_token', data.id_token);
+        console.log(localConfig.datat.id_token);
+        localStorage.setItem('id_token', localConfig.data.id_token);
     }
 
 
