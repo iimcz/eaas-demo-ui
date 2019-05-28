@@ -96,6 +96,16 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         return `<abbr title="{{data.description}}">{{data.description}}</abbr>`;
     }
 
+    vm.getArchiveHeader = function(item)
+    {
+        if(item === 'zero conf')
+            return 'Local Object Archive';
+        else if(item.startsWith("user_archive"))
+            return item.substring('user_archive'.length);
+        else
+            return item;
+    }
+
     $scope.gridOptions = {
         columnDefs: vm.initColumnDefs(),
         rowHeight: 31,
