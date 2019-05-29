@@ -88,7 +88,6 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
         if (!window.confirm(`Please confirm deleting this object?`))
             return false;
-        }
 
         Objects.remove({archiveId: archiveId,
                        objectId: id}).$promise.then(function() {
