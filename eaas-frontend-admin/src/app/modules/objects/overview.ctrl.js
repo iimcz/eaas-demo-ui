@@ -85,6 +85,11 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     }
 
     vm._delete = function(archiveId, id) {
+
+        if (!window.confirm(`Please confirm deleting this object?`))
+            return false;
+        }
+
         Objects.remove({archiveId: archiveId,
                        objectId: id}).$promise.then(function() {
             $state.go('admin.object-overview', {}, {reload: true});
