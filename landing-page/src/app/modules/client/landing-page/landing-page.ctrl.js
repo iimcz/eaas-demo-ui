@@ -131,15 +131,34 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 }
                 vm.proxy = "";
 
-
-                vm.downloadLink = function () {
+                $('#containerOutputDownloadBtn').click(function () {
                     const unloadBackup = eaasClient.deleteOnUnload;
                     eaasClient.deleteOnUnload = false;
-                    location = window.eaasClient.getContainerResultUrl();
-                    eaasClient.deleteOnUnload = backup;
+                    vm.isContOutDownloading = true;
 
-                    $("#container-download-btn").hide();
-                };
+                    let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
+
+                    async function f() {
+                        const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                            headers: _header,
+                        });
+                        const containerOutputBlob = await containerOutput.blob();
+                        // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+
+                        var downloadLink = document.createElement("a");
+                        downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                        downloadLink.download = "output-data.tar.gz";
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    };
+                    f().then(function () {
+                        vm.isContOutDownloading = false;
+                        $scope.$apply();
+                    });
+
+                    eaasClient.deleteOnUnload = unloadBackup;
+                });
 
                 vm.sendCtrlAltDel = function () {
                     window.eaasClient.sendCtrlAltDel();

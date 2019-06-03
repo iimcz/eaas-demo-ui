@@ -300,6 +300,7 @@
 
   "IMPORT_WAIT_TITLE" : "Importing Image",
   "IMPORT_WAIT_MSG" : "Depending on the file size and server/network performance, image import may take several minutes.",
+  "GENERAL_WAIT_MSG" : "Working on it...",
 
   "OBJECTS_L" : "Objects",
   "OBJECTS_SEARCH" : "Search...",
