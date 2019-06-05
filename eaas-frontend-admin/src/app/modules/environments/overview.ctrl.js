@@ -145,10 +145,16 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             }
         };
 
-        vm.deleteEnvironment = function(envId) {
+        vm.deleteEnvironment = function (envId, isConfirmed) {
             $rootScope.chk.transitionEnable = false;
+            let confirmationResult = null;
+            if (typeof isConfirmed != "undefined")
+                confirmationResult = isConfirmed;
+            else {
+                confirmationResult = window.confirm($translate.instant('JS_DELENV_OK'));
+            }
 
-            if (window.confirm($translate.instant('JS_DELENV_OK'))) {
+            if (confirmationResult) {
                 $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
                     envId: envId,
                     deleteMetaData: true,
@@ -205,10 +211,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         vm.selectedRowData = {};
         vm.deleteSelected = function () {
             console.log("selectedRowData ", vm.selectedRowData.length);
-            var selectedRowData = $scope.gridOptions.api.getSelectedRows();
-            selectedRowData.forEach( selectedRowData => {
-                vm.deleteEnvironment(selectedRowData.id)
-            });
+            var selectedRowData = vm.gridOptions.api.getSelectedRows();
+            if (window.confirm($translate.instant('JS_DELENV_OK')))
+                selectedRowData.forEach(selectedRowData => {
+                    vm.deleteEnvironment(selectedRowData.id, true)
+                });
         };
         $scope.selected = "";
 
@@ -237,7 +244,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                   </li>
                   
                   <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
-                  <li ng-if="data.archive == 'default'" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
+                  <li role="menuitem"><a ng-if="data.archive == 'default'" class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li ng-if="data.archive != 'remote'" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
                   <li class="divider">
 
@@ -311,7 +318,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         };
 
         function onRowSelected(event) {
-            if (vm.gridOptions.api.getSelectedRows().length > 0)
+            if (vm.gridOptions.api.getSelectedRows().length > 0 && vm.gridOptions.api.getSelectedRows()[0].archive === 'default')
                 $('#overviewDeleteButton').show();
             else
                 $('#overviewDeleteButton').hide();
@@ -327,12 +334,12 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 {headerName: "Archive", field: "archive", hide: true}
             ];
 
-            if (vm.view == 0 || vm.view == 1) {
-                columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
-                if (vm.view == 1) {
-                    columnDefs.push({headerName: "ObjectID", field: "objectId"});
-                }
+
+            columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
+            if (vm.view == 1) {
+                columnDefs.push({headerName: "ObjectID", field: "objectId"});
             }
+
 
             columnDefs.push({
                 headerName: "Actions", field: "actions", cellRenderer: actionsCellRendererFunc, suppressSorting: true,

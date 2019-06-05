@@ -139,7 +139,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     })
 
 
-    .run(function($rootScope) {
+    .run(function($rootScope, localConfig) {
         $rootScope.emulator = {state : ''};
 
         $rootScope.idleTimer = {};
@@ -156,6 +156,11 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             $rootScope.idleTimer.idleInterval = setInterval($rootScope.idleTimer.timerIncrement, 60000); // 1 minute
             console.log("TIMER started");
         };
+        if(localConfig.data.id_token)
+        {
+            console.log(localConfig.data.id_token);
+            localStorage.setItem('id_token', localConfig.data.id_token);
+        }
 
         $rootScope.disableIdleTimer = function()
         {
@@ -230,11 +235,25 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
         }
     ])
-    .config(function ($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, localConfig) {
+    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide, localConfig) {
 
-    /*
-     * Use ng-sanitize for textangular, see https://git.io/vFd7y
-     */
+        jwtOptionsProvider.config({
+            whiteListedDomains: "localhost",
+            tokenGetter: [ 'options', function(options) {
+                if (options && options.url.substr(options.url.length - 5) == '.html') {
+                    return null;
+                }
+                if (options && options.url.substr(options.url.length - 5) == '.json') {
+                    return null;
+                }
+                return localStorage.getItem('id_token');
+            }]
+        });
+        $httpProvider.interceptors.push('jwtInterceptor');
+
+        /*
+         * Use ng-sanitize for textangular, see https://git.io/vFd7y
+         */
     $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
         taOptions.forceTextAngularSanitize = false;
         return taOptions;
