@@ -33,7 +33,32 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
         var params = {};
 
         vm.downloadLink = function () {
-            window.open(window.eaasClient.getContainerResultUrl());
+            const unloadBackup = eaasClient.deleteOnUnload;
+            eaasClient.deleteOnUnload = false;
+            vm.isContOutDownloading = true;
+
+            let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
+
+            async function f() {
+                const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                    headers: _header,
+                });
+                const containerOutputBlob = await containerOutput.blob();
+                // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+
+                var downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                downloadLink.download = "output-data.tar.gz";
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            };
+            f().then(function () {
+                vm.isContOutDownloading = false;
+                $scope.$apply();
+            });
+
+            eaasClient.deleteOnUnload = unloadBackup;
         };
 
         var confirmStartFn = function (inputs) {
@@ -43,30 +68,33 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             input.destination = vm.env.input;
             input.content = inputs;
             params.input_data.push(input);
+            if(vm.env.runtimeId){
+                $state.go('admin.emulator', {envId: vm.env.runtimeId,  userContainerEnvironment: $stateParams.envId, userContainerArchive: "default"}, {reload: true});
+            } else {
+                $("#emulator-loading-container").show();
+                eaasClient.startContainer($stateParams.envId, params).then(function () {
+                    $("#emulator-loading-container").hide();
+                    $("#container-running").show();
 
-            $("#emulator-loading-container").show();
-            eaasClient.startContainer($stateParams.envId, params).then(function () {
-                $("#emulator-loading-container").hide();
-                $("#container-running").show();
+                    eaasClient.connect().then(function () {
+                        $("#emulator-container").show();
 
-                eaasClient.connect().then(function () {
-                    $("#emulator-container").show();
+                        if (eaasClient.params.pointerLock === "true") {
+                            growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                            BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                        }
 
-                    if (eaasClient.params.pointerLock === "true") {
-                        growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                        BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
-                    }
+                        // Fix to close emulator on page leave
+                        $scope.$on('$locationChangeStart', function (event) {
+                            eaasClient.release();
+                        });
+                    });
 
-                    // Fix to close emulator on page leave
                     $scope.$on('$locationChangeStart', function (event) {
                         eaasClient.release();
                     });
                 });
-
-                $scope.$on('$locationChangeStart', function (event) {
-                    eaasClient.release();
-                });
-            });
+            }
         };
 
         let modal = $uibModal.open({

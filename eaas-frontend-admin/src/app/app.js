@@ -636,6 +636,9 @@ function($stateProvider,
         })
         .state('admin.edit-container', {
             url: "/edit-container",
+            resolve: {
+                emilEnvironments : (Environments) => Environments.query().$promise
+            },
             params: {
                 envId: null,
             },
@@ -667,7 +670,9 @@ function($stateProvider,
                 returnToObjects: false,
                 isStarted: false,
                 isDetached: false,
-                networkInfo: null
+                networkInfo: null,
+                userContainerEnvironment: null,
+                userContainerArchive: null
             },
             views: {
                 'wizard': {

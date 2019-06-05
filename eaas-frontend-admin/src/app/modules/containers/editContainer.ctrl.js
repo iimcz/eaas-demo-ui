@@ -1,10 +1,12 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', 'localConfig', 'growl', '$translate', 'REST_URLS',
-    function ($http, $scope, $state, $stateParams, Environments, localConfig, growl, $translate, REST_URLS) {
+module.exports = ['$http', '$scope', '$state', '$stateParams', 'emilEnvironments', 'Environments', 'localConfig', 'growl', '$translate', 'REST_URLS',
+    function ($http, $scope, $state, $stateParams, emilEnvironments, Environments, localConfig, growl, $translate, REST_URLS) {
         var vm = this;
         let handlePrefix = "11270/";
         vm.isOpen = false;
+        vm.emilEnvironments = emilEnvironments;
 
         vm.showDateContextPicker = false;
+
         Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
             vm.env = response;
 
@@ -23,6 +25,15 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
             vm.envOutput = vm.env.output;
             vm.processArgs = vm.env.processArgs; // todo deep copy
             vm.processEnvs = vm.env.processEnvs;
+
+            if(typeof vm.env.runtimeId != "undefined" && vm.env.runtimeId !== "")
+                vm.emilEnvironments.forEach(function(element) {
+                    // we only support images and environments
+                    if(element.envId === vm.env.runtimeId){
+                        vm.containerRuntimeEnv = element;
+                        return true;
+                    }
+                });
         });
 
         vm.saveEdit = function () {
@@ -39,6 +50,9 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
             vm.env.description = vm.description;
             vm.env.processArgs = vm.processArgs;
             vm.env.processEnvs = vm.processEnvs;
+            vm.env.containerRuntimeEnv = vm.containerRuntimeEnv;
+
+            console.log("vm.containerRuntimeEnv", vm.containerRuntimeEnv);
 
             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
                 id: $stateParams.envId,
@@ -48,7 +62,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
                 outputFolder: vm.envOutput,
                 inputFolder: vm.envInput,
                 processEnvs: vm.processEnvs,
-                processArgs: vm.processArgs
+                processArgs: vm.processArgs,
+                containerRuntimeId: vm.containerRuntimeEnv.envId
             }).then(function (response) {
                 if (response.data.status === "0") {
                     growl.success($translate.instant('JS_ENV_UPDATE'));

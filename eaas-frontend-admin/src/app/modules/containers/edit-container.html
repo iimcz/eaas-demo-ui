@@ -90,6 +90,27 @@
             </input-list>
         </div>
     </div>
+
+    <div class="tekst">
+        <div uib-accordion-group class="panel-default" is-open="status.openRuntime">
+            <uib-accordion-heading>
+                Container Runtime
+                <i class="pull-right glyphicon"
+                   ng-class="{'glyphicon-chevron-down': status.openRuntime, 'glyphicon-chevron-right': !status.openRuntime}"></i>
+            </uib-accordion-heading>
+
+            <ui-select ng-model="editContainerCtrl.containerRuntimeEnv" theme="bootstrap" title="{{'EDIT_CONTAINER_RUNTIME' | translate}}" required>
+                <ui-select-match placeholder="{{'EDIT_CONTAINER_RUNTIME' | translate}}">{{$select.selected.title}}</ui-select-match>
+                <ui-select-choices repeat="runtime in editContainerCtrl.emilEnvironments  | filter: $select.search">
+                    <span ng-bind-html="runtime.title
+                     | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+
+        </div>
+    </div>
+
+
     <div style="text-align: right;">
         <button type="submit" class="btn btn-default"
                 ui-sref="admin.standard-envs-overview({showObjects: false, showContainers: true})">

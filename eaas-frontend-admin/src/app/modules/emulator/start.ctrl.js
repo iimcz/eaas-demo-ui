@@ -96,14 +96,18 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $stateParams.userId,
                 $stateParams.softwareId,
                 kbLayoutPrefs.language.name,
-                kbLayoutPrefs.layout.name);
+                kbLayoutPrefs.layout.name,
+                $stateParams.userContainerEnvironment,
+                $stateParams.userContainerArchive);
+
+
 
             if ($stateParams.type == 'saveUserSession') {
                 data.lockEnvironment = true;
                 console.log("locking user session");
             }
 
-            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel) {
+            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel, userContainerEnvironment, userContainerArchive) {
                 let data = {};
                 data.type = type;
                 data.archive = archive;
@@ -112,6 +116,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 data.objectArchive = objectArchive;
                 data.userId = userId;
                 data.software = softwareId;
+                data.userContainerEnvironment = userContainerEnvironment;
+                data.userContainerArchive = userContainerArchive;
 
                 if (typeof keyboardLayout != "undefined") {
                     data.keyboardLayout = keyboardLayout;

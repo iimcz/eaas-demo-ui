@@ -347,6 +347,7 @@
   "EDIT_CONTAINER_HELPTEXT" : "Description",
   "EDIT_CONTAINER_CANCEL" : "Cancel",
   "EDIT_CONTAINER_SAVE" : "Save",
+  "EDIT_CONTAINER_RUNTIME" : "Runtime Environment",
 
   "CONTAINER_RUN_L" : "Run container",
   "CONTAINER_RUN_RUN" : "Run",
