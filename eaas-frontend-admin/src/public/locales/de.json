@@ -131,6 +131,8 @@
   "SW_NEW_IMAGE_HEADER" : "Neue Basisumgebung erstellen",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM" : "System auswählen",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM_PH" : "Wählen oder suchen sie ein System...",
+  "SW_NEW_IMAGE_PATCH" : "Patch",
+  "SW_NEW_IMAGE_AVAILABLE_PATCH" : "Verfügbare Patches",
   "SW_NEW_IMAGE_NAME_LBL" : "Name",
   "SW_NEW_IMAGE_PROPERTY_HEADER" : "Systemeigenschaften",
   "SW_NEW_IMAGE_HD_HEADER" : "Festplatte",

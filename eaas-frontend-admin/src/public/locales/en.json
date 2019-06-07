@@ -134,6 +134,8 @@
   "SW_NEW_IMAGE_HEADER" : "Create Base Environment",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM" : "Choose System",
   "SW_NEW_IMAGE_CHOOSE_SYSTEM_PH" : "Search or choose a system...",
+  "SW_NEW_IMAGE_PATCH" : "Patch",
+  "SW_NEW_IMAGE_AVAILABLE_PATCH" : "Available Patches",
   "SW_NEW_IMAGE_NAME_LBL" : "Environment Name",
   "SW_NEW_IMAGE_PROPERTY_HEADER" : "System properties",
   "SW_NEW_IMAGE_HD_HEADER" : "Disk",
