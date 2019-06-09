@@ -1,26 +1,28 @@
 module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Objects', 'softwareObj', 'osList',
-                     'localConfig', 'environmentList', 'growl', '$translate', 'helperFunctions', 'REST_URLS',
+                     'localConfig', 'Environments', 'growl', '$translate', 'helperFunctions', 'REST_URLS',
                       function ($scope, $state, $stateParams, $uibModal, $http, Objects, softwareObj, osList,
-                      localConfig, environmentList, growl, $translate, helperFunctions, REST_URLS) {
+                      localConfig, Environments, growl, $translate, helperFunctions, REST_URLS) {
      var vm = this;
     console.log("$stateParams.userDescription", $stateParams.userDescription);
 
      vm.objectId = $stateParams.objectId;
-     vm.objectArchive = $stateParams.objectArchive;
+     vm.objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : null;
      vm.isSoftware = !($stateParams.swId === "-1");
      vm.softwareObj = softwareObj.data;
      vm.osList = osList;
 
-     if(!$stateParams.objectArchive)
-        $stateParams.objectArchive = "default";
-
-     Objects.get({archiveId: $stateParams.objectArchive, objectId: $stateParams.objectId}).$promise.then(function(response) {
+     Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
+        vm.response = response;
         vm.objEnvironments = response.objectEnvironments.environmentList;
         vm.suggested = response.objectEnvironments.suggested;
         vm.fileFormatMap = response.objectEnvironments.fileFormatMap;
-        console.log(response);
      });
+
+    Environments.query().$promise.then(function(response) {
+        vm.environmentList = response;
+    });
+
      vm.description = $stateParams.userDescription;
 
      vm.automaticCharacterization = function(updateClassification, updateProposal) {
@@ -57,7 +59,9 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
              template: require('./modals/set-default-environment.html'),
              controller: ["$scope", "helperFunctions", "REST_URLS", function($scope, helperFunctions, REST_URLS) {
                  this.defaultEnv = null;
-                 this.environments = environmentList.data.environments;
+
+                 this.environments = vm.environmentList;
+
                  this.osId = osId;
                  this.osLabel = osLabel;
 
@@ -87,7 +91,8 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
              template: require('./modals/add-environment.html'),
              controller: ['$scope', function($scope) {
                  this.newEnv = null;
-                 this.environments = environmentList.data.environments;
+                 this.environments = vm.environmentList;
+
                  this.addEnvironment = function() {
                      // check if environment was already added
                      for (var i = 0; i < vm.objEnvironments.length; i++) {
@@ -149,7 +154,8 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
 
      vm.saveSoftware = function() {
         vm.softwareObj.objectId = $stateParams.objectId;
-        vm.softwareObj.label = vm.softwareObj.objectId;
+        vm.softwareObj.label = vm.metadata.title;
+
         vm.softwareObj.archiveId = $stateParams.objectArchive;
 
         if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)
@@ -167,7 +173,6 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
            if (response.data.status === "0") {
                growl.success(response.data.message);
                $state.go('admin.sw-overview', {}, {reload: true});
-
            } else {
                growl.error(response.data.message, {title: 'Error ' + response.data.status});
            }

@@ -104,8 +104,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                    'textAngular', 'mgo-angular-wizard', 'ui.bootstrap.datetimepicker', 'chart.js', 'emilAdminUI.helpers',
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
-// .constant('kbLayouts', require('./../public/kbLayouts.json'))
-
+    .constant('localConfig', (() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
+        xhr.send();
+        var ret = {};
+        ret.data = JSON.parse(xhr.responseText);
+        return ret;
+    })())
 
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
@@ -173,24 +179,24 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         };
     })
 
-.run(async function($rootScope, $state, $http, authService) {
+.run(async function($rootScope, $state, $http, authService, localConfig) {
+
     $rootScope.emulator = {
         state : '',
-        mode : null
+        mode : null,
+        detached : false
     };
 
     $rootScope.chk = {};
     $rootScope.chk.transitionEnable = true;
     $rootScope.waitingForServer = true;
 
-    $http.get(localStorage.eaasConfigURL || "config.json")
-      .success(function(data, status, headers, config) {
-          if(data.id_token)
-          {
-            console.log(data.id_token);
-            localStorage.setItem('id_token', data.id_token);
-          }
-    });
+    if(localConfig.data.id_token)
+    {
+        console.log(localConfig.data.id_token);
+        localStorage.setItem('id_token', localConfig.data.id_token);
+    }
+
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
@@ -262,12 +268,38 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
      }
 })
 
-.factory('Objects', function($http, $resource) {
-    return $resource('http://localhost:8080/emil/objects/:archiveId/:objectId', {archiveId : "default"});
+.factory('Objects', function($http, $resource, localConfig) {
+   return $resource(localConfig.data.eaasBackendURL + 'objects/:archiveId/:objectId', {archiveId : "default"});
 })
 
-.config(['$stateProvider', '$urlRouterProvider', 'growlProvider', '$httpProvider', '$translateProvider', '$provide', 'jwtOptionsProvider', 'cfpLoadingBarProvider', '$locationProvider', 'angularAuth0Provider',
-        function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide, jwtOptionsProvider, cfpLoadingBarProvider, $locationProvider, angularAuth0Provider) {
+.factory('Environments', function($http, $resource, localConfig) {
+   return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
+})
+
+.config(['$stateProvider',
+        '$urlRouterProvider',
+        'growlProvider',
+        '$httpProvider',
+        '$translateProvider',
+        '$provide',
+        'jwtOptionsProvider',
+        'cfpLoadingBarProvider',
+        '$locationProvider',
+        'angularAuth0Provider',
+        'localConfig',
+function($stateProvider,
+        $urlRouterProvider,
+        growlProvider,
+        $httpProvider,
+        $translateProvider,
+        $provide,
+        jwtOptionsProvider,
+        cfpLoadingBarProvider,
+        $locationProvider,
+        angularAuth0Provider,
+        localConfig
+) {
+    angular.lowercase = angular.$$lowercase;
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
      */
@@ -406,12 +438,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-                localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
+
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
-
-                environmentList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.eaasBackendURL + REST_URLS.getAllEnvsUrl),
 
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
@@ -521,7 +550,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.object-overview', {
             url: "/objects",
             resolve: {
-                localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
                 archives: ($http, localConfig, REST_URLS)  =>  $http.get(localConfig.data.eaasBackendURL + REST_URLS.repositoriesListUrl),
             },
             views: {
@@ -546,9 +574,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.user-session-overview', {
             url: "/user-sessions",
             resolve: {
-                localConfig: function($http) {
-                    return $http.get(localStorage.eaasConfigURL || "config.json");
-                },
                 sessionList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.userSessionListUrl);
                 }
@@ -625,9 +650,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.emulator', {
             url: "/emulator",
             resolve: {
-                chosenEnv: function($http, $stateParams, localConfig, helperFunctions, REST_URLS) {
-                    if($stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
-                        return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEmilEnvironmentUrl, $stateParams.envId));
+                chosenEnv: function($stateParams, Environments) {
+                    if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                        return  Environments.get({envId: $stateParams.envId}).$promise;
                     else
                         return {};
                 }
@@ -640,7 +665,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                 objectId: null,
                 objectArchive: null,
                 userId: null,
-                returnToObjects: false
+                returnToObjects: false,
+                isStarted: false,
+                isDetached: false,
+                networkInfo: null
             },
             views: {
                 'wizard': {
@@ -707,13 +735,25 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         .state('admin.handles', {
             url: "/handles",
             resolve: {
-                localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
                 handles: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList)
             },
             views: {
                 'wizard': {
                     template: require('./modules/handle/overview.html'),
                     controller: "HandleOverviewController as handleOverview",
+                }
+            }
+        })
+            .state('admin.networking', {
+            url: "/networking",
+            resolve: {
+                localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
+                groupdIds: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/networking/overview.html'),
+                    controller: "NetworkingCtrl as netCtrl",
                 }
             }
         })

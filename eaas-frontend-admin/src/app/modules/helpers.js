@@ -4,20 +4,18 @@ const emilAdminUIHelpersModule = ng.module('emilAdminUI.helpers', []);
 
 emilAdminUIHelpersModule.service('REST_URLS', function () {
     // object data api
-    this.getSoftwareListURL = "EmilObjectData/list?archiveId={0}";
-    this.syncUrl = "EmilObjectData/sync";
+    this.syncUrl = "objects/sync";
     this.getHandleList = "handles/";
-    this.pushUploadUrl = "EmilObjectData/pushUpload";
+    this.pushUploadUrl = "objects/pushUpload";
     this.repositoriesListUrl = "objects/archives";
-    this.syncObjectsUrl = "EmilObjectData/syncObjects";
-    this.getObjectImportTaskState = "EmilObjectData/objectImportTaskState?taskId={0}";
+    this.syncObjectsUrl = "objects/syncObjects";
+    this.getObjectImportTaskState = "objects/objectImportTaskState?taskId={0}";
 
     this.getHandleValue = "handles/";
     this.deleteHandle = "handles/";
     this.postHandleValue = "handles/";
 
     // environment data api
-    this.getAllEnvsUrl = "EmilEnvironmentData/list";
     this.getRemoteEnvsUrl = "EmilEnvironmentData/remoteList?host={0}&type={1}";
     this.updateDescriptionUrl = "EmilEnvironmentData/updateDescription";
     this.deleteEnvironmentUrl = "EmilEnvironmentData/delete";
@@ -36,7 +34,6 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
     this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
     this.getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
-    this.getEmilEnvironmentUrl = "EmilEnvironmentData/environment?envId={0}";
     this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";

@@ -22,6 +22,7 @@ import 'angular-chart.js';
 import 'angular-ui-mask';
 import 'angular-wizard';
 import 'angular-jwt'
+import ngResource from 'angular-resource';
 import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
@@ -74,9 +75,25 @@ import '../../../eaas-client/eaas-client.css';
 import './app.css';
 
 
-export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl',
+var env = {};
+
+// Import variables if present (from env.js)
+if(window){
+  Object.assign(env, window.__env);
+}
+
+export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap', 'ui.select', 'angular-growl',
     'dibari.angular-ellipsis', 'ui.bootstrap.contextMenu', 'pascalprecht.translate', 'smart-table', 'emilUI.modules', 'emilUI.helpers', 'mgo-angular-wizard',
     'textAngular', 'ngFileUpload', 'angular-jwt'])
+
+    .constant('localConfig', (() => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
+            xhr.send();
+            var ret = {};
+            ret.data = JSON.parse(xhr.responseText);
+            return ret;
+     })())
 
     .component('containerInputList', {
         templateUrl: 'partials/containerInputList.html',
@@ -122,7 +139,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     })
 
 
-    .run(function($rootScope) {
+    .run(function($rootScope, localConfig) {
         $rootScope.emulator = {state : ''};
 
         $rootScope.idleTimer = {};
@@ -139,6 +156,11 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             $rootScope.idleTimer.idleInterval = setInterval($rootScope.idleTimer.timerIncrement, 60000); // 1 minute
             console.log("TIMER started");
         };
+        if(localConfig.data.id_token)
+        {
+            console.log(localConfig.data.id_token);
+            localStorage.setItem('id_token', localConfig.data.id_token);
+        }
 
         $rootScope.disableIdleTimer = function()
         {
@@ -203,19 +225,35 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
         $scope.$close();
     };
 })
-    .config( [
+    .factory('Environments', function ($http, $resource, localConfig) {
+        return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
+    })
+    .config([
         '$compileProvider',
-        function( $compileProvider )
-        {
+        function ($compileProvider) {
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|web\+eaas-proxy):/);
             // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
         }
     ])
-.config(function($stateProvider, $urlRouterProvider, growlProvider, $httpProvider, $translateProvider, $provide) {
+    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide, localConfig) {
 
-    /*
-     * Use ng-sanitize for textangular, see https://git.io/vFd7y
-     */
+        jwtOptionsProvider.config({
+            whiteListedDomains: "localhost",
+            tokenGetter: [ 'options', function(options) {
+                if (options && options.url.substr(options.url.length - 5) == '.html') {
+                    return null;
+                }
+                if (options && options.url.substr(options.url.length - 5) == '.json') {
+                    return null;
+                }
+                return localStorage.getItem('id_token');
+            }]
+        });
+        $httpProvider.interceptors.push('jwtInterceptor');
+
+        /*
+         * Use ng-sanitize for textangular, see https://git.io/vFd7y
+         */
     $provide.decorator('taOptions', ['taRegisterTool', '$delegate', function(taRegisterTool, taOptions) {
         taOptions.forceTextAngularSanitize = false;
         return taOptions;
@@ -288,10 +326,9 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             url: "/container-landing-page",
             template: require('./modules/client/landing-page/landing-page.html'),
             resolve: {
-                chosenEnv: function($http, localConfig, helperFunctions, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getEnvById, new URLSearchParams(window.location.search).get('id')))
+                chosenEnvId: function() {
+                    return new URLSearchParams(window.location.search).get('id')
                 },
-                localConfig: ($http) => $http.get("config.json"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
             },
             controller: "ContainerLandingCtrl as containerLandingCtrl"

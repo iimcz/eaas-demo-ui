@@ -36,6 +36,7 @@
   "ACTIONS_ESC" : "Send Esc",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   "ACTIONS_SNAPSHOT": "Snapshot",
+  "ACTIONS_PRINT_READY" : "A new print job is ready.",
 
   "CONTAINER_ACTIONS_ABORT" : "Abort",
 
@@ -182,6 +183,8 @@
   "SW_NEW_CONTAINER_ARGUMENTS_H" : "Process",
   "SW_NEW_CONTAINER_ARGUMENTS_NOTE" : "Enter container start script and arguments",
   "SW_NEW_CONTAINER_ARGUMENTS_PH" : "cmdl / args",
+  "SW_NEW_CONTAINER_OPTIONAL_SUBDIRECTORY" : "Optinal subdirectory",
+  "SW_NEW_CONTAINER_OPTIONAL_SUBDIRECTORY_NAME" : "Subdirectory name",
 
   "EDITENV_L" : "Edit Environment",
   "EDITENV_ID": "ID",
@@ -244,6 +247,7 @@
   "EMU_STOPPED" : "Emulator stopped",
   "EMU_POINTER_LOCK_AVAILABLE" : "Click on the emulator for mouse control.",
   "EMU_LINK": "Link to this environment",
+  "NETWORKING_STOPPING_COMPONENT": "Stopping emulator",
 
   "ADDSW_TITLE" : "Add software",
   "ADDSW_DIALOG_LIST" : "Available software packages",
@@ -296,6 +300,7 @@
 
   "IMPORT_WAIT_TITLE" : "Importing Image",
   "IMPORT_WAIT_MSG" : "Depending on the file size and server/network performance, image import may take several minutes.",
+  "GENERAL_WAIT_MSG" : "Working on it...",
 
   "OBJECTS_L" : "Objects",
   "OBJECTS_SEARCH" : "Search...",
@@ -337,6 +342,8 @@
   "EDIT_CONTAINER_INPUT_PH" : "path within the container",
   "EDIT_CONTAINER_OUTPUT" : "Output folder",
   "EDIT_CONTAINER_OUTPUT_PH" : "path within the container",
+  "EDIT_CONTAINER_ACCORDION_INPUT_OUTPUT" : "Input/Output folders",
+  "EDIT_CONTAINER_ACCORDION_PROCESS_VARIABLES" : "Processes and Variables",
   "EDIT_CONTAINER_HELPTEXT" : "Description",
   "EDIT_CONTAINER_CANCEL" : "Cancel",
   "EDIT_CONTAINER_SAVE" : "Save",

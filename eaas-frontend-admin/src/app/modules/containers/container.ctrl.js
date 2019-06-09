@@ -1,6 +1,10 @@
-module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal', 'environmentList',
-    function ($rootScope, $scope, $sce, $state, $http, $stateParams, $translate, Upload, localConfig, growl, $uibModal, environmentList) {
+module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'Environments', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
+    function ($rootScope, $scope, $sce, $state, $http, $stateParams, Environments, $translate, Upload, localConfig, growl, $uibModal) {
         var vm = this;
+
+        Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
+            vm.env = response;
+        });
 
         $("#container-stopped").hide();
 
@@ -20,17 +24,6 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             window.onbeforeunload = null;
         };
 
-        var envList = environmentList.data.environments;
-        console.log(envList);
-        vm.env = null;
-
-        for (var i = 0; i < envList.length; i++) {
-            if (envList[i].envId === $stateParams.envId) {
-                vm.env = envList[i];
-                break;
-            }
-        }
-
         window.eaasClient.onEmulatorStopped = function () {
             $("#emulator-loading-container").hide();
             $("#container-running").hide();
@@ -40,7 +33,32 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
         var params = {};
 
         vm.downloadLink = function () {
-            window.open(window.eaasClient.getContainerResultUrl());
+            const unloadBackup = eaasClient.deleteOnUnload;
+            eaasClient.deleteOnUnload = false;
+            vm.isContOutDownloading = true;
+
+            let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
+
+            async function f() {
+                const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                    headers: _header,
+                });
+                const containerOutputBlob = await containerOutput.blob();
+                // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+
+                var downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                downloadLink.download = "output-data.tar.gz";
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            };
+            f().then(function () {
+                vm.isContOutDownloading = false;
+                $scope.$apply();
+            });
+
+            eaasClient.deleteOnUnload = unloadBackup;
         };
 
         var confirmStartFn = function (inputs) {

@@ -1,46 +1,77 @@
 module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
-                        '$timeout', '$translate', 'chosenEnv', 'helperFunctions', 'REST_URLS',
+                        '$timeout', '$translate', 'chosenEnv', 'Environments', 'helperFunctions', 'REST_URLS',
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
-                        $timeout, $translate, chosenEnv, helperFunctions, REST_URLS) {
+                        $timeout, $translate, chosenEnv, Environments, helperFunctions, REST_URLS) {
     var vm = this;
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
-    $scope.chosenEnv = chosenEnv;
-
-    console.log($stateParams.objectArchive);
+    $rootScope.chosenEnv = chosenEnv;
     vm.currentMediumLabel = null;
+    $scope.idsData;
+    vm.printJobsAvailable = false;
+
+    var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
     var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
-    console.log(objectId);
+
     if(objectId) {
-        Objects.get({archiveId: $stateParams.objectArchive, objectId: objectId}).$promise.then(function(response) {
+        Objects.get({archiveId: objectArchive, objectId: objectId}).$promise.then(function(response) {
             vm.mediaCollection = response.mediaItems;
                 if(vm.mediaCollection)
                     vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
         });
     }
 
-    if(typeof $rootScope.nativeConfig !== 'undefined')
-        vm.isKVM = ($rootScope.nativeConfig.includes('-enable-kvm'));
+    if(chosenEnv.nativeConfig)
+        vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
     else
         vm.isKVM = false;
 
-    if (chosenEnv.data)
+    if (chosenEnv)
     {
-        vm.enablePrinting = chosenEnv.data.enablePrinting;
-        vm.shutdownByOs = chosenEnv.data.shutdownByOs;
+        vm.enablePrinting = chosenEnv.enablePrinting;
+        vm.shutdownByOs = chosenEnv.shutdownByOs;
     }
     else
         vm.enablePrinting = false;
 
-     vm.screenshot = async function() {
-        let _header = localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {};
-        const pic = await fetch(window.eaasClient.getScreenshotUrl(), {
-            headers: _header,
+    if(vm.enablePrinting) {
+        $rootScope.$on('emulatorStart', function(event, args) {
+            window.eaasClient.eventSource.addEventListener('PrintJobObserver', function(e) {
+                vm.printJobsAvailable = true;
+                growl.info($translate.instant('ACTIONS_PRINT_READY'));
+            });
         });
+    }
 
-        const picBlob = await pic.blob();
-        window.open(URL.createObjectURL(picBlob));
+
+    $scope.screenshot = function () {
+        vm.screenshotModal = $uibModal.open({
+            backdrop: 'static',
+            animation: true,
+            templateUrl: 'partials/wait-with-eclipse-spinner.html'
+        });
+        console.log("Trying to do");
+        let _header = localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {};
+
+        async function createScreenshot() {
+            const pic = await fetch(window.eaasClient.getScreenshotUrl(), {
+                headers: _header,
+            });
+
+            const picBlob = await pic.blob();
+
+            var downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(picBlob);
+            downloadLink.download = "screenshot.png";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        };
+        createScreenshot().then(function () {
+            vm.screenshotModal.close();
+            console.log("screenshot is done!")
+        });
     };
 
 
@@ -85,6 +116,11 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         window.eaasClient.sendCtrlAltDel();
     };
 
+    vm.close = function () {
+        window.onbeforeunload = null;
+        $state.go('admin.standard-envs-overview', {}, {reload: true});
+    };
+
     vm.stopEmulator = function () {
         $uibModal.open({
             animation: true,
@@ -126,15 +162,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $timeout(eaasClientReadyTimer, 100);
     };
     $timeout(eaasClientReadyTimer);
-
-    $scope.initTitles =function() {
-        // check if titles were introduced already
-        if (typeof window.$rootScope.idsData[0].title === "undefined") {
-            $rootScope.idsData.forEach(function (idData) {
-                idData.title = $rootScope.environments.find(element => element.envId === idData.env.data.environment).title;
-            })
-        }
-    };
 
     vm.openChangeMediaDialog = function() {
         $uibModal.open({
@@ -250,7 +277,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             eaasClient.componentId = component.id;
 
             eaasClient.connect().then(function () {
-
                 jQuery.when(
                     loadingElement.animate({width: "100%"}, 700),
                     jQuery.Deferred(function (deferred) {
@@ -263,20 +289,20 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 $("#emulator-container").show();
                 $rootScope.emulator.mode = eaasClient.mode;
                 $scope.$apply();
-                if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
-                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
-                    var pathArray = url.pathname.split('/');
-                    document.querySelector("#emulator-info-container").append(
-                        Object.assign(document.createElement("a"),
-                            {textContent: `connect to: ${url.hostname} protocol ${pathArray[1]} port ${pathArray[2]}`,
-                                href: `http://${url.hostname}:${pathArray[2]}`,
-                                target: "_blank", rel: "noopener"}),
-                        ' // ',
-                        Object.assign(document.createElement("a"),
-                            {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL(),
-                                target: "_blank",}),
-                    );
-                })();
+//                if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
+//                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
+//                    var pathArray = url.pathname.split('/');
+//                    document.querySelector("#emulator-info-container").append(
+//                        Object.assign(document.createElement("a"),
+//                            {textContent: `connect to: ${url.hostname} protocol ${pathArray[1]} port ${pathArray[2]}`,
+//                                href: `http://${url.hostname}:${pathArray[2]}`,
+//                                target: "_blank", rel: "noopener"}),
+//                        ' // ',
+//                        Object.assign(document.createElement("a"),
+//                            {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL(),
+//                                target: "_blank",}),
+//                    );
+//                })();
 
                 if (eaasClient.params.pointerLock === "true") {
                     growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
@@ -285,9 +311,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
                 // Fix to close emulator on page leave
                 $scope.$on('$locationChangeStart', function (event) {
-                    window.$rootScope.idsData = [];
                     eaasClient.release();
-
                 });
 
             });
@@ -301,7 +325,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/network.html'),
             resolve: {
                 currentEnv: function () {
-                    return chosenEnv.data;
+                    return chosenEnv;
                 },
                 localConfig: function () {
                     return localConfig;
@@ -318,7 +342,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),
             resolve: {
                 currentEnv: function () {
-                    return chosenEnv.data;
+                    return chosenEnv;
                 },
                 localConfig: function () {
                     return localConfig;
@@ -398,9 +422,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     this.showEmu = function() {
                         $('#emulator-container').show();
                     }
-
-
-
                 }],
                 controllerAs: "openSaveEnvironmentDialogCtrl"
             });
