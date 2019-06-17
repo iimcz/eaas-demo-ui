@@ -1,10 +1,7 @@
-module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'Environments', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
-    function ($rootScope, $scope, $sce, $state, $http, $stateParams, Environments, $translate, Upload, localConfig, growl, $uibModal) {
+module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'Environments', 'chosenEnv', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
+    function ($rootScope, $scope, $sce, $state, $http, $stateParams, Environments, chosenEnv, $translate, Upload, localConfig, growl, $uibModal) {
         var vm = this;
-
-        Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
-            vm.env = response;
-        });
+        vm.env = chosenEnv;
 
         $("#container-stopped").hide();
 
@@ -68,8 +65,16 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             input.destination = vm.env.input;
             input.content = inputs;
             params.input_data.push(input);
-            if(vm.env.runtimeId){
-                $state.go('admin.emulator', {envId: vm.env.runtimeId,  userContainerEnvironment: $stateParams.envId, userContainerArchive: "default"}, {reload: true});
+            console.log("input " , input);
+            if (vm.env.runtimeId) {
+                $state.go('admin.emulator', {
+                    envId: vm.env.runtimeId,
+                    containerRuntime: {
+                        userContainerEnvironment: $stateParams.envId,
+                        userContainerArchive: vm.env.archive,
+                        input_data: params.input_data
+                    }
+                }, {reload: true});
             } else {
                 $("#emulator-loading-container").show();
                 eaasClient.startContainer($stateParams.envId, params).then(function () {

@@ -101,7 +101,7 @@
 
             <ui-select ng-model="editContainerCtrl.containerRuntimeEnv" theme="bootstrap" title="{{'EDIT_CONTAINER_RUNTIME' | translate}}" required>
                 <ui-select-match placeholder="{{'EDIT_CONTAINER_RUNTIME' | translate}}">{{$select.selected.title}}</ui-select-match>
-                <ui-select-choices repeat="runtime in editContainerCtrl.emilEnvironments  | filter: $select.search">
+                <ui-select-choices repeat="runtime in editContainerCtrl.runtimeEnvs  | filter: $select.search">
                     <span ng-bind-html="runtime.title
                      | highlight: $select.search"></span>
                 </ui-select-choices>

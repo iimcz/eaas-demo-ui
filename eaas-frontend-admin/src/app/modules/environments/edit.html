@@ -127,6 +127,9 @@
                           class="form-control" ng-model="editEnvCtrl.nativeConfig"></textarea>
             </div>
             <br>
+            <label>Linux Runtime:
+                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.isLinuxRuntime">
+            </label><br/>
         </div>
 
         <div uib-accordion-group class="panel-default" is-open="status.openDrives">

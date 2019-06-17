@@ -63,6 +63,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
             vm.drives = vm.env.drives;
+            vm.isLinuxRuntime = vm.env.isLinuxRuntime;
 
             for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
                 if (vm.operatingSystemsMetadata[i].id === vm.env.os)
@@ -184,7 +185,8 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    containerEmulatorName : vm.emulatorContainer.value.name,
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
                    xpraEncoding: vm.xpraEncoding,
-                   drives : vm.drives
+                   drives : vm.drives,
+                   linuxRuntime : vm.isLinuxRuntime
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));

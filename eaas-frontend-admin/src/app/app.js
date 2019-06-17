@@ -672,8 +672,7 @@ function($stateProvider,
                 isStarted: false,
                 isDetached: false,
                 networkInfo: null,
-                userContainerEnvironment: null,
-                userContainerArchive: null
+                containerRuntime: null,
             },
             views: {
                 'wizard': {
@@ -690,6 +689,9 @@ function($stateProvider,
         .state('admin.container', {
             url: "/container",
             resolve: {
+                chosenEnv: function($stateParams, Environments) {
+                    return Environments.get({envId: $stateParams.envId}).$promise;
+                }
             },
             params: {
                 envId: null,

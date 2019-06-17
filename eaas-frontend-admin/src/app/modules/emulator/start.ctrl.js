@@ -6,6 +6,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
         $rootScope.emulator.detached = false;
+        $scope.containerRuntime = $stateParams.containerRuntime;
         console.log(window.isCollapsed, window.isCollapsed);
         vm.runEmulator = function(selectedEnvs, attachId) {
 
@@ -28,6 +29,26 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 window.onbeforeunload = null;
             };
 
+            vm.getOutput = function () {
+                let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
+
+                async function f() {
+                    const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                        headers: _header,
+                    });
+                    const containerOutputBlob = await containerOutput.blob();
+                    // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+
+                    var downloadLink = document.createElement("a");
+                    downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                    downloadLink.download = "output-data.zip";
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                };
+                f();
+            };
+
             this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
             if ($stateParams.objectId)
                 this.link += "&objectId=" + $stateParams.objectId;
@@ -41,6 +62,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $("#emulator-container").hide();
                 $("#emulator-loading-container").show();
                 $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+
                 $scope.$apply();
             };
 
@@ -97,8 +119,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $stateParams.softwareId,
                 kbLayoutPrefs.language.name,
                 kbLayoutPrefs.layout.name,
-                $stateParams.userContainerEnvironment,
-                $stateParams.userContainerArchive);
+                $stateParams.containerRuntime);
 
 
 
@@ -107,7 +128,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 console.log("locking user session");
             }
 
-            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel, userContainerEnvironment, userContainerArchive) {
+            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel, containerRuntime) {
                 let data = {};
                 data.type = type;
                 data.archive = archive;
@@ -116,9 +137,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 data.objectArchive = objectArchive;
                 data.userId = userId;
                 data.software = softwareId;
-                data.userContainerEnvironment = userContainerEnvironment;
-                data.userContainerArchive = userContainerArchive;
-
+                if (containerRuntime != null) {
+                    data.userContainerEnvironment = containerRuntime.userContainerEnvironment;
+                    data.userContainerArchive = containerRuntime.userContainerArchive;
+                    data.input_data = containerRuntime.input_data;
+                }
                 if (typeof keyboardLayout != "undefined") {
                     data.keyboardLayout = keyboardLayout;
                 }
