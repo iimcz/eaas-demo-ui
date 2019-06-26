@@ -20,6 +20,6 @@
     <h4>{{'EMU_STOPPED' | translate}}</h4>
 </div>
 
-<button ng-show="emulator.state == 'STOPPED' && containerRuntime != null" id="outputDownloadBtn" ng-click="startEmuCtrl.getOutput()">Download
+<button ng-show="emulator.state == 'STOPPED' && containerRuntime" id="outputDownloadBtn" ng-click="startEmuCtrl.getOutput()">Download
     result
 </button>

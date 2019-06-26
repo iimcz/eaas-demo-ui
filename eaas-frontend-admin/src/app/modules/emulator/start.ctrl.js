@@ -6,7 +6,10 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
         $rootScope.emulator.detached = false;
-        $scope.containerRuntime = $stateParams.containerRuntime;
+        if ($stateParams.containerRuntime != null) {
+            $scope.containerRuntime = $stateParams.containerRuntime;
+            chosenEnv.networking = $stateParams.containerRuntime.networking;
+        }
         console.log(window.isCollapsed, window.isCollapsed);
         vm.runEmulator = function(selectedEnvs, attachId) {
 
@@ -74,9 +77,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             let params = {};
             if (chosenEnv) {
-                if ($stateParams.containerRuntime != null){
-                    chosenEnv.networking =  $stateParams.containerRuntime.networking;
-                }
 
                 if (chosenEnv.networking) {
                     if (chosenEnv.networking.connectEnvs)
@@ -225,7 +225,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
         if (!chosenEnv) {
             vm.runEmulator([]);
         }
-        else if (!chosenEnv.connectEnvs) {
+        else if (!chosenEnv.networking.connectEnvs) {
             console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
             vm.runEmulator([]);
         }
