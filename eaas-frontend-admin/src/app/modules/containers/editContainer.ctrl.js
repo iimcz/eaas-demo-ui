@@ -8,9 +8,11 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'emilEnvironments
         vm.runtimeEnvs = [vm.containerRuntimeEnv];
 
         vm.showDateContextPicker = false;
+        vm.networking = {};
 
         Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
             vm.env = response;
+
             if(localConfig.data.features.handle) {
                 $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
                     if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
@@ -26,6 +28,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'emilEnvironments
             vm.envOutput = vm.env.output;
             vm.processArgs = vm.env.processArgs; // todo deep copy
             vm.processEnvs = vm.env.processEnvs;
+            if(vm.env.networking)
+            vm.networking = vm.env.networking;
 
                 vm.emilEnvironments.forEach(function(element) {
                     if(element.envId === vm.env.runtimeId){
@@ -62,6 +66,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'emilEnvironments
                 inputFolder: vm.envInput,
                 processEnvs: vm.processEnvs,
                 processArgs: vm.processArgs,
+                networking: vm.networking,
                 containerRuntimeId: vm.containerRuntimeEnv.runNatively ? null : vm.containerRuntimeEnv.envId
             }).then(function (response) {
                 if (response.data.status === "0") {

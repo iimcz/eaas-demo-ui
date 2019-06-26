@@ -201,69 +201,14 @@
             </div>
         </div>
 
-        <div uib-accordion-group class="panel-default" is-open="status.openNet">
-            <uib-accordion-heading>
-                Networking
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openNet, 'glyphicon-chevron-right': !status.openNet}"></i>
-            </uib-accordion-heading>
-
-
-            <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.connectEnvs" >
-                <label>Enable networking</label>
-            </div>
-
-            <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox"  ng-model="editEnvCtrl.enableInternet" >
-                <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
-            </div>
-
-            <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox"  ng-model="editEnvCtrl.serverMode">
-                <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
-            </div>
-
-            <div ng-if="editEnvCtrl.serverMode && editEnvCtrl.connectEnvs">
-
-                <div class="form-group">
-                    <input type="checkbox"  ng-model="editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_ENABLE_SOCKS' | translate}}</label>
-                </div>
-
-                <div class="form-group">
-                    <input type="checkbox"   ng-model="editEnvCtrl.localServerMode">
-                    <label>{{'EDITENV_ENABLE_LOCAL_MODE' | translate}}</label>
-                </div>
-
-                <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_SERVER_IP' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverIp">
-                </div>
-
-                <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_SERVER_PORT' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverPort">
-                </div>
-
-                <div class="form-group">
-                    <label>{{'EDITENV_GW_PRIVATE_IP' | translate}}</label>
-                    <input type="text"   class="form-control" ng-model="editEnvCtrl.gwPrivateIp">
-                </div>
-
-                <div class="form-group">
-                    <label>{{'EDITENV_GW_PRIVATE_MASK' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
-                </div>
-
-                <p>
-                    <b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br/>
-                    Symbols $$host$$ and $$port$$ would be substituted to real values on deployment. <br>
-                    Example: $$host$$:$$port$$/myPath/myPage.html = testserver:8080/myPath/myPage.html
-                    <text-angular ng-model="editEnvCtrl.envHelpText" ng-disabled="!editEnvCtrl.editMode" ></text-angular>
-                </p>
-            </div>
+        <!-- Include networking template
+           NOTE: you will find networkingTemplate in app.js-->
+        <div  ng-if="!editEnvCtrl.isLinuxRuntime" class="topSkip">
+            <networking-Template
+                networking=editEnvCtrl.networking
+            ></networking-Template>
         </div>
+
     </uib-accordion>
 
     <!--

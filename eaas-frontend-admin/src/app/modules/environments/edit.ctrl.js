@@ -7,6 +7,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
        let handlePrefix = "11270/";
        var vm = this;
+       vm.networking = {};
 
        vm.editMode = false;
        let emulatorContainerVersionSpillter = "|";
@@ -45,20 +46,12 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.envTitle = vm.env.title;
             vm.author = vm.env.author;
             vm.envDescription = vm.env.description;
-            vm.envHelpText = vm.env.helpText;
             vm.enableRelativeMouse = vm.env.enableRelativeMouse;
             vm.enablePrinting = vm.env.enablePrinting;
             vm.nativeConfig = vm.env.nativeConfig;
-            vm.enableInternet = vm.env.enableInternet;
-            vm.serverMode = vm.env.serverMode;
-            vm.localServerMode = vm.env.localServerMode;
-            vm.enableSocks = vm.env.enableSocks;
-            vm.serverIp = vm.env.serverIp;
-            vm.serverPort = vm.env.serverPort;
-            vm.gwPrivateIp = vm.env.gwPrivateIp;
-            vm.gwPrivateMask = vm.env.gwPrivateMask;
+            if (vm.env.networking)
+                vm.networking = vm.env.networking;
             vm.useXpra = vm.env.useXpra;
-            vm.connectEnvs = vm.env.connectEnvs;
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
@@ -157,13 +150,11 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
-               this.env.helpText = this.envHelpText;
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                    envId: $stateParams.envId,
                    title: this.envTitle,
                    author: this.author,
                    description: this.envDescription,
-                   helpText: this.envHelpText,
                    time: timecontext,
                    enablePrinting: vm.enablePrinting,
                    enableRelativeMouse: this.enableRelativeMouse,
@@ -171,17 +162,9 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    os: this.os ? this.os.id : null,
                    userTag: this.userTag,
                    useXpra : this.useXpra,
-                   enableInternet: this.enableInternet,
-                   serverMode: this.serverMode,
-                   localServerMode: this.localServerMode,
-                   enableSocks: this.enableSocks,
-                   serverIp : this.serverIp,
-                   serverPort : this.serverPort,
-                   gwPrivateIp: this.gwPrivateIp,
-                   gwPrivateMask: this.gwPrivateMask,
                    nativeConfig: this.nativeConfig,
-                   connectEnvs : this.connectEnvs,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
+                   networking : vm.networking,
                    containerEmulatorName : vm.emulatorContainer.value.name,
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
                    xpraEncoding: vm.xpraEncoding,

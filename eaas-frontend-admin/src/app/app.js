@@ -40,6 +40,7 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
+import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 
 
 
@@ -165,7 +166,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             showDialogs: '='
         }
     })
-    
+    .component('networkingTemplate', {
+        template: networkingTemplate,
+        bindings: {networking: '='}
+    })
+
+
     .directive('onInputFileChange', function() {
         return {
             restrict: 'A',

@@ -26,8 +26,8 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
                 return text.split(searchGoal).join(replacement);
         }
 
-        let helptext = replaceMulti(replaceMulti(this.env.helpText, '$$host$$', this.hostname), '$$port$$', this.port);
-        this.localServerMode = curentEnv.localServerMode;
+        let helptext = replaceMulti(replaceMulti(this.env.networking.helpText, '$$host$$', this.hostname), '$$port$$', this.port);
+        this.localServerMode = curentEnv.networking.localServerMode;
         console.log(this.localServerMode);
         this.networkHelp = helptext;
         this.detachTime;

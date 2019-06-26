@@ -142,8 +142,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     emulatorName: emulatorName,
                     version: version
                 }).then(function (response) {
-                console.log("!!!!!!");
-                console.log(response);
                 if (response.status === 200 || response.status === 204) {
                     growl.success('done!');
                     $state.go('admin.emulators_details', {entries: $stateParams.entries, emuName: $stateParams.emuName}, {reload: true});

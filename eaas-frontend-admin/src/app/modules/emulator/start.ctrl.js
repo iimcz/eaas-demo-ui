@@ -74,23 +74,29 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             let params = {};
             if (chosenEnv) {
-                if (chosenEnv.connectEnvs)
-                    params.enableNetwork = true;
-                    
-                if (chosenEnv.localServerMode) {
-                    params.hasTcpGateway = false;
-                } else {
-                    params.hasTcpGateway = chosenEnv.serverMode;
+                if ($stateParams.containerRuntime != null){
+                    chosenEnv.networking =  $stateParams.containerRuntime.networking;
                 }
-                params.hasInternet = chosenEnv.enableInternet;
-                if (params.hasTcpGateway || chosenEnv.localServerMode) {
-                    params.tcpGatewayConfig = {
-                        socks: chosenEnv.enableSocks,
-                        gwPrivateIp: chosenEnv.gwPrivateIp,
-                        gwPrivateMask: chosenEnv.gwPrivateMask,
-                        serverPort: chosenEnv.serverPort,
-                        serverIp: chosenEnv.serverIp
-                    };
+
+                if (chosenEnv.networking) {
+                    if (chosenEnv.networking.connectEnvs)
+                        params.enableNetwork = true;
+
+                    if (chosenEnv.networking.localServerMode) {
+                        params.hasTcpGateway = false;
+                    } else {
+                        params.hasTcpGateway = chosenEnv.networking.serverMode;
+                    }
+                    params.hasInternet = chosenEnv.networking.enableInternet;
+                    if (params.hasTcpGateway || chosenEnv.networking.localServerMode) {
+                        params.tcpGatewayConfig = {
+                            socks: chosenEnv.networking.enableSocks,
+                            gwPrivateIp: chosenEnv.networking.gwPrivateIp,
+                            gwPrivateMask: chosenEnv.networking.gwPrivateMask,
+                            serverPort: chosenEnv.networking.serverPort,
+                            serverIp: chosenEnv.networking.serverIp
+                        };
+                    }
                 }
                 params.xpraEncoding = chosenEnv.xpraEncoding;
             }
@@ -237,6 +243,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         $scope.envs = [];
 
                         environments.forEach(function (env) {
+                            console.log(env);
                             if (env.networkEnabled)
                                  $scope.envs.push(env);
                         });

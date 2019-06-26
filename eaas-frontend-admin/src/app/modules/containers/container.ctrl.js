@@ -72,7 +72,8 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     containerRuntime: {
                         userContainerEnvironment: $stateParams.envId,
                         userContainerArchive: vm.env.archive,
-                        input_data: params.input_data
+                        input_data: params.input_data,
+                        networking: vm.env.networking
                     }
                 }, {reload: true});
             } else {
