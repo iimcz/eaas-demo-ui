@@ -147,7 +147,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     data.linuxRuntimeData = {
                         userContainerEnvironment: containerRuntime.userContainerEnvironment,
                         userContainerArchive: containerRuntime.userContainerArchive,
-                        isDHCPenabled: containerRuntime.isDHCPenabled
+                        isDHCPenabled: containerRuntime.networking.isDHCPenabled
                     };
                     data.input_data = containerRuntime.input_data;
                 }
