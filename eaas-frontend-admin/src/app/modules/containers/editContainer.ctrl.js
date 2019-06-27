@@ -3,6 +3,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'emilEnvironments
         var vm = this;
         let handlePrefix = "11270/";
         vm.isOpen = false;
+        vm.isContainer = true;
         vm.emilEnvironments = emilEnvironments;
         vm.containerRuntimeEnv = {title: "native", runNatively: true};
         vm.runtimeEnvs = [vm.containerRuntimeEnv];

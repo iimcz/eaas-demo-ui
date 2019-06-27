@@ -16,6 +16,11 @@
         <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
     </div>
 
+    <div class="form-group" ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
+        <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled">
+        <label>{{'EDITENV_ENABLE_DHCP' | translate}}</label>
+    </div>
+
     <div class="form-group" ng-if="$ctrl.networking.connectEnvs">
         <input type="checkbox"  ng-model="$ctrl.networking.serverMode">
         <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>

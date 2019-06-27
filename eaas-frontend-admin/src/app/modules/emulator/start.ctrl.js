@@ -144,8 +144,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 data.userId = userId;
                 data.software = softwareId;
                 if (containerRuntime != null) {
-                    data.userContainerEnvironment = containerRuntime.userContainerEnvironment;
-                    data.userContainerArchive = containerRuntime.userContainerArchive;
+                    data.linuxRuntime = {
+                        userContainerEnvironment: containerRuntime.userContainerEnvironment,
+                        userContainerArchive: containerRuntime.userContainerArchive,
+                        isDHCPenabled: containerRuntime.containerRuntime
+                    };
                     data.input_data = containerRuntime.input_data;
                 }
                 if (typeof keyboardLayout != "undefined") {

@@ -216,6 +216,7 @@
   "EDITENV_ENABLE_INTERNET" : "Internetzugang aktivieren",
   "EDITENV_ENABLE_SERVERMODE" : "Nutzung als Server ermöglichen",
   "EDITENV_ENABLE_SOCKS" : "SOCKS5 Proxy aktivieren",
+  "EDITENV_ENABLE_DHCP" : "DHCP aktivieren",
   "EDITENV_ENABLE_LOCAL_MODE" : "Nutzung als lokalen Server aktivieren",
   "EDITENV_SERVER_IP" : "Interne Server Address",
   "EDITENV_SERVER_PORT" : "Interner Server Port",

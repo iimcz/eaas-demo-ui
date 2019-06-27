@@ -168,7 +168,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     })
     .component('networkingTemplate', {
         template: networkingTemplate,
-        bindings: {networking: '='}
+        bindings: {
+            networking: '=',
+            isContainer: '<'
+        }
     })
 
 
