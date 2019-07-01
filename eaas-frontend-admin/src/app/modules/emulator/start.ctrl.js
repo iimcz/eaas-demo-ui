@@ -2,7 +2,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                                     function ($rootScope, $uibModal, $scope, $http, $sce,   $state, $stateParams, $cookies, $translate, localConfig, growl, Environments, REST_URLS, chosenEnv) {
         var vm = this;
 
-        window.isCollapsed = true;
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
         $rootScope.emulator.detached = false;
@@ -10,7 +9,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             $scope.containerRuntime = $stateParams.containerRuntime;
             chosenEnv.networking = $stateParams.containerRuntime.networking;
         }
-        console.log(window.isCollapsed, window.isCollapsed);
         vm.runEmulator = function(selectedEnvs, attachId) {
 
             let type = "machine";
@@ -33,6 +31,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             };
 
             vm.getOutput = function () {
+                $("#emulator-loading-container").hide();
+
                 let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
 
                 async function f() {
@@ -104,14 +104,40 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             var envs = [];
             for (let i = 0; i < selectedEnvs.length; i++) {
-                //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
-                let data = createData(selectedEnvs[i].envId,
-                    "default",
-                    type,
-                    selectedEnvs[i].objectArchive,
-                    selectedEnvs[i].objectId,
-                    selectedEnvs[i].userId,
-                    selectedEnvs[i].softwareId);
+                if (selectedEnvs[i].envType === "container" && selectedEnvs[i].runtimeId) {
+                    var runtimeEnv =  vm.environments.find(function(element) {
+                        return element.envId = selectedEnvs[i].runtimeId;
+                    });
+                    data = createData(
+                        selectedEnvs[i].runtimeId,
+                        runtimeEnv.archive,
+                        type,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        {
+                            userContainerEnvironment: selectedEnvs[i].envId,
+                            userContainerArchive: selectedEnvs[i].archive,
+                            networking: {
+                                networking: selectedEnvs[i].networking
+                            },
+                            input_data: selectedEnvs[i].input_data
+                        });
+
+
+                } else {
+                    //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
+                    data = createData(selectedEnvs[i].envId,
+                        selectedEnvs[i].archive,
+                        type,
+                        selectedEnvs[i].objectArchive,
+                        selectedEnvs[i].objectId,
+                        selectedEnvs[i].userId,
+                        selectedEnvs[i].softwareId);
+                }
                 envs.push({data, visualize: false});
             }
 
@@ -229,7 +255,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             vm.runEmulator([]);
         }
         else if (!chosenEnv.networking.connectEnvs) {
-            console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
             vm.runEmulator([]);
         }
         else {
@@ -245,8 +270,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         $scope.availableGroupIds = sessionIds.data;
                         $scope.envs = [];
 
+                        vm.environments = environments;
+
                         environments.forEach(function (env) {
                             console.log(env);
+
                             if (env.networkEnabled)
                                  $scope.envs.push(env);
                         });
@@ -267,8 +295,31 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                             });
                         };
 
-                        function runSelectedEmulators() {
-                            vm.runEmulator($scope.selected);
+                       function runSelectedEmulators() {
+                            let containerEnvs = $scope.selected.filter(env => (env.envType === "container"));
+                            if (containerEnvs.length > 0) {
+                                getNetworkingDataForContainers(containerEnvs).then(function () {
+                                    vm.runEmulator($scope.selected);
+                                })
+                            } else {
+                                vm.runEmulator($scope.selected);
+                            }
+                        }
+
+                        async function getNetworkingDataForContainers(containerEnvs) {
+                            for (let i = 0; i < containerEnvs.length; i++) {
+                                await Environments.get({envId: containerEnvs[i].envId}).$promise.then(function (response) {
+                                    containerEnvs[i].networking = response.networking;
+                                    containerEnvs[i].input_data = [];
+                                    let input = {};
+                                    input.size_mb = 512;
+                                    input.destination = containerEnvs[i].input;
+                                    //TODO implement input data for connected containers
+                                    input.content = [];
+                                    containerEnvs[i].input_data.push(input);
+                                })
+                            }
+
                         }
 
                         $scope.connectToExistentComponent = function () {

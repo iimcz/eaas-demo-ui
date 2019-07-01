@@ -301,7 +301,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             }
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-            window.isCollapsed = true;
             $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, objectArchive: env.objectArchive}, {reload: true});
         };
 

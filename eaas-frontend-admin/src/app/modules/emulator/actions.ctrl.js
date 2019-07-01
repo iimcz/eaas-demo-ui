@@ -3,6 +3,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
                         $timeout, $translate, chosenEnv, Environments, helperFunctions, REST_URLS) {
     var vm = this;
+    vm.envId = $stateParams.envId;
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
@@ -135,7 +136,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     if($stateParams.isTestEnv)
                     {
                         $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                            envId: $stateParams.envId,
+                            envId: vm.envId,
                             deleteMetaData: true,
                             deleteImage: true
                         }).then(function(response) {
@@ -241,7 +242,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         })).done(function () {
             window.eaasClient.checkpoint({
                 type: "newEnvironment",
-                envId: $stateParams.envId,
+                envId: vm.envId,
             }).then(function (newEnvId) {
                     if (!newEnvId) {
                     growl.error(status, {title: "Snapshot failed"});
@@ -258,7 +259,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     vm.switchEmulators = function (component)
     {
-        $stateParams.envId = component.env.data.environment;
+        vm.envId = component.env.data.environment;
         var eaasClient = window.eaasClient;
         let loadingElement = $("#emulator-loading-connections");
         $("#emulator-container").hide();
@@ -377,7 +378,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         postReq.type = this.type;
 //                        if(postReq.type === 'objectEnvironment')
 //                            postReq.embeddedObject = true;
-                        postReq.envId = $stateParams.envId;
+                        postReq.envId = vm.envId;
                         postReq.message = this.envDescription;
                         postReq.title = this.envName;
                         postReq.softwareId = $stateParams.softwareId;
