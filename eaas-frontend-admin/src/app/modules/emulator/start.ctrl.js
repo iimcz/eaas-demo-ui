@@ -310,6 +310,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                             for (let i = 0; i < containerEnvs.length; i++) {
                                 await Environments.get({envId: containerEnvs[i].envId}).$promise.then(function (response) {
                                     containerEnvs[i].networking = response.networking;
+                                    containerEnvs[i].runtimeId = response.runtimeId;
                                     containerEnvs[i].input_data = [];
                                     let input = {};
                                     input.size_mb = 512;
