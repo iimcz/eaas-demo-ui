@@ -121,9 +121,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         {
                             userContainerEnvironment: selectedEnvs[i].envId,
                             userContainerArchive: selectedEnvs[i].archive,
-                            networking: {
-                                networking: selectedEnvs[i].networking
-                            },
+                            networking: selectedEnvs[i].networking,
                             input_data: selectedEnvs[i].input_data
                         });
 
