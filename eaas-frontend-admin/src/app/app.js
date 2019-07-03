@@ -510,6 +510,9 @@ function($stateProvider,
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
+                },
+                patches: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
                 }
             },
             views: {

@@ -1,16 +1,19 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "softwareList", "growl", "localConfig", "$uibModal", "$timeout", "helperFunctions", "REST_URLS",
-    function ($http, $scope, $state, $stateParams, systemList, softwareList, growl, localConfig, $uibModal, $timeout, helperFunctions, REST_URLS) {
+module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "patches", "softwareList", "growl", "localConfig", "$uibModal", "$timeout", "helperFunctions", "REST_URLS",
+    function ($http, $scope, $state, $stateParams, systemList, patches,  softwareList, growl, localConfig, $uibModal, $timeout, helperFunctions, REST_URLS) {
      var vm = this;
 
 
 
      vm.systems = systemList.data.systems;
      vm.softwareList = softwareList.data.descriptions;
+     vm.patches = patches.data;
+     vm.selectedPatch = {};
 
      // initialize default values of the form
      vm.hdsize = 1024;
      vm.hdtype = 'url';
      vm.native_config = "";
+     vm.requiresPatch = false;
 
      vm.imageId = "";
      vm.onSelectSystem = function(item, model) {
@@ -26,7 +29,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "so
                  {
                      _modal.close();
                      growl.success("import finished.");
-                     $state.go('admin.emulator', {envId: response.data.userData.environmentId, type: 'saveImport' });
+                     $state.go('admin.emulator', {envId: response.data.userData.environmentId, type: 'saveImport'});
                  }
                  else
                      $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
@@ -74,7 +77,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "systemList", "so
                      templateId: vm.selectedSystem.id,
                      label: vm.name,
                      nativeConfig: vm.native_config,
-                     rom: vm.rom
+                     rom: vm.rom,
+                     patchId: vm.selectedPatch.id && vm.requiresPatch? vm.selectedPatch.id : null
                  }).then(function(response) {
                      if(response.data.status == "0") {
                          var taskId = response.data.taskId;
