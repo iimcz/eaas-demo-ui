@@ -5,8 +5,8 @@
 
         <div style="text-align: right;">
 
-            <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
-                    type="button" ui-sref="admin.container({envId: editEnvCtrl.env.envId, modifiedDialog: true})">{{'CHOOSE_ENV_RUN' | translate}}</button>
+            <button ng-show="editContainerCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
+                    type="button" ui-sref="admin.container({envId: editContainerCtrl.env.envId, modifiedDialog: true})">{{'CHOOSE_ENV_RUN' | translate}}</button>
 
             <button class="btn btn-outline-dark" type="button"
                     ng-click="editContainerCtrl.replicateImage(editContainerCtrl.env.envId, 'publish')"
