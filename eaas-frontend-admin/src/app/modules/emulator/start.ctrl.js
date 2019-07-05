@@ -229,6 +229,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     $rootScope.idsData = eaasClient.envsComponentsData;
 
                     $rootScope.idsData.forEach(function (idData) {
+                        console.log("!!! idData", idData);
+                        if(idData.env)
                         Environments.get({envId: idData.env.data.environment}).$promise.then(function(response) {
                             idData.title = response.title;
                         });

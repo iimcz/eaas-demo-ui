@@ -1,7 +1,18 @@
-<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>
+<!--<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>-->
 <uib-accordion close-others="false">
 
     <form id="editContainerForm" name="editContainerCtrl.editContainerForm">
+
+        <div style="text-align: right;">
+
+            <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
+                    type="button" ui-sref="admin.container({envId: editEnvCtrl.env.envId, modifiedDialog: true})">{{'CHOOSE_ENV_RUN' | translate}}</button>
+
+            <button class="btn btn-outline-dark" type="button"
+                    ng-click="editContainerCtrl.replicateImage(editContainerCtrl.env.envId, 'publish')"
+                    ng-if="!editContainerCtrl.isObjectEnv && editContainerCtrl.env.archive == 'default'">Publish
+            </button>
+        </div>
 
         <p>
             <label>{{'EDIT_CONTAINER_ID' | translate}}:</label>
