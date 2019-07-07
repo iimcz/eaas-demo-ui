@@ -2,7 +2,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
    var vm = this;
    vm.swList = softwareList.data.descriptions;
 
-   console.log(vm.swList);
+   vm.pageSize = "10";
 
     $scope.onPageSizeChanged = function() {
         $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));

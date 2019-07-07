@@ -50,7 +50,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             });
         };
 
-        vm.pageSize = 10;
+        vm.pageSize = "10";
         if($stateParams.showContainers)
              vm.view = 2;
         else if($stateParams.showObjects)
