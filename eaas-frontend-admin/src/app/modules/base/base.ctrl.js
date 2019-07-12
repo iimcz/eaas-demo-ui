@@ -2,7 +2,13 @@ module.exports = ["$uibModal","$scope", "$state", "localConfig", "kbLayouts", "b
 function($uibModal, $scope, $state, localConfig, kbLayouts, buildInfo, userInfo, authService) {
     var vm = this;
 
-    $scope.isCollapsed = $state.current.name === "admin.emulator";
+    $scope.isCollapsed = false;
+
+    $scope.$watch(function(){
+        return $state.$current.name
+    }, function(newVal, oldVal){
+        $scope.isCollapsed = newVal == "admin.emulator"
+    })
 
     vm.authEnabled = auth0config.AUTH_CONFIGURED;
     

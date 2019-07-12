@@ -18,8 +18,15 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 vm.view = index;
                 vm.rowCount = 0;
                 vm.envs = response;
-                if (vm.view == 0)
+                if (vm.view == 0 || vm.view == 3)
                     vm.envs.forEach(function (element) {
+                        if (element.isLinuxRuntime) {
+                            if (vm.view === 0)
+                                return;
+                        } else {
+                            if (vm.view === 3)
+                                return;
+                        }
                         if(element.envType != 'base')
                             return;
                         if((element.archive == 'default' && vm.viewArchive === 0) ||
@@ -205,12 +212,10 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 this.showDialogs[this.activeInputMethod] = false;
             }
 
-            console.log(this.showDialogs);
             console.log(inputMethod);
         };
         vm.selectedRowData = {};
         vm.deleteSelected = function () {
-            console.log("selectedRowData ", vm.selectedRowData.length);
             var selectedRowData = vm.gridOptions.api.getSelectedRows();
             if (window.confirm($translate.instant('JS_DELENV_OK')))
                 selectedRowData.forEach(selectedRowData => {
@@ -296,14 +301,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             }
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-            window.isCollapsed = true;
             $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, objectArchive: env.objectArchive}, {reload: true});
         };
 
         vm.edit = function (id) {
             if (vm.view == 1)
                 $state.go('admin.edit-env', {envId: id, objEnv: true});
-           else if (vm.view == 0)
+           else if (vm.view == 0 || vm.view == 3)
                 $state.go('admin.edit-env', {envId: id});
            else if (vm.view == 2)
                 $state.go('admin.edit-container', {envId: id});

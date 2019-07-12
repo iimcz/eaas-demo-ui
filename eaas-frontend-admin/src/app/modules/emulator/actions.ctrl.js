@@ -136,7 +136,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     if($stateParams.isTestEnv)
                     {
                         $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                            envId: $stateParams.envId,
+                            envId: vm.envId,
                             deleteMetaData: true,
                             deleteImage: true
                         }).then(function(response) {
@@ -242,7 +242,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         })).done(function () {
             window.eaasClient.checkpoint({
                 type: "newEnvironment",
-                envId: $stateParams.envId,
+                envId: vm.envId,
             }).then(function (newEnvId) {
                     if (!newEnvId) {
                     growl.error(status, {title: "Snapshot failed"});
@@ -378,7 +378,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         postReq.type = this.type;
 //                        if(postReq.type === 'objectEnvironment')
 //                            postReq.embeddedObject = true;
-                        postReq.envId = $stateParams.envId;
+                        postReq.envId = vm.envId;
                         postReq.message = this.envDescription;
                         postReq.title = this.envName;
                         postReq.softwareId = $stateParams.softwareId;

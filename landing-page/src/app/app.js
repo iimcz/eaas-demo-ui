@@ -236,6 +236,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
         }
     ])
     .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide, localConfig) {
+        angular.lowercase = angular.$$lowercase;
 
         jwtOptionsProvider.config({
             whiteListedDomains: "localhost",

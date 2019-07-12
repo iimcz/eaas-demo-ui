@@ -2,11 +2,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                                     function ($rootScope, $uibModal, $scope, $http, $sce,   $state, $stateParams, $cookies, $translate, localConfig, growl, Environments, REST_URLS, chosenEnv) {
         var vm = this;
 
-        window.isCollapsed = true;
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
         $rootScope.emulator.detached = false;
-        console.log(window.isCollapsed, window.isCollapsed);
+        if ($stateParams.containerRuntime != null) {
+            $scope.containerRuntime = $stateParams.containerRuntime;
+            chosenEnv.networking = $stateParams.containerRuntime.networking;
+        }
         vm.runEmulator = function(selectedEnvs, attachId) {
 
             let type = "machine";
@@ -28,6 +30,28 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 window.onbeforeunload = null;
             };
 
+            vm.getOutput = function () {
+                $("#emulator-loading-container").hide();
+
+                let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
+
+                async function f() {
+                    const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                        headers: _header,
+                    });
+                    const containerOutputBlob = await containerOutput.blob();
+                    // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+
+                    var downloadLink = document.createElement("a");
+                    downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                    downloadLink.download = "output-data.zip";
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                };
+                f();
+            };
+
             this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
             if ($stateParams.objectId)
                 this.link += "&objectId=" + $stateParams.objectId;
@@ -41,6 +65,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $("#emulator-container").hide();
                 $("#emulator-loading-container").show();
                 $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
+
                 $scope.$apply();
             };
 
@@ -52,23 +77,26 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             let params = {};
             if (chosenEnv) {
-                if (chosenEnv.connectEnvs)
-                    params.enableNetwork = true;
-                    
-                if (chosenEnv.localServerMode) {
-                    params.hasTcpGateway = false;
-                } else {
-                    params.hasTcpGateway = chosenEnv.serverMode;
-                }
-                params.hasInternet = chosenEnv.enableInternet;
-                if (params.hasTcpGateway || chosenEnv.localServerMode) {
-                    params.tcpGatewayConfig = {
-                        socks: chosenEnv.enableSocks,
-                        gwPrivateIp: chosenEnv.gwPrivateIp,
-                        gwPrivateMask: chosenEnv.gwPrivateMask,
-                        serverPort: chosenEnv.serverPort,
-                        serverIp: chosenEnv.serverIp
-                    };
+
+                if (chosenEnv.networking) {
+                    if (chosenEnv.networking.connectEnvs)
+                        params.enableNetwork = true;
+
+                    if (chosenEnv.networking.localServerMode) {
+                        params.hasTcpGateway = false;
+                    } else {
+                        params.hasTcpGateway = chosenEnv.networking.serverMode;
+                    }
+                    params.hasInternet = chosenEnv.networking.enableInternet;
+                    if (params.hasTcpGateway || chosenEnv.networking.localServerMode) {
+                        params.tcpGatewayConfig = {
+                            socks: chosenEnv.networking.enableSocks,
+                            gwPrivateIp: chosenEnv.networking.gwPrivateIp,
+                            gwPrivateMask: chosenEnv.networking.gwPrivateMask,
+                            serverPort: chosenEnv.networking.serverPort,
+                            serverIp: chosenEnv.networking.serverIp
+                        };
+                    }
                 }
                 params.xpraEncoding = chosenEnv.xpraEncoding;
             }
@@ -76,14 +104,38 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
 
             var envs = [];
             for (let i = 0; i < selectedEnvs.length; i++) {
-                //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
-                let data = createData(selectedEnvs[i].envId,
-                    "default",
-                    type,
-                    selectedEnvs[i].objectArchive,
-                    selectedEnvs[i].objectId,
-                    selectedEnvs[i].userId,
-                    selectedEnvs[i].softwareId);
+                if (selectedEnvs[i].envType === "container" && selectedEnvs[i].runtimeId) {
+                    var runtimeEnv =  vm.environments.find(function(element) {
+                        return element.envId = selectedEnvs[i].runtimeId;
+                    });
+                    data = createData(
+                        selectedEnvs[i].runtimeId,
+                        runtimeEnv.archive,
+                        type,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        {
+                            userContainerEnvironment: selectedEnvs[i].envId,
+                            userContainerArchive: selectedEnvs[i].archive,
+                            networking: selectedEnvs[i].networking,
+                            input_data: selectedEnvs[i].input_data
+                        });
+
+
+                } else {
+                    //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
+                    data = createData(selectedEnvs[i].envId,
+                        selectedEnvs[i].archive,
+                        type,
+                        selectedEnvs[i].objectArchive,
+                        selectedEnvs[i].objectId,
+                        selectedEnvs[i].userId,
+                        selectedEnvs[i].softwareId);
+                }
                 envs.push({data, visualize: false});
             }
 
@@ -96,14 +148,17 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $stateParams.userId,
                 $stateParams.softwareId,
                 kbLayoutPrefs.language.name,
-                kbLayoutPrefs.layout.name);
+                kbLayoutPrefs.layout.name,
+                $stateParams.containerRuntime);
+
+
 
             if ($stateParams.type == 'saveUserSession') {
                 data.lockEnvironment = true;
                 console.log("locking user session");
             }
 
-            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel) {
+            function createData (envId, archive, type, objectArchive, objectId, userId, softwareId, keyboardLayout, keyboardModel, containerRuntime) {
                 let data = {};
                 data.type = type;
                 data.archive = archive;
@@ -112,7 +167,14 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 data.objectArchive = objectArchive;
                 data.userId = userId;
                 data.software = softwareId;
-
+                if (containerRuntime != null) {
+                    data.linuxRuntimeData = {
+                        userContainerEnvironment: containerRuntime.userContainerEnvironment,
+                        userContainerArchive: containerRuntime.userContainerArchive,
+                        isDHCPenabled: containerRuntime.networking.isDHCPenabled
+                    };
+                    data.input_data = containerRuntime.input_data;
+                }
                 if (typeof keyboardLayout != "undefined") {
                     data.keyboardLayout = keyboardLayout;
                 }
@@ -167,6 +229,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     $rootScope.idsData = eaasClient.envsComponentsData;
 
                     $rootScope.idsData.forEach(function (idData) {
+                        console.log("!!! idData", idData);
+                        if(idData.env)
                         Environments.get({envId: idData.env.data.environment}).$promise.then(function(response) {
                             idData.title = response.title;
                         });
@@ -190,8 +254,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
         if (!chosenEnv) {
             vm.runEmulator([]);
         }
-        else if (!chosenEnv.connectEnvs) {
-            console.log("chosenEnv.connectEnvs " + chosenEnv.connectEnvs);
+        else if (!chosenEnv.networking.connectEnvs) {
             vm.runEmulator([]);
         }
         else {
@@ -207,7 +270,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         $scope.availableGroupIds = sessionIds.data;
                         $scope.envs = [];
 
+                        vm.environments = environments;
+
                         environments.forEach(function (env) {
+                            console.log(env);
+
                             if (env.networkEnabled)
                                  $scope.envs.push(env);
                         });
@@ -228,8 +295,32 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                             });
                         };
 
-                        function runSelectedEmulators() {
-                            vm.runEmulator($scope.selected);
+                       function runSelectedEmulators() {
+                            let containerEnvs = $scope.selected.filter(env => (env.envType === "container"));
+                            if (containerEnvs.length > 0) {
+                                getNetworkingDataForContainers(containerEnvs).then(function () {
+                                    vm.runEmulator($scope.selected);
+                                })
+                            } else {
+                                vm.runEmulator($scope.selected);
+                            }
+                        }
+
+                        async function getNetworkingDataForContainers(containerEnvs) {
+                            for (let i = 0; i < containerEnvs.length; i++) {
+                                await Environments.get({envId: containerEnvs[i].envId}).$promise.then(function (response) {
+                                    containerEnvs[i].networking = response.networking;
+                                    containerEnvs[i].runtimeId = response.runtimeId;
+                                    containerEnvs[i].input_data = [];
+                                    let input = {};
+                                    input.size_mb = 512;
+                                    input.destination = containerEnvs[i].input;
+                                    //TODO implement input data for connected containers
+                                    input.content = [];
+                                    containerEnvs[i].input_data.push(input);
+                                })
+                            }
+
                         }
 
                         $scope.connectToExistentComponent = function () {

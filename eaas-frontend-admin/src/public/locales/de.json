@@ -218,6 +218,7 @@
   "EDITENV_ENABLE_INTERNET" : "Internetzugang aktivieren",
   "EDITENV_ENABLE_SERVERMODE" : "Nutzung als Server ermöglichen",
   "EDITENV_ENABLE_SOCKS" : "SOCKS5 Proxy aktivieren",
+  "EDITENV_ENABLE_DHCP" : "DHCP aktivieren",
   "EDITENV_ENABLE_LOCAL_MODE" : "Nutzung als lokalen Server aktivieren",
   "EDITENV_SERVER_IP" : "Interne Server Address",
   "EDITENV_SERVER_PORT" : "Interner Server Port",
@@ -347,6 +348,8 @@
   "EDIT_CONTAINER_HELPTEXT" : "Beschreibung",
   "EDIT_CONTAINER_CANCEL" : "Abbrechen",
   "EDIT_CONTAINER_SAVE" : "Speichern",
+  "EDIT_CONTAINER_RUNTIME" : "Runtime Umgebung",
+
   "CONTAINER_RUN_L" : "Starte Container",
   "CONTAINER_RUN_RUN" : "Start",
   "CONTAINER_RUN_CANCEL" : "Abbrechen",

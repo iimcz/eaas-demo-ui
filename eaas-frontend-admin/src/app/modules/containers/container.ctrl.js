@@ -1,10 +1,7 @@
-module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'Environments', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
-    function ($rootScope, $scope, $sce, $state, $http, $stateParams, Environments, $translate, Upload, localConfig, growl, $uibModal) {
+module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'Environments', 'chosenEnv', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
+    function ($rootScope, $scope, $sce, $state, $http, $stateParams, Environments, chosenEnv, $translate, Upload, localConfig, growl, $uibModal) {
         var vm = this;
-
-        Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
-            vm.env = response;
-        });
+        vm.env = chosenEnv;
 
         $("#container-stopped").hide();
 
@@ -68,30 +65,42 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
             input.destination = vm.env.input;
             input.content = inputs;
             params.input_data.push(input);
-
-            $("#emulator-loading-container").show();
-            eaasClient.startContainer($stateParams.envId, params).then(function () {
-                $("#emulator-loading-container").hide();
-                $("#container-running").show();
-
-                eaasClient.connect().then(function () {
-                    $("#emulator-container").show();
-
-                    if (eaasClient.params.pointerLock === "true") {
-                        growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                        BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+            console.log("input " , input);
+            if (vm.env.runtimeId) {
+                $state.go('admin.emulator', {
+                    envId: vm.env.runtimeId,
+                    containerRuntime: {
+                        userContainerEnvironment: $stateParams.envId,
+                        userContainerArchive: vm.env.archive,
+                        input_data: params.input_data,
+                        networking: vm.env.networking
                     }
+                }, {reload: true});
+            } else {
+                $("#emulator-loading-container").show();
+                eaasClient.startContainer($stateParams.envId, params).then(function () {
+                    $("#emulator-loading-container").hide();
+                    $("#container-running").show();
 
-                    // Fix to close emulator on page leave
+                    eaasClient.connect().then(function () {
+                        $("#emulator-container").show();
+
+                        if (eaasClient.params.pointerLock === "true") {
+                            growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                            BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                        }
+
+                        // Fix to close emulator on page leave
+                        $scope.$on('$locationChangeStart', function (event) {
+                            eaasClient.release();
+                        });
+                    });
+
                     $scope.$on('$locationChangeStart', function (event) {
                         eaasClient.release();
                     });
                 });
-
-                $scope.$on('$locationChangeStart', function (event) {
-                    eaasClient.release();
-                });
-            });
+            }
         };
 
         let modal = $uibModal.open({
