@@ -218,6 +218,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
                         BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
                     }
+                   //  $rootScope.$broadcast("emulatorStart", "success");
                 });
             } else {
                 eaasClient.start(envs, params, attachId).then(function () {
@@ -245,6 +246,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                         growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
                         BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
                     }
+                    $rootScope.$broadcast("emulatorStart", "success");
                 });
             });
             }
