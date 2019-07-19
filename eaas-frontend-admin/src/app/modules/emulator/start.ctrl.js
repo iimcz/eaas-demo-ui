@@ -91,8 +91,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     if (params.hasTcpGateway || chosenEnv.networking.localServerMode) {
                         params.tcpGatewayConfig = {
                             socks: chosenEnv.networking.enableSocks,
-                            gwPrivateIp: chosenEnv.networking.gwPrivateIp,
-                            gwPrivateMask: chosenEnv.networking.gwPrivateMask,
                             serverPort: chosenEnv.networking.serverPort,
                             serverIp: chosenEnv.networking.serverIp
                         };
