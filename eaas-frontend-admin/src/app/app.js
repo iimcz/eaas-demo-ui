@@ -28,6 +28,8 @@ import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
 import 'ng-file-upload';
+import { saveAs } from 'file-saver';
+
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.js';
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.css';
 
@@ -41,8 +43,6 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
-
-
 
 agGrid.initialiseAgGridWithAngular1(angular);
 
