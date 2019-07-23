@@ -23,8 +23,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     }
 
-    if(chosenEnv.nativeConfig)
-        vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
+
     else
         vm.isKVM = false;
 
@@ -32,6 +31,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     {
         vm.enablePrinting = chosenEnv.enablePrinting;
         vm.shutdownByOs = chosenEnv.shutdownByOs;
+        if(chosenEnv.nativeConfig)
+                vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
     }
     else
         vm.enablePrinting = false;

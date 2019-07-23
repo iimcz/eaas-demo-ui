@@ -672,7 +672,7 @@ function($stateProvider,
                     if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                         return  Environments.get({envId: $stateParams.envId}).$promise;
                     else
-                        return {};
+                        return null;
                 }
             },
             params: {
