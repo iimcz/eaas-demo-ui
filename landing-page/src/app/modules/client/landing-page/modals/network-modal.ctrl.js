@@ -3,13 +3,13 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
 
         var modalCtrl = this;
 
-        this.network = curentEnv.network;
+        this.network = currentEnv.network;
         this.env = curentEnv;
 
         if (eaasClient.networkTcpInfo) {
             var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
             var pathArray = url.pathname.split('/');
-            modalCtrl.hostname = url.hostname;
+            modalCtrl.hostname = url.hostname.replace("https", "http");
             modalCtrl.port = pathArray[2];
             modalCtrl.network = "//" + modalCtrl.hostname + ":" + modalCtrl.port;
         }
