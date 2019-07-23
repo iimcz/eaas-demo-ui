@@ -308,7 +308,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/network.html'),
             resolve: {
                 currentEnv: function () {
-                    return $rootScope.chosenEnv;
+                    return chosenEnv ? chosenEnv : $rootScope.chosenEnv;
                 },
                 localConfig: function () {
                     return localConfig;
