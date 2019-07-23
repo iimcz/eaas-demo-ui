@@ -213,6 +213,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     chosenEnv.networking.serverMode = true;
                     chosenEnv.networking.localServerMode = false;
                     eaasClient.networkTcpInfo = $stateParams.networkInfo.tcp;
+                    $rootScope.chosenEnv = chosenEnv;
                 }
                 eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();

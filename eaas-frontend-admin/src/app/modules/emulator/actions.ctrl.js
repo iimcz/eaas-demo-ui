@@ -100,6 +100,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     vm.close = function () {
         window.onbeforeunload = null;
+        window.eaasClient.disconnect();
         $state.go('admin.standard-envs-overview', {}, {reload: true});
     };
 
