@@ -196,13 +196,22 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             });
 
             if($stateParams.isStarted){
+                if(chosenEnv == null)
+                   chosenEnv = {};
+
+                if(chosenEnv.networking == null)
+                   chosenEnv.networking = {};
+
+                chosenEnv.networking.localServerMode = true;
+
                 eaasClient.isStarted = true;
                 if($stateParams.isDetached)
                     eaasClient.detached = true;
                 eaasClient.componentId = $stateParams.envId;
 
                 if ($stateParams.networkInfo) {
-                    chosenEnv.serverMode = true;
+                    chosenEnv.networking.serverMode = true;
+                    chosenEnv.networking.localServerMode = false;
                     eaasClient.networkTcpInfo = $stateParams.networkInfo.tcp;
                 }
                 eaasClient.connect().then(function () {
