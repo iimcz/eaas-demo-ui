@@ -155,20 +155,6 @@
                                    ng-required="newContainerCtrl.imageType == 'dockerhub'"/>
                         </div>
                     </div>
-
-                    <input-list list="newContainerCtrl.env"
-                                heading="{{'SW_NEW_CONTAINER_ENVIRONMENT_H' | translate}}"
-                                list-empty-note="{{'SW_NEW_CONTAINER_ENVIRONMENT_NOTE' | translate}}"
-                                input-placeholder="{{'SW_NEW_CONTAINER_ENVIRONMENT_PH' | translate}}"
-                                add-button-text="+">
-                    </input-list>
-                    <input-list list="newContainerCtrl.args"
-                                heading="{{'SW_NEW_CONTAINER_ARGUMENTS_H' | translate}}"
-                                list-empty-note="{{'SW_NEW_CONTAINER_ARGUMENTS_NOTE' | translate}}"
-                                input-placeholder="{{'SW_NEW_CONTAINER_ARGUMENTS_PH' | translate}}"
-                                add-button-text="+">
-                    </input-list>
-
                     <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
                     <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control" ng-model="newContainerCtrl.imageInput" ng-required="newContainerCtrl.imageType == 'dockerhub'"/>
                     <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>

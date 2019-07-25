@@ -35,7 +35,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if (container.runtime !== "2" && container.args.length === 0) {
+            if (container.runtime !== "2" && container.runtime !== "1" && container.args.length === 0) {
                 growl.error("process is required");
                 return false;
             }
@@ -45,7 +45,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
-            if(container.args.length == 0 && container.imageType == "dockerhub"){
+            if (container.tag === "" && container.imageType == "dockerhub") {
                 growl.error("container tag is required");
                 return false;
             }
