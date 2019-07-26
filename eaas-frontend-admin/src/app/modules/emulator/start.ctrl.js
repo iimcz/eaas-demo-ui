@@ -282,13 +282,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
             }
         }
-
-        console.log(chosenEnv);
-        //todo optimize this if else
-        if (!chosenEnv) {
-            vm.runEmulator([]);
-        }
-        else if (!chosenEnv.networking.connectEnvs) {
+        // if chosenEnv or chosenEnv.networking are undefined or connectedEnvs is false, don't show conencted-envs modal
+        if (!chosenEnv || typeof chosenEnv.networking == "undefined" || (chosenEnv && chosenEnv.networking && !chosenEnv.networking.connectEnvs)) {
             vm.runEmulator([]);
         }
         else {
