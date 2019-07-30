@@ -320,8 +320,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     vm.openDetachDialog = function() {
         $('#emulator-container').hide();
-        $uibModal.open({
-            animation: true,
+        let modal = $uibModal.open({
+            animation: false,
             template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),
             resolve: {
                 currentEnv: function () {
@@ -333,14 +333,16 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             },
             controller: "DetachModalController as detachModalCtrl"
         });
+
+        modal.closed.then(() => $('#emulator-container').show());
     };
 
     vm.openSaveEnvironmentDialog = function() {
         $('#emulator-container').hide();
         var saveDialog = function()
         {
-            $uibModal.open({
-                animation: true,
+            let modal = $uibModal.open({
+                animation: false,
                 template: require('./modals/save-environment.html'),
                 controller: ["$scope", function($scope) {
                     this.type = $stateParams.type;
@@ -408,10 +410,11 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                 }],
                 controllerAs: "openSaveEnvironmentDialogCtrl"
             });
+            modal.closed.then(() => $('#emulator-container').show());
         };
 
-        $uibModal.open({
-            animation: true,
+        let modal = $uibModal.open({
+            animation: false,
             template: require('./modals/confirm-snapshot.html'),
             controller: ["$scope", function($scope) {
                 this.confirmed = function()
@@ -424,6 +427,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             }],
             controllerAs: "confirmSnapshotDialogCtrl"
         });
+        modal.closed.then(() => $('#emulator-container').show());
+
 
     }
     /*
