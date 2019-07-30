@@ -188,8 +188,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             };
 
             envs.push({data, visualize: true});
-            $scope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
-                if(!newUrl.endsWith("emulator")) {
+            $scope.$on('$destroy', function (event) {
+                if ($stateParams.isStarted) {
+                    window.onbeforeunload = null;
+                    window.eaasClient.disconnect();
+                } else {
                     eaasClient.release();
                     window.onbeforeunload = null;
                 }
