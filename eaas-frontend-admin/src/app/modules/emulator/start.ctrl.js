@@ -1,3 +1,5 @@
+import {stopClient} from "./utils/stop-client";
+
 module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state', '$stateParams', '$cookies', '$translate', 'localConfig', 'growl', 'Environments', 'REST_URLS', 'chosenEnv',
                                   function ($rootScope, $uibModal, $scope, $http, $sce,   $state, $stateParams, $cookies, $translate, localConfig, growl, Environments, REST_URLS, chosenEnv) {
         var vm = this;
@@ -188,14 +190,9 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             };
 
             envs.push({data, visualize: true});
+
             $scope.$on('$destroy', function (event) {
-                if ($stateParams.isStarted) {
-                    window.onbeforeunload = null;
-                    window.eaasClient.disconnect();
-                } else {
-                    eaasClient.release();
-                    window.onbeforeunload = null;
-                }
+                stopClient($uibModal, $stateParams.isStarted, window.eaasClient);
             });
 
             if($stateParams.isStarted){

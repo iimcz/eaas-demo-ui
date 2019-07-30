@@ -468,6 +468,11 @@ button:focus#printerbutton    {
     color: whitesmoke;
 }
 
+.white-backdrop.modal-backdrop {
+    background-color: whitesmoke;
+    opacity: 1.0 !important;
+}
+
 pre#json-renderer {
     border: 1px solid #aaa;
     padding: 0.5em 1.5em;

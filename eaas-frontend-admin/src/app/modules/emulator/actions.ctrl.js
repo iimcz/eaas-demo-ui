@@ -1,3 +1,5 @@
+import {stopClient} from "./utils/stop-client";
+
 module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'Environments', 'helperFunctions', 'REST_URLS',
                         function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
@@ -111,8 +113,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             controller: ['$scope', function($scope) {
                 this.confirmed = function()
                 {
-                    window.onbeforeunload = null;
-                    window.eaasClient.release();
+                    stopClient($uibModal, false, window.eaasClient);
                     $('#emulator-stopped-container').show();
 
                     if($stateParams.isTestEnv)
