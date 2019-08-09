@@ -148,6 +148,7 @@
   "SW_NEW_IMAGE_CANCEL_BUTTON" : "Abbrechen",
   "SW_NEW_IMAGE_START_BUTTON" : "Starten",
   "SW_NEW_IMAGE_ROM_LBL" : "ROM Datei",
+  "SW_NEW_IMAGE_KVM" : "CPU Virtualisierung aktivieren",
 
   "SW_NEW_CONTAINER_HEADER" : "Neuen Container erstellen",
   "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Ursprungsumgebung wählen",
