@@ -395,9 +395,9 @@
   "METADATA_OK" : "Hinzufügen",
   "METADATA_CANCEL" : "Abbrechen",
   "METADATA_PROVIDER_LIST_H" : "Metadata provider",
-  "EMULATORS_TITLE": "Unterstützt Emulators",
-  "EMULATORS_AVAILABLE_NUMBER": "Verfügbar Emulators:",
-  "EMULATORS_SHOW_NUMBER": "Anzahl der angezeigten Emulatoren:",
-  "EMULATORS_DETAILS": "Einzelheiten",
-  "EMULATORS_BACK" : "Zurück zur Emulatoren Übersicht"
+  "EMULATORS_TITLE": "Unterstützte Emulatoren",
+  "EMULATORS_AVAILABLE_NUMBER": "Verfügbare Emulatoren:",
+  "EMULATORS_SHOW_NUMBER": "Anzahl der Emulatoren:",
+  "EMULATORS_DETAILS": "Details",
+  "EMULATORS_BACK" : "Zurück zur Übersicht"
 }
