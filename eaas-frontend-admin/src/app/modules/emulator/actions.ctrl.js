@@ -26,18 +26,28 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     }
 
 
-    else
-        vm.isKVM = false;
+    vm.enablePrinting = false;
+    vm.enableSaveEnvironment = false;
+    vm.isKVM = false;
 
     if (chosenEnv)
     {
         vm.enablePrinting = chosenEnv.enablePrinting;
         vm.shutdownByOs = chosenEnv.shutdownByOs;
         if(chosenEnv.nativeConfig)
-                vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
+            vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
+            
+        if(chosenEnv.drives)
+        {
+            for(let d of chosenEnv.drives)
+            {
+                if(d.type === 'disk')
+                    vm.enableSaveEnvironment = true;
+            }
+        }
+        else
+            vm.enableSaveEnvironment = true; // fallback to old metadata
     }
-    else
-        vm.enablePrinting = false;
 
     if(vm.enablePrinting) {
         $rootScope.$on('emulatorStart', function(event, args) {
