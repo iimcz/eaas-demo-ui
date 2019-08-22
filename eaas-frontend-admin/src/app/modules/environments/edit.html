@@ -63,7 +63,10 @@
                           ng-model="editEnvCtrl.envDescription"
                           placeholder="{{'EDITENV_DESC_PH' | translate}}" required></text-angular>
 
-
+            <p>
+                <label>{{'EDITENV_HELPTEXT' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode" ng-bind-html="editEnvCtrl.envHelpText"></span>
+                <text-angular ng-if="editEnvCtrl.editMode" ng-model="editEnvCtrl.envHelpText"></text-angular>
+            </p>
         </div>
 
         <div uib-accordion-group class="panel-default" is-open="status.openSystem">
