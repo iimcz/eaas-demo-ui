@@ -447,7 +447,6 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
 

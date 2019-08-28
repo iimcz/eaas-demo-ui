@@ -72,9 +72,25 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
            });
        }
 
+        vm.importMetaData = function(modal, metaData)
+        {
+            console.log(metaData);
+
+            $http.post(localConfig.data.eaasBackendURL + "/objects/import", {
+                label: metaData.label,
+                files: metaData.files
+            }).then(function(response) {
+                console.log(response);
+                modal.close();
+            }, function(error) {
+                console.log(error);
+                modal.close();
+            });
+            
+        }
+
        vm.upload = function()
        {
-
            var uploadInfo = {
                title : "uploading ",
                msg : "please wait"
@@ -89,6 +105,10 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                controllerAs: "waitMsgCtrl"
            });
 
+           let objectMetaData = {
+               files: [],
+           };
+
            if (vm.allFiles && vm.allFiles.length) {
                var uploadCnt = 0;
                for (var i = 0; i < vm.allFiles.length; i++) {
@@ -97,21 +117,13 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                    url: localConfig.data.eaasBackendURL + "objects/upload",
                          data: {file: vm.allFiles[i], 'mediaType' : vm.mediumType, 'objectId' : vm.objectId}
                      }).then(function (resp) {
-                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data.userDataUrl);
                          uploadCnt--;
+                         let fileInfo = { filename: resp.config.data.file.name, url: resp.data.userDataUrl, deviceId: "deviceIdx", fileFmt: "fmt"} ;
+                         objectMetaData.files.push(fileInfo);
                          if(uploadCnt === 0) {
-                           $http.post(localConfig.data.eaasBackendURL + REST_URLS.pushUploadUrl, {
-                                                       objectId: vm.objectId
-                           }).then(function(response) {
-                               if (response.data.status === "0") {
-                                   $state.go('admin.object-overview', {}, {reload: true});
-                               }
-                               else
-                               {
-                                   $state.go('error', {errorMsg: {title: "Load Environments Error " + response.data.status, message: response.data.message}});
-                               }
-                               modal.close();
-                           });
+                            vm.importMetaData(modal, objectMetaData);
+                            
                          }
                      }, function (resp) {
                          console.log('Error status: ' + resp.status);
