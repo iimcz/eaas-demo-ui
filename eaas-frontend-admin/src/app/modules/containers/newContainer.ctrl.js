@@ -4,7 +4,6 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         var container = this;
         container.runtimes = runtimeList.data.runtimes;
         console.log(container.runtimes);
-        window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
 
         // initialize default values of the form
         container.imageSize = 1024;
@@ -137,7 +136,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             // Initialize the uploadFiles list with meaningful values for destination and action.
             // Those are displayed in the view and can be changed by the user
             Upload.upload({
-                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                url: localConfig.data.eaasBackendURL + "upload",
                 name: file.filename,
                 destination: file.destination,
                 action: "copy",
@@ -145,7 +144,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             }).then(function (resp) {
                 // Push the uploaded file to the input list
                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-                container.imageUrl = resp.data.userDataUrl;
+                container.imageUrl = resp.data.uploads[0];
 
             }, function (resp) {
                 console.log('Error status: ' + resp.status);

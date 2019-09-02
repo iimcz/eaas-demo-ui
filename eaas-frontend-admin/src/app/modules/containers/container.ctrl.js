@@ -155,7 +155,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
 
                             // Have to remember the chosen destination and action for the file
                             Upload.upload({
-                                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                                url: localConfig.data.eaasBackendURL + "upload",
                                 name: this.uploadFiles[i].filename,
                                 destination: this.uploadFiles[i].destination,
                                 action: this.uploadFiles[i].action,
@@ -164,7 +164,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                                 // Push the uploaded file to the input list
                                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                                 $scope.runContainerDlgCtrl.inputs.push({
-                                    url: resp.data.userDataUrl,
+                                    url: resp.data.uploads[0],
                                     name: resp.config.destination,
                                     action: resp.config.action
                                 });

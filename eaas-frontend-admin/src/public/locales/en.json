@@ -388,6 +388,10 @@
   "OBJECT_INGEST_REPO_EMPTY" : "Empty list",
   "OBJECT_INGEST_REPO_PH" : "Object ID",
   "OBJECT_INGEST_REPO_BUTTON" : "Add",
+  "OBJECT_INGEST_LABEL" : "Object label",
+  "UPLOAD_FILE_TITLE" : "Upload media item",
+  "UPLOAD_FILE_SELECTED" : "File to be uploaded",
+  "UPLOAD_FILE_ADD" : "Add file",
 
   "METADATA_L" : "Metadata Harvesting",
   "METADATA_PROVIDER_TH" : "Configured Endpoints",

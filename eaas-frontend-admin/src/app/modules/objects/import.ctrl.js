@@ -9,15 +9,44 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
        };
 
        vm.repositories = repositoriesList.data.archives;
+       vm.selectedFiles = [];
 
-       vm.add = function()
+       vm.add = function(file, mediaType)
        {
-           console.log(vm.selectedFiles);
-           if(!vm.allFiles)
-               vm.allFiles = [];
+           let objectFile = {
+               file: file,
+               mediaType: mediaType
+           }
+           vm.selectedFiles.push(objectFile);
 
-           vm.allFiles = vm.allFiles.concat(vm.selectedFiles);
+           console.log(vm.selectedFiles);
        };
+
+       vm.removeFile = function(index)
+       {
+           vm.selectedFiles.splice(index);
+       }
+
+       vm.openFileModal = function() {
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/add-file-dialog.html'),
+                controller: ["$scope", function($scope) {
+                    this.select = function() 
+                    {
+                        console.log(this.selectedFile);
+                        console.log(this.mediumType);
+                    }
+
+                    this.add = function()
+                    {
+                        vm.add(this.selectedFile, this.mediumType);
+                    } 
+                }],
+                controllerAs: "selectFileModalCtrl"
+            });
+        };
+       
 
        vm.checkState = function(_taskId, _modal)
        {
@@ -77,7 +106,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
             console.log(metaData);
 
             $http.post(localConfig.data.eaasBackendURL + "/objects/import", {
-                label: metaData.label,
+                label: vm.objectLabel,
                 files: metaData.files
             }).then(function(response) {
                 console.log(response);
@@ -109,21 +138,26 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                files: [],
            };
 
-           if (vm.allFiles && vm.allFiles.length) {
+           if (vm.selectedFiles && vm.selectedFiles.length) {
                var uploadCnt = 0;
-               for (var i = 0; i < vm.allFiles.length; i++) {
+               for (var i = 0; i < vm.selectedFiles.length; i++) {
                  uploadCnt++;
                  Upload.upload({
-                   url: localConfig.data.eaasBackendURL + "objects/upload",
-                         data: {file: vm.allFiles[i], 'mediaType' : vm.mediumType, 'objectId' : vm.objectId}
-                     }).then(function (resp) {
+                   url: localConfig.data.eaasBackendURL + "upload",
+                         data: {file: vm.selectedFiles[i].file, uploadId: i}
+                     })
+                     .then(function (resp) {
                          console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data.userDataUrl);
                          uploadCnt--;
-                         let fileInfo = { filename: resp.config.data.file.name, url: resp.data.userDataUrl, deviceId: "deviceIdx", fileFmt: "fmt"} ;
+                         let deviceId =  vm.selectedFiles.find(x => x.file.name === resp.config.data.file.name).mediaType;
+                         let fileInfo = { 
+                             filename: resp.config.data.file.name, 
+                             url: resp.data.uploads[0], 
+                             deviceId: deviceId, 
+                            } ;
                          objectMetaData.files.push(fileInfo);
                          if(uploadCnt === 0) {
                             vm.importMetaData(modal, objectMetaData);
-                            
                          }
                      }, function (resp) {
                          console.log('Error status: ' + resp.status);

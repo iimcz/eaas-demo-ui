@@ -5,35 +5,20 @@
     <uib-tab index="0" heading="From File">
         <form name="fromFile" ng-submit="uploadCtrl.upload()">
             <div class="form-group">
-                <label>{{'OBJECT_INGEST_ID' | translate}}</label>
-                <input width="150px" type="text" class="form-control" ng-model="uploadCtrl.objectId" required>
-                <p>
-                    <b>{{'OBJECT_INGEST_NOTE' | translate }}</b> {{ 'OBJECT_INGEST_NOTE_OBJID' | translate }}
-                </p>
-                <br/>
-                <label>{{'OBJECT_INGEST_MEDIATYPE' | translate}}</label>
-                <select style="max-width: 150px;" class="form-control" theme="bootstrap" ng-model="uploadCtrl.mediumType"  required>
-                    <option style="display:none" value="">select a type</option>
-                    <option value="iso">ISO</option>
-                    <option value="floppy">Floppy</option>
-                    <option value="disk">Disk</option>
-                    <option value="file">Files</option>
-                </select>
-                <p> <b>{{'OBJECT_INGEST_NOTE' | translate }}</b> {{'OBJECT_INGEST_NOTE_MEDIA' | translate}}</p>
-                <br>
+                <label>{{'OBJECT_INGEST_LABEL' | translate}}</label>
+                <input width="150px" type="text" class="form-control" ng-model="uploadCtrl.objectLabel" required>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">{{'OBJECT_INGEST_FILES' | translate}}</div>
                 <div class="panel-body">
                     <ul>
-                        <li ng-repeat="f in uploadCtrl.allFiles" style="font:smaller">{{f.name}}</li>
+                        <li ng-repeat="f in uploadCtrl.selectedFiles" style="font:smaller">
+                            <b>{{f.file.name}}</b> -- MediaType: {{f.mediaType}} <button type="button" class="btn btn-default" ng-click="uploadCtrl.removeFile($index)">delete</button></li>
                     </ul>
-                    <br>
                 </div>
                 <div class="panel-footer" style="text-align: right;">
-                    <button type="button" class="btn btn-default" ngf-select="uploadCtrl.add()" 
-                        ng-model="uploadCtrl.selectedFiles" ngf-multiple="true" >Add File</button>
+                    <button type="button" class="btn btn-default" ng-click="uploadCtrl.openFileModal()">Add File</button>
                 </div>
             </div>
 

@@ -386,6 +386,10 @@
   "OBJECT_INGEST_REPO_EMPTY" : "keine Objekte definiert",
   "OBJECT_INGEST_REPO_PH" : "Objekt ID",
   "OBJECT_INGEST_REPO_BUTTON" : "Hinzufügen",
+  "OBJECT_INGEST_LABEL" : "Object Bezeichner",
+  "UPLOAD_FILE_TITLE" : "Medienelement hochladen",
+  "UPLOAD_FILE_SELECTED" : "Lokale datei hochladen",
+  "UPLOAD_FILE_ADD" : "Datei hinzufügen",
 
   "METADATA_L" : "Metadata Harvesting",
   "METADATA_PROVIDER_TH" : "Konfigurierte Endpunkte",
