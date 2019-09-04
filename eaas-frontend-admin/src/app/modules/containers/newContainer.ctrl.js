@@ -72,7 +72,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         };
 
         container.checkState = function (_taskId, stayAtPage) {
-            var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function (response) {
+            var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
                 if (response.data.status == "0") {
                     if (response.data.isDone) {
 

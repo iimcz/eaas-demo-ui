@@ -70,6 +70,28 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
             });
        };
 
+
+       vm.checkImportState = function(_taskId, _modal)
+       {
+            let taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function(response){
+                if(response.data.status == "0")
+                {
+                    if(response.data.isDone)
+                    {
+                        _modal.close();
+                        growl.success("import finished.");
+                        $state.go('admin.object-overview', {}, {reload: true});
+                    }
+                    else
+                        $timeout(function() {vm.checkImportState(_taskId, _modal);}, 2500);
+                }
+                else
+                {
+                    _modal.close();
+                }
+            });
+       };
+
        vm.import = function()
        {
            vm.importRequest.archive = vm.selectedArchive;
@@ -110,7 +132,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 files: metaData.files
             }).then(function(response) {
                 console.log(response);
-                modal.close();
+                vm.checkImportState(response.data.taskId, modal);
+                
             }, function(error) {
                 console.log(error);
                 modal.close();
