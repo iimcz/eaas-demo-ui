@@ -1,7 +1,7 @@
 module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Objects', 'softwareObj', 'osList',
-                     'localConfig', 'Environments', 'growl', '$translate', 'helperFunctions', 'REST_URLS',
+                     'localConfig', 'Environments', 'growl', '$translate', 'helperFunctions', 'REST_URLS', '$timeout',
                       function ($scope, $state, $stateParams, $uibModal, $http, Objects, softwareObj, osList,
-                      localConfig, Environments, growl, $translate, helperFunctions, REST_URLS) {
+                      localConfig, Environments, growl, $translate, helperFunctions, REST_URLS, $timeout) {
      var vm = this;
     console.log("$stateParams.userDescription", $stateParams.userDescription);
 
@@ -10,13 +10,11 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      vm.isSoftware = !($stateParams.swId === "-1");
      vm.softwareObj = softwareObj.data;
      vm.osList = osList;
+     vm.objEnvironments = [];
 
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId, noUpdate: true}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
-        vm.objEnvironments = response.objectEnvironments.environmentList;
-        vm.suggested = response.objectEnvironments.suggested;
-        vm.fileFormatMap = response.objectEnvironments.fileFormatMap;
      });
 
     Environments.query().$promise.then(function(response) {
@@ -25,31 +23,54 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
 
      vm.description = $stateParams.userDescription;
 
+     vm.checkState = function(_taskId, _modal)
+     {
+        $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function(response){
+            if(response.data.status == "0")
+            {
+                if(response.data.isDone)
+                {
+                    _modal.close();
+                    if(response.data.object) {
+                        let classificationResult = JSON.parse(response.data.object);
+                        vm.suggested = classificationResult.suggested;
+                        vm.fileFormatMap = classificationResult.fileFormatMap;
+                        vm.objEnvironments.push.apply(vm.objEnvironments, classificationResult.environmentList);
+                    }
+                }
+                else
+                    $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+            }
+            else
+            {
+                _modal.close();
+            }
+        });
+    };
+
      vm.automaticCharacterization = function(updateClassification, updateProposal) {
          if (window.confirm($translate.instant('JS_START_CHAR'))) {
-             $("html, body").addClass("wait");
-             $(".fullscreen-overlay-spinner").show();
+             
+             const modal = $uibModal.open({
+                animation: true,
+                template: require('./modals/wait.html'),
+                controller: ["$scope", function($scope) {
+                    this.info = "Please wait";
+                }],
+                controllerAs: "waitMsgCtrl"
+            });
 
-             Objects.get({
+             $http.post(localConfig.data.eaasBackendURL + `classification` , {
                 archiveId: $stateParams.objectArchive,
                 objectId: $stateParams.objectId,
                 updateClassification: updateClassification,
                 updateProposal: updateProposal
-                }).$promise.then(function(response) {
-                    vm.suggested = response.objectEnvironments.suggested;
-                    vm.metadata = response.metadata;
-                    vm.fileFormatMap = response.objectEnvironments.fileFormatMap;
-                    vm.objEnvironments.length = 0;
-                    vm.objEnvironments.push.apply(vm.objEnvironments, response.objectEnvironments.environmentList);
-             })['finally'](function() {
-                 $("html, body").removeClass("wait");
-                 $(".fullscreen-overlay-spinner").hide();
-//                 $state.transitionTo($state.current, $stateParams, {
-//                     reload: true,
-//                     inherit: false,
-//                     notify: true
-//                 });
-             });
+                }).then(function(response) {
+                    vm.checkState(response.data.taskId, modal);
+                }, function(error) {
+                    console.log(error);
+                    modal.close();
+                });
          }
      };
 

@@ -34,7 +34,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncImagesUrl = "EmilEnvironmentData/sync";
     this.exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
     this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
-    this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
+    this.overrideObjectCharacterizationUrl = "classification/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";
     this.replicateImage = "EmilEnvironmentData/replicateImage";
