@@ -41,6 +41,8 @@ emilUIModule.controller('MetadataController', require('./metadata/metadata.ctrl.
 // objects
 emilUIModule.controller('ObjectsOverviewController', require('./objects/overview.ctrl.js'));
 
+emilUIModule.controller('UVIController', require('./uvi/uvi.ctrl.js'));
+
 // container
 emilUIModule.controller('StartContainerController', require('./containers/container.ctrl.js'));
 emilUIModule.controller('ContainerActionsController', require('./containers/actions.ctrl.js'));

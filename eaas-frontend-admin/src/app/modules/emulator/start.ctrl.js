@@ -189,6 +189,12 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 return data;
             };
 
+            if($stateParams.uvi)
+            {
+                data.uviUrl = $stateParams.uvi.url;
+                data.uviFilename = $stateParams.uvi.filename;
+                data.type = "uvi";
+            }
             envs.push({data, visualize: true});
 
             $scope.$on('$destroy', function (event) {
@@ -260,7 +266,9 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                     }
                     $rootScope.$broadcast("emulatorStart", "success");
                 });
-            });
+                }, function(error) {
+                    $state.go('error', {errorMsg: {title: "Emulation Error", message: error}});
+                });
             }
         };
 

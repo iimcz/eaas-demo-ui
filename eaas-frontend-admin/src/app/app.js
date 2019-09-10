@@ -687,6 +687,7 @@ function($stateProvider,
                 isDetached: false,
                 networkInfo: null,
                 containerRuntime: null,
+                uvi: null,
             },
             views: {
                 'wizard': {
@@ -722,7 +723,18 @@ function($stateProvider,
                 }
             }
         })
+        .state('admin.uvi', {
+            url: "/uvi",
+            resolve: {
 
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/uvi/uvi.html'),
+                    controller: "UVIController as uviCtrl"
+                }
+            }
+        })
         .state('admin.edit-object-characterization', {
             url: "/edit-object-characterization?objectId&objectArchive",
             params: {userDescription: null, swId: "-1"},
