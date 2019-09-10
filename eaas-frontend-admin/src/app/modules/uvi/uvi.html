@@ -1,0 +1,12 @@
+<h2 class="m-t-0">UVI</h2>
+
+<form>
+    <div class="form-group">
+        <label>Upload a file to run UVI: </label> <span > {{uviCtrl.selectedFile.name}}  
+            <button type="button" class="btn btn-default" 
+                    ng-model="uviCtrl.selectedFile" 
+                    ngf-select="uviCtrl.select()" ngf-multiple="false" >Choose</button> 
+            <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" ng-click="uviCtrl.upload()">Run UVI</button>
+        </span>
+    </div>
+</form>
