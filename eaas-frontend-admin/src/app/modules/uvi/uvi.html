@@ -1,12 +1,36 @@
 <h2 class="m-t-0">UVI</h2>
 
 <form>
-    <div class="form-group">
-        <label>Upload a file to run UVI: </label> <span > {{uviCtrl.selectedFile.name}}  
-            <button type="button" class="btn btn-default" 
+    <div class="panel panel-default">
+        <div class="panel-heading">Object upload</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label>Upload a file to render: </label>  {{uviCtrl.selectedFile.name}}  
+            </div>
+            <div style="text-align: right; max-width: 750;">
+                    <button type="button" class="btn btn-default" 
                     ng-model="uviCtrl.selectedFile" 
-                    ngf-select="uviCtrl.select()" ngf-multiple="false" >Choose</button> 
-            <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" ng-click="uviCtrl.upload()">Run UVI</button>
-        </span>
+                    ngf-select="uviCtrl.select()" ngf-multiple="false" >Choose</button> &nbsp;
+                <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" ng-click="uviCtrl.upload()">Upload</button>
+            </div>
+        </div>
+        
     </div>
+    <div class="panel panel-default" ng-if="uviCtrl.classificationFinished">
+            <div class="panel-heading">Classification Result</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>File format: </label> {{uviCtrl.fileFormat}} {{uviCtrl.fileFormatLabel}}
+                </div>
+                <div class="form-group">
+                    <label>Selected environment: </label> <em>{{uviCtrl.selectedEnvironment}}</em> ({{uviCtrl.selectedEnvironmentId}})
+                </div>
+                <div style="text-align: right; max-width: 750;">
+                    <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" 
+                    ng-disabled="!uviCtrl.selectedEnvironmentId"
+                    ng-click="uviCtrl.start()">Render</button>
+                </div>
+            </div>
+    </div>
+
 </form>

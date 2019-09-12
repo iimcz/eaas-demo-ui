@@ -2,7 +2,17 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
     function($http, $scope, $state, $stateParams, growl, localConfig, $timeout, helperFunctions, Upload, REST_URLS, $uibModal) {
 
         var vm = this;
+        vm.classificationFinished = false;
 
+        vm.start = function () {
+            $state.go('admin.emulator', {
+                 envId: vm.selectedEnvironmentId,
+                  uvi: {
+                     url: vm.url,
+                     filename: vm.filename
+                 }
+            }, {reload: true});
+        }
 
         vm.checkState = function(_taskId, _modal, url, filename)
         {
@@ -22,13 +32,22 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                             }
                             
                             let envId = classificationResult.environmentList[0].id;
-                           $state.go('admin.emulator', {
-                            envId: envId,
-                             uvi: {
-                                url: url,
-                                filename: filename
+                            vm.classificationFinished = true;
+                            vm.selectedEnvironment = classificationResult.environmentList[0].label;
+                            vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
+                            if(classificationResult.fileFormatMap) {
+                                let objectId = classificationResult.objectId;
+                                if(objectId) {
+                                    let ffmts = classificationResult.fileFormatMap[objectId];
+                                    if(ffmts && ffmts.fileFormats && ffmts.fileFormats.length > 0)
+                                    {
+                                        vm.fileFormat = ffmts.fileFormats[0].puid;
+                                        vm.fileFormatLabel = ffmts.fileFormats[0].name;
+                                    }
+                                } 
                             }
-                        }, {reload: true});
+                            vm.filename = filename;
+                            vm.url = url;
                        }
                    }
                    else
