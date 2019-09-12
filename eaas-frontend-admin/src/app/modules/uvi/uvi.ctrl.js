@@ -3,6 +3,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
 
         var vm = this;
         vm.classificationFinished = false;
+        vm.classificationFailed = false;
 
         vm.start = function () {
             $state.go('admin.emulator', {
@@ -26,15 +27,19 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                            console.log(response);
                             let classificationResult = JSON.parse(response.data.object);
                             console.log(classificationResult);
-                            if(classificationResult.environmentList.length === 0)
+                            if(!classificationResult.environmentList || classificationResult.environmentList.length === 0)
                             {
                                 console.log("no environmemnt found");
+                                vm.classificationFailed = true;
+                            }
+                            else
+                            {
+                                vm.selectedEnvironment = classificationResult.environmentList[0].label;
+                                vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
                             }
                             
-                            let envId = classificationResult.environmentList[0].id;
                             vm.classificationFinished = true;
-                            vm.selectedEnvironment = classificationResult.environmentList[0].label;
-                            vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
+                           
                             if(classificationResult.fileFormatMap) {
                                 let objectId = classificationResult.objectId;
                                 if(objectId) {
