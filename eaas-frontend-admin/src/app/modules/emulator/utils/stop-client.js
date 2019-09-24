@@ -48,7 +48,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
 
                 var downloadLink = document.createElement("a");
                 downloadLink.href = URL.createObjectURL(containerOutputBlob);
-                downloadLink.download = "output-data.tar.gz";
+                downloadLink.download = "uvi-output.zip";
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
