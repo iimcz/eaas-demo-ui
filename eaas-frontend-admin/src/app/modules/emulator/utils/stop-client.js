@@ -19,15 +19,16 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
         window.onbeforeunload = null;
         eaasClient.disconnect();
     } else if (download) {
+        eaasClient.deleteOnUnload = false;
+        window.onbeforeunload = null; 
         await _stop(false);
-        window.onbeforeunload = null;   
+          
         const modal = $uibModal.open({
             animation: false,
             template: require('../modals/download.html'),
             controller: ['$scope', function ($scope) {
 
                 this.download = function () {
-                    eaasClient.deleteOnUnload = false;
                     modal.close(true);
                 };
             }],
