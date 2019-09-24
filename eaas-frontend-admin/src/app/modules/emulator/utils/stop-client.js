@@ -10,7 +10,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
         if (doRelease)
             await eaasClient.release();
         else
-            await eaasClient.stopEnvironment();
+            await eaasClient.stopEnvironment(true);
         window.onbeforeunload = null;
         modal.close();
     }
@@ -20,7 +20,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
         eaasClient.disconnect();
     } else if (download) {
         await _stop(false);
-        window.onbeforeunload = null;
+        window.onbeforeunload = null;   
         const modal = $uibModal.open({
             animation: false,
             template: require('../modals/download.html'),
@@ -56,9 +56,10 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
 
             if (doDownload)
                 await f();
-            // eaasClient.deleteOnUnload = true;
+                
+            eaasClient.deleteOnUnload = true;
             // window.onbeforeunload = null;
-            // await _stop(true);
+            await _stop(true);
             
         });
     } else {
