@@ -88,6 +88,7 @@
 
         <button type="submit" class="btn btn-default"
                 ng-if="!actionsCtrl.emulator.detached"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.stopEmulator()">
             {{'ACTIONS_STOP' | translate}}
         </button>
@@ -97,6 +98,11 @@
                 ng-click="actionsCtrl.close()">
             Close
         </button>
+
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.openChangeEnvDialog()"
+                ng-if="actionsCtrl.objEnvironments.length > 1"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
+                >Alternative Environments</button>
 
         <button  class="btn btn-default"
                  uib-dropdown-toggle ng-if="$root.idsData.length > 1"

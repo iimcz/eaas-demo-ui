@@ -4,13 +4,17 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
         var vm = this;
         vm.classificationFinished = false;
         vm.classificationFailed = false;
+        vm.environmentList = [];
 
         vm.start = function () {
             $state.go('admin.emulator', {
-                 envId: vm.selectedEnvironmentId,
-                  uvi: {
+                envId: vm.selectedEnvironmentId,
+                enableDownload: vm.writeable,
+                uvi: {
                      url: vm.url,
-                     filename: vm.filename
+                     filename: vm.filename,
+                     writeable: vm.writeable,
+                     environments: vm.environmentList,
                  }
             }, {reload: true});
         }
@@ -36,6 +40,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                             {
                                 vm.selectedEnvironment = classificationResult.environmentList[0].label;
                                 vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
+                                vm.environmentList = classificationResult.environmentList;
                             }
                             
                             vm.classificationFinished = true;

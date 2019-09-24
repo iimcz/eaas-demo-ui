@@ -688,6 +688,7 @@ function($stateProvider,
                 networkInfo: null,
                 containerRuntime: null,
                 uvi: null,
+                enableDownload: false,
             },
             views: {
                 'wizard': {

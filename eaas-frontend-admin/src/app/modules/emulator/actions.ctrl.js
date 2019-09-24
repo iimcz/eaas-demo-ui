@@ -14,6 +14,13 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     $scope.idsData;
     vm.printJobsAvailable = false;
 
+    if($stateParams.uvi)
+    {
+        vm.objEnvironments = $stateParams.uvi.environments
+    }
+    else 
+        vm.objEnvironments = [];
+
     var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
     var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
 
@@ -24,7 +31,6 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                     vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
         });
     }
-
 
     vm.enablePrinting = false;
     vm.enableSaveEnvironment = false;
@@ -116,16 +122,41 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $state.go('admin.standard-envs-overview', {}, {reload: true});
     };
 
+    vm.openChangeEnvDialog = function() {
+        $uibModal.open({
+            animation: true,
+            template: require('./modals/choose-env-dialog.html'),
+            controller: ["$scope", function($scope) {
+                this.custom_env = null;
+                this.environments = vm.objEnvironments;
+
+                this.changeEnv= function()
+                {
+                    window.eaasClient.release();
+                    let data = {envId: this.custom_env.id};
+
+                    if($stateParams.uvi)
+                    {
+                        data.enableDownload = $stateParams.enableDownload,
+                        data.uvi = $stateParams.uvi
+                    }
+                    $state.go('admin.emulator', data, {reload: true});
+                };
+            }],
+            controllerAs: "changeEnvDialogCtrl"
+        });
+    };
+
     vm.stopEmulator = function () {
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-stop.html'),
             controller: ['$scope', function($scope) {
-                this.confirmed = function()
+                this.confirmed = async function()
                 {
-                    stopClient($uibModal, false, window.eaasClient);
-                    $('#emulator-stopped-container').show();
+                    await stopClient($uibModal, false, $stateParams.enableDownload, window.eaasClient);
 
+                    $('#emulator-stopped-container').show();
                     if($stateParams.isTestEnv)
                     {
                         $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {

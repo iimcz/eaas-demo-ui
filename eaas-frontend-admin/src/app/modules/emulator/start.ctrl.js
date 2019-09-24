@@ -193,12 +193,13 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
             {
                 data.uviUrl = $stateParams.uvi.url;
                 data.uviFilename = $stateParams.uvi.filename;
+                data.uviWriteable = $stateParams.uvi.writeable;
                 data.type = "uvi";
             }
             envs.push({data, visualize: true});
 
             $scope.$on('$destroy', function (event) {
-                stopClient($uibModal, $stateParams.isStarted, window.eaasClient);
+                stopClient($uibModal, $stateParams.isStarted, false, window.eaasClient);
             });
 
             if($stateParams.isStarted){
