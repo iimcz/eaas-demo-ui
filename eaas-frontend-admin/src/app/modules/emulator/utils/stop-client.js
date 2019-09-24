@@ -55,9 +55,9 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
 
             if (doDownload)
                 await f();
-            eaasClient.deleteOnUnload = true;
-            window.onbeforeunload = null;
-            await _stop(true);
+            // eaasClient.deleteOnUnload = true;
+            // window.onbeforeunload = null;
+            // await _stop(true);
             
         });
     } else {
