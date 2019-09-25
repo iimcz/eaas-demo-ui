@@ -1,6 +1,7 @@
 export async function stopClient($uibModal, onlyDisconnect, download, eaasClient) {
     
     async function _stop(doRelease) {
+        let result = null;
         const modal = $uibModal.open({
             backdrop: 'static',
             animation: false,
@@ -12,10 +13,11 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
             console.log("releasing from stop ");
             await eaasClient.release();
         }   
-        else
-            await eaasClient.stopEnvironment(true);
+        else 
+            result = await eaasClient.stopEnvironment(true);
         window.onbeforeunload = null;
         modal.close();
+        return result;
     }
 
     if (onlyDisconnect) {
@@ -25,8 +27,9 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
         eaasClient.deleteOnUnload = false;
         window.onbeforeunload = null; 
         window.onunload = null;
-        await _stop(false);
-          
+        let result = await _stop(false);
+        
+        console.log(result);
         const modal = $uibModal.open({
             animation: false,
             template: require('../modals/download.html'),
@@ -45,7 +48,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
                 let _header = localStorage.getItem('id_token') ? {
                     "Authorization": "Bearer " + localStorage.getItem('id_token')
                 } : {};
-                const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                const containerOutput = await fetch(result.url, {
                     headers: _header,
                 });
                 const containerOutputBlob = await containerOutput.blob();
