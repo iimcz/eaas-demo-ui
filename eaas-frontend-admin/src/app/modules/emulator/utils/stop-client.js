@@ -21,6 +21,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
     } else if (download) {
         eaasClient.deleteOnUnload = false;
         window.onbeforeunload = null; 
+        window.onunload = null;
         await _stop(false);
           
         const modal = $uibModal.open({
