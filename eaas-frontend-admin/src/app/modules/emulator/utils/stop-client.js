@@ -49,14 +49,14 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
                     headers: _header,
                 });
                 const containerOutputBlob = await containerOutput.blob();
-                window.open(URL.createObjectURL(containerOutputBlob), '_blank');
+                // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
 
-                // var downloadLink = document.createElement("a");
-                // downloadLink.href = URL.createObjectURL(containerOutputBlob);
-                // downloadLink.download = "uvi-output.zip";
-                // document.body.appendChild(downloadLink);
-                // downloadLink.click();
-                // document.body.removeChild(downloadLink);
+                var downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(containerOutputBlob);
+                downloadLink.download = "uvi-output.zip";
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
                 console.log("download done");
             };
 
@@ -64,11 +64,11 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
                 await f();
 
             console.log("done...");
-            await _stop(true);
+           //  await _stop(true);
             
         });
     } else {
-        console.log("hard stop");
+        console.log("hard stop")
         _stop(true);
     }
 }
