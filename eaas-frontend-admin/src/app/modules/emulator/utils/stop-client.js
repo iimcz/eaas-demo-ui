@@ -8,7 +8,10 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
             template: require('../modals/wait.html')
         });
         if (doRelease)
+        {
+            console.log("releasing from stop ");
             await eaasClient.release();
+        }   
         else
             await eaasClient.stopEnvironment(true);
         window.onbeforeunload = null;
@@ -54,15 +57,18 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
+                console.log("download done");
             };
 
             if (doDownload)
                 await f();
 
+            console.log("done...");
             await _stop(true);
             
         });
     } else {
+        console.log("hard stop");
         _stop(true);
     }
 }
