@@ -38,6 +38,8 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                             }
                             else
                             {
+                                vm.selectedEnvironment = classificationResult.environmentList[0].label;
+                                vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
                                 vm.environmentList = classificationResult.environmentList;
                             }
                             
