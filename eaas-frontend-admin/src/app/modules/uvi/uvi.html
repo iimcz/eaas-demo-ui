@@ -32,7 +32,6 @@
                     <ul>
                         <li ng-repeat="env in uviCtrl.environmentList">
                             {{env.label}} ({{env.id}}) <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-link" 
-                            ng-disabled="!uviCtrl.selectedEnvironmentId"
                             ng-click="uviCtrl.start(env.id)">Render</button>
                         </li>
                     </ul>
@@ -44,7 +43,7 @@
                 <div style="text-align: right; max-width: 750;">
                         <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" 
                         ng-disabled="!uviCtrl.selectedEnvironmentId"
-                        ng-click="uviCtrl.start()">Render Suggested</button>
+                        ng-click="uviCtrl.start(uviCtrl.selectedEnvironmentId)">Render Suggested</button>
                 </div>
             </div>
     </div>
