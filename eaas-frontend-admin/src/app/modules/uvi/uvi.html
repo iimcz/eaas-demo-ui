@@ -26,25 +26,20 @@
                 <div class="form-group">
                     <label>File format: </label> {{uviCtrl.fileFormat}} {{uviCtrl.fileFormatLabel}}
                 </div>
-                <div class="form-group" ng-if="!uviCtrl.classificationFailed">
-                    <label>Selected / Suggested Environment: </label> <em>{{uviCtrl.selectedEnvironment}}</em> ({{uviCtrl.selectedEnvironmentId}})
-                </div>
+                
                 <div class="form-group" ng-if="uviCtrl.environmentList.length > 0">
-                    <label>All suggested environments</label>
+                    <label>Suggested environments</label>
                     <ul>
                         <li ng-repeat="env in uviCtrl.environmentList">
-                            {{env.label}} ({{env.id}})
+                            {{env.label}} ({{env.id}}) <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" 
+                            ng-disabled="!uviCtrl.selectedEnvironmentId"
+                            ng-click="uviCtrl.start(env.id)">Render</button>
                         </li>
                     </ul>
                 </div>
 
                 <div class="form-group" ng-if="uviCtrl.classificationFailed">
                         <label>No preinstalled environment available</label>
-                    </div>
-                <div style="text-align: right; max-width: 750;">
-                    <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" 
-                    ng-disabled="!uviCtrl.selectedEnvironmentId"
-                    ng-click="uviCtrl.start()">Render</button>
                 </div>
             </div>
     </div>

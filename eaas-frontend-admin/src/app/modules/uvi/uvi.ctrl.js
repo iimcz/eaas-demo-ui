@@ -6,9 +6,9 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
         vm.classificationFailed = false;
         vm.environmentList = [];
 
-        vm.start = function () {
+        vm.start = function (envId) {
             $state.go('admin.emulator', {
-                envId: vm.selectedEnvironmentId,
+                envId: envId,
                 enableDownload: vm.writeable,
                 uvi: {
                      url: vm.url,
@@ -38,8 +38,6 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                             }
                             else
                             {
-                                vm.selectedEnvironment = classificationResult.environmentList[0].label;
-                                vm.selectedEnvironmentId = classificationResult.environmentList[0].id;
                                 vm.environmentList = classificationResult.environmentList;
                             }
                             
