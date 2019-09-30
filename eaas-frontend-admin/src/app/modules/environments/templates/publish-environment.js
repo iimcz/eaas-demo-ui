@@ -39,7 +39,7 @@ Do you want to publish this environment to the network?`))
     }
 
     function checkState(_taskId, _modal) {
-        var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function (response) {
+        var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
             if (response.data.status == "0") {
                 if (response.data.isDone) {
                     console.log("task finished " + _taskId);

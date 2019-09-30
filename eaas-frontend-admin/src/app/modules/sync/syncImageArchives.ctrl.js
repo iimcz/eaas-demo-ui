@@ -74,7 +74,7 @@ module.exports = ['$http', '$timeout',  '$state', '$stateParams', 'environmentLi
 
            vm.checkState = function(_taskId, _modal)
            {
-              var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function(response){
+              var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function(response){
                    if(response.data.status == "0")
                    {
                        if(response.data.isDone)

@@ -23,7 +23,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.getDatabaseContent = "EmilEnvironmentData/getDatabaseContent?type={0}&className={1}";
     this.detachSessionUrl = "sessions";
     this.getEnvironmentTemplates = "EmilEnvironmentData/getEnvironmentTemplates";
-    this.getPatches = "EmilEnvironmentData/getPatches";;
+    this.getPatches = "EmilEnvironmentData/getPatches";
     this.createImageUrl = "EmilEnvironmentData/createImage?size={0}";
     this.prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
     this.importImageUrl = "EmilEnvironmentData/importImage";
@@ -34,8 +34,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.syncImagesUrl = "EmilEnvironmentData/sync";
     this.exportEnvironmentUrl = "EmilEnvironmentData/export?envId={0}";
     this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
-    this.getTaskState = "EmilEnvironmentData/taskState?taskId={0}";
-    this.overrideObjectCharacterizationUrl = "EmilEnvironmentData/overrideObjectCharacterization";
+    this.overrideObjectCharacterizationUrl = "classification/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.getOperatingSystemsMetadata = "EmilEnvironmentData/operatingSystemMetadata";
     this.replicateImage = "EmilEnvironmentData/replicateImage";
@@ -46,7 +45,6 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.importContainerUrl = "EmilContainerData/importContainer";
     this.importEmulator = "EmilContainerData/importEmulator";
     this.updateLatestEmulator = "EmilContainerData/updateLatestEmulator";
-    this.getContainerTaskState = "EmilContainerData/taskState?taskId={0}";
     this.updateContainerUrl = "EmilContainerData/updateContainer";
     this.deleteContainerUrl = "EmilContainerData/delete";
     this.saveImportedContainer = "EmilContainerData/saveImportedContainer";
