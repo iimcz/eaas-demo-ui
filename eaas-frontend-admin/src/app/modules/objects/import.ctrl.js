@@ -66,6 +66,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 else
                 {
                     _modal.close();
+                    $state.go('error', {errorMsg: {title: "Object import failed"}});
                 }
             });
        };
@@ -87,6 +88,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 }
                 else
                 {
+                    $state.go('error', {errorMsg: {title: "Object import failed"}});
                     _modal.close();
                 }
             });
@@ -125,18 +127,14 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
 
         vm.importMetaData = function(modal, metaData)
         {
-            console.log(metaData);
-
             $http.post(localConfig.data.eaasBackendURL + "/objects/import", {
                 label: vm.objectLabel,
                 files: metaData.files
             }).then(function(response) {
-                console.log(response);
                 vm.checkImportState(response.data.taskId, modal);
-
             }, function(error) {
-                console.log(error);
                 modal.close();
+
             });
 
         }

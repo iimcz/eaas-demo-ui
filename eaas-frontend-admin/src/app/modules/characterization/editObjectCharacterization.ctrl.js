@@ -12,7 +12,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      vm.osList = osList;
      vm.objEnvironments = [];
 
-     Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId, noUpdate: true}).$promise.then(function(response) {
+     Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
      });
