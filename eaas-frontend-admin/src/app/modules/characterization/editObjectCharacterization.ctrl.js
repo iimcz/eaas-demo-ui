@@ -55,7 +55,8 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
                 animation: true,
                 template: require('./modals/wait.html'),
                 controller: ["$scope", function($scope) {
-                    this.info = "Please wait";
+
+                    this.info = {msg : "Please wait", title : "Analysing object" };
                 }],
                 controllerAs: "waitMsgCtrl"
             });
