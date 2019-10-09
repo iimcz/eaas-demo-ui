@@ -22,7 +22,7 @@ var LOCAL_WEBSERVER_PATH = '/';
 var PRODUCTION_PATH = '/admin/';
 
 // Include git commit hash
-var commitHash = require('child_process').execSync('git rev-parse HEAD').toString();
+var commitHash = require('child_process').execSync('git rev-parse --short=10 HEAD').toString().toUpperCase();
 
 var auth0config = {
     AUTH_CONFIGURED: false,
