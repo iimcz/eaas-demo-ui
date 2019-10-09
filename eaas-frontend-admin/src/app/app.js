@@ -423,12 +423,12 @@ function($stateProvider,
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: ['$state', '$stateParams', function($state, $stateParams) {
+            controller: ['$state', '$stateParams', 'localConfig', function($state, $stateParams, localConfig) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
                     $state.go('admin.standard-envs-overview');
                     return;
                 }
-
+                this.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
                 this.errorMsg = $stateParams.errorMsg;
             }],
             controllerAs: "errorCtrl"
