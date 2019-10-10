@@ -7,11 +7,16 @@
     </uib-tab>
     <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-click="standardEnvsOverviewCtrl.updateTable(1)" ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
     </uib-tab>
-    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers">
+
+    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers" ng-if="standardEnvsOverviewCtrl.config.features.containers">
     </uib-tab>
+
+    <uib-tab index="3" ng-click="standardEnvsOverviewCtrl.updateTable(3)" heading="Container Runtimes" ng-if="standardEnvsOverviewCtrl.config.features.containers">
+    </uib-tab>
+
 </uib-tabset>
 <p></p>
-<uib-tabset ng-if="standardEnvsOverviewCtrl.view === 0 || standardEnvsOverviewCtrl.view === 2" active="standardEnvsOverviewCtrl.viewArchive" type="pills">
+<uib-tabset ng-if="!standardEnvsOverviewCtrl.config.features.standalone && standardEnvsOverviewCtrl.view != 1" active="standardEnvsOverviewCtrl.viewArchive" type="pills">
     <uib-tab index="0" heading="Private" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
     <uib-tab index="1" heading="Public" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
     <uib-tab index="2" heading="Remote" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
@@ -23,7 +28,7 @@
            placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}"/>
 </div>
 <div style="padding: 4px;">
-    <div class="ag-theme-balham"><b>Number of Environments: {{standardEnvsOverviewCtrl.initRowData().length;}}</b></div>
+    <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{standardEnvsOverviewCtrl.rowCount}}</b></div>
 
     <div style="top: 0; left: 0;">
         <div class="ag-theme-balham"> Page Size:

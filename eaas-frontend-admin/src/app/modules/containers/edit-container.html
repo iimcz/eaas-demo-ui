@@ -1,7 +1,18 @@
-<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>
+<!--<h2 class="m-t-0">{{'EDIT_CONTAINER_L' | translate}}</h2>-->
 <uib-accordion close-others="false">
 
     <form id="editContainerForm" name="editContainerCtrl.editContainerForm">
+
+        <div style="text-align: right;">
+
+            <button ng-show="editContainerCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
+                    type="button" ui-sref="admin.container({envId: editContainerCtrl.env.envId, modifiedDialog: true})">{{'CHOOSE_ENV_RUN' | translate}}</button>
+
+            <button class="btn btn-outline-dark" type="button"
+                    ng-click="editContainerCtrl.replicateImage(editContainerCtrl.env.envId, 'publish')"
+                    ng-if="!editContainerCtrl.isObjectEnv && editContainerCtrl.env.archive == 'default'">Publish
+            </button>
+        </div>
 
         <p>
             <label>{{'EDIT_CONTAINER_ID' | translate}}:</label>
@@ -90,6 +101,37 @@
             </input-list>
         </div>
     </div>
+
+    <div class="tekst">
+        <div uib-accordion-group class="panel-default" is-open="status.openRuntime">
+            <uib-accordion-heading>
+                Container Runtime
+                <i class="pull-right glyphicon"
+                   ng-class="{'glyphicon-chevron-down': status.openRuntime, 'glyphicon-chevron-right': !status.openRuntime}"></i>
+            </uib-accordion-heading>
+
+            <ui-select ng-model="editContainerCtrl.containerRuntimeEnv" theme="bootstrap" title="{{'EDIT_CONTAINER_RUNTIME' | translate}}" required>
+                <ui-select-match placeholder="{{'EDIT_CONTAINER_RUNTIME' | translate}}">{{$select.selected.title}}</ui-select-match>
+                <ui-select-choices repeat="runtime in editContainerCtrl.runtimeEnvs  | filter: $select.search">
+                    <span ng-bind-html="runtime.title
+                     | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+
+        </div>
+        <!--       Include networking template
+   NOTE: you will find networkingTemplate in app.js-->
+        <div class="topSkip">
+            <networking-Template
+                networking="editContainerCtrl.networking"
+                is-Container="true"
+            ></networking-Template>
+        </div>
+    </div>
+
+
+
+
     <div style="text-align: right;">
         <button type="submit" class="btn btn-default"
                 ui-sref="admin.standard-envs-overview({showObjects: false, showContainers: true})">

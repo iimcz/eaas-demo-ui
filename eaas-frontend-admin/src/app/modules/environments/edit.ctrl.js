@@ -1,3 +1,5 @@
+import {publisher} from "./templates/publish-environment";
+
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "softwareList", "$uibModal",
              "$timeout", "nameIndexes", "REST_URLS",
@@ -5,9 +7,12 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, softwareList, $uibModal,
             $timeout, nameIndexes, REST_URLS) {
 
+       const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
        var vm = this;
-
+       vm.networking = {};
+       vm.config = localConfig.data;
+       
        vm.editMode = false;
        let emulatorContainerVersionSpillter = "|";
 
@@ -45,24 +50,18 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.envTitle = vm.env.title;
             vm.author = vm.env.author;
             vm.envDescription = vm.env.description;
-            vm.envHelpText = vm.env.helpText;
             vm.enableRelativeMouse = vm.env.enableRelativeMouse;
             vm.enablePrinting = vm.env.enablePrinting;
             vm.nativeConfig = vm.env.nativeConfig;
-            vm.enableInternet = vm.env.enableInternet;
-            vm.serverMode = vm.env.serverMode;
-            vm.localServerMode = vm.env.localServerMode;
-            vm.enableSocks = vm.env.enableSocks;
-            vm.serverIp = vm.env.serverIp;
-            vm.serverPort = vm.env.serverPort;
-            vm.gwPrivateIp = vm.env.gwPrivateIp;
-            vm.gwPrivateMask = vm.env.gwPrivateMask;
+            if (vm.env.networking)
+                vm.networking = vm.env.networking;
             vm.useXpra = vm.env.useXpra;
-            vm.connectEnvs = vm.env.connectEnvs;
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
             vm.drives = vm.env.drives;
+            vm.isLinuxRuntime = vm.env.isLinuxRuntime;
+            vm.envHelpText = vm.env.helpText;
 
             for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
                 if (vm.operatingSystemsMetadata[i].id === vm.env.os)
@@ -156,13 +155,11 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
-               this.env.helpText = this.envHelpText;
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                    envId: $stateParams.envId,
                    title: this.envTitle,
                    author: this.author,
                    description: this.envDescription,
-                   helpText: this.envHelpText,
                    time: timecontext,
                    enablePrinting: vm.enablePrinting,
                    enableRelativeMouse: this.enableRelativeMouse,
@@ -170,28 +167,22 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    os: this.os ? this.os.id : null,
                    userTag: this.userTag,
                    useXpra : this.useXpra,
-                   enableInternet: this.enableInternet,
-                   serverMode: this.serverMode,
-                   localServerMode: this.localServerMode,
-                   enableSocks: this.enableSocks,
-                   serverIp : this.serverIp,
-                   serverPort : this.serverPort,
-                   gwPrivateIp: this.gwPrivateIp,
-                   gwPrivateMask: this.gwPrivateMask,
                    nativeConfig: this.nativeConfig,
-                   connectEnvs : this.connectEnvs,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
+                   networking : vm.networking,
                    containerEmulatorName : vm.emulatorContainer.value.name,
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
                    xpraEncoding: vm.xpraEncoding,
-                   drives : vm.drives
+                   drives : vm.drives,
+                   linuxRuntime : vm.isLinuxRuntime,
+                   helpText: vm.envHelpText,
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
                    } else {
                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
                    }
-                   $state.go('admin.edit-env', {envId: $stateParams.envId, objEnv: vm.isObjectEnv}, {reload: true});
+                   $state.go('admin.edit-env', {envId: response.data.id, objEnv: vm.isObjectEnv}, {reload: true});
                });
            };
 
@@ -286,73 +277,9 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                vm.isOpen = true;
            };
 
-          vm.checkState = function(_taskId, _modal)
-          {
-              var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getTaskState, _taskId)).then(function(response)
-              {
-                  if(response.data.status == "0")
-                  {
-                       if(response.data.isDone)
-                       {
-                          console.log("task finished " + _taskId);
-                          growl.success("replication finished.");
-                          $state.go('admin.standard-envs-overview', { }, {reload: true});
-                          _modal.close();
-                       }
-                       else
-                           $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
-                   }
-                   else
-                   {
-                      growl.error("error replicating image " + response.data.message);
-                      _modal.close();
-                   }
-              });
-          };
-
-          vm.replicateImage = function(envId, replicationType) {
-              if(replicationType === "import")
-              {
-                if (!window.confirm(`Replication will copy environment data to local storage. Environments copied from the EaaSI Network cannot be deleted from storage once replicated.
-
-Do you want to replicate this environment from the Network.`))
-                   return false;
-              }
-              else {
-                if (!window.confirm(`Resources published to the EaaSI network cannot be easily removed.
-Do not share software or environments with existing access or license restrictions.
-
-Do you want to publish this environment to the network?`))
-                   return false;
-              }
-
-              console.log("replicating " + envId);
-              var modal = $uibModal.open({
-                   animation: true,
-                   template: require('./modals/wait.html')
-               });
-              $http.post(localConfig.data.eaasBackendURL + REST_URLS.replicateImage,
-              {
-                  replicateList : [envId],
-                  destArchive : "public"
-              }).then(function(response) {
-                  if(response.data.status === "0")
-                  {
-                       var taskId = response.data.taskList[0];
-                       vm.checkState(taskId, modal);
-                  }
-                  else
-                  {
-                      modal.close();
-                      growl.error("error replicating image");
-                      $state.go('admin.standard-envs-overview');
-                  }
-              }, function(response) {
-                   modal.close();
-                   growl.error("error replicating image: " + response.data.message);
-                   $state.go('admin.standard-envs-overview');
-              });
-          };
+        vm.replicateImage = function (envId, replicationType) {
+            replicateImage(envId, replicationType)
+        };
 
           var confirmDeleteFn = function(envId)
           {

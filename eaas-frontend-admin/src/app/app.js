@@ -28,6 +28,8 @@ import 'bootstrap-ui-datetime-picker';
 import 'sortablejs';
 import 'sortablejs/ng-sortable';
 import 'ng-file-upload';
+import { saveAs } from 'file-saver';
+
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.js';
 import '../../node_modules/jquery.json-viewer/json-viewer/jquery.json-viewer.css';
 
@@ -40,8 +42,7 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
-
-
+import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
 
@@ -165,7 +166,15 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             showDialogs: '='
         }
     })
-    
+    .component('networkingTemplate', {
+        template: networkingTemplate,
+        bindings: {
+            networking: '=',
+            isContainer: '<'
+        }
+    })
+
+
     .directive('onInputFileChange', function() {
         return {
             restrict: 'A',
@@ -414,12 +423,12 @@ function($stateProvider,
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: ['$state', '$stateParams', function($state, $stateParams) {
+            controller: ['$state', '$stateParams', 'localConfig', function($state, $stateParams, localConfig) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
                     $state.go('admin.standard-envs-overview');
                     return;
                 }
-
+                this.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
                 this.errorMsg = $stateParams.errorMsg;
             }],
             controllerAs: "errorCtrl"
@@ -501,6 +510,9 @@ function($stateProvider,
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
+                },
+                patches: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
                 }
             },
             views: {
@@ -515,6 +527,9 @@ function($stateProvider,
             resolve: {
                 systemList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
+                },
+                patches: function($http, localConfig, REST_URLS) {
+                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
                 }
             },
             views: {
@@ -586,7 +601,7 @@ function($stateProvider,
             }
         })
         .state('admin.standard-envs-overview', {
-            url: "/standard-envs-overview",
+            url: "/environments",
             params: {
                 showObjects: false,
                 showContainers: false
@@ -637,6 +652,9 @@ function($stateProvider,
         })
         .state('admin.edit-container', {
             url: "/edit-container",
+            resolve: {
+                emilEnvironments : (Environments) => Environments.query().$promise
+            },
             params: {
                 envId: null,
             },
@@ -654,7 +672,7 @@ function($stateProvider,
                     if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                         return  Environments.get({envId: $stateParams.envId}).$promise;
                     else
-                        return {};
+                        return null;
                 }
             },
             params: {
@@ -668,7 +686,8 @@ function($stateProvider,
                 returnToObjects: false,
                 isStarted: false,
                 isDetached: false,
-                networkInfo: null
+                networkInfo: null,
+                containerRuntime: null,
             },
             views: {
                 'wizard': {
@@ -685,6 +704,9 @@ function($stateProvider,
         .state('admin.container', {
             url: "/container",
             resolve: {
+                chosenEnv: function($stateParams, Environments) {
+                    return Environments.get({envId: $stateParams.envId}).$promise;
+                }
             },
             params: {
                 envId: null,

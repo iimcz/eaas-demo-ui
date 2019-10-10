@@ -18,8 +18,15 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 vm.view = index;
                 vm.rowCount = 0;
                 vm.envs = response;
-                if (vm.view == 0)
+                if (vm.view == 0 || vm.view == 3)
                     vm.envs.forEach(function (element) {
+                        if (element.isLinuxRuntime) {
+                            if (vm.view === 0)
+                                return;
+                        } else {
+                            if (vm.view === 3)
+                                return;
+                        }
                         if(element.envType != 'base')
                             return;
                         if((element.archive == 'default' && vm.viewArchive === 0) ||
@@ -50,7 +57,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             });
         };
 
-        vm.pageSize = 10;
+        vm.pageSize = "10";
         if($stateParams.showContainers)
              vm.view = 2;
         else if($stateParams.showObjects)
@@ -205,12 +212,10 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 this.showDialogs[this.activeInputMethod] = false;
             }
 
-            console.log(this.showDialogs);
             console.log(inputMethod);
         };
         vm.selectedRowData = {};
         vm.deleteSelected = function () {
-            console.log("selectedRowData ", vm.selectedRowData.length);
             var selectedRowData = vm.gridOptions.api.getSelectedRows();
             if (window.confirm($translate.instant('JS_DELENV_OK')))
                 selectedRowData.forEach(selectedRowData => {
@@ -246,8 +251,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                   <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
                   <li role="menuitem"><a ng-if="data.archive == 'default'" class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li ng-if="data.archive != 'remote'" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
-                  <li class="divider">
-
+                  
                   <li role="menuitem"><a ng-if="landingPage" target="_blank" class="dropdown-content"
                   ng-click="switchAction(data.id, \'openLandingPage\')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
                 
@@ -296,14 +300,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             }
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-            window.isCollapsed = true;
             $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, objectArchive: env.objectArchive}, {reload: true});
         };
 
         vm.edit = function (id) {
             if (vm.view == 1)
                 $state.go('admin.edit-env', {envId: id, objEnv: true});
-           else if (vm.view == 0)
+           else if (vm.view == 0 || vm.view == 3)
                 $state.go('admin.edit-env', {envId: id});
            else if (vm.view == 2)
                 $state.go('admin.edit-container', {envId: id});
@@ -329,7 +332,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             columnDefs = [
                 {headerName: '', width: 41, checkboxSelection: true, suppressSorting: true,
                     suppressMenu: true},
-                {headerName: "Name", field: "name", width: 400},
+                {headerName: "Name", field: "name", width: 400, sort: "asc" },
                 {headerName: "ID", field: "id", width: 100},
                 {headerName: "Archive", field: "archive", hide: true}
             ];

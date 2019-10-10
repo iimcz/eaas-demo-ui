@@ -71,7 +71,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
             // Initialize the uploadFiles list with meaningful values for destination and action.
             // Those are displayed in the view and can be changed by the user
             Upload.upload({
-                url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                url: localConfig.data.eaasBackendURL + "upload",
                 name: file.filename,
                 destination: file.destination,
                 action: "copy",
@@ -79,7 +79,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
             }).then(function (resp) {
                 // Push the uploaded file to the input list
                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-                vm.imageUrl = resp.data.userDataUrl;
+                vm.imageUrl = resp.data.uploads[0];
 
             }, function (resp) {
                 console.log('Error status: ' + resp.status);
@@ -147,7 +147,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$timeout', 'localCo
         };
 
         vm.checkState = function (_taskId, stayAtPage) {
-            var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function (response) {
+            var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
                 if (response.data.status == "0") {
                     if (response.data.isDone) {
 

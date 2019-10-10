@@ -1,12 +1,21 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', 'localConfig', 'growl', '$translate', 'REST_URLS',
-    function ($http, $scope, $state, $stateParams, Environments, localConfig, growl, $translate, REST_URLS) {
+import { publisher }  from '../environments/templates/publish-environment'
+module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uibModal', 'helperFunctions', 'emilEnvironments', 'Environments', 'localConfig', 'growl', '$translate', 'REST_URLS',
+    function ($http, $scope, $state, $timeout, $stateParams, $uibModal, helperFunctions, emilEnvironments, Environments, localConfig, growl, $translate, REST_URLS) {
+        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
         var vm = this;
         let handlePrefix = "11270/";
         vm.isOpen = false;
+        vm.isContainer = true;
+        vm.emilEnvironments = emilEnvironments;
+        vm.containerRuntimeEnv = {title: "native", runNatively: true};
+        vm.runtimeEnvs = [vm.containerRuntimeEnv];
 
         vm.showDateContextPicker = false;
+        vm.networking = {};
+
         Environments.get({envId: $stateParams.envId}).$promise.then(function(response) {
             vm.env = response;
+            console.log("vm.env ", vm.env);
 
             if(localConfig.data.features.handle) {
                 $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
@@ -23,7 +32,22 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
             vm.envOutput = vm.env.output;
             vm.processArgs = vm.env.processArgs; // todo deep copy
             vm.processEnvs = vm.env.processEnvs;
+            if (vm.env.networking)
+                vm.networking = vm.env.networking;
+
+            vm.emilEnvironments.forEach(function (element) {
+                if (element.envId === vm.env.runtimeId) {
+                    vm.containerRuntimeEnv = element;
+                }
+                if (element.isLinuxRuntime) {
+                    vm.runtimeEnvs.push(element);
+                }
+            });
         });
+
+        vm.replicateImage = function (envId, replicationType){
+            replicateImage(envId, replicationType )
+        };
 
         vm.saveEdit = function () {
 
@@ -39,6 +63,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
             vm.env.description = vm.description;
             vm.env.processArgs = vm.processArgs;
             vm.env.processEnvs = vm.processEnvs;
+            vm.env.containerRuntimeEnv = vm.containerRuntimeEnv;
 
             $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateContainerUrl, {
                 id: $stateParams.envId,
@@ -48,7 +73,9 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
                 outputFolder: vm.envOutput,
                 inputFolder: vm.envInput,
                 processEnvs: vm.processEnvs,
-                processArgs: vm.processArgs
+                processArgs: vm.processArgs,
+                networking: vm.networking,
+                containerRuntimeId: vm.containerRuntimeEnv.runNatively ? null : vm.containerRuntimeEnv.envId
             }).then(function (response) {
                 if (response.data.status === "0") {
                     growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -75,4 +102,5 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'Environments', '
                 }
             });
         };
+
     }];

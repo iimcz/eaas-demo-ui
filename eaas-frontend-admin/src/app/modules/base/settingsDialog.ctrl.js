@@ -13,6 +13,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
 
      vm.serverLogUrl = localConfig.data.eaasBackendURL + "Emil/serverLog";
      vm.usageLogUrl = localConfig.data.eaasBackendURL + "Emil/usageLog";
+
      vm.importEnvs = function () {
          $scope.$close();
 
@@ -54,6 +55,15 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
              }
          );
      };
+
+     vm.exportMetadata = function () {
+              $scope.$close();
+
+              $http.get(localConfig.data.eaasBackendURL + REST_URLS.exportMetadata).then(function (response) {
+                      $state.go('admin.standard-envs-overview', {}, {reload: true});
+                  }
+              );
+          };
 
      vm.showSetKeyboardLayoutDialog = function () {
          $uibModal.open({
@@ -124,7 +134,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'localConfig', 'kbLa
      };
 
      vm.checkState = function (_taskId, stayAtPage) {
-         var taskInfo = $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getContainerTaskState, _taskId)).then(function (response) {
+         var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
              if (response.data.status == "0") {
                  if (response.data.isDone) {
 

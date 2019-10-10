@@ -343,7 +343,7 @@
 
                                 <button ng-hide="containerLandingCtrl.env.isContainer" type="submit" class="btn btn-default" ng-click="containerLandingCtrl.sendCtrlAltDel()">{{'ACTIONS_CTRLALTDEL' | translate}}</button>
 
-                                <button ng-if="containerLandingCtrl.network || containerLandingCtrl.env.localServerMode"
+                                <button ng-if="containerLandingCtrl.network || containerLandingCtrl.env.networking.localServerMode"
                                         ng-click="containerLandingCtrl.openNetworkDialog()" class="btn btn-default">Connection info</button>
 
                                 <button id="emulator-downloadable-attachment-link" style="display: none;"
@@ -366,7 +366,7 @@
                             <img src="img/Eclipse-1s-200px.gif">
                         </div>
 
-                        <button id="containerOutputDownloadBtn" ng-hide="hideme" ng-click="hideme=true;">Download
+                        <button ng-click="containerLandingCtrl.getOutput()" ng-hide="hideme" ng-click="hideme=true;">Download
                             result
                         </button>
 

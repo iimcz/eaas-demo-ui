@@ -25,21 +25,16 @@
     </div>
     <div class="panel-body">
         <p>
+            <b>Object ID:</b> {{editObjectCharacterizationCtrl.metadata.id}}
+        </p>
+        <p>
             <b>Object Label:</b> {{editObjectCharacterizationCtrl.metadata.title}}
         </p>
 
         <p ng-bind-html="editObjectCharacterizationCtrl.metadata.summary"></p>
-            <p>
-                <b>Additional Description</b>
-            </p>
-            <div class="form-group">
-                <textarea ng-model="editObjectCharacterizationCtrl.description" class="form-control" style="resize: none;"
-                      rows="5"
-                      id="comment"></textarea>
-            </div>
 
         <div class="form-group">
-            <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isSoftware" ng-isabled="editObjectCharacterizationCtrl.isSoftware">
+            <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isSoftware" ng-disabled="editObjectCharacterizationCtrl.isSoftware">
             <label>Object is software</label>
         </div>
     </div>
@@ -145,7 +140,7 @@
             </div>
 
             <label>{{'SW_INGEST_NO_INSTANCES_LBL' | translate}}</label>
-            <input type="number" class="form-control"
+            <input type="number" class="form-control" ng-disabled="true"
                    ng-model="editObjectCharacterizationCtrl.softwareObj.allowedInstances">
             <br/>
 

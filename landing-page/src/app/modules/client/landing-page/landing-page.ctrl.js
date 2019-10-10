@@ -113,25 +113,26 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
                 if (vm.data) {
 
-                    if (vm.env.localServerMode)
+                    if (vm.env.networking.localServerMode)
                         params.hasTcpGateway = false;
                     else
-                        params.hasTcpGateway = vm.env.serverMode;
+                        params.hasTcpGateway = vm.env.networking.serverMode;
 
-                    params.hasInternet = vm.env.enableInternet;
-                    if (params.hasTcpGateway || vm.env.localServerMode) {
+                    params.hasInternet = vm.env.networking.enableInternet;
+                    if (params.hasTcpGateway || vm.env.networking.localServerMode) {
                         params.tcpGatewayConfig = {
                             socks: vm.env.enableSocks,
-                            gwPrivateIp: vm.env.gwPrivateIp,
-                            gwPrivateMask: vm.env.gwPrivateMask,
-                            serverPort: vm.env.serverPort,
-                            serverIp: vm.env.serverIp
+                            gwPrivateIp: vm.env.networking.gwPrivateIp,
+                            gwPrivateMask: vm.env.networking.gwPrivateMask,
+                            serverPort: vm.env.networking.serverPort,
+                            serverIp: vm.env.networking.serverIp
                         };
                     }
                 }
                 vm.proxy = "";
 
-                $('#containerOutputDownloadBtn').click(function () {
+
+                vm.getOutput = function () {
                     const unloadBackup = eaasClient.deleteOnUnload;
                     eaasClient.deleteOnUnload = false;
                     vm.isContOutDownloading = true;
@@ -158,7 +159,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     });
 
                     eaasClient.deleteOnUnload = unloadBackup;
-                });
+                };
 
                 vm.sendCtrlAltDel = function () {
                     window.eaasClient.sendCtrlAltDel();
@@ -195,7 +196,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                             jQuery(deferred.resolve);
                         })).done(function () {
 
-                        vm.downloadLink();
+                        vm.getOutput();
                     });
                     $("#emulator-downloadable-attachment-link").hide();
                 };

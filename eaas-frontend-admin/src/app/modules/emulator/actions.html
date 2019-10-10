@@ -10,10 +10,11 @@
         </button>
 
         <button type="submit" class="btn btn-default" ng-click="actionsCtrl.openPrintDialog()"
-                ng-disabled="actionsCtrl.emulator.state !== 'STARTED' && actionsCtrl.printJobsAvailable"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED' || !actionsCtrl.printJobsAvailable"
                 ng-show="actionsCtrl.enablePrinting">
             {{'ACTIONS_PRINT' | translate}}
         </button>
+
         <button type="submit" class="btn btn-default"
                 ng-click="actionsCtrl.openChangeMediaDialog()"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
@@ -21,7 +22,7 @@
             {{'ACTIONS_CHANGE_MEDIA' | translate}}
         </button>
 
-        <span  ng-if="actionsCtrl.shutdownByOs">
+        <span  ng-if="actionsCtrl.shutdownByOs && actionsCtrl.enableSaveEnvironment">
             <button type="submit"
                     class="btn btn-default"
                     ng-click="actionsCtrl.openSaveEnvironmentDialog()"  ng-disabled="actionsCtrl.emulator.state != 'STOPPED'"
@@ -33,7 +34,7 @@
                     class="btn btn-default" > <span class="glyphicon glyphicon-question-sign"></span></button>
         </span>
 
-        <button ng-if="!actionsCtrl.shutdownByOs"
+        <button ng-if="!actionsCtrl.shutdownByOs && actionsCtrl.enableSaveEnvironment"
                 type="submit"
                 class="btn btn-default"
                 ng-click="actionsCtrl.openSaveEnvironmentDialog()"
@@ -53,7 +54,7 @@
 
         <button type="submit" class="btn btn-default"
                 ng-click="actionsCtrl.sendCtrlAltDel()"
-                ng-if="actionsCtrl.emulator.mode === 'guac'"
+
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'">
             {{'ACTIONS_CTRLALTDEL' | translate}}
         </button>
@@ -72,14 +73,14 @@
         </button>
 
         <button class="btn btn-default"
-                ng-if="(chosenEnv.serverMode || chosenEnv.localServerMode)"
+                ng-if="(chosenEnv.networking.serverMode || chosenEnv.networking.localServerMode || actionsCtrl.emulator.detached)"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openNetworkDialog()">
             Connection Info
         </button>
 
         <button class="btn btn-default"
-                ng-if="!actionsCtrl.emulator.detached && chosenEnv.connectEnvs"
+                ng-if="!actionsCtrl.emulator.detached && chosenEnv.networking.connectEnvs"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openDetachDialog()" >
             Detach Network
@@ -87,6 +88,7 @@
 
         <button type="submit" class="btn btn-default"
                 ng-if="!actionsCtrl.emulator.detached"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.stopEmulator()">
             {{'ACTIONS_STOP' | translate}}
         </button>

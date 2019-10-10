@@ -6,6 +6,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     vm.config = localConfig.data;
     vm.activeView = 0;
     vm.archives = archives.data.archives;
+    vm.pageSize = "10";
 
     vm.updateTable = function(index, archive)
     {
@@ -29,7 +30,6 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     };
 
     $scope.onPageSizeChanged = function () {
-        console.log("page size changed: " + vm.pageSize);
         $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
     };
 
@@ -37,7 +37,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         return [
             {headerName: "ID", field: "id"},
             {
-                headerName: "title", field: "title"
+                headerName: "title", field: "title", sort: "asc"
             },
             {
                 headerName: "description", field: "description", cellRenderer: descriptiponRenderer, suppressSorting: true,

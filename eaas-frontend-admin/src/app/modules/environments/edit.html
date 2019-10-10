@@ -6,20 +6,20 @@
     <div style="text-align: right;">
 
         <button type="button" ng-if="!editEnvCtrl.editMode && editEnvCtrl.env.archive != 'remote'"
-                class="btn btn-outline-dark" ng-click="editEnvCtrl.editMode = true;">Edit</button>
+                class="btn btn-outline-dark" ng-click="editEnvCtrl.editMode = true;">{{'EDITENV_EDIT' | translate }}</button>
 
         <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
-                type="button" ui-sref="admin.emulator({envId: editEnvCtrl.env.envId})">{{'CHOOSE_ENV_RUN' | translate}}</button>
+                type="button" ui-sref="admin.emulator({envId: editEnvCtrl.env.envId, objectId: editEnvCtrl.env.objectId, objectArchive: editEnvCtrl.env.objectArchive})">{{'CHOOSE_ENV_RUN' | translate}}</button>
 
         <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
                 type="button" ng-click="editEnvCtrl.addSoftware(editEnvCtrl.env.envId)">{{'CHOOSE_ENV_ADDSW' | translate}}</button>
         <button class="btn btn-outline-dark" type="button"
                 ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'publish')"
-                ng-if="!editEnvCtrl.isObjectEnv && editEnvCtrl.env.archive == 'default'">Publish
+                ng-if="!editEnvCtrl.config.features.standalone && !editEnvCtrl.isObjectEnv && editEnvCtrl.env.archive == 'default'">{{'EDITENV_PUBLISH' | translate}}
         </button>
         <button class="btn btn-outline-dark" type="button"
                 ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'import')"
-                ng-if="editEnvCtrl.env.archive == 'remote'">Replicate
+                ng-if="!editEnvCtrl.config.features.standalone && editEnvCtrl.env.archive === 'remote'">{{'EDITENV_REPLICATE' | translate}}
         </button>
     </div>
     <hr>
@@ -63,12 +63,15 @@
                           ng-model="editEnvCtrl.envDescription"
                           placeholder="{{'EDITENV_DESC_PH' | translate}}" required></text-angular>
 
-
+            <p>
+                <label>{{'EDITENV_HELPTEXT' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode" ng-bind-html="editEnvCtrl.envHelpText"></span>
+                <text-angular ng-if="editEnvCtrl.editMode" ng-model="editEnvCtrl.envHelpText"></text-angular>
+            </p>
         </div>
 
         <div uib-accordion-group class="panel-default" is-open="status.openSystem">
             <uib-accordion-heading>
-                System
+                {{ 'EDITENV_SYSTEM_SETTINGS'| translate }}
                 <i class="pull-right glyphicon"
                    ng-class="{'glyphicon-chevron-down': status.openSystem, 'glyphicon-chevron-right': !status.openSystem}"></i>
             </uib-accordion-heading>
@@ -121,12 +124,15 @@
             </div>
             <br>
             <div class="form-group">
-                <label>Emulator Configuration:</label>
+                <label>{{'EDITENV_EMULATOR_CONFIG' | translate}}:</label>
                 <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.nativeConfig}}</span>
                 <textarea ng-if="editEnvCtrl.editMode" type="text"
                           class="form-control" ng-model="editEnvCtrl.nativeConfig"></textarea>
             </div>
             <br>
+            <label>Linux Runtime:
+                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.isLinuxRuntime">
+            </label><br/>
         </div>
 
         <div uib-accordion-group class="panel-default" is-open="status.openDrives">
@@ -159,7 +165,7 @@
 
         <div uib-accordion-group class="panel-default" is-open="status.openUI">
             <uib-accordion-heading>
-                UI Options
+                {{'EDITENV_UI_OPTIONS' | translate}}
                 <i class="pull-right glyphicon"
                    ng-class="{'glyphicon-chevron-down': status.openUI, 'glyphicon-chevron-right': !status.openUI}"></i>
             </uib-accordion-heading>
@@ -198,69 +204,12 @@
             </div>
         </div>
 
-        <div uib-accordion-group class="panel-default" is-open="status.openNet">
-            <uib-accordion-heading>
-                Networking
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openNet, 'glyphicon-chevron-right': !status.openNet}"></i>
-            </uib-accordion-heading>
-
-
-            <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.connectEnvs" >
-                <label>Enable networking</label>
-            </div>
-
-            <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox"  ng-model="editEnvCtrl.enableInternet" >
-                <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
-            </div>
-
-            <div class="form-group" ng-if="editEnvCtrl.connectEnvs">
-                <input type="checkbox"  ng-model="editEnvCtrl.serverMode">
-                <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
-            </div>
-
-            <div ng-if="editEnvCtrl.serverMode && editEnvCtrl.connectEnvs">
-
-                <div class="form-group">
-                    <input type="checkbox"  ng-model="editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_ENABLE_SOCKS' | translate}}</label>
-                </div>
-
-                <div class="form-group">
-                    <input type="checkbox"   ng-model="editEnvCtrl.localServerMode">
-                    <label>{{'EDITENV_ENABLE_LOCAL_MODE' | translate}}</label>
-                </div>
-
-                <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_SERVER_IP' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverIp">
-                </div>
-
-                <div class="form-group" ng-if="!editEnvCtrl.enableSocks">
-                    <label>{{'EDITENV_SERVER_PORT' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.serverPort">
-                </div>
-
-                <div class="form-group">
-                    <label>{{'EDITENV_GW_PRIVATE_IP' | translate}}</label>
-                    <input type="text"   class="form-control" ng-model="editEnvCtrl.gwPrivateIp">
-                </div>
-
-                <div class="form-group">
-                    <label>{{'EDITENV_GW_PRIVATE_MASK' | translate}}</label>
-                    <input type="text"  class="form-control" ng-model="editEnvCtrl.gwPrivateMask">
-                </div>
-
-                <p>
-                    <b>{{'EDITENV_HELPTEXT' | translate}}:</b> <br/>
-                    Symbols $$host$$ and $$port$$ would be substituted to real values on deployment. <br>
-                    Example: $$host$$:$$port$$/myPath/myPage.html = testserver:8080/myPath/myPage.html
-                    <text-angular ng-model="editEnvCtrl.envHelpText" ng-disabled="!editEnvCtrl.editMode" ></text-angular>
-                </p>
-            </div>
+        <!-- Include networking template
+           NOTE: you will find networkingTemplate in app.js-->
+        <div  ng-if="!editEnvCtrl.isLinuxRuntime" class="topSkip">
+            <networking-Template networking=editEnvCtrl.networking></networking-Template>
         </div>
+
     </uib-accordion>
 
     <!--
@@ -278,7 +227,7 @@
     -->
 
     <hr>
-    <h4 >Configured Software</h4>
+    <h4 >{{'EDITENV_SOFTWARE' | translate}}</h4>
     <div ng-show="editEnvCtrl.env.installedSoftwareIds.length > 0" >
         <ul>
             <li ng-repeat="softwareId in editEnvCtrl.env.installedSoftwareIds">{{softwareId}}</li>
@@ -286,12 +235,12 @@
     </div>
     <div ng-show="editEnvCtrl.env.installedSoftwareIds.length == 0">
         <p id="editEnvSoftwareListLabel">
-            <label>No software installed</label>
+            <label>{{'EDITENV_NO_SOFTWARE' | translate }}</label>
         </p>
     </div>
 
     <hr>
-    <h4>Revision History</h4>
+    <h4>{{'EDITENV_REV_HISTORY' | translate}}</h4>
     <div class="form-group" ng-show="editEnvCtrl.env.revisions.length > 0">
         <p>
             <label>{{'EDITENV_REVS' | translate}}:</label>
@@ -312,7 +261,7 @@
     </div>
     <div ng-show="!editEnvCtrl.env.revisions.length">
         <p>
-            <label>No revisions</label>
+            <label>{{'EDITENV_NO_REVS' | translate }}</label>
         </p>
     </div>
 
@@ -330,12 +279,12 @@
 
     <div>
         <span style="text-align: left;">
-             <button class="btn btn-danger" type="button" ng-click="editEnvCtrl.deleteEnvironment(editEnvCtrl.env.envId)">Delete Environment</button>
+             <button class="btn btn-danger" type="button" ng-click="editEnvCtrl.deleteEnvironment(editEnvCtrl.env.envId)">{{'EDITENV_DELETE_ENV' | translate }}</button>
         </span>
         <span style="float: right;">
             <button class="btn btn-default" type="button"
                     ui-sref="admin.edit-env({envId: editEnvCtrl.env.envId, objEnv: editEnvCtrl.isObjectEnv})" ui-sref-opts="{reload: true}">
-                    Reset</button>
+                    {{'EDITENV_RESET' | translate }}</button>
 
             <button type="submit" ng-if="editEnvCtrl.env.archive != 'remote'" class="btn btn-primary">{{'EDITENV_SAVE'| translate}}</button>
 

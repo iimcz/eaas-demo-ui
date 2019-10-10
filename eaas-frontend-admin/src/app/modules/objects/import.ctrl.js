@@ -9,15 +9,44 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
        };
 
        vm.repositories = repositoriesList.data.archives;
+       vm.selectedFiles = [];
 
-       vm.add = function()
+       vm.add = function(file, mediaType)
        {
-           console.log(vm.selectedFiles);
-           if(!vm.allFiles)
-               vm.allFiles = [];
+           let objectFile = {
+               file: file,
+               mediaType: mediaType
+           }
+           vm.selectedFiles.push(objectFile);
 
-           vm.allFiles = vm.allFiles.concat(vm.selectedFiles);
+           console.log(vm.selectedFiles);
        };
+
+       vm.removeFile = function(index)
+       {
+           vm.selectedFiles.splice(index);
+       }
+
+       vm.openFileModal = function() {
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/add-file-dialog.html'),
+                controller: ["$scope", function($scope) {
+                    this.select = function()
+                    {
+                        console.log(this.selectedFile);
+                        console.log(this.mediumType);
+                    }
+
+                    this.add = function()
+                    {
+                        vm.add(this.selectedFile, this.mediumType);
+                    }
+                }],
+                controllerAs: "selectFileModalCtrl"
+            });
+        };
+
 
        vm.checkState = function(_taskId, _modal)
        {
@@ -36,6 +65,30 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 }
                 else
                 {
+                    _modal.close();
+                    $state.go('error', {errorMsg: {title: "Object import failed"}});
+                }
+            });
+       };
+
+
+       vm.checkImportState = function(_taskId, _modal)
+       {
+            let taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function(response){
+                if(response.data.status == "0")
+                {
+                    if(response.data.isDone)
+                    {
+                        _modal.close();
+                        growl.success("import finished.");
+                        $state.go('admin.object-overview', {}, {reload: true});
+                    }
+                    else
+                        $timeout(function() {vm.checkImportState(_taskId, _modal);}, 2500);
+                }
+                else
+                {
+                    $state.go('error', {errorMsg: {title: "Object import failed"}});
                     _modal.close();
                 }
             });
@@ -72,9 +125,22 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
            });
        }
 
+        vm.importMetaData = function(modal, metaData)
+        {
+            $http.post(localConfig.data.eaasBackendURL + "/objects/import", {
+                label: vm.objectLabel,
+                files: metaData.files
+            }).then(function(response) {
+                vm.checkImportState(response.data.taskId, modal);
+            }, function(error) {
+                modal.close();
+
+            });
+
+        }
+
        vm.upload = function()
        {
-
            var uploadInfo = {
                title : "uploading ",
                msg : "please wait"
@@ -89,29 +155,30 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                controllerAs: "waitMsgCtrl"
            });
 
-           if (vm.allFiles && vm.allFiles.length) {
+           let objectMetaData = {
+               files: [],
+           };
+
+           if (vm.selectedFiles && vm.selectedFiles.length) {
                var uploadCnt = 0;
-               for (var i = 0; i < vm.allFiles.length; i++) {
+               for (var i = 0; i < vm.selectedFiles.length; i++) {
                  uploadCnt++;
                  Upload.upload({
-                   url: localConfig.data.eaasBackendURL + "objects/upload",
-                         data: {file: vm.allFiles[i], 'mediaType' : vm.mediumType, 'objectId' : vm.objectId}
-                     }).then(function (resp) {
-                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                   url: localConfig.data.eaasBackendURL + "upload",
+                         data: {file: vm.selectedFiles[i].file, uploadId: i}
+                     })
+                     .then(function (resp) {
+                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data.userDataUrl);
                          uploadCnt--;
+                         let deviceId =  vm.selectedFiles.find(x => x.file.name === resp.config.data.file.name).mediaType;
+                         let fileInfo = {
+                             filename: resp.config.data.file.name,
+                             url: resp.data.uploads[0],
+                             deviceId: deviceId,
+                            } ;
+                         objectMetaData.files.push(fileInfo);
                          if(uploadCnt === 0) {
-                           $http.post(localConfig.data.eaasBackendURL + REST_URLS.pushUploadUrl, {
-                                                       objectId: vm.objectId
-                           }).then(function(response) {
-                               if (response.data.status === "0") {
-                                   $state.go('admin.object-overview', {}, {reload: true});
-                               }
-                               else
-                               {
-                                   $state.go('error', {errorMsg: {title: "Load Environments Error " + response.data.status, message: response.data.message}});
-                               }
-                               modal.close();
-                           });
+                            vm.importMetaData(modal, objectMetaData);
                          }
                      }, function (resp) {
                          console.log('Error status: ' + resp.status);
