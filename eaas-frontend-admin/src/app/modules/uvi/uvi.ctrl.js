@@ -5,6 +5,12 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
         vm.classificationFinished = false;
         vm.classificationFailed = false;
         vm.environmentList = [];
+        
+        /* addional files to be uploaded */
+        vm.selectedFiles = [];
+
+        /* additional files: url / filename pairs */
+        vm.auxFiles = [];
 
         vm.start = function (envId) {
             $state.go('admin.emulator', {
@@ -83,37 +89,92 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 modal.close();
         });
     }
-    vm.upload = function()
-       {
-           var uploadInfo = {
-               title : "uploading ",
-               msg : "please wait"
-           };
 
-           var modal = $uibModal.open({
-               animation: true,
-               template: require('./modals/wait.html'),
-               controller: ["$scope", function($scope) {
-                   this.info = uploadInfo;
-               }],
-               controllerAs: "waitMsgCtrl"
-           });
+    vm.add = function(file)
+    {
+        let objectFile = {
+            file: file,
+        }
+        vm.selectedFiles.push(objectFile);
+    };
+
+    vm.removeFile = function(index)
+    {
+        vm.selectedFiles.splice(index);
+    }
+
+    vm.openFileModal = function() {
+        $uibModal.open({
+            animation: true,
+            template: require('./modals/add-file-dialog.html'),
+            controller: ["$scope", function($scope) {
+                this.add = function()
+                {
+                    vm.add(this.selectedFile, this.mediumType);
+                } 
+            }],
+            controllerAs: "selectFileModalCtrl"
+        });
+    };
+
+    vm.uploadJob = function(_filename, _uploadInfo)
+    {
+        let promise = new Promise(function(resolve, reject) {
             Upload.upload({
-            url: localConfig.data.eaasBackendURL + "upload",
-                data: {file: vm.selectedFile}
-            })
-            .then(function (resp) {
-                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data.userDataUrl);
-                vm.runUVI(modal, resp.data.uploads[0], resp.config.data.file.name);
-            }, function (resp) {
-                console.log('Error status: ' + resp.status);
-                modal.close();
-                $state.go('error', {errorMsg: {title: "Load Environments Error " + resp.data.status, message: resp.data.message}});
-            }, function (evt) {
-                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-                uploadInfo.title = "Uploading Object(s) " + evt.config.data.file.name;
-                uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
-            });
+                url: localConfig.data.eaasBackendURL + "upload",
+                    data: {file: _filename}
+                })
+                .then(function (resp) {
+                    let fileInfo = {
+                        filename: resp.config.data.file.name,
+                        url: resp.data.uploads[0],
+                    }
+                    resolve(fileInfo);
+                    console.log('Success uploaded. Response: ' + resp.data.userDataUrl);
+                }, function (resp) {
+                    reject(Error(resp));
+                }, function (evt) {
+                    if(_uploadInfo) {
+                        var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                        _uploadInfo.title = "Uploading Object(s) " + evt.config.data.file.name;
+                        _uploadInfo.msg = 'upload: ' + evt.config.data.file.name + ' (' + progressPercentage + '%)';
+                    }       
+                }
+                );
+        });
+        return promise;
+    }
+
+    vm.upload = async function()
+    {
+        var uploadInfo = {
+            title : "uploading ",
+            msg : "please wait"
+        };
+
+        var modal = $uibModal.open({
+            animation: true,
+            template: require('./modals/wait.html'),
+            controller: ["$scope", function($scope) {
+                this.info = uploadInfo;
+            }],
+            controllerAs: "waitMsgCtrl"
+        });
+        
+        try { 
+            let uploadFile = await vm.uploadJob(vm.selectedFile, uploadInfo);
+            
+            for(let element of vm.selectedFiles) {
+                let uploadJob = await vm.uploadJob(element.file, uploadInfo);
+                vm.auxFiles.push(uploadJob);
+            }
+            vm.runUVI(modal, uploadFile.url, uploadFile.filename);
+        }
+        catch(error)
+        {
+            console.log(error);
+            modal.close();
+            $state.go('error', {errorMsg: {title: "Upload Error " , message: ""}});
+        }
     } 
 }];

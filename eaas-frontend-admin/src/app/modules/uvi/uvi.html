@@ -6,18 +6,35 @@
         <div class="panel-body">
             <div class="form-group">
                 <label>Upload a file to render: </label>  {{uviCtrl.selectedFile.name}}  
+                <span style="float: right;">
+                        <button type="button" class="btn btn-default" 
+                        ng-model="uviCtrl.selectedFile" 
+                        ngf-select="uviCtrl.select()" ngf-multiple="false" >Choose</button> &nbsp;
+                </span>
             </div>
             <div class="form-group">
-                <input type="checkbox" ng-model="uviCtrl.writeable">
-                <label>Use writeable media (supports data export)</label>
+                <label><input type="checkbox" ng-model="uviCtrl.writeable"> Use writeable media (supports data export) </label>
             </div>
-            <div style="text-align: right; max-width: 750;">
-                    <button type="button" class="btn btn-default" 
-                    ng-model="uviCtrl.selectedFile" 
-                    ngf-select="uviCtrl.select()" ngf-multiple="false" >Choose</button> &nbsp;
-                <button ng-if="uviCtrl.selectedFile" type="button" class="btn btn-default" ng-click="uviCtrl.upload()">Upload</button>
+            <div class="form-group" ng-if="uviCtrl.selectedFile" style="max-width: 450;">
+                <label>Upload additional files</label>
+                <ul>
+                    <li ng-repeat="f in uviCtrl.selectedFiles" style="font: smaller">
+                        <b>{{f.file.name}}</b> 
+                        <span style="float: right">
+                            <button type="button" class="btn btn-default" ng-click="uploadCtrl.removeFile($index)">delete</button></li>
+                        </span>
+                </ul>
+                <div style="text-align: right;">
+                    <button type="button" class="btn btn-default" ng-click="uviCtrl.openFileModal()">Add File</button>
+                </div>
             </div>
         </div>
+        <div class="panel-footer">      
+            <div style="text-align: right; max-width: 750;"> 
+                <button ng-disabled="!uviCtrl.selectedFile" type="button" class="btn btn-default" ng-click="uviCtrl.upload()">Upload</button>
+            </div>
+        </div>
+
         
     </div>
     <div class="panel panel-default" ng-if="uviCtrl.classificationFinished">
