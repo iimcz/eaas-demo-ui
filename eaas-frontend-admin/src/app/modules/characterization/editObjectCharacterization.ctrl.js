@@ -15,7 +15,6 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
-        console.log(response);
      });
 
     Environments.query().$promise.then(function(response) {
@@ -56,7 +55,8 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
                 animation: true,
                 template: require('./modals/wait.html'),
                 controller: ["$scope", function($scope) {
-                    this.info = "Please wait";
+
+                    this.info = {msg : "Please wait", title : "Analysing object" };
                 }],
                 controllerAs: "waitMsgCtrl"
             });
