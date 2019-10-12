@@ -176,7 +176,8 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
 
      vm.saveSoftware = function() {
         vm.softwareObj.objectId = $stateParams.objectId;
-        vm.softwareObj.label = vm.metadata.title;
+        if(vm.metadata)
+            vm.softwareObj.label = vm.metadata.title;
 
         vm.softwareObj.archiveId = $stateParams.objectArchive;
 

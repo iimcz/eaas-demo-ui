@@ -21,6 +21,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                      filename: vm.filename,
                      writeable: vm.writeable,
                      environments: vm.environmentList,
+                     auxFiles: vm.auxFiles
                  }
             }, {reload: true});
         }
