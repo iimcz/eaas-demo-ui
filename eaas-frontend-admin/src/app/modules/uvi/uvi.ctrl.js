@@ -82,7 +82,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
     {
         $http.post(localConfig.data.eaasBackendURL + `classification` , {
             url: url,
-            filename: "test"
+            filename: filename
             }).then(function(response) {
                 vm.checkState(response.data.taskId, modal, url, filename);
             }, function(error) {
