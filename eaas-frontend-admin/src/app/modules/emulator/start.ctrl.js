@@ -194,6 +194,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 data.uviUrl = $stateParams.uvi.url;
                 data.uviFilename = $stateParams.uvi.filename;
                 data.uviWriteable = $stateParams.uvi.writeable;
+                data.auxFiles = $stateParams.uvi.auxFiles;
                 data.type = "uvi";
             }
             envs.push({data, visualize: true});
