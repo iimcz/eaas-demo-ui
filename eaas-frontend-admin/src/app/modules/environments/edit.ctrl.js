@@ -12,7 +12,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
        var vm = this;
        vm.networking = {};
        vm.config = localConfig.data;
-       
+
        vm.editMode = false;
        let emulatorContainerVersionSpillter = "|";
 
@@ -323,13 +323,14 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                       else if (response.data.status === "2") {
                           $uibModal.open({
                               animation: true,
-                              templateUrl: './modals/confirm-delete.html',
+                              template: require('./modals/confirm-delete.html'),
                               controller: ["$scope", function($scope) {
                                   this.envId = envId;
                                   this.confirmed = confirmDeleteFn;
                               }],
                               controllerAs: "confirmDeleteDialogCtrl"
                           });
+                          $state.go('admin.standard-envs-overview', {}, {reload: true});
                       }
                       else {
                           $rootScope.chk.transitionEnable = true;
