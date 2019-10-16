@@ -27,7 +27,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
 
     vm.enablePrinting = false;
-    vm.enableSaveEnvironment = false;
+    vm.enableSaveEnvironment = (chosenEnv == null);
     vm.isKVM = false;
 
     if (chosenEnv)
@@ -36,7 +36,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         vm.shutdownByOs = chosenEnv.shutdownByOs;
         if(chosenEnv.nativeConfig)
             vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
-            
+
         if(chosenEnv.drives)
         {
             for(let d of chosenEnv.drives)
