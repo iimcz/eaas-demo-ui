@@ -16,17 +16,12 @@
                 <label><input type="checkbox" ng-model="uviCtrl.writeable"> Use writeable media (supports data export) </label>
             </div>
             <div class="form-group" ng-if="uviCtrl.selectedFile" style="max-width: 450;">
-                <label>Upload additional files</label>
+                <label>Upload additional files</label> <a href="" ng-click="uviCtrl.openFileModal()"><span class="glyphicon glyphicon-plus-sign"></span></a>
                 <ul>
                     <li ng-repeat="f in uviCtrl.selectedFiles" style="font: smaller">
-                        <b>{{f.file.name}}</b> 
-                        <span style="float: right">
-                            <button type="button" class="btn btn-default" ng-click="uviCtrl.removeFile($index)">delete</button></li>
-                        </span>
-                </ul>
-                <div style="text-align: right;">
-                    <button type="button" class="btn btn-default" ng-click="uviCtrl.openFileModal()">Add File</button>
-                </div>
+                        <b>{{f.file.name}}</b>
+                            <a href="" ng-click="uviCtrl.removeFile($index)"><span class="glyphicon glyphicon-trash"></span></a></li>
+                </ul>            
             </div>
         </div>
         <div class="panel-footer">      
