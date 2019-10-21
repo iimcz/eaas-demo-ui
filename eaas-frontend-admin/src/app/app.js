@@ -339,6 +339,8 @@ function($stateProvider,
       'de_*': 'de'
     });
 
+    $translateProvider.fallbackLanguage('en');
+
     // automatically choose best language for user
     $translateProvider.determinePreferredLanguage();
     // $translateProvider.preferredLanguage('en');
