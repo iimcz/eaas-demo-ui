@@ -214,7 +214,8 @@
   "EDITENV_OBJ_DEPENDENCIES" : "Manuell zugeordnete Objekte",
   "EDITENV_NATIVE_CONFIG" : "Native config",
   "EDITENV_CONTAINER_EMULATOR" : "Emulator Version",
-  "EDITENV_XPRA": "XPRA Video (Experimental)",
+  "EDITENV_XPRA": "XPRA Video (Beta)",
+  "EDITENV_WEBRTC" : "WebRTC Audio (Beta)",
   "EDITENV_XPRA_ENCODING": "XPRA Encoding",
 
   "EDITENV_CANCONNECTENVS": "Umgebung verbinden (Experimental)",

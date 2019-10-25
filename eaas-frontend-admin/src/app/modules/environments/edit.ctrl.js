@@ -56,6 +56,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             if (vm.env.networking)
                 vm.networking = vm.env.networking;
             vm.useXpra = vm.env.useXpra;
+            vm.useWebRTC = vm.env.useWebRTC;
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
@@ -167,6 +168,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    os: this.os ? this.os.id : null,
                    userTag: this.userTag,
                    useXpra : this.useXpra,
+                   useWebRTC : this.useWebRTC,
                    nativeConfig: this.nativeConfig,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
                    networking : vm.networking,
