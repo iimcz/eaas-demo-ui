@@ -38,7 +38,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     vm.envs.forEach(function (element) {
                         if(element.envType != 'object')
                             return;
-                        rowData.push({name: element.title, id: element.envId, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
+                        rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared", objectId : element.objectId})
                     })
                 } else if (vm.view == 2) {
                     vm.envs.forEach(function (element) {
@@ -249,7 +249,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                   </li>
                   
                   <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
-                  <li role="menuitem"><a ng-if="data.archive == 'default'" class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
+                  <li role="menuitem"><a ng-if="data.archive == 'default'"  class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li ng-if="data.archive != 'remote'" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
                   
                   <li role="menuitem"><a ng-if="landingPage" target="_blank" class="dropdown-content"
