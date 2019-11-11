@@ -36,7 +36,8 @@
   "ACTIONS_ESC" : "Esc",
   "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
   "ACTIONS_SNAPSHOT": "Snapshot",
-  "ACTIONS_PRINT_READY" : "Ein neuer Druckauftrag liegt vor",
+  "ACTIONS_PRINT_READY" : "Druckauftrag ist fertig",
+  "ACTIONS_PRINT_FAILED" : "Druckauftrag ist fehlgeschlagen",
 
   "CONTAINER_ACTIONS_ABORT" : "Abbrechen",
   "CONTAINER_STOPPED" : "Beendet",
@@ -230,7 +231,7 @@
   "EDITENV_GW_PRIVATE_MASK" : "Interne IP Maske des Gateways (dezimal)",
   "EDITENV_CLOSE" : "Zurück zur Übersicht",
   "EDITENV_SYSTEM_SETTINGS" : "Systemeinstellungen",
-  "EDITENV_EMULATOR_CONFIG" : "Emulator Parameter", 
+  "EDITENV_EMULATOR_CONFIG" : "Emulator Parameter",
   "EDITENV_UI_OPTIONS" : "Darstellungsoptionen",
   "EDITENV_EDIT" : "Bearbeiten",
   "EDITENV_PUBLISH" : "Veröffentlichen",

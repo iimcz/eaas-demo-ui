@@ -26,7 +26,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     }
 
 
-    vm.enablePrinting = false;
+    vm.enablePrinting = (chosenEnv == null);
     vm.enableSaveEnvironment = (chosenEnv == null);
     vm.isKVM = false;
 
@@ -53,9 +53,17 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         $rootScope.$on('emulatorStart', function(event, args) {
             window.eaasClient.eventSource.addEventListener('print-job', function(e) {
                 var obj = JSON.parse(e.data);
-                if(obj && obj.status === 'done') {
+                if (!obj) {
+                    console.warn('Parsing print-job notification failed!');
+                    return;
+                }
+
+                if (obj.status === 'done') {
                     vm.printJobsAvailable = true;
-                    growl.info($translate.instant('ACTIONS_PRINT_READY'));
+                    growl.info($translate.instant('ACTIONS_PRINT_READY') + ': ' + obj.filename);
+                }
+                else if (obj.status === 'failed') {
+                    growl.warning($translate.instant('ACTIONS_PRINT_FAILED') + ': ' + obj.filename);
                 }
             });
         });

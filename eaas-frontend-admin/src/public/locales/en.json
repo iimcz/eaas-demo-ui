@@ -37,7 +37,8 @@
   "ACTIONS_ESC" : "Send Esc",
   "ACTIONS_SAVESESSION_HELP" : "Shutdown the guest OS to enable this feature",
   "ACTIONS_SNAPSHOT": "Snapshot",
-  "ACTIONS_PRINT_READY" : "A new print job is ready.",
+  "ACTIONS_PRINT_READY" : "Print job is done",
+  "ACTIONS_PRINT_FAILED" : "Print job has failed",
 
   "CONTAINER_ACTIONS_ABORT" : "Abort",
 
@@ -222,7 +223,7 @@
   "EDITENV_XPRA_ENCODING": "XPRA Encoding",
   "EDITENV_CLOSE" : "Back to overview",
   "EDITENV_SYSTEM_SETTINGS" : "Emulation system settings",
-  "EDITENV_EMULATOR_CONFIG" : "Emulator configuration", 
+  "EDITENV_EMULATOR_CONFIG" : "Emulator configuration",
   "EDITENV_UI_OPTIONS" : "UI options",
   "EDITENV_EDIT" : "Edit",
   "EDITENV_PUBLISH" : "Publish",
