@@ -63,6 +63,12 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.drives = vm.env.drives;
             vm.isLinuxRuntime = vm.env.isLinuxRuntime;
             vm.envHelpText = vm.env.helpText;
+            if(vm.env.timeContext)
+            {
+               vm.datetimePicker.date.setTime(vm.env.timeContext);
+               console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
+               vm.showDateContextPicker = false;
+            }
 
             for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
                 if (vm.operatingSystemsMetadata[i].id === vm.env.os)
@@ -240,12 +246,6 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    cancel: {}
                }
            };
-
-           if(this.env.timeContext)
-           {
-               vm.datetimePicker.date.setTime(this.env.timeContext);
-               vm.showDateContextPicker = true;
-           }
 
            if ($translate.use() === 'de') {
                vm.datetimePicker.buttonBar = {
