@@ -47,6 +47,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             else
                 vm.xpraEncoding = "jpeg";
 
+            vm.timestamp = (new Date(vm.env.timestamp)).toString();
             vm.envTitle = vm.env.title;
             vm.author = vm.env.author;
             vm.envDescription = vm.env.description;

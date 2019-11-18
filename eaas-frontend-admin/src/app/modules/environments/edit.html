@@ -28,6 +28,10 @@
     </div>
 
     <div>
+        <label>{{'EDITENV_TIMESTAMP' | translate}}:</label> {{editEnvCtrl.timestamp}}
+    </div>
+
+    <div>
         <label> Name: </label> <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.envTitle}}</span>
         <span ng-if="editEnvCtrl.editMode">
             <input id="tagi" type="text"
