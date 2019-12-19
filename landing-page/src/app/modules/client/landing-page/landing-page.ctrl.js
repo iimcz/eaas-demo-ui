@@ -110,6 +110,9 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 input.destination = vm.env.input;
                 input.content = inputs;
                 params.input_data.push(input);
+                if (vm.env.objectId) {
+                    params.object = vm.env.objectId;
+                }
 
                 if (vm.data) {
 
