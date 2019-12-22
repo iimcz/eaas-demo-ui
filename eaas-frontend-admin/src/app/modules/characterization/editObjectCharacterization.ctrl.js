@@ -15,6 +15,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
+        vm.objEnvironments = response.objectEnvironments.environmentList;
      });
 
     Environments.query().$promise.then(function(response) {
