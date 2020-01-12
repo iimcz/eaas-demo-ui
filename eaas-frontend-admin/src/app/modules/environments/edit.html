@@ -238,7 +238,11 @@
     <h4 >{{'EDITENV_SOFTWARE' | translate}}</h4>
     <div ng-show="editEnvCtrl.env.installedSoftwareIds.length > 0" >
         <ul>
-            <li ng-repeat="softwareId in editEnvCtrl.env.installedSoftwareIds">{{softwareId}}</li>
+            <li ng-repeat="software in editEnvCtrl.env.installedSoftwareIds">
+                <a ui-sref="admin.edit-object-characterization({swId: software.id, objectId: software.id, objectArchive: software.archive})">
+                    {{software.label}}
+                </a>
+            </li>
         </ul>
     </div>
     <div ng-show="editEnvCtrl.env.installedSoftwareIds.length == 0">
