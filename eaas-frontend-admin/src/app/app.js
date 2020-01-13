@@ -822,19 +822,6 @@ function($stateProvider,
                 }
             }
         })
-        .state('admin.images', {
-            url: "/images",
-            params: {},
-            resolve: {
-               
-            },
-            views: {
-                'wizard': {
-                    template: require('./modules/images/overview.html'),
-                    controller: "ImagesOverviewController as imagesCtrl"
-                }
-            }
-        })
     ;
     growlProvider.globalTimeToLive(5000);
 }]);

@@ -31,8 +31,6 @@ emilUIModule.controller('EmulatorStartController', require('./emulator/start.ctr
 emilUIModule.controller('EmulatorActionsController', require('./emulator/actions.ctrl.js'));
 emilUIModule.controller('EmulatorConnectedEnvsController', require('./emulator/modals/connected-envs.ctrl.js'));
 
-emilUIModule.controller('ImagesOverviewController', require('./images/overview.ctrl.js'));
-
 // handle
 emilUIModule.controller('HandleOverviewController', require('./handle/overview.ctrl.js'));
 emilUIModule.controller('EditHandleController', require('./handle/edit.ctrl.js'));
