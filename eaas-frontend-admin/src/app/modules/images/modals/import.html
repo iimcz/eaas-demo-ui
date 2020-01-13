@@ -1,0 +1,59 @@
+<div class="modal-header">
+    <h3 class="modal-title">Image Management</h3>
+</div>
+
+<div class="modal-body">
+    <form name="myForm">
+        <div class="panel panel-default">
+            <div class="panel-heading">Add Disk Media</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Disk image label: </label>
+                    <input class="form-control" type="text" ng-model="importDlgCtrl.label" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="radio" ng-model="importDlgCtrl.mode" value="create"> <label>Create new image</label>
+                </div>
+
+                <div class="form-group">
+                    <label>{{'SW_NEW_IMAGE_NEW_HD_LBL' | translate}}
+                        {{'SW_NEW_IMAGE_NEW_HD_SIZE_LBL' | translate}}</label>
+                    <input type="text" class="form-control" ng-model="importDlgCtrl.hdsize"
+                        ui-mask="?9?9?9?9?9?9?9?9 MB" ui-mask-placeholder ui-mask-placeholder-char="​\u200B" 
+                        ng-disabled="importDlgCtrl.mode !== 'create'"
+                        ng-required="importDlgCtrl.mode == 'create'" />
+                </div>
+
+
+                <div class="form-group">
+                    <input type="radio" ng-model="importDlgCtrl.mode" value="upload"> <label>Import image</label>
+                </div>
+                <div class="form-group">
+                    Supported disk image formats:<br>
+                    <ul>
+                        <li>RAW disk images</li>
+                        <li>VirtualBox VDI</li>
+                        <li>Virtual PC VHD</li>
+                        <li>VMware VMDK </li>
+                        <li>Expert Witness Format (EnCase) EWF (only a single image file can be
+                            imported (.E01)</li>
+                        <li>Qemu QCOW2</li>
+                    </ul>
+                    <label>
+                        <!--<input type="radio" ng-model="newImageCtrl.hdtype" value="url">-->
+                        <span>{{'SW_NEW_IMAGE_HD_URL_LBL' | translate}}</span>
+                    </label>
+                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.hdurl"
+                        ng-disabled="importDlgCtrl.mode !== 'upload'"
+                        ng-required="importDlgCtrl.mode == 'upload'" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$close(); importDlgCtrl.import();">OK </button>
+    <button class="btn btn-default" type="button" ng-click="$close()">Cancel</button>
+</div>

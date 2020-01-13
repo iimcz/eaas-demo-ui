@@ -1,0 +1,35 @@
+<h2 class="m-t-0">Environment Disks</h2>
+
+<div class="tekstMore"></div>
+<div style="float: right;">
+    <input type="text" class="form-control" ng-model="imagesCtrl.gridOptions.quickFilterText"
+           placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}"/>
+</div>
+<div style="padding: 4px;">
+    <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{imagesCtrl.rowCount}}</b></div>
+
+    <div style="top: 0; left: 0;">
+        <div class="ag-theme-balham"> Page Size:
+            <select ng-click="onPageSizeChanged()" ng-model="imagesCtrl.pageSize">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="100">100</option>
+                <option value="500">500</option>
+            </select>
+        </div>
+    </div>
+    <span style="vertical-align: text-bottom; display: inline-block">
+            <button type="button" class="btn btn-default" ng-click="imagesCtrl.importDlg();">
+                <span 
+                class="glyphicon glyphicon-plus"></span>
+                Import
+            </button>
+    </span>
+</div>
+
+<div style="width: 100%;"
+     ag-grid="gridOptions"
+     class="ag-theme-balham">
+</div>
