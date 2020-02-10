@@ -37,7 +37,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         return [
             {headerName: "ID", field: "id"},
             {
-                headerName: "title", field: "title", sort: "asc"
+                headerName: "title", field: "Name", sort: "asc"
             },
             {
                 headerName: "description", field: "description", cellRenderer: descriptiponRenderer, suppressSorting: true,
@@ -100,6 +100,16 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         return `<abbr title="{{data.description}}">{{data.description}}</abbr>`;
     }
 
+    function userObjectRenderer(params) {
+        return `
+        <div style="padding-top: 10px; padding-bottom: 10px;" >
+            <div class="overview-label">{{data.title}}<br>
+            <span class="overview-content">
+                <b>ID:</b> {{data.id}} &nbsp; <p>
+                <span ng-bind-html="data.description"></span>
+            </span></div></div>`;
+    }
+
     vm.getArchiveHeader = function(item)
     {
         if(item === 'zero conf')
@@ -127,9 +137,12 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         animateRows: true,
         onGridReady: function (params) {
             $scope.gridOptions.api.sizeColumnsToFit();
+            window.onresize = () => {
+                $scope.gridOptions.api.sizeColumnsToFit();
+            }        
         },
         pagination: true,
-        paginationPageSize: 20,
+        paginationPageSize: 10,
         paginationNumberFormatter: function (params) {
             return '[' + params.value.toLocaleString() + ']';
         },

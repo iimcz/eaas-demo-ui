@@ -1,4 +1,5 @@
 import {stopClient} from "./utils/stop-client";
+import {WaitModal} from "../../lib/task.js"
 
 module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'Environments', 'helperFunctions', 'REST_URLS',
@@ -10,26 +11,17 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
     $rootScope.chosenEnv = chosenEnv;
-    vm.currentMediumLabel = null;
     $scope.idsData;
     vm.printJobsAvailable = false;
+    vm.showKeys = false;
 
-    var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
-    var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
-
-    if(objectId) {
-        Objects.get({archiveId: objectArchive, objectId: objectId}).$promise.then(function(response) {
-            vm.mediaCollection = response.mediaItems;
-                if(vm.mediaCollection)
-                    vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
-        });
-    }
-
+    vm.mediaList = [];
+    vm.removableMediaList = [];
 
     vm.enablePrinting = (chosenEnv == null);
     vm.enableSaveEnvironment = (chosenEnv == null);
     vm.isKVM = false;
-
+    vm.waitModal = new WaitModal($uibModal);
     if (chosenEnv)
     {
         vm.enablePrinting = chosenEnv.enablePrinting;
@@ -76,6 +68,26 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
        });
     };
 
+    vm.toggleKeyboard = function()
+    {
+        if(!vm.showKeys) {
+            $("#emulator-keys").show();
+            $("emulator-kbd").show();
+            var elem = document.querySelector('#emulator-kbd');
+            console.log(elem);
+            elem.style.visibility = 'visible';
+
+            vm.showKeys = true;
+        } 
+        else {
+            $("#emulator-keys").hide();
+            $("emulator-kbd").hide();
+            var elem = document.querySelector('#emulator-kbd');
+            console.log(elem);
+            elem.style.visibility = 'hidden';
+            vm.showKeys = false;
+        }
+    }
 
     var printSuccessFn = function(data) {
         $uibModal.open({
@@ -159,68 +171,84 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     var eaasClientReadyTimer = function() {
         if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
             vm.driveId = window.eaasClient.driveId;
+            vm.removableMediaList = window.eaasClient.removableMediaList;
+            vm.mediaList = [];
+
+            if(vm.removableMediaList && vm.removableMediaList.length) {
+                
+                for(let i = 0; i < window.eaasClient.removableMediaList.length; i++)
+                {
+                    let mediaItem = {};
+                    let element = window.eaasClient.removableMediaList[i];
+                    mediaItem.driveId = element.driveIndex;
+                    Objects.get({archiveId: element.archive, objectId: element.id}).$promise.then(function(response) {
+                        mediaItem.mediaCollection = response.mediaItems;
+                        mediaItem.objectId = element.id;
+                        mediaItem.archive = element.archive;
+                        if(mediaItem.mediaCollection) 
+                        {
+                            mediaItem.currentMediumLabel = mediaItem.mediaCollection.file.length > 0 ? mediaItem.mediaCollection.file[0].localAlias : null;
+                            mediaItem.chosen_medium_label = mediaItem.currentMediumLabel;
+                            mediaItem.media = mediaItem.mediaCollection.file;
+                            mediaItem.mediumTypes = [];
+                            for(var i = 0; i < mediaItem.media.length; i++)
+                            {
+                                if(!mediaItem.mediumTypes.includes(mediaItem.media[i].type))
+                                {
+                                    mediaItem.mediumTypes.push(mediaItem.media[i].type);
+                                }
+                            }
+                        }
+                    });
+                    vm.mediaList.push(mediaItem);
+                }
+            }
                 return;
         }
-        $timeout(eaasClientReadyTimer, 100);
+        $timeout(eaasClientReadyTimer, 500);
     };
-    $timeout(eaasClientReadyTimer);
+    $timeout(eaasClientReadyTimer, 500);
 
     vm.openChangeMediaDialog = function() {
         $uibModal.open({
             animation: true,
             template: require('./modals/change-media.html'),
             controller: ["$scope", function($scope) {
-                this.chosen_medium_label = vm.currentMediumLabel;
-
-                if(vm.mediaCollection != null)
+                this.mediaList = vm.mediaList;
+                this.entriesByMedia = function(i, m)
                 {
-                  this.media = vm.mediaCollection.file;
+                    let mediaItem = vm.mediaList[i];
+                    let result = [];
+                    if(!mediaItem)
+                        return result;
 
-                  this.mediumTypes = [];
-                  for(var i = 0; i < this.media.length; i++)
-                  {
-                    if(!this.mediumTypes.includes(this.media[i].type))
+                    for(var _i = 0; _i < mediaItem.media.length; _i++)
                     {
-                        this.mediumTypes.push(this.media[i].type);
-                    }
-                  }
-                  console.log(this.mediumTypes);
-                }
-
-                this.entriesByMedia = function(m)
-                {
-                    var result = [];
-                    for(var i = 0; i < this.media.length; i++)
-                    {
-                        if(this.media[i].type === m)
-                             result.push(this.media[i]);
+                        if(mediaItem.media[_i].type === m)
+                             result.push(mediaItem.media[_i]);
                     }
                     return result;
                 }
-
+                    
                 this.isChangeMediaSubmitting = false;
 
-                this.objectId = $stateParams.softwareId;
-                if(!this.objectId)
-                    this.objectId = $stateParams.objectId;
+                this.changeMedium = function(i) {
 
-                this.changeMedium = function(newMediumLabel) {
-                    if (newMediumLabel == null) {
+                    let mediaItem = vm.mediaList[i];
+                    if (mediaItem.chosen_medium_label == null) {
                         growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
                         return;
                     }
-
+                    
                     this.isChangeMediaSubmitting = true;
-
                     var postObj = {};
-                    postObj.objectId = this.objectId;
-
-                    postObj.driveId = window.eaasClient.driveId;
-                    postObj.label = newMediumLabel;
+                    postObj.objectId = mediaItem.objectId;
+                    postObj.driveId = mediaItem.driveId;
+                    postObj.label = mediaItem.chosen_medium_label;
 
                     var changeSuccsessFunc = function(data, status) {
-                        growl.success($translate.instant('JS_MEDIA_CHANGETO') + newMediumLabel);
-                        vm.currentMediumLabel = newMediumLabel;
+                        growl.success($translate.instant('JS_MEDIA_CHANGETO') + mediaItem.chosen_medium_label);
+                        mediaItem.currentMediumLabel = mediaItem.chosen_medium_label;
                         $scope.$close();
                         $("html, body").removeClass("wait");
                     };
@@ -388,6 +416,19 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         postReq.objectId = $stateParams.objectId;
                         postReq.userId = $stateParams.userId;
                         postReq.isRelativeMouse = this.isRelativeMouse;
+                        postReq.cleanRemovableDrives = !this.cleanRemovableDrives;
+
+                        var snapshotDoneFunc2 = () =>{
+                            vm.waitModal.hide();
+                            window.eaasClient.realEnvId = undefined;
+                            window.eaasClient.release();
+                            if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
+                            else
+                                $state.go('admin.standard-envs-overview', {}, {reload: true});
+                            $scope.$close();
+                            window.isSavingEnvironment = false;
+                        }
 
                         var snapshotDoneFunc = (data, status) => {
                             console.log("error status: " + status);
@@ -397,16 +438,23 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
                                 snapshotErrorFunc(data.message);
                                 return;
-                            }
+                            }           
 
-                            growl.success(status, {title: $translate.instant('JS_ACTIONS_SUCCESS')});
-                            window.eaasClient.release();
-                            if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
+                            if(window.eaasClient.realEnvId) {
+                                $.ajax({
+                                    type: "DELETE",
+                                    url: localConfig.data.eaasBackendURL + "sessions/" + $window.eaasClient._groupId + "/resources",
+                                    headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
+                                    async: true,
+                                    contentType: "application/json",
+                                    data: JSON.stringify([vm.envId])
+                                }).then(function (data, status, xhr) {
+                                    snapshotDoneFunc2();
+                                })
+                            }
                             else
-                                $state.go('admin.standard-envs-overview', {}, {reload: true});
-                            $scope.$close();
-                            window.isSavingEnvironment = false;
+                                snapshotDoneFunc2();
+                            
                         };
 
                         var snapshotErrorFunc = error => {
@@ -419,7 +467,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                             $scope.$close();
                             window.isSavingEnvironment = false;
                         };
-
+                        vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
                         $('#emulator-container').show();
                     };

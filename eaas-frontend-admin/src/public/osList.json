@@ -1,12 +1,216 @@
 {
   "operatingSystems" : [
-    {"id":"os:windows:xp:32bit", "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}]},
-    {"id":"os:windows:xp:64bit", "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}]},
-    {"id":"os:windows:9x", "puids": [{"puid": "x-fmt/410"}, {"puid": "x-fmt/409"}, {"puid": "x-fmt/411"}, {"puid": "fmt/899"}]},
-    {"id":"os:windows:311", "puids": [{"puid": "x-fmt/410"}, {"puid": "x-fmt/409"}]},
-    {"id":"os:dos", "puids": [{"puid":  "x-fmt/409"}]},
-    {"id":"os:mac:ppc", "puids": [{"puid": "bwfla/1"}, {"puid": "x-fmt/416"}]},
-    {"id":"os:mac:mk68", "puids": [{"puid": "x-fmt/416"}]},
-    {"id":"os:linux:x86:rpm", "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ]}
+    {
+      "id":"os:windows:xp:32bit", 
+      "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}],
+      "label" : "Windows XP (32bit)",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "40G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "2",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "1024",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:windows:xp:64bit", 
+      "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
+      "label" : "Windows XP (64bit)",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "40G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "2",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "1024",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:windows:95", 
+      "puids": [{"puid": "x-fmt/410"}, {"puid": "x-fmt/409"}, {"puid": "x-fmt/411"}, {"puid": "fmt/899"}],
+      "label" : "Windows 95",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "12G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "1",
+        "net" : "rtl8139",
+        "audio" : "sb16",
+        "memory" : "64",
+        "pointer" : "lock"
+      }
+    },
+    {
+      "id":"os:windows:server:2008", 
+      "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
+      "label" : "Windows Server 2008",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "120G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "4",
+        "net" : "e1000",
+        "audio" : "hda",
+        "memory" : "4096",
+        "pointer" : "usb",
+        "kvm_enabled" : true
+      }
+    },
+    {
+      "id":"os:windows:server:2003", 
+      "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
+      "label" : "Windows Server 2003",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "60G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "2",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "2048",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:windows:server:nt40", 
+      "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
+      "label" : "Windows Server NT 4.0",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "10G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "1",
+        "net" : "rtl8139",
+        "audio" : "sb16",
+        "memory" : "128",
+        "pointer" : "lock"
+      }
+    },
+
+    {
+      "id":"os:windows:311", 
+      "puids" : [{"puid": "x-fmt/410"}, {"puid": "x-fmt/409"}],
+      "label" : "Windows 3.x",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "1G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "1",
+        "net" : "rtl8139",
+        "audio" : "sb16",
+        "memory" : "16",
+        "pointer" : "lock"
+      }
+    },
+
+    {
+      "id":"os:mac:mk86", 
+      "puids" : [{"puid": "x-fmt/416"}],
+      "label" : "Apple System 7/8 (M68k)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "1G",
+      "template" : "basiliskII",
+      "template_params" : 
+      {
+       
+      }
+    },
+
+    {
+      "id":"os:mac:ppc", 
+      "puids" : [{"puid": "bwfla/1"}, {"puid": "x-fmt/416"}],
+      "label" : "Apple System 8-9.0.x (PPC)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "1G",
+      "template" : "sheepshaver",
+      "template_params" : 
+      {
+       
+      }
+    },
+
+    {
+      "id":"os:linux:cent:77", 
+      "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
+      "label": "CentOS",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "60G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "2",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "2048",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:linux:ubuntu", 
+      "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
+      "label": "Ubuntu",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "60G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "1",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "1024",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:linux:fedora", 
+      "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
+      "label": "Fedora",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "60G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "1",
+        "net" : "rtl8139",
+        "audio" : "ac97",
+        "memory" : "1024",
+        "pointer" : "usb"
+      }
+    }
+
   ]
 }

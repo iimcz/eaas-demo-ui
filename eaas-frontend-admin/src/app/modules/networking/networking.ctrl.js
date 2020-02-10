@@ -1,25 +1,16 @@
 module.exports = ['$state', '$scope', '$stateParams', '$uibModal', 'groupdIds', 'localConfig', 'REST_URLS', '$http', 'Environments',
     function ($state, $scope, $stateParams, $uibModal, groupdIds, localConfig, REST_URLS, $http, Environments) {
-    console.log("groupdIds", groupdIds.data);
+   
+    var updatedGroupID = $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds).then(function (response) {
+        $scope.groupdIds = response.data;
 
-    console.log("local ", localConfig);
-    var interval = setInterval(updateGroupId, 10000);
-
-    $scope.$on('$locationChangeStart', function (event) {
-        clearInterval(interval);
+        if ($scope.gridOptions.api != null) {
+            $scope.gridOptions.api.setRowData($scope.groupdIds);
+            $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+            $scope.gridOptions.api.sizeColumnsToFit();
+        }
     });
-
-    function updateGroupId() {
-        var updatedGroupID = $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds).then(function (response) {
-            $scope.groupdIds = response.data;
-
-            if ($scope.gridOptions.api != null) {
-                $scope.gridOptions.api.setRowData($scope.groupdIds);
-                $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-                $scope.gridOptions.api.sizeColumnsToFit();
-            }
-        });
-    }
+    
     var vm = this;
     vm.config = localConfig.data;
     $scope.groupdIds = groupdIds.data;
@@ -54,7 +45,7 @@ module.exports = ['$state', '$scope', '$stateParams', '$uibModal', 'groupdIds', 
 
         params.$scope.selected = $scope.selected;
         return `<button ng-click="openNetworkGroupModal(data.id)" id="single-button" type="button" class="dropbtn">
-                  details
+                  select
                 </button>`;
     }
 

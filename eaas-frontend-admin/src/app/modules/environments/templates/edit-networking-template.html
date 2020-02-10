@@ -1,55 +1,49 @@
-<div uib-accordion-group class="panel-default" is-open="status.openNet">
-    <uib-accordion-heading>
-        Networking
-        <i class="pull-right glyphicon"
-           ng-class="{'glyphicon-chevron-down': status.openNet, 'glyphicon-chevron-right': !status.openNet}"></i>
-    </uib-accordion-heading>
-
-
-    <div class="form-group">
-        <input type="checkbox" ng-model="$ctrl.networking.connectEnvs" >
+<h4>Networking</h4>
+    
+<div class="form-group">
+    <div>
+        <input type="checkbox" ng-model="$ctrl.networking.connectEnvs">
         <label>Enable networking</label>
     </div>
-
-    <div class="form-group" ng-if="$ctrl.networking.connectEnvs">
-        <input type="checkbox"  ng-model="$ctrl.networking.enableInternet" >
+    <div ng-if="$ctrl.networking.connectEnvs">
+        <input type="checkbox" ng-model="$ctrl.networking.enableInternet">
         <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
     </div>
 
-    <div class="form-group" ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
+    <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
         <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled">
         <label>{{'EDITENV_ENABLE_DHCP' | translate}}</label>
     </div>
 
-    <div class="form-group" ng-if="$ctrl.networking.connectEnvs">
-        <input type="checkbox"  ng-model="$ctrl.networking.serverMode">
+    <div ng-if="$ctrl.networking.connectEnvs">
+        <input type="checkbox" ng-model="$ctrl.networking.serverMode">
         <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>
     </div>
 
     <div ng-if="$ctrl.networking.serverMode && $ctrl.networking.connectEnvs">
 
         <div class="form-group">
-            <input type="checkbox"  ng-model="$ctrl.networking.enableSocks">
+            <input type="checkbox" ng-model="$ctrl.networking.enableSocks">
             <label>{{'EDITENV_ENABLE_SOCKS' | translate}}</label>
         </div>
 
         <div class="form-group">
-            <input type="checkbox"   ng-model="$ctrl.networking.localServerMode">
+            <input type="checkbox" ng-model="$ctrl.networking.localServerMode">
             <label>{{'EDITENV_ENABLE_LOCAL_MODE' | translate}}</label>
         </div>
 
         <div class="form-group" ng-if="!$ctrl.networking.enableSocks">
             <label>{{'EDITENV_SERVER_IP' | translate}}</label>
-            <input type="text"  class="form-control" ng-model="$ctrl.networking.serverIp">
+            <input type="text" class="form-control" ng-model="$ctrl.networking.serverIp">
         </div>
 
         <div class="form-group" ng-if="!$ctrl.networking.enableSocks">
             <label>{{'EDITENV_SERVER_PORT' | translate}}</label>
-            <input type="text"  class="form-control" ng-model="$ctrl.networking.serverPort">
+            <input type="text" class="form-control" ng-model="$ctrl.networking.serverPort">
         </div>
 
         <p>
-            <b>{{'EDITENV_HELPTEXT_NETWORK' | translate}}:</b> <br/>
+            <b>{{'EDITENV_HELPTEXT_NETWORK' | translate}}:</b> <br />
             Symbols $$host$$ and $$port$$ would be substituted to real values on deployment. <br>
             Example: $$host$$:$$port$$/myPath/myPage.html = testserver:8080/myPath/myPage.html
             <text-angular ng-model="$ctrl.networking.helpText"></text-angular>

@@ -1,49 +1,98 @@
 <!--
 <h2 class="m-t-0">{{'EDITENV_L' | translate}}</h2>
 -->
-<form id="editEnvForm" name="editEnvCtrl.editEnvForm" ng-submit="editEnvCtrl.saveEdit()">
+<h3>{{editEnvCtrl.envTitle}}</h3>
+<form name="form">
+<nav class="navbar navbar-emulator">
+    <div class="container-fluid">
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a ng-click="editEnvCtrl.run()" href=""
+                        class="top-bar-link" ng-show="editEnvCtrl.env.archive != 'remote'">
+                        <img src="img/run.png">Run
+                    </a>
+                </li>
+                <li><a ng-click="editEnvCtrl.saveEdit()" href="" class="top-bar-link"
+                        ng-show="editEnvCtrl.env.archive != 'remote'">
+                        <img src="img/save.png">Save</a>
+                </li>
+                <li><a ng-click="editEnvCtrl.deleteEnvironment(editEnvCtrl.env.envId)" href="" class="top-bar-link"
+                        ng-show="editEnvCtrl.env.archive != 'remote'">
+                        <img src="img/delete.png">Delete</a>
+                </li>
+                <li ng-if="!editEnvCtrl.config.features.standalone && !editEnvCtrl.isObjectEnv && editEnvCtrl.env.archive == 'default'">
+                    <a href="" ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'publish')" class="top-bar-link">
+                    <img src="img/delete.png">{{'EDITENV_PUBLISH' | translate}}</a>
+                </li>
+                <li ng-if="!editEnvCtrl.config.features.standalone && editEnvCtrl.env.archive === 'remote'">
+                    <a href="" ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'import')" class="top-bar-link">
+                        <img src="img/delete.png">{{'EDITENV_PUBLISH' | translate}}</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="top-bar-link"
+                        ui-sref="admin.edit-env({envId: editEnvCtrl.env.envId, objEnv: editEnvCtrl.isObjectEnv})"
+                        ui-sref-opts="{reload: true}">
+                        <img src="img/restart.png">{{'EDITENV_RESET' | translate }}
+                    </a>
+                </li>
+                <li>
+                    <a class="top-bar-link"
+                        ui-sref="admin.standard-envs-overview({showObjects: editEnvCtrl.isObjectEnv})">
+                        <img src="img/back.png">{{'ERROR_RETURN_BTN' | translate}}
+                    </a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+        
+<uib-tabset active="editEnvCtrl.view">
+    <uib-tab index="0" ng-click="" heading="Details">
+        <br>
+        <div class="form-group">
+            <div>
+                <label>{{'EDITENV_ID' | translate}}:</label> {{editEnvCtrl.env.envId}}
+            </div>
 
-    <div style="text-align: right;">
-
-        <button type="button" ng-if="!editEnvCtrl.editMode && editEnvCtrl.env.archive != 'remote'"
-                class="btn btn-outline-dark" ng-click="editEnvCtrl.editMode = true;">{{'EDITENV_EDIT' | translate }}</button>
-
-        <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
-                type="button" ui-sref="admin.emulator({envId: editEnvCtrl.env.envId, objectId: editEnvCtrl.env.objectId, objectArchive: editEnvCtrl.env.objectArchive})">{{'CHOOSE_ENV_RUN' | translate}}</button>
-
-        <button ng-show="editEnvCtrl.env.archive != 'remote'" class="btn btn-outline-dark"
-                type="button" ng-click="editEnvCtrl.addSoftware(editEnvCtrl.env.envId)">{{'CHOOSE_ENV_ADDSW' | translate}}</button>
-        <button class="btn btn-outline-dark" type="button"
-                ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'publish')"
-                ng-if="!editEnvCtrl.config.features.standalone && !editEnvCtrl.isObjectEnv && editEnvCtrl.env.archive == 'default'">{{'EDITENV_PUBLISH' | translate}}
-        </button>
-        <button class="btn btn-outline-dark" type="button"
-                ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'import')"
-                ng-if="!editEnvCtrl.config.features.standalone && editEnvCtrl.env.archive === 'remote'">{{'EDITENV_REPLICATE' | translate}}
-        </button>
-    </div>
-    <hr>
-    <div>
-        <label>{{'EDITENV_ID' | translate}}:</label> {{editEnvCtrl.env.envId}}
-    </div>
-
-    <div>
-        <label>{{'EDITENV_TIMESTAMP' | translate}}:</label> {{editEnvCtrl.timestamp}}
-    </div>
-
-    <div>
-        <label> Name: </label> <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.envTitle}}</span>
-        <span ng-if="editEnvCtrl.editMode">
-            <input id="tagi" type="text"
-                   ng-model="editEnvCtrl.envTitle"
-                   placeholder="{{'Name' | translate}}">
-        </span>
-    </div>
-
+            <div>
+                <label>{{'EDITENV_TIMESTAMP' | translate}}:</label> {{editEnvCtrl.timestamp}}
+            </div>
+            <div class="input-group">
+                <label> Name: </label>
+                <span ng-if="!editEnvCtrl.editName">{{editEnvCtrl.envTitle}} <a href=""
+                        ng-click="editEnvCtrl.editName=true"><i class="glyphicon glyphicon-pencil"></i></a></span>
+                <span ng-if="editEnvCtrl.editName === true && editEnvCtrl.env.archive != 'remote'" class="input-group">
+                    <input type="text" class="form-control" ng-model="editEnvCtrl.envTitle"
+                        placeholder="{{'Name' | translate}}">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"
+                            ng-click="editEnvCtrl.editName=false">done</button>
+                    </span>
+                </span>
+            </div>
+            <div class="input-group">
+                <label>{{'EDITENV_OS' | translate}}:</label> <span ng-click="editEnvCtrl.editOs=true"
+                    ng-if="!editEnvCtrl.editOs">{{editEnvCtrl.os.label}} <a href=""
+                        ng-click="editEnvCtrl.editOs=true"><i class="glyphicon glyphicon-pencil"></i></a></span>
+                <ui-select ng-if="editEnvCtrl.editOs" ng-model="editEnvCtrl.os" theme="bootstrap"
+                    on-select="editEnvCtrl.editOs=false" title="{{'EDITENV_OS' | translate}}" required>
+                    <ui-select-match placeholder="{{'EDITENV_OS' | translate}}">{{$select.selected.label}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="os in editEnvCtrl.osList | filter: $select.search">
+                        <span ng-bind-html="os.label | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+    <!--
     <div class="form-group" ng-if="editEnvCtrl.author">
         <label>{{'NEW_CONTAINER_AUTHOR' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode"> {{editEnvCtrl.author}}</span>
         <input type="text" ng-if="editEnvCtrl.editMode" class="form-control" ng-model="editEnvCtrl.author">
     </div>
+-->
 
     <div>
         <label>Handle:</label> <span id="osl" ng-if="editEnvCtrl.handle">{{editEnvCtrl.handle}}</span>
@@ -54,171 +103,98 @@
        </b>
     </div>
 
-    <uib-accordion close-others="false">
-        <div uib-accordion-group class="panel-default" is-open="status.openDescr">
-            <uib-accordion-heading>
-                {{'EDITENV_DESC' | translate}}
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openDescr, 'glyphicon-chevron-right': !status.openDescr}"></i>
-            </uib-accordion-heading>
-
-            <label>{{'EDITENV_DESC' | translate}}</label> <span ng-if="!editEnvCtrl.editMode" ng-bind-html="editEnvCtrl.envDescription"></span>
-            <text-angular ng-if="editEnvCtrl.editMode"
-                          ng-model="editEnvCtrl.envDescription"
-                          placeholder="{{'EDITENV_DESC_PH' | translate}}" required></text-angular>
-
-            <p>
-                <label>{{'EDITENV_HELPTEXT' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode" ng-bind-html="editEnvCtrl.envHelpText"></span>
-                <text-angular ng-if="editEnvCtrl.editMode" ng-model="editEnvCtrl.envHelpText"></text-angular>
-            </p>
-        </div>
-
-        <div uib-accordion-group class="panel-default" is-open="status.openSystem">
-            <uib-accordion-heading>
-                {{ 'EDITENV_SYSTEM_SETTINGS'| translate }}
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openSystem, 'glyphicon-chevron-right': !status.openSystem}"></i>
-            </uib-accordion-heading>
-
-            <div>
-                <label>{{'EDITENV_DATE_CONTEXT' | translate}}</label> <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.datetimePicker.date}}</span>
-                <div>
-                    <div style="float: left; margin: 6px;" ng-if="editEnvCtrl.editMode">
-                        <input type="checkbox" ng-model="editEnvCtrl.showDateContextPicker">
-                    </div>
-                    <div>
-                        <p class="input-group" ng-if="editEnvCtrl.editMode">
-                            <input type="text" class="form-control" datetime-picker="dd.MM.yyyy HH:mm" ng-model="editEnvCtrl.datetimePicker.date" is-open="editEnvCtrl.isOpen"
-                                   timepicker-options="editEnvCtrl.datetimePicker.timepickerOptions" datepicker-options="editEnvCtrl.datetimePicker.datepickerOptions"
-                                   button-bar="editEnvCtrl.datetimePicker.buttonBar"
-                                   ng-disabled="!editEnvCtrl.showDateContextPicker" />
-                            <span class="input-group-btn">
-						<button type="button" class="btn btn-default" ng-disabled="!editEnvCtrl.showDateContextPicker"
-                                ng-click="editEnvCtrl.openCalendar($event, prop)"><i class="fa fa-calendar"></i></button></span>
-                    </div>
+    <div class="form-group">
+        <label>Last change</label>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-click="editEnvCtrl.editDesc=true">
+                    <span ng-if="!editEnvCtrl.editDesc" ng-bind-html="editEnvCtrl.envDescription"></span>
                 </div>
+                <text-angular ng-if="editEnvCtrl.editDesc" ng-model="editEnvCtrl.envDescription"
+                    placeholder="{{'EDITENV_DESC_PH' | translate}}" required></text-angular>
+                <button class="btn btn-default" style="float: right;" ng-click="editEnvCtrl.editDesc=false"
+                    type="button" ng-if="editEnvCtrl.editDesc">done</button>
             </div>
-
-            <br>
-            <div>
-                <label>{{'EDITENV_OS' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.os.label}}</span>
-                <ui-select ng-if="editEnvCtrl.editMode" ng-model="editEnvCtrl.os" theme="bootstrap" title="{{'EDITENV_OS' | translate}}" required>
-                    <ui-select-match placeholder="{{'EDITENV_OS' | translate}}">{{$select.selected.label}}</ui-select-match>
-                    <ui-select-choices repeat="os in editEnvCtrl.operatingSystemsMetadata | filter: $select.search">
-                        <span ng-bind-html="os.label | highlight: $select.search"></span>
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-            <br>
-            <div>
-                <label>{{'EDITENV_EMULATOR' | translate}}:</label>
-                {{editEnvCtrl.env.emulator}}
-            </div>
-
-            <!--Container emulator-->
-            <div ng-show="editEnvCtrl.nameIndexes">
-                <label>{{'EDITENV_CONTAINER_EMULATOR' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.emulatorContainer.key}}</span>
-                <ui-select ng-if="editEnvCtrl.editMode" ng-model="editEnvCtrl.emulatorContainer" theme="bootstrap" title="{{'EDITENV_CONTAINER_EMULATOR' | translate}}" required>
-                    <ui-select-match placeholder="{{'EDITENV_CONTAINER_EMULATOR' | translate}}">{{$select.selected.key}}</ui-select-match>
-                    <ui-select-choices repeat="index in editEnvCtrl.nameIndexes  | filter: $select.search">
-                    <span ng-bind-html="index.key
-                     | highlight: $select.search"></span>
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-            <br>
-            <div class="form-group">
-                <label>{{'EDITENV_EMULATOR_CONFIG' | translate}}:</label>
-                <span ng-if="!editEnvCtrl.editMode">{{editEnvCtrl.nativeConfig}}</span>
-                <textarea ng-if="editEnvCtrl.editMode" type="text"
-                          class="form-control" ng-model="editEnvCtrl.nativeConfig"></textarea>
-            </div>
-            <br>
-            <label>Linux Runtime:
-                <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.isLinuxRuntime">
-            </label><br/>
         </div>
+    </div>
 
-        <div uib-accordion-group class="panel-default" is-open="status.openDrives">
-            <uib-accordion-heading>
-                Configured Drives
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openDrives, 'glyphicon-chevron-right': !status.openDrives}"></i>
-            </uib-accordion-heading>
-            <!-- Drives go here -->
-
-            <div style="text-align: right; margin-bottom: 15px;">
-                <div style="display: inline-block;">
-                    <button type="button" class="btn btn-default" ng-click="editEnvCtrl.showDriveDetails(-1)">
-                        <span style="color: green" class="glyphicon glyphicon-plus"></span> Add Drive</button>
+    <div class="form-group">
+        <label>{{'EDITENV_HELPTEXT' | translate}} <a href="" ng-click="editEnvCtrl.editOs=true"><i
+                    class="glyphicon glyphicon-pencil"></i></a></label>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ng-click="editEnvCtrl.editHelpText=true">
+                    <span ng-if="!editEnvCtrl.editHelpText && editEnvCtrl.envHelpText"
+                        ng-bind-html="editEnvCtrl.envHelpText"></span>
+                    <span ng-if="!editEnvCtrl.editHelpText && !editEnvCtrl.envHelpText">n.a.</span>
                 </div>
+                <text-angular ng-if="editEnvCtrl.editHelpText" ng-model="editEnvCtrl.envHelpText">
+                </text-angular>
+                <button class="btn btn-default" style="float: right" type="button"
+                    ng-click="editEnvCtrl.editHelpText=false" ng-if="editEnvCtrl.editHelpText">done</button>
             </div>
-
-            <ul class="list-group-item" >
-                <li class="list-group-item" ng-repeat="drive in editEnvCtrl.drives">
-                    <div style="display: inline-block;">{{drive.type}}</div>
-                    <div class="btn btn-default" style="float: right; color: #CC322E;" ng-click="editEnvCtrl.deleteDrive($index)">
-                        <i class="glyphicon glyphicon-remove" ></i>
-                    </div>
-                    <div class="btn btn-default" style="float: right; color: #CC322E;" ng-click="editEnvCtrl.showDriveDetails($index)">
-                        <i class="glyphicon glyphicon-edit"></i>
-                    </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{'EDITENV_SOFTWARE' | translate}}</label>
+        <div>
+            <ul>
+                <li ng-repeat="software in editEnvCtrl.env.installedSoftwareIds">
+                    <a
+                        ui-sref="admin.edit-object-characterization({swId: software.id, objectId: software.id, objectArchive: software.archive})">
+                        {{software.label}}
+                    </a>
                 </li>
+                <li style="list-style: none; margin-left: -1em;"><a href=""
+                        ng-click="editEnvCtrl.addSoftware(editEnvCtrl.env.envId)"><span
+                            class="glyphicon glyphicon-plus"></span> install software</a></li>
             </ul>
         </div>
+    </div>
 
-        <div uib-accordion-group class="panel-default" is-open="status.openUI">
-            <uib-accordion-heading>
-                {{'EDITENV_UI_OPTIONS' | translate}}
-                <i class="pull-right glyphicon"
-                   ng-class="{'glyphicon-chevron-down': status.openUI, 'glyphicon-chevron-right': !status.openUI}"></i>
-            </uib-accordion-heading>
+    <!--  <h4> {{ 'EDITENV_SYSTEM_SETTINGS'| translate }} </h4> -->
+    <div class="form-group">
+        <label>Set machine date <input type="checkbox" ng-model="editEnvCtrl.showDateContextPicker"></label>
 
-            <div class="form-group" >
-                <input type="checkbox" ng-model="editEnvCtrl.enablePrinting">
-                <label>{{'EDITENV_PRINTING' | translate}}</label>
+        <div style="padding-left: 50px" ng-if="editEnvCtrl.showDateContextPicker">
+            <div ng-click="editEnvCtrl.editDate=true">
+                <label>{{'EDITENV_DATE_CONTEXT' | translate}}</label>
+                <span ng-if="!editEnvCtrl.editDate"></span>
+                {{editEnvCtrl.datetimePicker.date}}
+                </span>
+                <span><a href="" ng-click="editEnvCtrl.editDate=true"><i
+                    class="glyphicon glyphicon-pencil"></i></a></span>
             </div>
 
-            <div class="form-group">
-                <input type="checkbox"  ng-model="editEnvCtrl.enableRelativeMouse">
-                <label>{{'EDITENV_RELMOUSE' | translate}}</label>
-            </div>
-
-            <div class="form-group">
-                <input type="checkbox"  ng-model="editEnvCtrl.canProcessAdditionalFiles">
-                <label>User file upload</label>
-            </div>
-            <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.useWebRTC" >
-                <label>{{'EDITENV_WEBRTC' | translate}}</label>
-            </div>
-
-            <div class="form-group">
-                <input type="checkbox" ng-model="editEnvCtrl.useXpra" >
-                <label>{{'EDITENV_XPRA' | translate}}</label>
-                <select ng-if="editEnvCtrl.useXpra" ng-model="editEnvCtrl.xpraEncoding">
-                    <option value="jpeg">jpeg</option>
-                    <option value="png">png</option>
-                    <option value="rgb24">rgb24</option>
-                    <option value="rgb32">rgb32</option>
-                    <option value="h264">h264</option>
-                    <option value="auto">auto</option>
-                </select>
-            </div>
-
-            <div class="form-group" >
-                <input type="checkbox" ng-model="editEnvCtrl.shutdownByOs" >
-                <label>{{'EDITENV_SHUTDOWNBYOS' | translate}}</label>
-            </div>
+            <p class="input-group" ng-if="editEnvCtrl.editDate">
+                <input type="text" class="form-control" datetime-picker="dd.MM.yyyy HH:mm"
+                    ng-model="editEnvCtrl.datetimePicker.date" is-open="editEnvCtrl.isOpen"
+                    timepicker-options="editEnvCtrl.datetimePicker.timepickerOptions"
+                    datepicker-options="editEnvCtrl.datetimePicker.datepickerOptions"
+                    button-bar="editEnvCtrl.datetimePicker.buttonBar"
+                    ng-disabled="!editEnvCtrl.showDateContextPicker" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-disabled="!editEnvCtrl.showDateContextPicker"
+                        ng-click="editEnvCtrl.openCalendar($event, prop)"><i
+                            class="fa fa-calendar"></i></button></span>
         </div>
+    </div>
+
+    <br>
+        <h4>Runtime options</h4>
+        <ui-Options-Template ui-options=editEnvCtrl.uiOptions></ui-Options-Template>
+
+        <hr>
+        <h4>Drive Settings</h4>
+        <drives-overview drives="editEnvCtrl.drives.getList()" render="editEnvCtrl.guessBinding(index)"
+            select="editEnvCtrl.selectMedium(index)"></drives-overview>
 
         <!-- Include networking template
            NOTE: you will find networkingTemplate in app.js-->
-        <div  ng-if="!editEnvCtrl.isLinuxRuntime" class="topSkip">
+        <div ng-if="!editEnvCtrl.isLinuxRuntime" class="topSkip">
             <networking-Template networking=editEnvCtrl.networking></networking-Template>
         </div>
-
-    </uib-accordion>
+    </div>
 
     <!--
     <p ng-if="editEnvCtrl.showAdvanced">
@@ -234,50 +210,7 @@
     </p>
     -->
 
-    <hr>
-    <h4 >{{'EDITENV_SOFTWARE' | translate}}</h4>
-    <div ng-show="editEnvCtrl.env.installedSoftwareIds.length > 0" >
-        <ul>
-            <li ng-repeat="software in editEnvCtrl.env.installedSoftwareIds">
-                <a ui-sref="admin.edit-object-characterization({swId: software.id, objectId: software.id, objectArchive: software.archive})">
-                    {{software.label}}
-                </a>
-            </li>
-        </ul>
-    </div>
-    <div ng-show="editEnvCtrl.env.installedSoftwareIds.length == 0">
-        <p id="editEnvSoftwareListLabel">
-            <label>{{'EDITENV_NO_SOFTWARE' | translate }}</label>
-        </p>
-    </div>
-
-    <hr>
-    <h4>{{'EDITENV_REV_HISTORY' | translate}}</h4>
-    <div class="form-group" ng-show="editEnvCtrl.env.revisions.length > 0">
-        <p>
-            <label>{{'EDITENV_REVS' | translate}}:</label>
-        </p>
-        <ul id="editEnvSoftwareList">
-            <li ng-repeat="revision in editEnvCtrl.env.revisions">
-                <ng-bind-html
-                    ng-bind-html="revision.text">
-                </ng-bind-html>
-                <a href="#"
-                   ng-click="editEnvCtrl.fork(revision.id)"> [ fork ] </a>
-
-                <a ng-if="editEnvCtrl.env.archive === 'default' && revision.archive === 'default'" style="cursor: pointer;"
-                   ng-click="editEnvCtrl.revert(editEnvCtrl.env.envId, revision.id)"> [ revert to this version ] </a>
-
-            </li>
-        </ul>
-    </div>
-    <div ng-show="!editEnvCtrl.env.revisions.length">
-        <p>
-            <label>{{'EDITENV_NO_REVS' | translate }}</label>
-        </p>
-    </div>
-
-            <!--
+        <!--
             <div class="form-group" ng-show="editEnvCtrl.dependencies.length > 0" ng-if="editEnvCtrl.showAdvanced">
                 <p id="objDeps">
                     <label>{{'EDITENV_OBJ_DEPENDENCIES' | translate}}:</label>
@@ -287,21 +220,74 @@
                 </ul>
             </div>
             -->
+        </uib-tab>
 
-
-    <div>
-        <span style="text-align: left;">
-             <button class="btn btn-danger" type="button" ng-click="editEnvCtrl.deleteEnvironment(editEnvCtrl.env.envId)">{{'EDITENV_DELETE_ENV' | translate }}</button>
-        </span>
-        <span style="float: right;">
-            <button class="btn btn-default" type="button"
-                    ui-sref="admin.edit-env({envId: editEnvCtrl.env.envId, objEnv: editEnvCtrl.isObjectEnv})" ui-sref-opts="{reload: true}">
-                    {{'EDITENV_RESET' | translate }}</button>
-
-            <button type="submit" ng-if="editEnvCtrl.env.archive != 'remote'" class="btn btn-primary">{{'EDITENV_SAVE'| translate}}</button>
-
-            <button type="button" class="btn btn-primary"
-                    ui-sref="admin.standard-envs-overview({showObjects: editEnvCtrl.isObjectEnv})">{{'ERROR_RETURN_BTN' | translate}}</button>
-        </span>
+        <uib-tab index="2" heading="Advanced Settings">
+            <div>
+                <h4>{{'EDITENV_EMULATOR' | translate}}: {{editEnvCtrl.env.emulator}} </h4>
+            </div>
+            <!--Container emulator-->
+        <div ng-show="editEnvCtrl.nameIndexes">
+            <label>{{'EDITENV_CONTAINER_EMULATOR' | translate}}:</label> <span
+                ng-if="!editEnvCtrl.editEmulator">{{editEnvCtrl.emulatorContainer.key}}
+                <a href="" ng-click="editEnvCtrl.editEmulator=true"><i
+                        class="glyphicon glyphicon-pencil"></i></a></span>
+            <ui-select ng-if="editEnvCtrl.editEmulator" ng-model="editEnvCtrl.emulatorContainer" theme="bootstrap"
+                on-select="editEnvCtrl.editEmulator=false" title="{{'EDITENV_CONTAINER_EMULATOR' | translate}}"
+                required>
+                <ui-select-match placeholder="{{'EDITENV_CONTAINER_EMULATOR' | translate}}">
+                    {{$select.selected.key}}
+                </ui-select-match>
+                <ui-select-choices repeat="index in editEnvCtrl.nameIndexes  | filter: $select.search">
+                    <span ng-bind-html="index.key
+                                 | highlight: $select.search"></span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+    
+        <div class="form-group">
+        <label>{{'EDITENV_EMULATOR_CONFIG' | translate}}:</label>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div >
+                    <span ng-if="!editEnvCtrl.editConfig">{{editEnvCtrl.nativeConfig}} <a href="" ng-click="editEnvCtrl.editConfig=true"><i
+                        class="glyphicon glyphicon-pencil"></i></a></span>
+                </div>
+                <textarea ng-if="editEnvCtrl.editConfig" type="text" class="form-control"
+                    ng-model="editEnvCtrl.nativeConfig"></textarea>
+                <button class="btn btn-default" style="float: right" type="button"
+                    ng-click="editEnvCtrl.editConfig=false" ng-if="editEnvCtrl.editConfig">done</button>
+            </div>
+        </div>
     </div>
+    <label>Linux Runtime:
+        <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.isLinuxRuntime">
+    </label><br/>
+</uib-tab>
+<uib-tab index="1" ng-click="" heading="Revisions">
+    <h4>{{'EDITENV_REV_HISTORY' | translate}}</h4>
+    <div class="form-group" ng-show="editEnvCtrl.env.revisions.length > 0">
+        <p>
+            <label>{{'EDITENV_REVS' | translate}}:</label>
+        </p>
+        <ul id="editEnvSoftwareList">
+            <li ng-repeat="revision in editEnvCtrl.env.revisions">
+                <ng-bind-html ng-bind-html="revision.text">
+                </ng-bind-html>
+                <a href="#" ng-click="editEnvCtrl.fork(revision.id)"> [ fork ] </a>
+
+                <a ng-if="editEnvCtrl.env.archive === 'default'"
+                    style="cursor: pointer;" ng-click="editEnvCtrl.revert(editEnvCtrl.env.envId, revision.id)"> [
+                    revert to this version ] </a>
+
+            </li>
+        </ul>
+    </div>
+    <div ng-show="!editEnvCtrl.env.revisions.length">
+        <p>
+            <label>{{'EDITENV_NO_REVS' | translate }}</label>
+        </p>
+    </div>
+</uib-tab>
+</uib-tabset>
 </form>

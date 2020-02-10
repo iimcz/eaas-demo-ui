@@ -11,7 +11,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
     vm.initColumnDefs = function () {
         return [
             {headerName: "ID", field: "id"},
-            {headerName: "Label", field: "label", sort: "asc"},
+            {headerName: "Name", field: "label", sort: "asc"},
             {headerName: "Operating System", field: "isOperatingSystem"},
             {headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
                 suppressMenu: true}
@@ -43,9 +43,12 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
         animateRows: true,
         onGridReady: function (params) {
             $scope.gridOptions.api.sizeColumnsToFit();
+            window.onresize = () => {
+                $scope.gridOptions.api.sizeColumnsToFit();
+            }
             },
         pagination: true,
-        paginationPageSize: 20,
+        paginationPageSize: 10,
         paginationNumberFormatter: function(params) {
             return '[' + params.value.toLocaleString() + ']';
         },

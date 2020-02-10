@@ -10,6 +10,21 @@
     text-align: center;
 }
 
+.top-bar-link
+{
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px;
+}
+
+.top-bar-link img
+{
+    height: 30px;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+}
 /* ==========================================================================
         Menu
    ========================================================================== */
@@ -535,4 +550,14 @@ abbr[title] {
 		  z-index: 2;
 		}
 	}
+}
+
+.overview-label {
+    font-size: 20px; line-height: 1.5em;
+}
+
+.overview-content {
+    font-size: 12px; 
+    color: slategrey; 
+    line-height: 1.1em;
 }

@@ -208,6 +208,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                 if($stateParams.isDetached)
                     eaasClient.detached = true;
                 eaasClient.componentId = $stateParams.envId;
+                eaasClient.realEnvId = $stateParams.realEnvId;
+                eaasClient._groupId = $stateParams.groupId;
 
                 if ($stateParams.networkInfo) {
                     chosenEnv.networking.serverMode = true;
@@ -232,6 +234,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$http', '$sce', '$state'
                    //  $rootScope.$broadcast("emulatorStart", "success");
                 });
             } else {
+                eaasClient.realEnvId = undefined;
+                eaasClient._groupId = undefined;
                 eaasClient.start(envs, params, attachId).then(function () {
                     eaasClient.connect().then(function () {
                     $("#emulator-loading-container").hide();
