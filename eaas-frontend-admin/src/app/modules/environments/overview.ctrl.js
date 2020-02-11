@@ -438,9 +438,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             onGridReady: function (params) {
                  vm.updateTable(0);
                  vm.gridOptions.api.redrawRows();
-                 window.onresize = () => {
-                    vm.gridOptions.api.sizeColumnsToFit();
-                }
             },
             pagination: true,
             paginationPageSize: 10,
