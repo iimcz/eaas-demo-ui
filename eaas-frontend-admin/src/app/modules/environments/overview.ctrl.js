@@ -1,3 +1,4 @@
+import {getOsLabelById} from '../../lib/os.js'
 module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'localConfig', 'growl', '$translate', 'Environments',
     '$uibModal', 'softwareList', 'helperFunctions', 'userInfo', 'REST_URLS', '$timeout', "osList",
     function ($rootScope, $http, $state, $scope, $stateParams,

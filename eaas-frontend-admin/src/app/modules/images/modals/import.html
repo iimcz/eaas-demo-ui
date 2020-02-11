@@ -2,19 +2,20 @@
     <h3 class="modal-title">Image Management</h3>
 </div>
 
+<form name="myForm">
 <div class="modal-body">
-    <form name="myForm">
+
         <div class="panel panel-default">
             <div class="panel-heading">Add Disk Media</div>
             <div class="panel-body">
                 <div class="form-group">
                     <label>Disk image label: </label>
-                    <input class="form-control" type="text" ng-model="importDlgCtrl.label" required>
+                    <input class="form-control" type="text" ng-model="importDlgCtrl.label">
                 </div>
                 <hr>
 
                 <div class="form-group">
-                    <input type="radio" ng-model="importDlgCtrl.mode" value="create"> <label>Create new image</label>
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="create" > <label>Create new image</label>
                 </div>
 
                 <div class="form-group">
@@ -28,7 +29,7 @@
                 <hr>
 
                 <div class="form-group">
-                    <input type="radio" ng-model="importDlgCtrl.mode" value="upload"> <label>Import image</label>
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="upload"> <label>Import image</label>
                 </div>
                 <div class="form-group">
                     Supported disk image formats:<br>
@@ -50,10 +51,10 @@
                 </div>
             </div>
         </div>
-    </form>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="$close(); importDlgCtrl.import();">OK </button>
+    <button class="btn btn-primary" type="button" ng-click="importDlgCtrl.import();">OK </button>
     <button class="btn btn-default" type="button" ng-click="$close()">Cancel</button>
 </div>
+</form>

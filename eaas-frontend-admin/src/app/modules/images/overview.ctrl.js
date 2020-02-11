@@ -27,13 +27,36 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
     vm.updateTable(0, "default");
 
     vm.importDlg = function () {
-        $uibModal.open({
+        let modal = $uibModal.open({
             animation: true,
             template: require ('./modals/import.html'),
             controller: ["$scope", "localConfig", function($scope, localConfig) {
-
                 this.import = async () => 
                 {
+                    if(!this.mode)
+                    {
+                        window.alert("Please select an image type");
+                        return;
+                    }
+                    if(!this.label)
+                    {
+                        window.alert("Please set an image label");
+                        return;
+                    }
+
+                    if(this.mode === "create" && !this.hdsize)
+                    {
+                        window.alert("Please set disk size");
+                        return;
+                    } 
+
+                    if(this.mode === "upload" && !this.hdurl)
+                    {
+                        window.alert("plase set image url");
+                        return;
+                    }
+                    modal.close();
+
                     let waitModal = new WaitModal($uibModal);
                     waitModal.show("Import", "Please wait");
                     let result = undefined;

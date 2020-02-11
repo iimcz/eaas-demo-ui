@@ -1,0 +1,7 @@
+<div class="form-group" style="margin-left: 20px; margin-right: 20px">
+    <label>
+        <input type="checkbox" ng-model="newImageCtrl.hasRom">
+        <span>{{'SW_NEW_IMAGE_ROM_LBL' | translate}}</span>
+    </label>
+    <input type="text" ng-model="newImageCtrl.rom" ng-disabled="!newImageCtrl.hasRom">
+</div>

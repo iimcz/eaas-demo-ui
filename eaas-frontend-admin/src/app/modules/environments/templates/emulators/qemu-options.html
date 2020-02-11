@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label><img src="img/cpu.png" height="30px"> CPUs </label> <input type="text" size="2"
+                ng-model="$ctrl.args.cpu" ui-mask="?9" ng-change="$ctrl.onUpdate()""></input>
+            <span ng-if="!$ctrl.args.kvm_available">virtualize CPU
+                <input type="checkbox" ng-model="$ctrl.args.kvm_enabled" ng-change="$ctrl.onUpdate()">
+            </span>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label><img src="img/memory.png" height="30px"> Memory </label> <input type="text"
+                ng-model="$ctrl.args.memory" ng-required ui-mask="?9?9?9?9?9?9?9?9 MB" ui-mask-placeholder
+                ui-mask-placeholder-char="​\u200B" ng-change="$ctrl.onUpdate()"/>
+        </div>
+    </div>
+</div>
