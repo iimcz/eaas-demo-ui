@@ -11,11 +11,19 @@ export class MachineBuilder {
         this.label = undefined;
         this.nativeConfig = undefined;
         this.uiOptions = undefined;
+        this.rom = undefined;
+        this.romLabel = undefined;
     }
 
     setDrives(drives)
     {
         this.drives = drives;
+    }
+
+    setRom(romId, romLabel)
+    {
+        this.rom = romId;
+        this.romLabel = romLabel;
     }
 
     async build()
@@ -30,6 +38,8 @@ export class MachineBuilder {
                 nativeConfig: this.nativeConfig,
                 driveSettings: (this.drives) ? this.drives.getUpdates() : [],
                 operatingSystemId : this.operatingSystemId,
+                romId: this.rom,
+                romLabel: this.romLabel,
                 
                 enablePrinting : this.uiOptions.enablePrinting,
                 enableRelativeMouse: this.uiOptions.enableRelativeMouse,

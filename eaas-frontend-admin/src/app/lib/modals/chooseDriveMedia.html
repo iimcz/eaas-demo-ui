@@ -61,7 +61,7 @@
                             </ui-select>
                     </div>
                     <hr ng-if="editDriveCtrl.drive.type !== 'disk'">
-                    <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk'">
+                    <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk' && editDriveCtrl.context !== 'create' ">
                     <input type="radio" ng-model="editDriveCtrl.diskType"  value="object"> <label>Select from user assets</label>
                     
                             <ui-select ng-model="editDriveCtrl.selectedObject" theme="bootstrap"

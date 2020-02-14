@@ -16,11 +16,28 @@ export async function imageList($http, localConfig)
     rawImages.forEach(function(element, i) {
         let image = {
             imageId : element.value.image.id,
-            label : element.value.label
+            label : element.value.label,
+            type: element.value.image.type,
         };
         images.push(image);
     });
     
+    return images;
+}
+
+export async function romList($http, localConfig)
+{
+    const rawImages = await imagesListRaw($http, localConfig);
+    let images = [];
+    rawImages.forEach(function(element, i) {
+        let image = {
+            imageId : element.value.image.id,
+            label : element.value.label,
+            type: element.value.image.type,
+        };
+        if(image.type === 'roms')
+            images.push(image);
+    });
     return images;
 }
 
@@ -60,8 +77,9 @@ export async function deleteImage(localConfig, imageArchive, imageId)
 
 export async function importImage(localConfig, url, label)
 {
+    let result;
     try  {
-        let result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
+        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
             url: url,
             label: label
         });
@@ -72,7 +90,27 @@ export async function importImage(localConfig, url, label)
     catch(e) {
         throw new Error("environment-repository/create-image: " 
             +  ' Request failed: ' 
-            + e);
+            + e + "\n original message: " + result);
+    }
+}
+
+export async function importRomImage(localConfig, url, label)
+{
+    let result; 
+    try  {
+        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
+            url: url,
+            label: label,
+            imageType: 'roms',
+        });
+        let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
+        let imageResult = await task.done;
+        return imageResult.imageId; 
+    }
+    catch(e) {
+        throw new Error("environment-repository/create-image: " 
+            +  ' Request failed: ' 
+            + e + "\n original message: " + result);
     }
 }
 

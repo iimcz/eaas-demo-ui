@@ -1,4 +1,4 @@
-import {imageList, importEmptyImage, importImage, deleteImage} from '../../lib/images.js'
+import {imageList, importEmptyImage, importImage, deleteImage, importRomImage} from '../../lib/images.js'
 import {WaitModal} from '../../lib/task.js'
 
 module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
@@ -52,7 +52,13 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
 
                     if(this.mode === "upload" && !this.hdurl)
                     {
-                        window.alert("plase set image url");
+                        window.alert("Please set image url");
+                        return;
+                    }
+
+                    if(this.mode === "rom" && !this.romurl)
+                    {
+                        window.alert("Please set ROM url");
                         return;
                     }
                     modal.close();
@@ -60,10 +66,18 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
                     let waitModal = new WaitModal($uibModal);
                     waitModal.show("Import", "Please wait");
                     let result = undefined;
-                    if(this.mode ==='create')
-                        result = await importEmptyImage(localConfig, this.hdsize, this.label);
-                    else
-                        result = await importImage(localConfig, this.hdurl, this.label);
+                    try {
+                        if(this.mode ==='create')
+                            result = await importEmptyImage(localConfig, this.hdsize, this.label);
+                        else if(this.mode === "rom")
+                            result = await importRomImage(localConfig, this.romurl, this.label);
+                        else
+                            result = await importImage(localConfig, this.hdurl, this.label);
+                    }
+                    catch(e)
+                    {
+                        console.log(e);
+                    }
                     waitModal.hide();
                     $state.reload();
                 }

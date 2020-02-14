@@ -49,6 +49,18 @@
                         ng-disabled="importDlgCtrl.mode !== 'upload'"
                         ng-required="importDlgCtrl.mode == 'upload'" />
                 </div>
+                <hr>
+                <div class="form-group">
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="rom"> <label>Import ROM</label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <span>Upload ROM image</span>
+                    </label>
+                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.romurl"
+                        ng-disabled="importDlgCtrl.mode !== 'rom'"
+                        ng-required="importDlgCtrl.mode == 'rom'"/>
+                </div>
             </div>
         </div>
 </div>

@@ -2,6 +2,10 @@ import {_fetch} from './utils.js'
 
 export class Task {
     constructor(taskId, api, idToken = null) {
+
+        if(!taskId)
+            throw new Error("retrieving task ID failed");
+
         this.API_URL = api;
         this.idToken = idToken;
         this.taskId = taskId;

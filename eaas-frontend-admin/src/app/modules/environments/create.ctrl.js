@@ -1,5 +1,5 @@
 import {
-    imageList
+    imageList, romList
 } from '../../lib/images.js'
 import {
     MachineBuilder
@@ -15,17 +15,14 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm.softwareList = softwareList.data.descriptions; 
         vm.osPresets = os.operatingSystems;
 
-        // initialize default values of the form
-        vm.hdsize = 1024;
-        vm.hdtype = 'url';
         vm.native_config = "";
-        vm.requiresPatch = false;
         vm.uiOptions = {};
     
         vm.imageId = "";
         vm._preSelectedSystem = undefined;
         vm.selectedOs = undefined;
         vm.imageList = [];
+        vm.romList = [];
 
         vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL);
 
@@ -85,6 +82,11 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             
             vm.osId = vm.selectedOs.id;
             vm.template = vm.systems.find(o => o.id === vm.selectedOs.template);
+
+            if(!vm.template) {
+                console.log(item);
+                throw new Error("no template found: ");
+            }
             
             vm.drives = new Drives(vm.template.drive);
             vm.native_config = updateNativeConfig();
@@ -114,14 +116,21 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             if (vm.config.template_params.kvm_enabled)
                 confStr += " -enable-kvm"
 
-
             if (confStr.startsWith(" "))
                 confStr = confStr.substring(1);
             return confStr;
         }
 
-        vm.update = function () {
+        function updateMacConfig () {
+
+        }
+
+        vm.updateQemu = function () {
             vm.native_config = updateNativeConfig();
+        }
+
+        vm.updateMacemu = function () {
+        
         }
 
         vm.save = function () {
@@ -132,6 +141,12 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 vm.builder.operatingSystemId = vm.osId;
                 vm.builder.uiOptions = vm.uiOptions;
                 vm.builder.setDrives(vm.drives);
+
+                if(vm.config.template_params.rom)
+                {
+                    vm.builder.setRom(vm.config.template_params.rom.imageId, vm.config.template_params.rom.label)
+                }
+
                 vm.builder.build()
                     .then(() => $state.go('admin.standard-envs-overview', {}, {
                         reload: true

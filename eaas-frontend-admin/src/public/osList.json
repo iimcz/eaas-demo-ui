@@ -137,10 +137,7 @@
       "qid" : "",
       "disk" : "1G",
       "template" : "basiliskII",
-      "template_params" : 
-      {
-       
-      }
+      "template_params" : {}
     },
 
     {
@@ -156,7 +153,20 @@
        
       }
     },
-
+    {
+      "id":"os:mac:ppc-qemu", 
+      "puids" : [{"puid": "bwfla/1"}, {"puid": "x-fmt/416"}],
+      "label" : "Apple System 9.1.x - 10.4 (PPC)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "20G",
+      "template" : "qemu-ppc",
+      "template_params" : 
+      {
+        "net" : "sungem",
+        "args" : "-M mac99 -prom-env 'auto-boot?=true' -prom-env 'boot-args=-v' -prom-env 'vga-ndrv?=true' -device usb-kbd -g 1024x786x32"
+      }
+    },
     {
       "id":"os:linux:cent:77", 
       "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
@@ -211,6 +221,5 @@
         "pointer" : "usb"
       }
     }
-
   ]
 }

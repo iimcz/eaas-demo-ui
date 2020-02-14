@@ -42,9 +42,12 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
+import {romList} from "./lib/images.js"
+
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
 import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
+import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
 import drivesOverviewTemplate from './modules/environments/templates/drives/overview.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
@@ -193,12 +196,32 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
     })
 
+    .component('macemuOptions', {
+        template: macemuOptionsTemplate,
+        controller: ["$scope", "$http", "localConfig", function($scope, $http, localConfig) {
+            var vm = this;
+            vm.romList = [];
+            console.log(this.args);
+            romList($http, localConfig).then((result) => {
+                vm.romList = result;
+                console.log(vm.romList);
+            }, (e) => {
+                throw new Error(e);
+            });
+        }],
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
     .component('drivesOverview', {
         template: drivesOverviewTemplate,
         bindings: {
             drives: "<",
             select: '&',
-            render: '&'
+            render: '&',
+            context: '<',
         }
     })
 

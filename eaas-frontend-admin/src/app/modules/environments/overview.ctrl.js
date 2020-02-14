@@ -60,9 +60,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     })
                 }
                 vm.rowCount = rowData.length;
-                vm.gridOptions.api.setRowData(rowData);
-                vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-                vm.gridOptions.api.sizeColumnsToFit();
+                if(vm.gridOptions.api) {
+                    vm.gridOptions.api.setRowData(rowData);
+                    vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+                    vm.gridOptions.api.sizeColumnsToFit();
+                }
             });
         };
 
