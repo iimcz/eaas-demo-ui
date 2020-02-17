@@ -5,7 +5,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
    vm.pageSize = "10";
 
     $scope.onPageSizeChanged = function() {
-        $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
+        vm.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
     };
 
     vm.initColumnDefs = function () {
@@ -25,7 +25,43 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
                 </button>`;
     }
 
-    $scope.gridOptions = {
+    vm.updateTable = function(index)
+    {
+        vm.gridOptions.api.setRowData(null);
+        var rowData = [];
+        if (vm.view === 2) // remote objects
+        {
+            vm.swList.forEach(element => {
+                if(element.archive === "Remote Objects")
+                {
+                    rowData.push({id: element.id, label: element.label, isOperatingSystem : element.isOperatingSystem});
+                }
+            });
+        }
+        else if(vm.view === 1) {
+             vm.swList.forEach(element => {
+                 console.log(element);
+                if(element.archive !== "Remote Objects" && element.isPublic)
+                {
+                    rowData.push({id: element.id, label: element.label, isOperatingSystem : element.isOperatingSystem});
+                }
+            });
+        }
+        else {
+            vm.swList.forEach(element => {
+                if(element.archive !== "Remote Objects")
+                {
+                    rowData.push({id: element.id, label: element.label, isOperatingSystem : element.isOperatingSystem});
+                }
+            });
+        }
+        vm.rowCount = rowData.length;
+        vm.gridOptions.api.setRowData(rowData);
+        vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+        vm.gridOptions.api.sizeColumnsToFit();
+    }
+
+    vm.gridOptions = {
         columnDefs: vm.initColumnDefs(),
         rowData: vm.swList,
         rowHeight: 31,
@@ -42,10 +78,10 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
         suppressHorizontalScroll: true,
         animateRows: true,
         onGridReady: function (params) {
-            $scope.gridOptions.api.sizeColumnsToFit();
-            },
+            vm.gridOptions.api.sizeColumnsToFit();
+        },
         pagination: true,
-        paginationPageSize: 20,
+        paginationPageSize: 10,
         paginationNumberFormatter: function(params) {
             return '[' + params.value.toLocaleString() + ']';
         },
@@ -62,7 +98,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
     // setup the grid after the page has finished loading
     document.addEventListener('DOMContentLoaded', function () {
         var gridDiv = document.querySelector('#myGrid');
-        new agGrid.Grid(gridDiv, gridOptions);
-        gridOptions.api.sizeColumnsToFit();
+        new agGrid.Grid(gridDiv, vm.gridOptions);
+        vm.gridOptions.api.sizeColumnsToFit();
     });
 }];
