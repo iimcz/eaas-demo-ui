@@ -42,6 +42,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm.preSelectedSystem = function(os)
         {
             vm._preSelectedSystem = os;
+            vm.selectedTemplate = "";
             vm.config = {
                 cpu: undefined,
                 memory: undefined,
@@ -85,6 +86,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
 
             if(!vm.template) {
                 console.log(item);
+                console.log(vm.systems);
                 throw new Error("no template found: ");
             }
             
