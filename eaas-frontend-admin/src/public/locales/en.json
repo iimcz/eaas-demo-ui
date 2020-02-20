@@ -6,6 +6,7 @@
   "CHOOSE_BASEENV_L" : "Virtual machines",
   "CHOOSE_OBJENV_L" : "Object Environments",
   "CHOOSE_ENV_SEARCH" : "Search...",
+  "CHOOSE_ENV_SEARCH_NETWORK" : "Environments with network",
   "CHOOSE_ENV_PROPOSAL" : "Run Environment",
   "CHOOSE_ENV_EDIT" : "Details",
   "CHOOSE_HANDLE_EDIT" : "Edit handle value",
@@ -23,6 +24,12 @@
   "CHOOSE_ENV_RUN_MODIFIED" : "Run modified",
   "CHOOSE_ACTION" : "Choose action",
   "CHOOSE_DELETE_SELECTED" : "Delete selected",
+  "ADD_NETWORK_ENVIRONMENT": "Create Network",
+  "EDIT_NETWORK_ENVIRONMENT": "Edit Network",
+  "NO_ENVIRONMENTS_WITH_NETWORK": "There are no environments with enabled network!",
+  "ADD_NETWORK_ENVIRONMENT_LABEL": "Environment Label",
+  "ADD_NETWORK_ENVIRONMENT_MAC_ADDRESS": "Mac Address",
+  "ADD_NETWORK_FQDN": "Server Name / FQDN",
 
   "ERROR_RETURN_BTN" : "Back to overview",
 
@@ -43,7 +50,7 @@
   "CONTAINER_ACTIONS_ABORT" : "Abort",
 
   "CONTAINER_STOPPED" : "Finished",
-  "CONTAINER_STOPPED_T" : "Container process done.",
+  "CONTAINER_STOPPED_T" : "Container process has finished.",
 
   "ADDENV_L" : "Add environment",
   "ADDENV_SEARCH" : "Select an environment...",
@@ -154,9 +161,9 @@
   "SW_NEW_IMAGE_ROM_LBL" : "ROM File",
   "SW_NEW_IMAGE_KVM" : "Enable kvm (Kernel-based Virtual Machine)",
 
-  "SW_NEW_CONTAINER_HEADER" : "Create new Container",
-  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Choose Origin Runtime",
-  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH" : "Choose a  Runtime (Singularity, Docker...)",
+  "SW_NEW_CONTAINER_HEADER" : "Import Container",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME" : "Container source",
+  "SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME_PH" : "Choose a source (Singularity, Docker...)",
   "SW_NEW_CONTAINER_ORIGIN" : "Container Environment",
   "SW_NEW_CONTAINER_FROM_BUILDFILE" : "Generate Container from Buildfile",
   "SW_NEW_CONTAINER_BUILDFILE_URL" : "Buildfile",
@@ -238,14 +245,15 @@
 
   "EDITENV_CANCONNECTENVS": "Can be connected with other environments (Experimental)",
   "EDITENV_ENABLE_INTERNET" : "Enable Internet access",
+  "EDITENV_ALLOW_EXT_CONNECTIONS" : "Allow external connections",
   "EDITENV_ENABLE_SERVERMODE" : "Enable server mode",
-  "EDITENV_ENABLE_SOCKS" : "use SOCKS5",
-  "EDITENV_ENABLE_DHCP" : "Enable DHCP",
+  "EDITENV_ENABLE_SOCKS" : "Use SOCKS5",
+  "EDITENV_ENABLE_DHCP" : "Enable slirp DHCP",
   "EDITENV_ENABLE_LOCAL_MODE" : "Enable Local Mode",
   "EDITENV_SERVER_IP" : "Internal server IP",
   "EDITENV_SERVER_PORT" : "Internal server port",
   "EDITENV_GW_PRIVATE_IP" : "Internal gateway IP",
-  "EDITENV_GW_PRIVATE_MASK" : "Internal gateway IP mask(decimal)",
+  "EDITENV_GW_PRIVATE_MASK" : "IP mask(decimal)",
 
   "OBJECTS_NEW_OBJECT" : "Import Object",
   "OBJECTS_DETAILS" : "Details",

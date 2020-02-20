@@ -46,6 +46,8 @@ emilUIModule.controller('StartContainerController', require('./containers/contai
 emilUIModule.controller('ContainerActionsController', require('./containers/actions.ctrl.js'));
 emilUIModule.controller('EditContainerController', require('./containers/editContainer.ctrl.js'));
 emilUIModule.controller('NewContainerController', require('./containers/newContainer.ctrl'));
+emilUIModule.controller('ContainerInputDialog', require('./containers/modals/conrainer-run-dialog.ctrl'));
+
 
 emilUIModule.controller('ObjectsImportController', require('./objects/import.ctrl.js'));
 emilUIModule.controller('EmulatorsController', require('./emulators/overview.ctrl.js'));
@@ -55,4 +57,4 @@ emilUIModule.controller('EmulatorsJsonModalController', require('./emulators/mod
 emilUIModule.controller('NetworkModalController', require('../../../../landing-page/src/app/modules/client/landing-page/modals/network-modal.ctrl.js'));
 emilUIModule.controller('DetachModalController', require('../../../../landing-page/src/app/modules/client/landing-page/modals/detach-modal.ctrl.js'));
 emilUIModule.controller('NetworkingCtrl', require('./networking/networking.ctrl.js'));
-emilUIModule.controller('NetworkGroupManagerCtrl', require('./networking/modals/networkGroupModal.ctrl.js'));
+emilUIModule.controller('NetworkGroupManagerCtrl', require('./networking/modals/connectEnvToNetwork.ctrl.js'));
