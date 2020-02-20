@@ -1,0 +1,592 @@
+/* ==========================================================================
+        Browser Problem Prompt
+   ========================================================================== */
+@import '../app2/theme.scss';
+.browserproblem {
+    background: #C11E1E;
+    color: #000000;
+    padding: 0.8em 0;
+    font-size: 1.25em;
+    text-align: center;
+}
+
+.top-bar-link
+{
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px;
+}
+
+.top-bar-link img
+{
+    height: 30px;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+}
+/* ==========================================================================
+        Menu
+   ========================================================================== */
+@media (min-width: 768px) {
+    
+      
+    .container {
+        width: 90%;
+    }
+
+    .navbar-emulator {
+        border-color: #e7e7e7;
+        min-height: auto !important;
+    }
+   .collapsing {
+        transition: none !important;
+    }
+    .sidebar-nav .navbar  {
+        padding: 0;
+        max-height: none;
+    }
+
+    .sidebar-nav .navbar ul {
+        float: none;
+    }
+
+    .sidebar-nav .navbar ul:not {
+        display: block;
+    }
+
+    .sidebar-nav .navbar li {
+        float: none;
+        display: block;
+    }
+
+    .sidebar-nav .navbar li a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        font-size: 16px;
+    }
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+        z-index: 100;
+        background-color: transparent !important;
+    }
+    .navbar-collapse.collapse {
+        display: none !important;
+    }
+    .navbar-nav {
+        float: none!important;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-collapse.collapse.in{
+        display:block !important;
+    }
+    .navbar-toggle:hover {
+        background-color: #ddd !important;
+    }
+}
+
+.menuTitle{
+    color: #777;
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+    margin-left: 30%;
+}
+
+
+/* ==========================================================================
+        Header
+   ========================================================================== */
+
+#footer {
+
+        height: 30px;
+        bottom: 0;
+        font-size: x-small;
+}
+
+#header {
+    margin: 7px 0;
+}
+
+/* ==========================================================================
+        Action Heading
+   ========================================================================== */
+
+#actionsHeading {
+    text-align: center;
+}
+
+/* ==========================================================================
+        Action Buttons
+   ========================================================================== */
+
+#actionsBtnGroup {
+    width: 100%;
+}
+
+#actionsBtnGroup .btn:first-child {
+    border-radius: 0;
+}
+
+#actionsBtnGroup .btn:last-child {
+    border-radius: 0 0 3px 3px;
+}
+
+/* ==========================================================================
+        Emulator
+   ========================================================================== */
+
+html.wait, body.wait {
+    cursor: progress !important;
+}
+
+#emulator-stopped-container {
+    display: none;
+}
+
+#emulator-loading-spinner {
+    margin: 10px 0 0 90px;
+}
+
+#container-loading-spinner {
+    margin: 10px 0 0 45px;
+}
+
+/* ==========================================================================
+        Error Page
+   ========================================================================== */
+
+#error-panel {
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+        Standard Environments Overview
+   ========================================================================== */
+
+#standard-envs-overview-table {
+  width: 650px;
+}
+
+#standard-envs-overview-table > thead > tr > th {
+  border-bottom: 0;
+}
+
+#standard-envs-overview-table > tbody > tr > td {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* ==========================================================================
+        Edit Environment
+   ========================================================================== */
+
+#editEnvForm {
+    max-width: 650px;
+}
+
+#editEnvSoftwareListLabel {
+  margin-bottom: 0;
+}
+
+#editEnvSoftwareList {
+  margin-bottom: 50px;
+}
+   
+#standard-envs-overview-table {
+  width: 650px;
+}
+
+/* ==========================================================================
+        Fullscreen Overlay Spinner
+   ========================================================================== */
+
+.fullscreen-overlay-spinner {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Transparent Overlay */
+.fullscreen-overlay-spinner:before {
+  content: '';
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+
+/* ==========================================================================
+        Server Error Dialog
+   ========================================================================== */
+
+#error-loading-spinner {
+    display: block;
+    margin: 30px auto;
+}
+
+/* ==========================================================================
+        Utility classes
+   ========================================================================== */
+
+.m-t-0 {
+  margin-top: 0 !important;
+}
+
+.m-b-0 {
+  margin-bottom: 0 !important;
+}
+
+.handle {
+  display: inline-block; 
+  cursor: move;
+  cursor: -webkit-grabbing;
+  margin-right: 10px;
+}
+
+/* ==========================================================================
+        Datetime Picker
+   ========================================================================== */
+
+.uib-daypicker {
+    outline: none !important;
+}
+
+/* ==========================================================================
+        Dashboard
+   ========================================================================== */
+
+.dashboard-heading {
+    margin: 0 0 20px 0;
+}
+
+.dashboard-panel-body {
+    background: #F7F7F7
+}
+
+.dashboard-entry-metric-outer {
+    padding: 0 10px 0 20px;
+}
+
+.dashboard-entry-metric-outer + .dashboard-entry-metric-outer:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    height: 65px;
+    border-left: 2px solid #adb2b5;
+    margin-top: 10px;
+}
+
+.dashboard-entry-metric-label {
+    font-size: 13px;
+}
+
+.dashboard-entry-metric-value {
+    color: #73879C;
+    font-size: 40px;
+    font-weight: bold
+}
+
+.dashboard-node-panel {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.dashboard-node-panel-body {
+    background: white;
+}
+
+.dashboard-entry-chart-label {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 4px;
+    margin-top: 0;
+}
+
+.dashboard-entry-title {
+    border-bottom: 1px solid #e6e9ed;
+    padding: 1px 5px 6px;
+    margin-bottom: 10px;
+}
+
+.dashboard-entry-title-header {
+    font-size: 18px;
+    margin: 0;
+}
+
+.dashboard-entry-title-header small {
+    margin-left: 3px;
+}
+
+/* ==========================================================================
+        Object Overview Page
+   ========================================================================== */
+#object-grid-container {
+  margin: 0 16px;
+}
+
+#object-grid-container .object-container {
+  height: 220px;
+  width: 150px;
+  display: inline-block;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+#object-grid-container .object-container:last-child {
+  margin-right: 0;
+}
+
+#object-grid-container .cover-container {
+  display: inline-block;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+#object-grid-container .cover {
+  max-height: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+
+#object-grid-container .title-container {
+  display: block;
+  text-align: center;
+}
+
+#object-grid-container .title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+  max-width: 100%;
+}
+
+#object-grid-container .description {
+  height: 50px;
+}
+
+.m-t-0 {
+  margin-top: 0 !important;
+}
+
+button#printerbutton    {
+    cursor: pointer;
+    background-image: none;
+    border: none;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+button:focus#printerbutton    {
+    background-color: #ededed;
+}
+
+#loading-bar {
+  pointer-events: all;
+  z-index: 99999;
+  border: none;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  cursor: wait;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.tekst {
+    display:block;
+    margin-bottom:5px;   /* adapt the margin value to the desire space between span and select box */
+}
+.tekstMore {
+    display:block;
+    margin-bottom:10px;   /* adapt the margin value to the desire space between span and select box */
+}
+
+.topSkip {
+    display:block;
+    margin-top:5px;   /* adapt the margin value to the desire space between span and select box */
+}
+
+.ag-theme-balham {
+    font-size: 14px;
+}
+
+.ag-header-cell-label{
+    font-size: 14px;
+}
+
+.dropbtn {
+    color: black;
+    border: none;
+    cursor: pointer;
+    margin: auto;
+    width: 100%;
+    padding: 0px;
+    text-indent:0px;
+    background-color: #A9A9A9;
+    max-width: 190px;
+;
+
+}
+
+.dropbtn2 {
+    border: none;
+    cursor: pointer;
+    margin: auto;
+    width: 100%;
+    background-color: black;
+    color: whitesmoke;
+    max-width: 190px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-content {
+    cursor: default;
+}
+
+.dropdown-content a:hover {
+    color: #0000FF;
+    background-color: #f1f1f1;
+}
+
+.dropdown-content:hover  {
+    display: block;
+    background-color: black;
+}
+
+.dropdown:hover .dropbtn {
+    border: black;
+    border-style: solid;
+    border-width: thin;
+    color: whitesmoke;
+}
+.parent .center-wrapper .centered-content {
+    position: relative;
+    left: -50%;
+}
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+}
+
+.full-width {
+    width: 100%;
+}
+
+
+.separator-right{
+    float: right
+}
+
+.white-backdrop.modal-backdrop {
+    background-color: whitesmoke;
+    opacity: 1.0 !important;
+}
+
+pre#json-renderer {
+    border: 1px solid #aaa;
+    padding: 0.5em 1.5em;
+}
+
+.ag-ltr .ag-cell-focus{
+    border: none !important;
+}
+div.ex1, div.ex2 {
+    /*margin: auto;*/
+}
+div.ex1{
+    padding: 10px;
+    border: 0.5px solid #D3D3D3;
+}
+div.ex3{
+    margin:5px 8% 5px 5%;
+}
+
+div.ex4{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.wrapper-signin {
+	margin-top: 80px;
+  margin-bottom: 80px;
+}
+abbr[title] {
+    /*border-bottom: none !important;*/
+    /*cursor: inherit !important;*/
+    text-decoration: none !important;
+}
+
+.form-signin {
+  max-width: 380px;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
+
+  .form-signin-heading {
+	  margin-bottom: 50px;
+	  margin-top: 50px;
+	  text-align: center;
+	}
+
+	.checkbox {
+	  font-weight: normal;
+	}
+
+	.form-control {
+	  position: relative;
+	  font-size: 16px;
+	  height: auto;
+	  padding: 10px;
+		//@include box-sizing(border-box);
+
+		&:focus {
+		  z-index: 2;
+		}
+	}
+}
+
+.overview-label {
+    font-size: 20px; line-height: 1.5em;
+}
+
+.overview-content {
+    font-size: 12px; 
+    color: slategrey; 
+    line-height: 1.1em;
+}

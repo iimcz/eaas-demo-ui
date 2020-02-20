@@ -1,0 +1,13 @@
+<div *ngFor="let env of data.networkSessionEnvironments">
+    <div *ngIf="env.networkData.serverIp">
+        <div style="display: flex">
+            <div style="font-weight: bold;font-size: 20px; width: 0;flex: 1;">{{env.title}}</div>
+            <div style="font-size: 15px;color: #7676a2;width: 0;flex: 0.8;align-self: center;">{{env.label}}</div>
+        </div>
+        <bind-port-view
+            [serverIp]="env.networkData.serverIp"
+            [serverPorts]="env.networkData.serverPorts"
+            [eaasClient]="data.eaasClient"
+        ></bind-port-view>
+    </div>
+</div>
