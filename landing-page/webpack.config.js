@@ -237,6 +237,14 @@ module.exports = function makeWebpackConfig() {
     },
     open: true
   };
-
+  config.resolve = {
+    alias: {
+        EaasLibs: path.resolve(__dirname, '../eaas-frontend-lib/'),
+        EaasAdmin: path.resolve(__dirname, '../eaas-frontend-admin/src/'),
+        '@angular': path.resolve(__dirname, './node_modules/@angular'),
+        'uuid': path.resolve(__dirname, './node_modules/uuid'),
+        'EaasClient': path.resolve(__dirname, '../eaas-client/')
+    }
+};
   return config;
 }();
