@@ -55,7 +55,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
 
     if(vm.enablePrinting) {
         $rootScope.$on('emulatorStart', function(event, args) {
-            window.eaasClient.eventSource.addEventListener('print-job', function(e) {
+            eaasClient.eventSource.addEventListener('print-job', function(e) {
                 var obj = JSON.parse(e.data);
                 if (!obj) {
                     console.warn('Parsing print-job notification failed!');
@@ -416,7 +416,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
                         postReq.type = this.type;
 //                        if(postReq.type === 'objectEnvironment')
 //                            postReq.embeddedObject = true;
-                        postReq.envId = vm.envId;
+                        postReq.envId = (eaasClient.realEnvId) ? eaasClient.realEnvId : vm.envId;
                         postReq.message = this.envDescription;
                         postReq.title = this.envName;
                         postReq.softwareId = $stateParams.softwareId;
@@ -450,7 +450,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
                             if(eaasClient.realEnvId) {
                                 $.ajax({
                                     type: "DELETE",
-                                    url: localConfig.data.eaasBackendURL + "sessions/" + $window.eaasClient._groupId + "/resources",
+                                    url: localConfig.data.eaasBackendURL + "sessions/" + eaasClient._groupId + "/resources",
                                     headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
                                     async: true,
                                     contentType: "application/json",
