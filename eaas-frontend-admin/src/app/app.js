@@ -425,11 +425,17 @@ function($stateProvider,
         clientID: auth0config.CLIENT_ID,
         domain: auth0config.DOMAIN,
         responseType: 'token id_token',
+        _sendTelemetry: false,
+        overrides: {
+            // The following values can usually be found in </.well-known/openid-configuration>:
+            __jwks_uri: auth0config.jwks_uri,
+            __token_issuer: auth0config.issuer,
+        },
     });
 
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      whiteListedDomains: "localhost",
+      whiteListedDomains: [new URL(localConfig.data.eaasBackendURL, location).hostname],
       tokenGetter: [ 'options', function(options) {
         if (options && options.url.substr(options.url.length - 5) == '.html') {
             return null;
