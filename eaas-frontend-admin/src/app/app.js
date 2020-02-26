@@ -296,8 +296,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
 })
 
-.service('authService', function($state, angularAuth0, $timeout) {
-
+.service('authService', function($state, angularAuth0, $timeout, localConfig) {
+      const auth0config = localConfig.data.auth0Config;
       this.login = function (data) {
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
@@ -381,6 +381,7 @@ function($stateProvider,
         angularAuth0Provider,
         localConfig
 ) {
+    const auth0config = localConfig.data.auth0Config;
     angular.lowercase = angular.$$lowercase;
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
