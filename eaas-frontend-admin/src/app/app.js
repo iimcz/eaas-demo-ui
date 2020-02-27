@@ -436,6 +436,7 @@ function($stateProvider,
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
       whiteListedDomains: [new URL(localConfig.data.eaasBackendURL, location).hostname],
+      urlParam: "access_token",
       tokenGetter: [ 'options', function(options) {
         if (options && options.url.substr(options.url.length - 5) == '.html') {
             return null;
