@@ -74,6 +74,25 @@
       }
     },
     {
+        "id":"os:windows:vista", 
+        "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
+        "label" : "Windows Vista",
+        "kvm_available" : true,
+        "qid" : "",
+        "disk" : "120G",
+        "template" : "qemu-x86",
+        "template_params" : 
+        {
+          "vga" : "cirrus",
+          "cpu" : "2",
+          "net" : "e1000",
+          "audio" : "ac97",
+          "memory" : "2048",
+          "pointer" : "usb",
+          "kvm_enabled" : true
+        }
+      },
+      {
       "id":"os:windows:server:2003", 
       "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
       "label" : "Windows Server 2003",
@@ -218,6 +237,23 @@
         "net" : "rtl8139",
         "audio" : "ac97",
         "memory" : "1024",
+        "pointer" : "usb"
+      }
+    },
+    {
+      "id":"os:other:runtime:2020-02", 
+      "puids": [],
+      "label": "Generic Container Runtime",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "60G",
+      "template" : "runtime",
+      "runtime" : true,
+      "template_params" : 
+      {
+        "cpu" : "1",
+        "net" : "e1000",
+        "memory" : "2048",
         "pointer" : "usb"
       }
     }

@@ -43,6 +43,7 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
 import {romList} from "./lib/images.js"
+import {_fetch} from './lib/utils.js'
 
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
@@ -521,10 +522,8 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-
-                kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
-
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
@@ -751,6 +750,7 @@ function($stateProvider,
                 isDetached: false,
                 networkInfo: null,
                 containerRuntime: null,
+                realEnvId: null,
                 componentId: null,
                 session: null,
                 groupId : null
@@ -837,7 +837,6 @@ function($stateProvider,
             url: "/networking",
             resolve: {
                 localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
-                groupdIds: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
             },
             views: {
                 'wizard': {
@@ -856,6 +855,46 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/handle/edit.html'),
                     controller: "EditHandleController as handleOverview"
+                }
+            }
+        })
+        .state('admin.settings', {
+            url: "/settings",
+            params: {},
+            resolve: {
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/settings.html'),
+                    controller: "SettingsCtrl as settingsCtrl"
+                }
+            }
+        })
+        .state('admin.runtime-overview', {
+            url: "/runtimes",
+            params: {},
+            resolve: {
+                osList : () => osLocalList(),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/runtime-overview.html'),
+                    controller: "RuntimeOverviewCtrl as runtimeOverviewCtrl"
+                }
+            }
+        })
+
+        .state('admin.service-containers', {
+            url: "/service-containers",
+            params: {},
+            resolve: {
+               containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/service-container-overview.html'),
+                    controller: "ServiceContainerCtrl as serviceContainerCtrl"
                 }
             }
         })

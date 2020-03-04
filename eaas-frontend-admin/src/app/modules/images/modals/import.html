@@ -18,7 +18,7 @@
                     <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="create" > <label>Create new image</label>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" ng-if="importDlgCtrl.mode === 'create'">
                     <label>{{'SW_NEW_IMAGE_NEW_HD_LBL' | translate}}
                         {{'SW_NEW_IMAGE_NEW_HD_SIZE_LBL' | translate}}</label>
                     <input type="text" class="form-control" ng-model="importDlgCtrl.hdsize"
@@ -31,7 +31,7 @@
                 <div class="form-group">
                     <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="upload"> <label>Import image</label>
                 </div>
-                <div class="form-group">
+                <div class="form-group" ng-if="importDlgCtrl.mode === 'upload'">
                     Supported disk image formats:<br>
                     <ul>
                         <li>RAW disk images</li>
@@ -53,13 +53,25 @@
                 <div class="form-group">
                     <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="rom"> <label>Import ROM</label>
                 </div>
-                <div class="form-group">
+                <div class="form-group" ng-if="importDlgCtrl.mode === 'rom'">
                     <label>
                         <span>Upload ROM image</span>
                     </label>
                     <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.romurl"
                         ng-disabled="importDlgCtrl.mode !== 'rom'"
                         ng-required="importDlgCtrl.mode == 'rom'"/>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="runtime"> <label>Import Container Runtime Asset</label>
+                </div>
+                <div class="form-group" ng-if="importDlgCtrl.mode === 'runtime'">
+                    <label>
+                        <span>Upload runtime image</span>
+                    </label>
+                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.runtime"
+                        ng-disabled="importDlgCtrl.mode !== 'runtime'"
+                        ng-required="importDlgCtrl.mode == 'runtime'"/>
                 </div>
             </div>
         </div>

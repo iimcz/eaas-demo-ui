@@ -1,5 +1,7 @@
-<div ng-if="(startEmuCtrl.networkSessionEnvironments && startEmuCtrl.networkSessionEnvironments.length > 0) && startEmuCtrl.eaasClient.network" class="tekstMore">
-
+<div ng-if="(startEmuCtrl.networkSessionEnvironments && 
+    startEmuCtrl.networkSessionEnvironments.length > 0) && 
+        startEmuCtrl.eaasClient.network" class="tekstMore">
+        
     <started-network-environment-overview
         [network-Session-Environments]="startEmuCtrl.networkSessionEnvironments"
         [selected-Network-Environment]="startEmuCtrl.env ? startEmuCtrl.env : chosenEnv"
