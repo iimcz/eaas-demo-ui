@@ -25,18 +25,6 @@ var PRODUCTION_PATH = '/admin/';
 // Include git commit hash
 var commitHash = require('child_process').execSync('git rev-parse --short=10 HEAD').toString().toUpperCase();
 
-var auth0config = {
-    AUTH_CONFIGURED: false,
-    CLIENT_ID : JSON.stringify('not configured'),
-    DOMAIN : JSON.stringify('not configured')
-};
-try {
-  auth0config  = require('./auth.env');
-}
-catch(err) {
-    console.log(err);
-}
-
 module.exports = function makeWebpackConfig() {
   /**
    * Config
@@ -195,7 +183,6 @@ module.exports = function makeWebpackConfig() {
     }),
     new webpack.DefinePlugin({
         __UI_COMMIT_HASH__: JSON.stringify(commitHash),
-        'auth0config': auth0config
     })
   ];
 

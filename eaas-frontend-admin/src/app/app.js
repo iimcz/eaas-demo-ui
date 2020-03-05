@@ -290,6 +290,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 //            }
     });
 
+     const auth0config = localConfig.data.auth0Config;
      if(auth0config.AUTH_CONFIGURED) {
             console.log("authService", auth0config);
             await authService.handleAuthentication();
@@ -537,6 +538,7 @@ function($stateProvider,
                 },
                 userInfo: ($http, localConfig, REST_URLS) =>
                     {
+                        const auth0config = localConfig.data.auth0Config;
                         if(auth0config.AUTH_CONFIGURED)
                            return  $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo);
                         else

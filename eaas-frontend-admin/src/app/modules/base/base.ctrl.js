@@ -10,6 +10,7 @@ function($uibModal, $scope, $state, localConfig, kbLayouts, buildInfo, userInfo,
         $scope.isCollapsed = newVal == "admin.emulator"
     });
 
+    const auth0config = localConfig.data.auth0Config;
     vm.authEnabled = auth0config.AUTH_CONFIGURED;
     
     vm.open = function() {
