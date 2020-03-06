@@ -1,11 +1,11 @@
 import {getOsLabelById} from '../../lib/os.js'
 module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 
                     'localConfig', 'growl', '$translate', 'Environments', 
-                    'EmilNetworkEnvironments', '$uibModal', 'softwareList', 
+                    '$uibModal', 'softwareList', 
                     'REST_URLS', '$timeout', "osList",
     function ($rootScope, $http, $state, $scope, $stateParams,
               localConfig, growl, $translate, Environments, 
-              EmilNetworkEnvironments, $uibModal, softwareList,  
+              $uibModal, softwareList,  
               REST_URLS, $timeout, osList) {
         
         var vm = this;
@@ -27,88 +27,72 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             vm.gridOptions.api.setRowData(null);
             vm.view = index;
             let rowData = [];
-            if(vm.view != 4) {
-                vm.envs = Environments.query().$promise.then(function(response) {
-                vm.rowCount = 0;
-                vm.envs = response;
-                if (vm.view == 0 || vm.view == 3)
-                    vm.envs.forEach(function (element) {
-                        if (element.isLinuxRuntime) {
-                            if (vm.view === 0)
-                                return;
-                        } else {
-                            if (vm.view === 3)
-                                return;
-                        }
-                        if(element.envType != 'base')
+           
+            vm.envs = Environments.query().$promise.then(function(response) {
+            vm.rowCount = 0;
+            vm.envs = response;
+            if (vm.view == 0 || vm.view == 3)
+                vm.envs.forEach(function (element) {
+                    if (element.isLinuxRuntime) {
+                        if (vm.view === 0)
                             return;
-                        
-                        if((element.archive == 'default' && vm.viewArchive === 0) ||
-                            ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
-                            (element.archive == "remote" && vm.viewArchive === 2))
-                            rowData.push({
-                                name: element.title, 
-                                id: element.envId, 
-                                archive: element.archive, 
-                                owner: (element.owner) ? element.owner : "shared",
-                                timestamp: element.timestamp,
-                                description: element.description,
-                                os: getOsLabelById(osList.operatingSystems, element.operatingSystem),
-                            });
-                    });
-                else if (vm.view == 1) {
-                    vm.envs.forEach(function (element) {
-                        if(element.envType != 'object')
+                    } else {
+                        if (vm.view === 3)
                             return;
+                    }
+                    if(element.envType != 'base')
+                        return;
+                    
+                    if((element.archive == 'default' && vm.viewArchive === 0) ||
+                        ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
+                        (element.archive == "remote" && vm.viewArchive === 2))
+                        rowData.push({
+                            name: element.title, 
+                            id: element.envId, 
+                            archive: element.archive, 
+                            owner: (element.owner) ? element.owner : "shared",
+                            timestamp: element.timestamp,
+                            description: element.description,
+                            os: getOsLabelById(osList.operatingSystems, element.operatingSystem),
+                        });
+                });
+            else if (vm.view == 1) {
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'object')
+                        return;
+                    rowData.push({
+                        name: element.title,
+                        id: element.envId,
+                        archive: element.archive,
+                        owner: (element.owner) ? element.owner : "shared",
+                        objectId: element.objectId
+                    })
+                })
+            } else if (vm.view == 2) {
+                vm.envs.forEach(function (element) {
+                    if(element.envType != 'container')
+                        return;
+                    if((element.archive == 'default' && vm.viewArchive === 0) ||
+                        ((element.archive == "public" || element.archive == 'container') && vm.viewArchive === 1) ||
+                        (element.archive == "remote" && vm.viewArchive === 2))
                         rowData.push({
                             name: element.title,
                             id: element.envId,
-                            archive: element.archive,
                             owner: (element.owner) ? element.owner : "shared",
                             objectId: element.objectId
                         })
-                    })
-                } else if (vm.view == 2) {
-                    vm.envs.forEach(function (element) {
-                        if(element.envType != 'container')
-                            return;
-                        if((element.archive == 'default' && vm.viewArchive === 0) ||
-                            ((element.archive == "public" || element.archive == 'container') && vm.viewArchive === 1) ||
-                            (element.archive == "remote" && vm.viewArchive === 2))
-                            rowData.push({
-                                name: element.title,
-                                id: element.envId,
-                                owner: (element.owner) ? element.owner : "shared",
-                                objectId: element.objectId
-                            })
-                    })
-                }
-                updateTableData(rowData);
-                });
-            } else {
-                vm.envs = EmilNetworkEnvironments.query().$promise.then(function (response) {
-                    vm.viewArchive = 1;
-                    vm.envs = response;
-                    vm.envs.forEach((element) => {
-                            rowData.push({
-                                name: element.title,
-                                id: element.envId,
-                            })
-                        }
-
-                    );
-                    updateTableData(rowData);
-                });
+                })
             }
+            updateTableData(rowData);
+            });
+        
         };
 
         vm.pageSize = "10";
         if($stateParams.showContainers)
              vm.view = 2;
         else if($stateParams.showObjects)
-            vm.view = 1;
-        else if($stateParams.showNetworkEnvs)
-            vm.view = 4;            
+            vm.view = 1;       
         else
             vm.view = 0;
 
@@ -267,17 +251,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             if (confirmationResult) {
                 let promise = null;
 
-                if (vm.view === 4) {
-                    console.log("envId", envId);
-                    promise = EmilNetworkEnvironments.delete({envId: envId}).$promise;
-                } else {
-                    promise = $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                        envId: envId,
-                        deleteMetaData: true,
-                        deleteImage: true,
-                        force: false
-                    });
-                }
+                promise = $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+                    envId: envId,
+                    deleteMetaData: true,
+                    deleteImage: true,
+                    force: false
+                });
+                
                 promise.then( (response) => {
                     console.log(response.data);
 
@@ -288,7 +268,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                     });
                     $rootScope.chk.transitionEnable = true;
                     growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                    $state.go('admin.standard-envs-overview', {showNetworkEnvs: vm.view === 4}, {reload: true});
+                    $state.go('admin.standard-envs-overview', {}, {reload: true});
                 } else if (response.data.status === "2") {
 
                     $uibModal.open({
@@ -423,20 +403,12 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 $state.go('admin.edit-env', {envId: id});
            else if (vm.view == 2)
                 $state.go('admin.edit-container', {envId: id});
-            else if (vm.view == 4){
-                const env = vm.envs.find((env) => {
-                    if (env.envId === id) {
-                        return env;
-                    }
-                });
-                $state.go('admin.edit-network-environment', {selectedNetworkEnvironment: env});
-            }
         };
 
         vm.openLandingPage = function (id) {
-            if(vm.view ===4 ){
-                window.open(vm.landingPage + "?id=" + id + "&isNetworkEnvironment=" + "true");
-            } else
+ //           if(vm.view ===4 ){
+ //               window.open(vm.landingPage + "?id=" + id + "&isNetworkEnvironment=" + "true");
+ //           } else
                 window.open(vm.landingPage + "?id=" + id)
         };
 
@@ -460,10 +432,10 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 {headerName: "ID", field: "id", width: 100},
                 
             ];
-            if (vm.view !== 4){
-                columnDefs.push({headerName: "Archive", field: "archive", hide: true});
-                columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
-            }
+            
+            columnDefs.push({headerName: "Archive", field: "archive", hide: true});
+            columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
+        
             if(vm.view == 0)
             {
                 columnDefs.push({headerName: "Operating System", field: "os"});
