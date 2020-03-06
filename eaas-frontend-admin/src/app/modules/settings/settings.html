@@ -4,7 +4,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 text-center"><a ng-if="baseCtrl.config.features.emulators" ui-sref="admin.emulators"
+            <div class="col-md-3 text-center"><a ui-sref="admin.emulators"
                     href="">
                     <img src="img/emulator.png" height="80px"></br>
                     <small class="text-secondary">Manage Emulators</small>
@@ -43,11 +43,12 @@
                     <p>Manage Services</p>
                 </a>
             </div>
-            <div class="col-md-3 text-center">
+            <div class="col-md-3 text-center"> <a href="{{settingsCtrl.downloadLogUrl}}">
                 <img src="img/errorlog.png" height="80px"></br>
                 <small class="text-secondary">Download Error Log</small>
 
                 <p>Error-Log</p>
+                </a>
             </div>
 
         </div>
