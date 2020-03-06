@@ -7,10 +7,12 @@ import {attach} from "EaasLibs/javascript-libs/network-environment-utils/attach.
 module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams', '$cookies', '$translate', '$http', 'localConfig', 'growl', 'Environments', 'EmilNetworkEnvironments', 'chosenEnv', 'eaasClient',
     function ($rootScope, $uibModal, $scope, $state, $stateParams, $cookies, $translate, $http, localConfig, growl, Environments, EmilNetworkEnvironments, chosenEnv, eaasClient) {
         var vm = this;
+        vm.eaasClient = eaasClient;
 
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
         $rootScope.emulator.detached = false;
+        vm.emulator = $rootScope.emulator;
 
         if ($stateParams.containerRuntime != null) {
             $scope.containerRuntime = $stateParams.containerRuntime;
