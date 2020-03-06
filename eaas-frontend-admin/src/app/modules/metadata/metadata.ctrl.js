@@ -74,6 +74,7 @@ module.exports = ['$scope' , '$state', '$stateParams', 'oaiHarvesterList', '$tra
                             var stream = {};
                             stream.source = {};
                             stream.source.url = _this.host + "/" + p;
+                            stream.source.secret = _this.secret;
                             stream.sink = {}
                             stream.sink.base_url = localConfig.data.eaasBackendURL + "metadata-repositories/remote-" + p;
                             data.streams.push(stream);
