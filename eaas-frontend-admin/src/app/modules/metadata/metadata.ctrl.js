@@ -1,9 +1,14 @@
+import {createJwt} from '../../lib/jwt.js'
+import {_fetch} from '../../lib/utils'
+import {WaitModal} from "../../lib/task.js"
+
 module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig', 'growl', '$uibModal', 'apiKey',
     function($scope, $state, oaiHarvesterList, $http, localConfig, growl, $uibModal, apiKey) {
 
     var vm = this;
 
     vm.oaiHarvesterList = oaiHarvesterList.data;
+    vm.waitModal = new WaitModal($uibModal);
 
     vm.apikey = apiKey.data.apikey;
     vm.sync = function(harvester)
@@ -45,8 +50,6 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
 
     vm._delete = function(harvester)
     {
-        console.log("delete " + harvester);
-
         if (!window.confirm(`Please confirm deleting this harvester config?`))
             return false;
 
@@ -63,7 +66,7 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
             template: require('./modals/addEndpoint.html'),
             controller: ["$scope", function($scope) {
                 var _this = this;
-                _this.success = false;
+
                 this.confirmed = function()
                 {
                     console.log(_this.providers);
@@ -89,14 +92,20 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
                     });
                 }
 
-                this.resolve = function()
+                this.resolve = async function()
                 {
-                    $http.get(_this.host)
-                      .then(function(response) {
-                        _this.providers = response.data;
-                        if(_this.providers.length >= 2)
-                            _this.success = true;
-                      });
+                    let token = await createJwt(_this.secret);
+                    try { 
+                        vm.waitModal.show("Resolving endpoint");
+                        _this.providers = await _fetch(_this.host, "GET", null, token);
+                    }
+                    catch(e)
+                    {
+                        growl.error(e);
+                    }
+                    finally {
+                        vm.waitModal.hide();
+                    }
                 }
             }],
             controllerAs: "addEnvironmentCtrl"
