@@ -1,9 +1,11 @@
-module.exports = ['$scope' , '$state', '$stateParams', 'oaiHarvesterList', '$translate', '$http', 'localConfig', 'growl', '$interval', 'helperFunctions', '$uibModal', 'REST_URLS',
-    function($scope, $state, $stateParams, oaiHarvesterList, $translate, $http, localConfig, growl, $interval, helperFunctions, $uibModal, REST_URLS) {
+module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig', 'growl', '$uibModal', 'apiKey',
+    function($scope, $state, oaiHarvesterList, $http, localConfig, growl, $uibModal, apiKey) {
 
     var vm = this;
 
     vm.oaiHarvesterList = oaiHarvesterList.data;
+
+    vm.apikey = apiKey.data.apikey;
     vm.sync = function(harvester)
     {
         console.log("sync " + harvester);

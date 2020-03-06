@@ -1,5 +1,16 @@
 <h2 class="m-t-0">{{'METADATA_L' | translate}}</h2>
 
+<h4>Local Endpoint Configuration</h4>
+<form-group>
+    <label>Provider Endpoint: </label> {{metadataCtrl.endpoint}}
+</form-group>
+<form-group>
+    <label>Api-Key: </label> {{metadataCtrl.apikey}}
+</form-group>
+
+<hr>
+<p></p>
+<h4>Remote Endpoint Configuration</h4>
 <table id="oai-endpoint-table" st-table="endpoints" st-safe-src="metadataCtrl.oaiHarvesterList" class="table">
     <thead>
     <tr>
