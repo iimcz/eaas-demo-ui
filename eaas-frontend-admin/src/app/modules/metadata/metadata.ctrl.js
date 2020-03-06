@@ -9,7 +9,8 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
 
     vm.oaiHarvesterList = oaiHarvesterList.data;
     vm.waitModal = new WaitModal($uibModal);
-
+    
+    vm.endpoint = localConfig.data.oaipmhServiceBaseUrl + "providers";
     vm.apikey = apiKey.data.apikey;
     vm.sync = function(harvester)
     {
