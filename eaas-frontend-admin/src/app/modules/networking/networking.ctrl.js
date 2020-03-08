@@ -12,21 +12,21 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
 
     vm.initColumnDefs = function () {
         let rowdef =  [
-            {headerName: "ID", field: "id"},            
+            {headerName: "ID", field: "id", width: 150},            
         ];
 
         if(vm.view === "0") {
             rowdef.push({headerName: "Machines", field: "name", 
                 sort: "asc", 
                 cellRenderer: machineEntryRenderer, 
-                autoHeight: true});
+                autoHeight: true, flex: 1});
         }
         else {
-            rowdef.push({headerName: "Name", field: "name"});
+            rowdef.push({headerName: "Name", field: "name", flex: 1});
         }
         rowdef.push({
             headerName: "", field: "actions", cellRenderer: connectBtnRenderer, suppressSorting: true,
-            suppressMenu: true, 
+            suppressMenu: true, width: 150
         });
         return rowdef;
     };
@@ -76,12 +76,12 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
 
                     <li ng-if="data.archive !='remote'" role="menuitem dropdown-content">
                         <a class="dropdown-content" ng-click="run(data.id)">
-                            {{'CHOOSE_ENV_PROPOSAL'| translate}}
+                            run
                         </a>
                     </li>
                     <li role="menuitem">
                         <a class="dropdown-content" ng-click="edit(data.id)">
-                            {{'CHOOSE_ENV_EDIT'| translate}}
+                            details 
                         </a>
                     </li>
                     <li role="menuitem">
@@ -250,7 +250,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
     vm.gridOptions = {
         columnDefs: vm.initColumnDefs(),
         rowData: null,
-        rowHeight: 100,
+        rowHeight: 75,
         groupUseEntireRow: true,
         rowSelection: 'multiple',
         angularCompileRows: true,
