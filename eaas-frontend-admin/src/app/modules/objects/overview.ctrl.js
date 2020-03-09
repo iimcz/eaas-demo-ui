@@ -35,13 +35,8 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
     vm.initColumnDefs = function () {
         return [
-            {headerName: "ID", field: "id"},
             {
-                headerName: "title", field: "Name", sort: "asc"
-            },
-            {
-                headerName: "description", field: "description", cellRenderer: descriptiponRenderer, suppressSorting: true,
-                suppressMenu: true
+                headerName: "object", field: "Object", sort: "asc", userObjectRenderer
             },
             {
                 headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
@@ -95,11 +90,6 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         });
     }
 
-    function descriptiponRenderer(params) {
-        params.$scope.selected = $scope.selected;
-        return `<abbr title="{{data.description}}">{{data.description}}</abbr>`;
-    }
-
     function userObjectRenderer(params) {
         return `
         <div style="padding-top: 10px; padding-bottom: 10px;" >
@@ -136,10 +126,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         suppressHorizontalScroll: true,
         animateRows: true,
         onGridReady: function (params) {
-            $scope.gridOptions.api.sizeColumnsToFit();
-            window.onresize = () => {
-                $scope.gridOptions.api.sizeColumnsToFit();
-            }        
+            $scope.gridOptions.api.sizeColumnsToFit();      
         },
         pagination: true,
         paginationPageSize: 10,
