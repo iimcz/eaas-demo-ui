@@ -95,7 +95,10 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
 
                 this.resolve = async function()
                 {
-                    let token = await createJwt(_this.secret);
+                    let token = null;
+                    
+                    if(_this.secret) 
+                        token = await createJwt(_this.secret);
                     try { 
                         vm.waitModal.show("Resolving endpoint");
                         _this.providers = await _fetch(_this.host, "GET", null, token);
