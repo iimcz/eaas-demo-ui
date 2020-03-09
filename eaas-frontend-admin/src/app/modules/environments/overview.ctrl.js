@@ -338,7 +338,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                   <li role="menuitem"><a ng-if="data.archive == 'default' || view == 4" class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li ng-if="data.archive != 'remote'" ng-hide="view == 4" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
                   
-                  <li role="menuitem"><a ng-if="landingPage" target="_blank" class="dropdown-content"
+                  <li role="menuitem"><a ng-if="ng-if="data.archive !== 'remote'" target="_blank" class="dropdown-content" 
                   ng-click="switchAction(data.id, \'openLandingPage\')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
                 
                 </ul>
