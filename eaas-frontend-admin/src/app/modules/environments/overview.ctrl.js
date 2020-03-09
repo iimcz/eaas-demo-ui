@@ -31,15 +31,8 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             vm.envs = Environments.query().$promise.then(function(response) {
             vm.rowCount = 0;
             vm.envs = response;
-            if (vm.view == 0 || vm.view == 3)
+            if (vm.view == 0)
                 vm.envs.forEach(function (element) {
-                    if (element.isLinuxRuntime) {
-                        if (vm.view === 0)
-                            return;
-                    } else {
-                        if (vm.view === 3)
-                            return;
-                    }
                     if(element.envType != 'base')
                         return;
                     
