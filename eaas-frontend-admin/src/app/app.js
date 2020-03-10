@@ -536,6 +536,10 @@ function($stateProvider,
             controller: function(authService) {
                 var vm = this;
                 vm.authService = authService;
+                vm.authService.login({
+                    connection: 'Username-Password-Authentication',
+                    scope: 'openid profile email'
+                });
             },
             controllerAs: "loginCtrl"
         })
@@ -563,22 +567,10 @@ function($stateProvider,
         .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
-                clusters: function($http, localConfig) {
-                    return $http.get(localConfig.data.dashboardClusterAPIBaseURL, {
-                        headers: {
-                            'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                },
+                clusters: ($http, localConfig) => $http.get(localConfig.data.dashboardClusterAPIBaseURL),
                 allClusterDetails: function ($q, $http, localConfig, clusters) {
                     return $q.all(clusters.data.map(function (cluster) {
-                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster, {
-                                headers: {
-                                    'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                                    'Cache-Control': 'no-cache'
-                            }
-                        })
+                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster)
                     }));
                 }
             },
