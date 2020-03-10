@@ -308,42 +308,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     });
 })
 
-.service('authService', function($state, angularAuth0, $timeout, localConfig, $rootScope) {
+.service('authService', function($state, angularAuth0, $timeout, localConfig) {
       const auth0config = localConfig.data.auth0Config || {};
       this.login = function (data) {
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
       };
-
-      this.handleAuthentication = async function () {
-        let resolve, reject;
-        const promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
-
-        angularAuth0.parseHash(
-            function(err, authResult) {
-                if (authResult && authResult.idToken && authResult.accessToken) {
-                    setSession(authResult);
-                    resolve();
-                } else if (err) {
-                    console.log(err);
-
-                    $timeout(function() {
-                        $state.go('login');
-                    });
-                    console.log('Error: ' + err.error + '. Check the console for further details.');
-                }
-            });
-        return promise;
-     }
-
-    function setSession(authResult) {
-           // Set the time that the access token will expire at
-           let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-           localStorage.setItem('access_token', authResult.accessToken);
-           localStorage.setItem('id_token', authResult.idToken);
-           localStorage.setItem('expires_at', expiresAt);
-           console.log(authResult.idToken);
-     }
 
      this.logout = function () {
            // Remove tokens and expiry time from localStorage
@@ -467,10 +437,11 @@ function($stateProvider,
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                // if (rejection && rejection.status === 401) {
-                //     $injector.get('$state').go('login');
-                //     return $q.reject(rejection);
-                // }
+
+                if (rejection && rejection.status === 401 || rejection.status === 403) {
+                     $injector.get('$state').go('login');
+                     return $q.reject(rejection);
+                }
                 
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
