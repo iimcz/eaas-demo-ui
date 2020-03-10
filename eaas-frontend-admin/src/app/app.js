@@ -281,20 +281,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
             event.preventDefault();
-            // $scope.toState = toState;
-            // $scope.open();
-            //  console.log("prevent: $stateChangeStart: "+toState.name);
+            $scope.toState = toState;
+        //    $scope.open();
+            console.log("prevent: $stateChangeStart: "+toState.name);
         }
-//            else {
-//                console.log("$stateChangeStart: "+toState.name);
-//            }
+            else {
+                console.log("$stateChangeStart: "+toState.name);
+            }
     });
-
-     const auth0config = localConfig.data.auth0Config || {};
-     if(auth0config.AUTH_CONFIGURED) {
-            console.log("authService", auth0config);
-            await authService.handleAuthentication();
-        }
 })
 
 .service('authService', function($state, angularAuth0, $timeout, localConfig, $rootScope) {
@@ -306,7 +300,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
       this.handleAuthentication = async function () {
         let resolve, reject;
-        $rootScope.chk.transitionEnable = false;
         const promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
 
         angularAuth0.parseHash(
@@ -323,8 +316,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                     console.log('Error: ' + err.error + '. Check the console for further details.');
                 }
             });
-            await promise;
-            $rootScope.chk.transitionEnable = true;
+        return promise;
      }
 
     function setSession(authResult) {
@@ -535,6 +527,14 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
+                loginSuccess: (localConfig, authService) => {
+                    const auth0config = localConfig.data.auth0Config || {};
+                    if(auth0config.AUTH_CONFIGURED) {
+                       return authService.handleAuthentication();
+                    }
+                    else
+                        return {};
+                },
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
