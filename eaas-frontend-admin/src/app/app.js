@@ -544,14 +544,6 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-                loginSuccess: (localConfig, authService) => {
-                    const auth0config = localConfig.data.auth0Config || {};
-                    if(auth0config.AUTH_CONFIGURED) {
-                       return authService.handleAuthentication();
-                    }
-                    else
-                        return {};
-                },
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
