@@ -36,6 +36,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                     if(element.envType != 'base')
                         return;
                     
+                    if (element.isLinuxRuntime) 
+                        return;
+                    
                     if((element.archive == 'default' && vm.viewArchive === 0) ||
                         ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
                         (element.archive == "remote" && vm.viewArchive === 2))
