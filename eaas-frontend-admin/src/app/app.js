@@ -297,7 +297,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
 })
 
-.service('authService', function($state, angularAuth0, $timeout, localConfig) {
+.service('authService', function($state, angularAuth0, $timeout, localConfig, $rootScope) {
       const auth0config = localConfig.data.auth0Config || {};
       this.login = function (data) {
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
@@ -306,22 +306,25 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
       this.handleAuthentication = async function () {
         let resolve, reject;
+        $rootScope.chk.transitionEnable = false;
         const promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
 
         angularAuth0.parseHash(
-        function(err, authResult) {
-            if (authResult && authResult.idToken && authResult.accessToken) {
-                setSession(authResult);
-                resolve();
-            } else if (err) {
-                $timeout(function() {
-                $state.go('login');
-           });
-           console.log('Error: ' + err.error + '. Check the console for further details.');
-        }
-        });
+            function(err, authResult) {
+                if (authResult && authResult.idToken && authResult.accessToken) {
+                    setSession(authResult);
+                    resolve();
+                } else if (err) {
+                    console.log(err);
 
-        await promise;
+                    $timeout(function() {
+                        $state.go('login');
+                    });
+                    console.log('Error: ' + err.error + '. Check the console for further details.');
+                }
+            });
+            await promise;
+            $rootScope.chk.transitionEnable = true;
      }
 
     function setSession(authResult) {
@@ -459,6 +462,7 @@ function($stateProvider,
                 //     $injector.get('$state').go('login');
                 //     return $q.reject(rejection);
                 // }
+                
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
