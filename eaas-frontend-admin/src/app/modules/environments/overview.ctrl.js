@@ -29,59 +29,59 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             let rowData = [];
            
             vm.envs = Environments.query().$promise.then(function(response) {
-            vm.rowCount = 0;
-            vm.envs = response;
-            if (vm.view == 0)
+                vm.rowCount = 0;
+                vm.envs = response;
                 vm.envs.forEach(function (element) {
-                    if(element.envType != 'base')
-                        return;
-                    
-                    if (element.isLinuxRuntime) 
-                        return;
-                    
-                    if((element.archive == 'default' && vm.viewArchive === 0) ||
-                        ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
-                        (element.archive == "remote" && vm.viewArchive === 2))
-                        rowData.push({
-                            name: element.title, 
-                            id: element.envId, 
-                            archive: element.archive, 
-                            owner: (element.owner) ? element.owner : "shared",
-                            timestamp: element.timestamp,
-                            description: element.description,
-                            os: getOsLabelById(osList.operatingSystems, element.operatingSystem),
-                        });
-                });
-            else if (vm.view == 1) {
-                vm.envs.forEach(function (element) {
-                    if(element.envType != 'object')
-                        return;
-                    rowData.push({
-                        name: element.title,
-                        id: element.envId,
-                        archive: element.archive,
-                        owner: (element.owner) ? element.owner : "shared",
-                        objectId: element.objectId
-                    })
-                })
-            } else if (vm.view == 2) {
-                vm.envs.forEach(function (element) {
-                    if(element.envType != 'container')
-                        return;
-                    if((element.archive == 'default' && vm.viewArchive === 0) ||
-                        ((element.archive == "public" || element.archive == 'container') && vm.viewArchive === 1) ||
-                        (element.archive == "remote" && vm.viewArchive === 2))
+                    if (vm.view == 0) {
+                        if(element.envType != 'base')
+                            return;
+                        
+                        if (element.isLinuxRuntime) 
+                            return;
+                        
+                        if((element.archive == 'default' && vm.viewArchive === 0) ||
+                            ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
+                            (element.archive == "remote" && vm.viewArchive === 2))
+                            rowData.push({
+                                name: element.title, 
+                                id: element.envId, 
+                                archive: element.archive, 
+                                owner: (element.owner) ? element.owner : "shared",
+                                timestamp: element.timestamp,
+                                description: element.description,
+                                os: getOsLabelById(osList.operatingSystems, element.operatingSystem),
+                            });
+                            
+                    }
+                    else if (vm.view == 1) {
+                        if(element.envType != 'object')
+                            return;
+
                         rowData.push({
                             name: element.title,
                             id: element.envId,
+                            archive: element.archive,
                             owner: (element.owner) ? element.owner : "shared",
                             objectId: element.objectId
-                        })
-                })
-            }
-            updateTableData(rowData);
+                        });  
+                    } 
+                    else if (vm.view == 2) {
+                        if(element.envType != 'container')
+                            return;
+                        if((element.archive == 'default' && vm.viewArchive === 0) ||
+                            ((element.archive == "public" || element.archive == 'container') && vm.viewArchive === 1) ||
+                            (element.archive == "remote" && vm.viewArchive === 2))
+                            rowData.push({
+                                name: element.title,
+                                id: element.envId,
+                                owner: (element.owner) ? element.owner : "shared",
+                                objectId: element.objectId
+                            });
+                        
+                    }
+                });
+                updateTableData(rowData);
             });
-        
         };
 
         vm.pageSize = "10";
@@ -314,6 +314,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
 
 
         function actionsCellRendererFunc(params) {
+
             params.$scope.switchAction = switchAction;
             params.$scope.selected = $scope.selected;
             params.$scope.landingPage = vm.landingPage;
@@ -334,15 +335,26 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                
                 <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                   <li ng-if="data.archive !='remote'" role="menuitem dropdown-content">
-                        <a class="dropdown-content" ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>
+                        <a class="dropdown-content" ng-click="switchAction(data.id, 'run')">{{'CHOOSE_ENV_PROPOSAL'| translate}}</a>
                   </li>
                   
-                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
-                  <li role="menuitem"><a ng-if="data.archive == 'default' || view == 4" class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
-                  <li ng-if="data.archive != 'remote'" ng-hide="view == 4" role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'addSoftware\')">{{\'CHOOSE_ENV_ADDSW\'| translate}}</a></li>
+                  <li role="menuitem">
+                    <a class="dropdown-content" ng-click="switchAction(data.id, 'edit')">{{'CHOOSE_ENV_EDIT'| translate}}</a>
+                  </li>
+                  <li role="menuitem">
+                    <a ng-if="data.archive == 'default'" 
+                        class="dropdown-content" ng-click="switchAction(data.id, 'deleteEnvironment')">
+                            {{'CHOOSE_ENV_DEL'| translate}}
+                    </a>
+                  </li>
+                  <li ng-if="data.archive !== 'remote'" role="menuitem">
+                    <a class="dropdown-content" ng-click="switchAction(data.id, 'addSoftware')">
+                        {{'CHOOSE_ENV_ADDSW'| translate}}
+                    </a>
+                  </li>
                   
-                  <li role="menuitem"><a ng-if="ng-if="data.archive !== 'remote'" target="_blank" class="dropdown-content" 
-                  ng-click="switchAction(data.id, \'openLandingPage\')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
+                  <li role="menuitem"><a ng-if="data.archive !== 'remote'" target="_blank" class="dropdown-content" 
+                  ng-click="switchAction(data.id, 'openLandingPage')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
                 
                 </ul>
                 
@@ -420,13 +432,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
         }
 
         vm.initColumnDefs = function () {
-            var columnDefs = [];
-            columnDefs = [
-                {headerName: '', width: 41, checkboxSelection: false, suppressSorting: true,
-                    suppressMenu: true},
+            let columnDefs = [
                 {headerName: "Name", field: "name", width: 400, sort: "asc" },
                 {headerName: "ID", field: "id", width: 100},
-                
             ];
             
             columnDefs.push({headerName: "Archive", field: "archive", hide: true});

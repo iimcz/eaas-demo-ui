@@ -5,23 +5,21 @@
     <uib-tab index="0" ng-click="standardEnvsOverviewCtrl.updateTable(0)" heading="{{'CHOOSE_BASEENV_L' | translate}}">
 
     </uib-tab>
-    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-click="standardEnvsOverviewCtrl.updateTable(1)" ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
+    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-click="standardEnvsOverviewCtrl.updateTable(1)" 
+        ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
     </uib-tab>
 
-    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers" ng-if="standardEnvsOverviewCtrl.config.features.containers">
+    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers" 
+        ng-if="standardEnvsOverviewCtrl.config.features.containers">
     </uib-tab>
 </uib-tabset>
 <p></p>
-<div class="separator-right" ng-if="standardEnvsOverviewCtrl.view == 4">
-    <button class="btn btn-default" ng-if="standardEnvsOverviewCtrl.view == 4"
-            ui-sref="admin.create-network-environment()">
-        {{ 'ADD_NETWORK_ENVIRONMENT' | translate }}
-    </button>
-</div>
-<uib-tabset ng-if="!standardEnvsOverviewCtrl.config.features.standalone && standardEnvsOverviewCtrl.view != 1" active="standardEnvsOverviewCtrl.viewArchive" type="pills">
-    <uib-tab index="0" disable="standardEnvsOverviewCtrl.view == 4" heading="Private" ng-click="standardEnvsOverviewCtrl.view != 4 ? standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view) : null"></uib-tab>
+
+<uib-tabset ng-if="!standardEnvsOverviewCtrl.config.features.standalone && standardEnvsOverviewCtrl.view != 1" 
+    active="standardEnvsOverviewCtrl.viewArchive" type="pills">
+    <uib-tab index="0" heading="Private" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
     <uib-tab index="1" heading="Public" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
-    <uib-tab index="2" disable="standardEnvsOverviewCtrl.view == 4" heading="Remote" ng-click="standardEnvsOverviewCtrl.view != 4 ? standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view) : null"></uib-tab>
+    <uib-tab index="2" heading="Remote" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
 </uib-tabset>
 
 <div class="row">
