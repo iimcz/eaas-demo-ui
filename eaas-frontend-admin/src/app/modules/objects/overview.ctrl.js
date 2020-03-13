@@ -36,7 +36,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     vm.initColumnDefs = function () {
         return [
             {
-                headerName: "object", field: "Object", sort: "asc", userObjectRenderer
+                headerName: "Object", field: "object", sort: "asc", cellRenderer: userObjectRenderer, width: 700,
             },
             {
                 headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
@@ -95,8 +95,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         <div style="padding-top: 10px; padding-bottom: 10px;" >
             <div class="overview-label">{{data.title}}<br>
             <span class="overview-content">
-                <b>ID:</b> {{data.id}} &nbsp; <p>
-                <span ng-bind-html="data.description"></span>
+                <b>ID:</b> {{data.id}} 
             </span></div></div>`;
     }
 
@@ -112,7 +111,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
     $scope.gridOptions = {
         columnDefs: vm.initColumnDefs(),
-        rowHeight: 31,
+        rowHeight: 75,
         groupUseEntireRow: true,
         rowSelection: 'multiple',
         angularCompileRows: true,
