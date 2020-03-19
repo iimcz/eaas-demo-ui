@@ -18,7 +18,7 @@
         <button type="submit" class="btn btn-default"
                 ng-click="actionsCtrl.openChangeMediaDialog()"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
-                ng-show="actionsCtrl.driveId >= 0">
+                ng-show="actionsCtrl.mediaList.length > 0">
             {{'ACTIONS_CHANGE_MEDIA' | translate}}
         </button>
 
