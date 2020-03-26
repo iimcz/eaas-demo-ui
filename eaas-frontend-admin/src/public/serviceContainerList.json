@@ -1,0 +1,8 @@
+{
+    "container" : [{
+        "id" : "dns",
+        "title" : "DNS / DHCP Service",
+        "imageUrl" :  "registry.gitlab.com/emulation-as-a-service/experiments/fake-dns",
+        "description" : "DNS / DHCP service container"
+    }]
+}

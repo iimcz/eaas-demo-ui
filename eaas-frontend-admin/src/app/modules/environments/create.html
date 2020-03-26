@@ -31,8 +31,8 @@
                         </button>
                     </div>
                     <div class="col-md-3 text-center">
-                        <button class="btn btn-default" type="button" ng-disabled="true"
-                            ng-click="newImageCtrl.preSelectedSystem(other)">
+                        <button class="btn btn-default" type="button" 
+                            ng-click="newImageCtrl.preSelectedSystem('other')">
                             <img src="img/other.png" height="80px"></br>
                             <small class="text-secondary">Other</small>
                         </button>
@@ -55,8 +55,8 @@
     <div class="panel panel-default" ng-if="newImageCtrl._preSelectedSystem">
         <div class="panel-heading">System Settings</div>
         <div class="panel-body">
-            <div class="form-group" ng-if="newImageCtrl._preSelectedSystem != 'other'">
-                <label>Select operating system presets </label>
+            <div class="form-group">
+                <label>Select operating system / System </label>
                 <div style="max-width: 350px;">
                     <ui-select ng-model="newImageCtrl.selectedTemplate"
                         on-select="newImageCtrl.onSelectSystem($item, $model)" theme="bootstrap"

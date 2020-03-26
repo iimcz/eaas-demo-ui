@@ -43,6 +43,7 @@ import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
 import {romList} from "./lib/images.js"
+import {_fetch} from './lib/utils.js'
 
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
@@ -80,10 +81,8 @@ Object.defineProperty(window, "EMULATORS_LIST", {
 
 import guacamolejs from 'raw-loader!../../../eaas-client/guacamole/guacamole.js';
 appendScript(guacamolejs);
-
-import eaasclientjs from 'raw-loader!../../../eaas-client/eaas-client.js';
-appendScript(eaasclientjs);
-
+import {Client, hideCursor, showCursor, requestPointerLock} from '../../../eaas-client/eaas-client.js';
+import {textAngularComponent} from 'EaasLibs/javascript-libs/text-angularjs.component.js';
 /*
  * Import application specific modules
  */
@@ -104,7 +103,17 @@ import 'font-awesome/css/font-awesome.css';
 import 'angular-wizard/dist/angular-wizard.css';
 import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
-import './app.css';
+
+import './app.scss';
+
+/**
+ * angular 8 modules
+ */
+import {downgradeComponent} from '@angular/upgrade/static';
+import {AddNetworkComponent} from '../app2/components/network-environments/add/add-network-env.component.ts';
+import {EditNetworkComponent} from "../app2/components/network-environments/edit/edit-network-env.component.ts";
+import {StartedNetworkOverview} from "EaasLibs/network-environments/run/started-network-overview.component.ts";
+
 import { osLocalList } from './lib/os.js';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
@@ -120,7 +129,19 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         ret.data = JSON.parse(xhr.responseText);
         return ret;
     })())
-
+    .directive(
+        'addNetworkEnvironment',
+        downgradeComponent({component: AddNetworkComponent})
+    )
+    .directive(
+        'startedNetworkEnvironmentOverview',
+        downgradeComponent({component: StartedNetworkOverview})
+    )
+    .directive(
+        'editNetworkEnvironment',
+        downgradeComponent({component: EditNetworkComponent})
+    )
+    .component('descriptionText', textAngularComponent)
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
         bindings: {
@@ -275,8 +296,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
 })
 
-.service('authService', function($state, angularAuth0, $timeout) {
-
+.service('authService', function($state, angularAuth0, $timeout, localConfig) {
+      const auth0config = localConfig.data.auth0Config;
       this.login = function (data) {
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
@@ -334,7 +355,9 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 .factory('Environments', function($http, $resource, localConfig) {
    return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
 })
-
+.factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
+    return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
+ })
 .config(['$stateProvider',
         '$urlRouterProvider',
         'growlProvider',
@@ -358,6 +381,7 @@ function($stateProvider,
         angularAuth0Provider,
         localConfig
 ) {
+    const auth0config = localConfig.data.auth0Config;
     angular.lowercase = angular.$$lowercase;
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
@@ -401,11 +425,18 @@ function($stateProvider,
         clientID: auth0config.CLIENT_ID,
         domain: auth0config.DOMAIN,
         responseType: 'token id_token',
+        _sendTelemetry: false,
+        overrides: {
+            // The following values can usually be found in </.well-known/openid-configuration>:
+            __jwks_uri: auth0config.jwks_uri,
+            __token_issuer: auth0config.issuer,
+        },
     });
 
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      whiteListedDomains: "localhost",
+      whiteListedDomains: [new URL(localConfig.data.eaasBackendURL, location).hostname],
+      urlParam: "access_token",
       tokenGetter: [ 'options', function(options) {
         if (options && options.url.substr(options.url.length - 5) == '.html') {
             return null;
@@ -499,10 +530,8 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-
-                kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
-
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
@@ -640,7 +669,8 @@ function($stateProvider,
             url: "/environments",
             params: {
                 showObjects: false,
-                showContainers: false
+                showContainers: false,
+                showNetworkEnvs: false
             },
             resolve : {
                 osList : () => osLocalList(),
@@ -655,8 +685,9 @@ function($stateProvider,
         .state('admin.metadata', {
             url: "/metadata",
             resolve : {
-                oaiHarvesterList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters")
+                oaiHarvesterList: ($http, localConfig) =>
+                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters"),
+                apiKey: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "admin/apikey")
             },
             views: {
                 'wizard': {
@@ -703,15 +734,20 @@ function($stateProvider,
         .state('admin.emulator', {
             url: "/emulator",
             resolve: {
-                chosenEnv: function($stateParams, Environments) {
-                    if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
-                        return  Environments.get({envId: $stateParams.envId}).$promise;
+                chosenEnv: function($stateParams, Environments, EmilNetworkEnvironments) {
+                    if($stateParams.isNetworkEnvironment){
+                        return EmilNetworkEnvironments.get({envId: $stateParams.envId}).$promise;
+                    }
+                    else if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                        return Environments.get({envId: $stateParams.envId}).$promise;
                     else
                         return null;
-                }
+                },
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
             },
             params: {
                 envId: null,
+                isNetworkEnvironment: null,                
                 type: 'saveRevision',
                 softwareId: null,
                 isUserSession: false,
@@ -723,6 +759,9 @@ function($stateProvider,
                 isDetached: false,
                 networkInfo: null,
                 containerRuntime: null,
+                realEnvId: null,
+                componentId: null,
+                session: null,
                 groupId : null
             },
             views: {
@@ -742,7 +781,8 @@ function($stateProvider,
             resolve: {
                 chosenEnv: function($stateParams, Environments) {
                     return Environments.get({envId: $stateParams.envId}).$promise;
-                }
+                },
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
             },
             params: {
                 envId: null,
@@ -806,7 +846,6 @@ function($stateProvider,
             url: "/networking",
             resolve: {
                 localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
-                groupdIds: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
             },
             views: {
                 'wizard': {
@@ -828,6 +867,46 @@ function($stateProvider,
                 }
             }
         })
+        .state('admin.settings', {
+            url: "/settings",
+            params: {},
+            resolve: {
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/settings.html'),
+                    controller: "SettingsCtrl as settingsCtrl"
+                }
+            }
+        })
+        .state('admin.runtime-overview', {
+            url: "/runtimes",
+            params: {},
+            resolve: {
+                osList : () => osLocalList(),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/runtime-overview.html'),
+                    controller: "RuntimeOverviewCtrl as runtimeOverviewCtrl"
+                }
+            }
+        })
+
+        .state('admin.service-containers', {
+            url: "/service-containers",
+            params: {},
+            resolve: {
+               containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/service-container-overview.html'),
+                    controller: "ServiceContainerCtrl as serviceContainerCtrl"
+                }
+            }
+        })
         .state('admin.emulators', {
             url: "/emulators",
             params: {},
@@ -839,6 +918,53 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/emulators/overview.html'),
                     controller: "EmulatorsController as emusCtrl"
+                }
+            }
+        })
+        .state('admin.create-network-environment', {
+            url: "/create-network-environment",
+            resolve: {
+                environments: (Environments) => {
+                    return Environments.query().$promise;
+                }
+            },
+            views: {
+                'wizard': {
+                    template: '<add-Network-Environment' +
+                        '  [environments] = environments>' +
+                        '</add-Network-Environment>',
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                        $scope.environments = environments.filter(env => env.networkEnabled === true);
+                        if ($scope.environments.length === 0) {
+                            growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
+                    }]
+                }
+            }
+        })
+        .state('admin.edit-network-environment', {
+            url: "/edit-network-environment",
+            params: {selectedNetworkEnvironment: null},
+            resolve: {
+                environments: (Environments) => {
+                    return Environments.query().$promise;
+                }
+            },
+            views: {
+                'wizard': {
+                    template: '<edit-Network-Environment ' +
+                        '[environments] = environments '+
+                        '[selected-Network-Environment] = selectedNetworkEnvironment>' +
+                        '</edit-Network-Environment>',
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                        $scope.environments = environments.filter(env => env.networkEnabled === true);
+                        if ($scope.environments.length === 0) {
+                            growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
+                        $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
+                    }]
                 }
             }
         })

@@ -41,6 +41,22 @@ export async function romList($http, localConfig)
     return images;
 }
 
+export async function runtimeList($http, localConfig)
+{
+    const rawImages = await imagesListRaw($http, localConfig);
+    let images = [];
+    rawImages.forEach(function(element, i) {
+        let image = {
+            imageId : element.value.image.id,
+            label : element.value.label,
+            type: element.value.image.type,
+        };
+        if(image.type === 'runtime')
+            images.push(image);
+    });
+    return images;
+}
+
 async function _createEmptyImage(localConfig, size) 
 {
     try {
@@ -102,6 +118,26 @@ export async function importRomImage(localConfig, url, label)
             url: url,
             label: label,
             imageType: 'roms',
+        });
+        let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
+        let imageResult = await task.done;
+        return imageResult.imageId; 
+    }
+    catch(e) {
+        throw new Error("environment-repository/create-image: " 
+            +  ' Request failed: ' 
+            + e + "\n original message: " + result);
+    }
+}
+
+export async function importRuntimeImage(localConfig, url, label)
+{
+    let result; 
+    try  {
+        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
+            url: url,
+            label: label,
+            imageType: 'runtime',
         });
         let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
         let imageResult = await task.done;

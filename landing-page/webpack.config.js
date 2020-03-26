@@ -7,6 +7,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const path = require('path');
 
 /**
  * Env
@@ -36,7 +37,8 @@ module.exports = function makeWebpackConfig() {
    * Reference: http://webpack.github.io/docs/configuration.html#entry
    */
   config.entry = {
-    app: './src/app/app.js'
+    polyfills: './src/app2/polyfills.js',
+    app: './src/app2/app.module.ts'
   };
 
   /**
@@ -111,6 +113,22 @@ module.exports = function makeWebpackConfig() {
         ],
       })
     }, {
+      test: /\.scss$/,
+      use: [
+          {
+              loader: 'style-loader'
+          },
+          {
+              loader: 'to-string-loader'
+          },
+          {
+              loader: 'css-loader'
+          },
+          {
+              loader: 'sass-loader'
+          }
+      ]
+  }, {
       // ASSET LOADER
       // Reference: https://github.com/webpack/file-loader
       // Copy png, jpg, jpeg, gif, svg, woff, woff2, ttf, eot files to output
@@ -128,7 +146,9 @@ module.exports = function makeWebpackConfig() {
       // Allow loading html through js
       test: /\.html$/,
       loader: 'raw-loader'
-    }]
+    },
+      { test: /\.tsx?$/,exclude: /\.node_modules/, loader: "ts-loader" }]
+
   };
 
   /**
@@ -217,6 +237,14 @@ module.exports = function makeWebpackConfig() {
     },
     open: true
   };
-
+  config.resolve = {
+    alias: {
+        EaasLibs: path.resolve(__dirname, '../eaas-frontend-lib/'),
+        EaasAdmin: path.resolve(__dirname, '../eaas-frontend-admin/src/'),
+        '@angular': path.resolve(__dirname, './node_modules/@angular'),
+        'uuid': path.resolve(__dirname, './node_modules/uuid'),
+        'EaasClient': path.resolve(__dirname, '../eaas-client/')
+    }
+};
   return config;
 }();

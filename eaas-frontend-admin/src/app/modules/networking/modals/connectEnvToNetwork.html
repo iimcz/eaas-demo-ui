@@ -1,0 +1,12 @@
+<div class="modal-header">
+    Choose environment
+</div>
+
+
+<div class="modal-body">
+    <ul>
+        <li  ng-if="item.networkEnabled" ng-repeat="item in $ctrl.environments">
+            <a style="cursor: pointer;" ng-click="$ctrl.connectEnvironmentToNetwork(item)">{{ item.title }}</a>
+        </li>
+    </ul>
+</div>

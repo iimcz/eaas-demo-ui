@@ -4,7 +4,7 @@
 /*.modal-backdrop.in {*/
     /*opacity: 1;*/
 /*}*/
-
+@import '../../../eaas-frontend-admin/src/app2/theme.scss';
 .parent {
     position: relative;
 }
@@ -218,6 +218,9 @@ html.wait, body.wait {
 .m-t-0 {
   margin-top: 0 !important;
 }
+.minContent{
+  margin: auto;width: min-content;
+}
 
 div.ex1, div.ex2 {
     /*margin: auto;*/
@@ -228,6 +231,9 @@ div.ex1{
 }
 div.ex3{
     margin:5px 8% 5px 5%;
+}
+div.main-block{
+    margin:5px 20% 5px 20%;
 }
 
 div.ex4{
@@ -246,4 +252,8 @@ div.ex4{
 .tekst {
     display:block;
     margin-bottom:5px;   /* adapt the margin value to the desire space between span and select box */
+}
+.tekstMore {
+  display:block;
+  margin-bottom:10px;   /* adapt the margin value to the desire space between span and select box */
 }

@@ -1,4 +1,4 @@
-import {imageList, importEmptyImage, importImage, deleteImage, importRomImage} from '../../lib/images.js'
+import {imageList, importEmptyImage, importImage, deleteImage, importRomImage, importRuntimeImage} from '../../lib/images.js'
 import {WaitModal} from '../../lib/task.js'
 
 module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
@@ -71,6 +71,8 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
                             result = await importEmptyImage(localConfig, this.hdsize, this.label);
                         else if(this.mode === "rom")
                             result = await importRomImage(localConfig, this.romurl, this.label);
+                        else if(this.mode === "runtime")
+                            result = await importRuntimeImage(localConfig, this.runtime, this.label);
                         else
                             result = await importImage(localConfig, this.hdurl, this.label);
                     }
@@ -165,9 +167,6 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
         animateRows: true,
         onGridReady: function (params) {
             $scope.gridOptions.api.sizeColumnsToFit();
-            window.onresize = () => {
-                $scope.gridOptions.api.sizeColumnsToFit();
-            }
         },
         pagination: true,
         paginationPageSize: 10,

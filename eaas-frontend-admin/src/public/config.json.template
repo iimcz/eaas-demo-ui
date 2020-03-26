@@ -21,7 +21,8 @@
       "objectUpload" : true,
       "oaipmh" : true,
       "emulators": true,
-      "networking": true
+      "networking": true,
+      "network_sessions": true
     },
 
     "auth0Config" : {

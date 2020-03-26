@@ -1,11 +1,12 @@
 import {stopClient} from "./utils/stop-client";
 import {WaitModal} from "../../lib/task.js"
 
-module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
-                        '$timeout', '$translate', 'chosenEnv', 'Environments', 'helperFunctions', 'REST_URLS',
-                        function ($rootScope, $scope, $window, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
-                        $timeout, $translate, chosenEnv, Environments, helperFunctions, REST_URLS) {
+module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
+                        '$timeout', '$translate', 'chosenEnv', 'REST_URLS', 'eaasClient',
+                        function ($rootScope, $scope, $state, $http, $uibModal, $stateParams, growl, localConfig, Objects,
+                        $timeout, $translate, chosenEnv, REST_URLS, eaasClient) {
     var vm = this;
+    vm.isNetworkEnvironment = $stateParams.isNetworkEnvironment;
     vm.envId = $stateParams.envId;
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
@@ -17,6 +18,17 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     vm.mediaList = [];
     vm.removableMediaList = [];
+
+    var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
+    var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
+
+    if (objectId) {
+        Objects.get({ archiveId: objectArchive, objectId: objectId }).$promise.then(function (response) {
+            vm.mediaCollection = response.mediaItems;
+            if (vm.mediaCollection)
+                vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
+        });
+    }
 
     vm.enablePrinting = (chosenEnv == null);
     vm.enableSaveEnvironment = (chosenEnv == null);
@@ -43,7 +55,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
     if(vm.enablePrinting) {
         $rootScope.$on('emulatorStart', function(event, args) {
-            window.eaasClient.eventSource.addEventListener('print-job', function(e) {
+            eaasClient.eventSource.addEventListener('print-job', function(e) {
                 var obj = JSON.parse(e.data);
                 if (!obj) {
                     console.warn('Parsing print-job notification failed!');
@@ -61,12 +73,12 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     }
 
-    $scope.screenshot = function () {
-       var canvas = document.getElementsByTagName("canvas")[0];
-       canvas.toBlob(function(blob) {
-           saveAs(blob, "screenshot.png");
-       });
-    };
+   $scope.screenshot = function () {
+        var canvas = document.getElementsByTagName("canvas")[0];
+        canvas.toBlob(function(blob) {
+            saveAs(blob, "screenshot.png");
+        });
+     };
 
     vm.toggleKeyboard = function()
     {
@@ -89,51 +101,47 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         }
     }
 
-    var printSuccessFn = function(data) {
+    vm.openPrintDialog = function () {
+        eaasClient.getPrintJobs(printSuccessFn);
+    };
+
+    vm.restartEmulator = function () {
+        eaasClient.release();
+        $state.reload();
+    };
+
+    vm.sendEsc = function () {
+        eaasClient.sendEsc();
+    };
+
+    vm.sendCtrlAltDel = function () {
+        eaasClient.sendCtrlAltDel();
+    };
+
+    vm.close = function () {
+        window.onbeforeunload = null;
+        $state.go('admin.standard-envs-overview', {}, { reload: true });
+    };
+
+    var printSuccessFn = function (data) {
         $uibModal.open({
             animation: true,
             template: require('./modals/printed-list.html'),
-            controller: ["$scope", function($scope) {
+            controller: ["$scope", function ($scope) {
                 this.printJobs = data;
 
-                this.download = async function(label)
-                {
-                      let _header = localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {};
-                      const pdf = await fetch(window.eaasClient.downloadPrint(label),{
-                         headers: _header,
-                     });
+                this.download = async function (label) {
+                    let _header = localStorage.getItem('id_token') ? { "Authorization": "Bearer " + localStorage.getItem('id_token') } : {};
+                    const pdf = await fetch(eaasClient.downloadPrint(label), {
+                        headers: _header,
+                    });
                     const pdfBlob = await pdf.blob();
                     window.open(URL.createObjectURL(pdfBlob));
                 }
             }],
             controllerAs: "openPrintDialogCtrl"
         });
-        // window.open(window.eaasClient.getPrintUrl());
-    };
-
-
-    vm.openPrintDialog = function ()
-    {
-        window.eaasClient.getPrintJobs(printSuccessFn);
-    };
-
-    vm.restartEmulator = function() {
-        window.eaasClient.release();
-        $state.reload();
-    };
-
-    vm.sendEsc = function() {
-        window.eaasClient.sendEsc();
-    };
-
-    vm.sendCtrlAltDel = function() {
-        window.eaasClient.sendCtrlAltDel();
-    };
-
-    vm.close = function () {
-        window.onbeforeunload = null;
-        window.eaasClient.disconnect();
-        $state.go('admin.standard-envs-overview', {}, {reload: true});
+        // window.open(eaasClient.getPrintUrl());
     };
 
     vm.stopEmulator = function () {
@@ -141,9 +149,9 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
             animation: true,
             template: require('./modals/confirm-stop.html'),
             controller: ['$scope', function($scope) {
-                this.confirmed = function()
-                {
-                    stopClient($uibModal, false, window.eaasClient);
+                this.confirmed = function() {
+                    window.onbeforeunload = null;
+                    stopClient($uibModal, false, eaasClient);
                     $('#emulator-stopped-container').show();
 
                     if($stateParams.isTestEnv)
@@ -169,17 +177,17 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
     };
 
     var eaasClientReadyTimer = function() {
-        if ((window.eaasClient !== undefined) && (window.eaasClient.driveId !== undefined) && (window.eaasClient.driveId !== null)) {
-            vm.driveId = window.eaasClient.driveId;
-            vm.removableMediaList = window.eaasClient.removableMediaList;
+        if ((eaasClient !== undefined) && (eaasClient.driveId !== undefined) && (eaasClient.driveId !== null)) {
+            vm.driveId = eaasClient.driveId;
+            vm.removableMediaList = eaasClient.removableMediaList;
             vm.mediaList = [];
 
             if(vm.removableMediaList && vm.removableMediaList.length) {
                 
-                for(let i = 0; i < window.eaasClient.removableMediaList.length; i++)
+                for(let i = 0; i < vm.removableMediaList.length; i++)
                 {
                     let mediaItem = {};
-                    let element = window.eaasClient.removableMediaList[i];
+                    let element = vm.removableMediaList[i];
                     mediaItem.driveId = element.driveIndex;
                     Objects.get({archiveId: element.archive, objectId: element.id}).$promise.then(function(response) {
                         mediaItem.mediaCollection = response.mediaItems;
@@ -261,128 +269,127 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
         });
     };
 
-    vm.checkpoint = function ()
-    {
-        window.onbeforeunload = null;
-        jQuery.when(
-        window.eaasClient.disconnect(),
-        jQuery.Deferred(function (deferred) {
-            jQuery(deferred.resolve);
-        })).done(function () {
-            window.eaasClient.checkpoint({
-                type: "newEnvironment",
-                envId: vm.envId,
-            }).then(function (newEnvId) {
-                    if (!newEnvId) {
-                    growl.error(status, {title: "Snapshot failed"});
-                    $state.go('admin.standard-envs-overview', {}, {reload: true});
-                    window.eaasClient.release();
-                }
-                console.log("Checkpointed environment saved as: " + newEnvId);
-                growl.success(status, {title: "New snapshot created."});
-                window.eaasClient.release();
-                $state.go('admin.edit-env', {envId: newEnvId, objEnv: $stateParams.returnToObjects}, {reload: true});
-            });
-        });
-    };
-
-    vm.switchEmulators = function (component)
-    {
-        vm.envId = component.env.data.environment;
-        var eaasClient = window.eaasClient;
-        let loadingElement = $("#emulator-loading-connections");
-        $("#emulator-container").hide();
-
-        var attr = loadingElement.attr('width');
-        loadingElement.attr("hidden", false);
-
-
-        jQuery.when(
-        window.eaasClient.disconnect(),
-        jQuery.Deferred(function (deferred) {
-            jQuery(deferred.resolve);
-        })).done(function () {
-
-
-            eaasClient.componentId = component.id;
-
-            eaasClient.connect().then(function () {
-                jQuery.when(
-                    loadingElement.animate({width: "100%"}, 700),
-                    jQuery.Deferred(function (deferred) {
-                        jQuery(deferred.resolve);
-                    })).done(function () {
-                    loadingElement.attr("hidden", true);
+        vm.checkpoint = function () {
+            window.onbeforeunload = null;
+            jQuery.when(
+                eaasClient.disconnect(),
+                jQuery.Deferred(function (deferred) {
+                    jQuery(deferred.resolve);
+                })).done(function () {
+                    eaasClient.checkpoint({
+                        type: "newEnvironment",
+                        envId: vm.envId,
+                    }).then(function (newEnvId) {
+                        if (!newEnvId) {
+                            growl.error(status, { title: "Snapshot failed" });
+                            $state.go('admin.standard-envs-overview', {}, { reload: true });
+                            eaasClient.release();
+                        }
+                        console.log("Checkpointed environment saved as: " + newEnvId);
+                        growl.success(status, { title: "New snapshot created." });
+                        eaasClient.release();
+                        $state.go('admin.edit-env', { envId: newEnvId, objEnv: $stateParams.returnToObjects }, { reload: true });
+                    });
                 });
+        };
+
+        vm.switchEmulators = function (component) {
+            vm.envId = component.env.data.environment;
+            var eaasClient = eaasClient;
+            let loadingElement = $("#emulator-loading-connections");
+            $("#emulator-container").hide();
+
+            var attr = loadingElement.attr('width');
+            loadingElement.attr("hidden", false);
 
 
-                $("#emulator-container").show();
-                $rootScope.emulator.mode = eaasClient.mode;
-                $scope.$apply();
-//                if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
-//                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
-//                    var pathArray = url.pathname.split('/');
-//                    document.querySelector("#emulator-info-container").append(
-//                        Object.assign(document.createElement("a"),
-//                            {textContent: `connect to: ${url.hostname} protocol ${pathArray[1]} port ${pathArray[2]}`,
-//                                href: `http://${url.hostname}:${pathArray[2]}`,
-//                                target: "_blank", rel: "noopener"}),
-//                        ' // ',
-//                        Object.assign(document.createElement("a"),
-//                            {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL(),
-//                                target: "_blank",}),
-//                    );
-//                })();
+            jQuery.when(
+                eaasClient.disconnect(),
+                jQuery.Deferred(function (deferred) {
+                    jQuery(deferred.resolve);
+                })).done(function () {
 
-                if (eaasClient.params.pointerLock === "true") {
-                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                    BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
-                }
 
-                // Fix to close emulator on page leave
-                $scope.$on('$locationChangeStart', function (event) {
-                    eaasClient.release();
+                    eaasClient.componentId = component.id;
+
+                    eaasClient.connect().then(function () {
+                        jQuery.when(
+                            loadingElement.animate({ width: "100%" }, 700),
+                            jQuery.Deferred(function (deferred) {
+                                jQuery(deferred.resolve);
+                            })).done(function () {
+                                loadingElement.attr("hidden", true);
+                            });
+
+
+                        $("#emulator-container").show();
+                        $rootScope.emulator.mode = eaasClient.mode;
+                        $scope.$apply();
+                        //                if (eaasClient.networkTcpInfo || eaasClient.tcpGatewayConfig) (async () => {
+                        //                    var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
+                        //                    var pathArray = url.pathname.split('/');
+                        //                    document.querySelector("#emulator-info-container").append(
+                        //                        Object.assign(document.createElement("a"),
+                        //                            {textContent: `connect to: ${url.hostname} protocol ${pathArray[1]} port ${pathArray[2]}`,
+                        //                                href: `http://${url.hostname}:${pathArray[2]}`,
+                        //                                target: "_blank", rel: "noopener"}),
+                        //                        ' // ',
+                        //                        Object.assign(document.createElement("a"),
+                        //                            {textContent: "start eaas-proxy", href: await eaasClient.getProxyURL(),
+                        //                                target: "_blank",}),
+                        //                    );
+                        //                })();
+
+                        if (eaasClient.params.pointerLock === "true") {
+                            growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
+                            BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                        }
+
+                        // Fix to close emulator on page leave
+                        $scope.$on('$locationChangeStart', function (event) {
+                            eaasClient.release();
+                        });
+
+                    });
+
                 });
+        };
 
+        vm.openNetworkDialog = function () {
+            $uibModal.open({
+                animation: true,
+                template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/network.html'),
+                resolve: {
+                    currentEnv: function () {
+                        return chosenEnv;
+                    },
+                    localConfig: function () {
+                        return localConfig;
+                    },
+                    eaasClient: () => eaasClient
+                },
+                controller: "NetworkModalController as networkModalCtrl"
             });
+        };
 
-        });
-    };
-
-    vm.openNetworkDialog = function() {
-        $uibModal.open({
-            animation: true,
-            template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/network.html'),
-            resolve: {
-                currentEnv: function () {
-                    return chosenEnv ? chosenEnv : $rootScope.chosenEnv;
+        vm.openDetachDialog = function () {
+            $('#emulator-container').hide();
+            let modal = $uibModal.open({
+                animation: false,
+                template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),
+                resolve: {
+                    currentEnv: function () {
+                        return chosenEnv;
+                    },
+                    localConfig: function () {
+                        return localConfig;
+                    },
+                    eaasClient: () => eaasClient,
                 },
-                localConfig: function () {
-                    return localConfig;
-                }
-            },
-            controller: "NetworkModalController as networkModalCtrl"
-        });
-    };
-
-    vm.openDetachDialog = function() {
-        $('#emulator-container').hide();
-        let modal = $uibModal.open({
-            animation: false,
-            template: require('../../../../../landing-page/src/app/modules/client/landing-page/modals/detach.html'),
-            resolve: {
-                currentEnv: function () {
-                    return chosenEnv;
-                },
-                localConfig: function () {
-                    return localConfig;
-                }
-            },
-            controller: "DetachModalController as detachModalCtrl"
-        });
-
-        modal.closed.then(() => $('#emulator-container').show());
-    };
+                controller: "DetachModalController as detachModalCtrl"
+            });
+            modal.closed.then(() => $('#emulator-container').show());
+        };
 
     vm.openSaveEnvironmentDialog = function() {
         $('#emulator-container').hide();
@@ -409,7 +416,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                         postReq.type = this.type;
 //                        if(postReq.type === 'objectEnvironment')
 //                            postReq.embeddedObject = true;
-                        postReq.envId = vm.envId;
+                        postReq.envId = (eaasClient.realEnvId) ? eaasClient.realEnvId : vm.envId;
                         postReq.message = this.envDescription;
                         postReq.title = this.envName;
                         postReq.softwareId = $stateParams.softwareId;
@@ -420,8 +427,8 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
 
                         var snapshotDoneFunc2 = () =>{
                             vm.waitModal.hide();
-                            window.eaasClient.realEnvId = undefined;
-                            window.eaasClient.release();
+                            eaasClient.realEnvId = undefined;
+                            eaasClient.release();
                             if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                 $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                             else
@@ -440,10 +447,10 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                                 return;
                             }           
 
-                            if(window.eaasClient.realEnvId) {
+                            if(eaasClient.realEnvId) {
                                 $.ajax({
                                     type: "DELETE",
-                                    url: localConfig.data.eaasBackendURL + "sessions/" + $window.eaasClient._groupId + "/resources",
+                                    url: localConfig.data.eaasBackendURL + "sessions/" + eaasClient._groupId + "/resources",
                                     headers: localStorage.getItem('id_token') ? {"Authorization" : "Bearer " + localStorage.getItem('id_token')} : {},
                                     async: true,
                                     contentType: "application/json",
@@ -468,7 +475,7 @@ module.exports = ['$rootScope', '$scope', '$window', '$state', '$http', '$uibMod
                             window.isSavingEnvironment = false;
                         };
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
-                        window.eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
+                        eaasClient.snapshot(postReq, snapshotDoneFunc, snapshotErrorFunc);
                         $('#emulator-container').show();
                     };
                     this.showEmu = function() {

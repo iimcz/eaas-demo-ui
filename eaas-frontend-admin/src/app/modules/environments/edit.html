@@ -85,6 +85,7 @@
                 </ui-select>
             </div>
         </div>
+        
     <!--
     <div class="form-group" ng-if="editEnvCtrl.author">
         <label>{{'NEW_CONTAINER_AUTHOR' | translate}}:</label> <span ng-if="!editEnvCtrl.editMode"> {{editEnvCtrl.author}}</span>
@@ -113,6 +114,10 @@
                 <button class="btn btn-default" style="float: right;" ng-click="editEnvCtrl.editDesc=false"
                     type="button" ng-if="editEnvCtrl.editDesc">done</button>
             </div>
+            <text-angular ng-if="editEnvCtrl.editHelpText" ng-model="editEnvCtrl.envHelpText">
+            </text-angular>
+            <button class="btn btn-default" style="float: right" type="button"
+                ng-click="editEnvCtrl.editHelpText=false" ng-if="editEnvCtrl.editHelpText">done</button>
         </div>
     </div>
 
@@ -133,6 +138,8 @@
             </div>
         </div>
     </div>
+</div>
+
     <div class="form-group">
         <label>{{'EDITENV_SOFTWARE' | translate}}</label>
         <div>
@@ -258,9 +265,6 @@
             </div>
         </div>
     </div>
-    <label>Linux Runtime:
-        <input type="checkbox" ng-disabled="!editEnvCtrl.editMode" ng-model="editEnvCtrl.isLinuxRuntime">
-    </label><br/>
 </uib-tab>
 <uib-tab index="1" ng-click="" heading="Revisions">
     <h4>{{'EDITENV_REV_HISTORY' | translate}}</h4>

@@ -124,15 +124,15 @@
                         <div class="panel-heading">{{'SW_NEW_CONTAINER_DOCKER' | translate}}</div>
                         <div class="panel-body">
                             <div class="tekst">
-                            Name:
-                            <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_DOCKERHUB_NAME' | translate}}"
-                                   class="form-control" ng-model="newContainerCtrl.imageUrl"
-                                   ng-required="newContainerCtrl.imageType == 'dockerhub'"/>
-                            </div>
-                            Tag:
-                            <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_DOCKERHUB_TAG' | translate}}"
-                                   class="form-control" ng-model="newContainerCtrl.tag"
-                                   ng-required="newContainerCtrl.imageType == 'dockerhub'"/>
+                                <label>Name:
+                                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_DOCKERHUB_NAME' | translate}}"
+                                           class="form-control" ng-model="newContainerCtrl.imageUrl"
+                                           ng-required="newContainerCtrl.imageType == 'dockerhub'"/></label>
+                                    </div>
+                                    <label>Tag:
+                                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_DOCKER_DOCKERHUB_TAG' | translate}}"
+                                           class="form-control" ng-model="newContainerCtrl.tag"
+                                           ng-required="newContainerCtrl.imageType == 'dockerhub'"/></label>
                         </div>
                     </div>
                     <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>

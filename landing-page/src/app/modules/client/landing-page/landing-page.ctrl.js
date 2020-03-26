@@ -1,31 +1,47 @@
-module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', '$scope', 'localConfig', 'Environments', 'chosenEnvId', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
-    function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, $scope, localConfig, Environments, chosenEnvId, buildInfo, WizardHandler, helperFunctions, growl) {
+import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
+import {createData} from "EaasLibs/javascript-libs/eaas-data-creator.js";
+import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
 
+module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', 'eaasClient', '$scope', 'localConfig', 'Environments', 'REST_URLS', 'EmilNetworkEnvironments', 'chosenEnvId', 'isNetworkEnvironment', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
+    function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, eaasClient, $scope, localConfig, Environments, REST_URLS, EmilNetworkEnvironments, chosenEnvId, isNetworkEnvironment, buildInfo, WizardHandler, helperFunctions, growl) {
 
-
-    console.log("!!!" , chosenEnvId);
-        if (chosenEnvId == null) {
-            $state.go('error', {
-                errorMsg: {
-                    title: "Error ",
-                    message: "ID is not found. Please follow the pattern: {SERVER_URL}?id={containerId}"
-                }
-            });
+        showErrorIfNull(chosenEnvId, $state);
+        async function checkIfShared() {
+            //check if shared network is enabled
+            if (isNetworkEnvironment && vm.env.startupEnvId) {
+                $http.get(localConfig.data.eaasBackendURL + REST_URLS.detachedNetEnvs).then((response) => {
+                    response.data.forEach((netEnv) => {
+                        if (netEnv.networkEnvId === vm.env.envId) {
+                            console.log("!! Running Network Environment Found!", netEnv);
+                            console.log("redirecting to attach!");
+                            window.location.href = localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page";
+                        }
+                    });
+                    vm.env.emilEnvironments.push({
+                        envId: vm.env.startupEnvId,
+                        label: "Temp Client",
+                        toVisualize: true
+                    })
+                })
+            }
         }
+
+    
         var vm = this;
+        vm.eaasClient = eaasClient;
 
 
-        Environments.get({envId: chosenEnvId}).$promise.then(function (response) {
+        (isNetworkEnvironment ? EmilNetworkEnvironments : Environments).get({envId: chosenEnvId}).$promise.then((response) => init(response));
 
-
+        async function init(response) {
+            console.log("!!!!", response);
             vm.env = response;
-
-            vm.env.isContainer = vm.env.envType ==="container";
+            await checkIfShared();
+        
+            vm.env.isContainer = vm.env.envType === "container";
             vm.network = "";
             vm.buildInfo = buildInfo.data.version;
             vm.uiCommitHash = __UI_COMMIT_HASH__;
-
-            console.log("vm.env 2", vm.env);
 
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.inputs = [];
@@ -93,12 +109,12 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
             vm.input_data.size_mb = 512;
 
 
-            var confirmStartFn = function (inputs) {
+            var confirmStartFn = async function (inputs) {
 
-                if (vm.env.isContainer)
+                if (vm.env.isContainer && !vm.env.runtimeId)
                     var startFunction = "startContainer";
                 else {
-                    var startFunction = "startEnvironment";
+                    var startFunction = "start";
                     $("#container-running").hide();
                 }
                 $("#container-stopped").hide();
@@ -143,7 +159,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
 
                     async function f() {
-                        const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
+                        const containerOutput = await fetch(eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId).getContainerResultUrl(), {
                             headers: _header,
                         });
                         const containerOutputBlob = await containerOutput.blob();
@@ -165,19 +181,20 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 };
 
                 vm.sendCtrlAltDel = function () {
-                    window.eaasClient.sendCtrlAltDel();
+                    eaasClient.sendCtrlAltDel();
                 };
 
-                window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
-
-                window.eaasClient.onEmulatorStopped = function () {
+                eaasClient.onEmulatorStopped = function () {
                     $("#emulator-loading-container").hide();
+                    $("#emulator-container").hide();
+                    $("#emulator-footer").hide();
                     $("#container-running").hide();
                     $("#container-stopped").show();
-                    console.log("done " + eaasClient.getContainerResultUrl());
+                    const currentSession = eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId);
+                    console.log("done " + currentSession.getContainerResultUrl());
                 };
 
-                window.eaasClient.onError = function (msg) {
+                eaasClient.onError = function (msg) {
                     $state.go('error', {errorMsg: {title: "Error ", message: msg}});
                 };
 
@@ -208,11 +225,63 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     if (localStorage.DEBUG_script) eval(localStorage.DEBUG_script);
                 } catch (e) {
                 }
+                let envs = [];
+               if(vm.env.isContainer && vm.env.runtimeId){
+                   const runtimeEnv = await Environments.get({envId: vm.env.runtimeId}).$promise;
+                   console.log("!!!!!!!!!!!!!!!! vm.env.runtimeId", vm.env.runtimeId);
+                   console.log("params.input_data", params.input_data);
+                   const data = createData(
+                       vm.env.runtimeId,
+                       runtimeEnv.archive,
+                       "machine",
+                       null,
+                       null,
+                       null,
+                       null,
+                       null,
+                       null,
+                       {
+                           userContainerEnvironment: vm.env.envId,
+                           userContainerArchive: vm.env.archive,
+                           networking: vm.env.networking,
+                           input_data: params.input_data
+                       });
+                   envs.push({data, visualize: true});
+               } else if (vm.env.isContainer) {
+                   envs = vm.env.envId
+               } else {
+                   const data = createData(vm.env.envId,
+                       vm.env.archive,
+                       "machine",
+                       vm.env.objectArchive,
+                       vm.env.objectId,
+                       vm.env.userId,
+                       vm.env.softwareId
+                   );
+                   data.input_data = [];
+                   data.input_data.push(vm.input_data);
+                   envs.push({data, visualize: true});
+               }
+               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : eaasClient[startFunction](envs, params)).then(function () {
+                let sessionToInitialize = undefined;
+                if(vm.componentIdToInitialize){
+                   sessionToInitialize = eaasClient.getSession(vm.componentIdToInitialize);
+                }
 
-                eaasClient[startFunction](vm.env.envId, params, vm.input_data).then(function () {
+                eaasClient.connect($("#emulator-container")[0], sessionToInitialize).then(function () {
+                    window.onbeforeunload = function (e) {
+                        var dialogText = $translate.instant('MESSAGE_QUIT');
+                        e.returnValue = dialogText;
+                        return dialogText;
+                    };
 
-                    eaasClient.connect().then(function () {
-                        $("#emulator-loading-container").hide();
+                    window.onunload = function () {
+                        if (eaasClient)
+                            eaasClient.release();
+                        window.onbeforeunload = null;
+                    };
+                    
+                    $("#emulator-loading-container").hide();
                         $("#emulator-container").show();
                         $("#emulator-downloadable-attachment-link").show();
 
@@ -318,7 +387,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
                     // Have to remember the chosen destination and action for the file
                     Upload.upload({
-                        url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                        url: localConfig.data.eaasBackendURL + "upload",
                         name: vm.uploadFiles[i].filename,
                         destination: vm.uploadFiles[i].destination,
                         action: vm.uploadFiles[i].action,
@@ -329,13 +398,13 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                         if (vm.env.isContainer)
                             $scope.containerLandingCtrl.inputs.push({
-                                url: resp.data.userDataUrl,
+                                url: resp.data.uploads[0],
                                 name: resp.config.destination,
                                 action: resp.config.action,
                                 compression_format: resp.config.compression_format
                             });
                         else $scope.containerLandingCtrl.content.push({
-                            url: resp.data.userDataUrl,
+                            url: resp.data.uploads[0],
                             name: resp.config.destination,
                             action: resp.config.action,
                             compression_format: resp.config.compression_format
@@ -514,6 +583,5 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
             vm.inputSourceButtonText = "Choose Input Source";
             vm.activeInputMethod = null;
             vm.uploadFiles = [];
-        });
-
+        }
 }];

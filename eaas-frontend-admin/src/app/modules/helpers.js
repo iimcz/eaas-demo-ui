@@ -26,6 +26,8 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.prepareEnvironmentUrl = "EmilEnvironmentData/prepareEnvironment";
     this.importImageUrl = "EmilEnvironmentData/importImage";
     this.createEnvironmentUrl = "EmilEnvironmentData/createEnvironment";
+    this.networkEnvironmentUrl = "network-environments";
+
     this.forkRevisionUrl = "EmilEnvironmentData/forkRevision";
     this.revertRevisionUrl = "EmilEnvironmentData/revertRevision";
     this.syncImagesUrl = "EmilEnvironmentData/sync";
@@ -35,7 +37,7 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.replicateImage = "EmilEnvironmentData/replicateImage";
     this.getNameIndexes = "EmilEnvironmentData/getNameIndexes";
-    this.getGroupIds = "networks/";
+    this.getGroupIds = "sessions/";
 
     this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
     this.importContainerUrl = "EmilContainerData/importContainer";

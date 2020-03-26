@@ -1,5 +1,4 @@
 import {_fetch} from './utils.js'
-import { is } from '@uirouter/core';
 
 export async function osLocalList()
 {

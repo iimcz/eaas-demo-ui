@@ -1,0 +1,78 @@
+<h2 class="m-t-0">Settings</h2>
+
+<div class="modal-body">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 text-center"><a ng-if="baseCtrl.config.features.emulators" ui-sref="admin.emulators"
+                    href="">
+                    <img src="img/emulator.png" height="80px"></br>
+                    <small class="text-secondary">Manage Emulators</small>
+
+                    <p>Emulators</p>
+                </a>
+            </div>
+
+            <div class="col-md-3 text-center"> <a ui-sref="admin.runtime-overview" href="">
+                    <img src="img/container_runtime.png" height="80px"></br>
+                    <small class="text-secondary">Runtime Overview</small>
+
+                    <p>Container Runtimes</p>
+            </div>
+
+            <div class="col-md-3 text-center"> <a ng-click="settingsCtrl.showSetKeyboardLayoutDialog()">
+                    <img src="img/keyboard.png" height="80px"></br>
+                    <small class="text-secondary">Keyboard Settings</small>
+
+                    <p>Keyboard</p>
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 text-center"><a ng-click="settingsCtrl.syncImages()" href="">
+                    <img src="img/sync.png" height="80px"></br>
+                    <small class="text-secondary">Synchronize Backend</small>
+                    <p>Sync</p>
+                </a>
+            </div>
+
+            <div class="col-md-3 text-center"><a ui-sref="admin.service-containers" href="">
+                    <img src="img/network_services.png" height="80px"></br>
+                    <small class="text-secondary">Network Services</small>
+
+                    <p>Manage Services</p>
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <img src="img/errorlog.png" height="80px"></br>
+                <small class="text-secondary">Download Error Log</small>
+
+                <p>Error-Log</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!--
+    <button class="btn btn-default btn-lg btn-block" type="button"
+            ng-click="settingsDialogCtrl.importEnvs()">{{'SETTINGS_DLG_IMPORT_ENVS'|
+        translate}}</button>
+    <button class="btn btn-default btn-lg btn-block" type="button"
+            ng-click="settingsDialogCtrl.showSetKeyboardLayoutDialog()">{{'SETTINGS_DLG_SET_KEYBOARD_LAYOUT'|
+        translate}}</button>
+    <button class="btn btn-default btn-lg btn-block" type="button"
+            ng-click="settingsDialogCtrl.syncImages()">{{'SETTINGS_DLG_SYNC_IMAGES'|
+        translate}}</button>
+    <button class="btn btn-default btn-lg btn-block" type="button"
+            ng-click="settingsDialogCtrl.exportMetadata()">Export Metadata</button>
+        -->
+    <!--<button class="btn btn-default btn-lg btn-block" type="button"-->
+    <!--ng-click="settingsDialogCtrl.syncObjects()">{{'SETTINGS_DLG_SYNC_OBJECTS'|-->
+    <!--translate}}</button>-->
+
+    <!--
+    <a href="{{settingsDialogCtrl.serverLogUrl}}">Server Log</a>
+    <hr>
+    <a href="{{settingsDialogCtrl.usageLogUrl}}">Usage Log</a>
+    -->
+</div>
