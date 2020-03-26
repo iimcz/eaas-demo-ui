@@ -663,8 +663,9 @@ function($stateProvider,
         .state('admin.metadata', {
             url: "/metadata",
             resolve : {
-                oaiHarvesterList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters")
+                oaiHarvesterList: ($http, localConfig) =>
+                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters"),
+                apiKey: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "admin/apikey")
             },
             views: {
                 'wizard': {

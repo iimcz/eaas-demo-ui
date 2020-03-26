@@ -37,6 +37,10 @@
             <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isSoftware" ng-disabled="editObjectCharacterizationCtrl.isSoftware">
             <label>Object is software</label>
         </div>
+        <div class="form-group" ng-if="editObjectCharacterizationCtrl.isSoftware">
+            <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isPublic" ng-disabled="editObjectCharacterizationCtrl.isPublic">
+            <label>Software is public</label>
+        </div>
     </div>
 
     <br/>

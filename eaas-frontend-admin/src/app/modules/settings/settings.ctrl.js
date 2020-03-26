@@ -25,6 +25,7 @@ module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbL
             );
         };
 
+        vm.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
     }
 ];
  
