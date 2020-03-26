@@ -1,5 +1,17 @@
 <h1 class="m-t-0">{{'SW_OVERVIEW_HEADER' | translate}}</h1>
 
+<uib-tabset active="swOverviewCtrl.view">
+    <uib-tab index="0" ng-click="swOverviewCtrl.updateTable(0)" heading="Private">
+    </uib-tab>
+
+    <uib-tab index="1" ng-click="swOverviewCtrl.updateTable(2)" heading="Public">
+    </uib-tab>
+
+    <uib-tab index="2" ng-click="swOverviewCtrl.updateTable(3)" heading="Remote">
+    </uib-tab>
+
+</uib-tabset>
+
 <div style="margin-bottom: 15px;" class="ag-theme-balham">
     <div style="text-align: justify; text-align-last: justify">
         <span style="display: inline-block; vertical-align: text-bottom;"> Page Size:
@@ -23,10 +35,9 @@
     </div>
 </div>
 
-
 <div style="text-align: right; margin-bottom: 15px;">
-    <input type="text" class="form-control" ng-model="gridOptions.quickFilterText"
+    <input type="text" class="form-control" ng-model="swOverviewCtrl.gridOptions.quickFilterText"
            placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}"/>
 </div>
 
-<div ag-grid="gridOptions" class="ag-theme-balham"></div>
+<div ag-grid="swOverviewCtrl.gridOptions" class="ag-theme-balham"></div>
