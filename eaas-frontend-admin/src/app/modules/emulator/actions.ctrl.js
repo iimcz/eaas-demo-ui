@@ -19,6 +19,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
     vm.mediaList = [];
     vm.removableMediaList = [];
 
+    /*
     var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
     var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
 
@@ -29,6 +30,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
                 vm.currentMediumLabel = vm.mediaCollection.file.length > 0 ? vm.mediaCollection.file[0].localAlias : null;
         });
     }
+    */
 
     vm.enablePrinting = (chosenEnv == null);
     vm.enableSaveEnvironment = (chosenEnv == null);
@@ -177,9 +179,10 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
     };
 
     var eaasClientReadyTimer = function() {
-        if ((eaasClient !== undefined) && (eaasClient.driveId !== undefined) && (eaasClient.driveId !== null)) {
-            vm.driveId = eaasClient.driveId;
-            vm.removableMediaList = eaasClient.removableMediaList;
+
+        if (eaasClient && eaasClient.getActiveSession() && eaasClient.getActiveSession().getRemovableMediaList()) {
+            
+            vm.removableMediaList = eaasClient.getActiveSession().getRemovableMediaList();
             vm.mediaList = [];
 
             if(vm.removableMediaList && vm.removableMediaList.length) {

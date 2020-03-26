@@ -22,11 +22,11 @@
                 </li>
                 <li ng-if="!editEnvCtrl.config.features.standalone && !editEnvCtrl.isObjectEnv && editEnvCtrl.env.archive == 'default'">
                     <a href="" ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'publish')" class="top-bar-link">
-                    <img src="img/delete.png">{{'EDITENV_PUBLISH' | translate}}</a>
+                    <img src="img/publish.png">{{'EDITENV_PUBLISH' | translate}}</a>
                 </li>
                 <li ng-if="!editEnvCtrl.config.features.standalone && editEnvCtrl.env.archive === 'remote'">
                     <a href="" ng-click="editEnvCtrl.replicateImage(editEnvCtrl.env.envId, 'import')" class="top-bar-link">
-                        <img src="img/delete.png">{{'EDITENV_PUBLISH' | translate}}</a>
+                        <img src="img/replicate.png">Replicate</a>
                 </li>
                 <li>&nbsp;</li>
                 <li>&nbsp;</li>

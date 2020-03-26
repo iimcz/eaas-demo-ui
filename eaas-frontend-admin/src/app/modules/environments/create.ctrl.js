@@ -7,8 +7,8 @@ import {
 
 import {Drives} from '../../lib/drives.js'
 
-module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "$timeout", "helperFunctions", "os",
-    function ($http,  $state, systemList, softwareList, localConfig, $uibModal, $timeout, helperFunctions, os) {
+module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "os", "Objects",
+    function ($http,  $state, systemList, softwareList, localConfig, $uibModal, os, Objects) {
         var vm = this;
 
         vm.systems = systemList.data;
@@ -18,6 +18,11 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm.native_config = "";
         vm.uiOptions = {};
     
+        vm.objectList = [];
+        Objects.query({archiveId: "zero conf"}).$promise.then(function(response) {
+            vm.objectList = response;
+        });
+
         vm.imageId = "";
         vm._preSelectedSystem = undefined;
         vm.selectedOs = undefined;

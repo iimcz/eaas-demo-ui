@@ -564,11 +564,10 @@ abbr[title] {
 }
 
 .overview-label {
-    font-size: 20px; line-height: 1.5em;
+    font-size: 14px; line-height: 1.0em;
 }
 
 .overview-content {
-    font-size: 12px; 
-    color: slategrey; 
+    font-size: 10px; 
     line-height: 1.1em;
 }

@@ -10,7 +10,7 @@
                     <form>
                         <div ng-repeat="item in openChangeMediaDialogCtrl.entriesByMedia(openChangeMediaDialogCtrl.activeIndex, medium)">
                             <label>
-                                <input type="radio" ng-model="mediaItem.chosen_medium_label" value="{{item.id}}"> {{item.localAlias}}
+                                <input type="radio" ng-model="mediaItem.chosen_medium_label" value="{{item.id}}"> {{ item.localAlias ? item.localAlias : item.id }}
                             </label>
                         </div>
                         <input type="radio" ng-model="mediaItem.chosen_medium_label" value=""> <b>* Empty Drive *</b>
