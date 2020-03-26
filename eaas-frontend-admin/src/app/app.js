@@ -122,6 +122,23 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
     .constant('localConfig', (() => {
+        const params = new URLSearchParams(location.hash.slice(1));
+
+        const token_type = params.get("token_type");
+        // TODO: Check `state`!
+        const state = params.get("state");
+        // TODO: Save `session_state`, handle (unattended) renewal of token
+        const session_state = params.get("session_state");
+        const expires_in = Number(params.get("expires_in"));
+        const id_token = params.get("id_token");
+
+        if (token_type === "bearer") {
+            // TODO: Get `exp` from JWT instead of using `expires_in`?
+            const expires_at = Date.now() + expires_in * 1000;
+            Object.assign(localStorage, {id_token, expires_at});
+            console.log({id_token, expires_at});
+        }
+
         const xhr = new XMLHttpRequest();
         xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
         xhr.send();
@@ -281,20 +298,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
             event.preventDefault();
-            // $scope.toState = toState;
-            // $scope.open();
-            //  console.log("prevent: $stateChangeStart: "+toState.name);
+            $scope.toState = toState;
+        //    $scope.open();
+            console.log("prevent: $stateChangeStart: "+toState.name);
         }
-//            else {
-//                console.log("$stateChangeStart: "+toState.name);
-//            }
+            else {
+                console.log("$stateChangeStart: "+toState.name);
+            }
     });
-
-     const auth0config = localConfig.data.auth0Config || {};
-     if(auth0config.AUTH_CONFIGURED) {
-            console.log("authService", auth0config);
-            await authService.handleAuthentication();
-        }
 })
 
 .service('authService', function($state, angularAuth0, $timeout, localConfig) {
@@ -303,35 +314,6 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
       };
-
-      this.handleAuthentication = async function () {
-        let resolve, reject;
-        const promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
-
-        angularAuth0.parseHash(
-        function(err, authResult) {
-            if (authResult && authResult.idToken && authResult.accessToken) {
-                setSession(authResult);
-                resolve();
-            } else if (err) {
-                $timeout(function() {
-                $state.go('login');
-           });
-           console.log('Error: ' + err.error + '. Check the console for further details.');
-        }
-        });
-
-        await promise;
-     }
-
-    function setSession(authResult) {
-           // Set the time that the access token will expire at
-           let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-           localStorage.setItem('access_token', authResult.accessToken);
-           localStorage.setItem('id_token', authResult.idToken);
-           localStorage.setItem('expires_at', expiresAt);
-           console.log(authResult.idToken);
-     }
 
      this.logout = function () {
            // Remove tokens and expiry time from localStorage
@@ -455,10 +437,12 @@ function($stateProvider,
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                // if (rejection && rejection.status === 401) {
-                //     $injector.get('$state').go('login');
-                //     return $q.reject(rejection);
-                // }
+
+                if (rejection && rejection.status === 401 || rejection.status === 403) {
+                     $injector.get('$state').go('login');
+                     return $q.reject(rejection);
+                }
+                
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
@@ -523,6 +507,10 @@ function($stateProvider,
             controller: function(authService) {
                 var vm = this;
                 vm.authService = authService;
+                vm.authService.login({
+                    connection: 'Username-Password-Authentication',
+                    scope: 'openid profile email'
+                });
             },
             controllerAs: "loginCtrl"
         })
@@ -550,22 +538,10 @@ function($stateProvider,
         .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
-                clusters: function($http, localConfig) {
-                    return $http.get(localConfig.data.dashboardClusterAPIBaseURL, {
-                        headers: {
-                            'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                },
+                clusters: ($http, localConfig) => $http.get(localConfig.data.dashboardClusterAPIBaseURL),
                 allClusterDetails: function ($q, $http, localConfig, clusters) {
                     return $q.all(clusters.data.map(function (cluster) {
-                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster, {
-                                headers: {
-                                    'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                                    'Cache-Control': 'no-cache'
-                            }
-                        })
+                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster)
                     }));
                 }
             },
