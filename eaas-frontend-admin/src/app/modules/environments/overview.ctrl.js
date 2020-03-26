@@ -1,7 +1,8 @@
+import {getOsLabelById} from '../../lib/os.js'
 module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'localConfig', 'growl', '$translate', 'Environments',
-    '$uibModal', 'softwareList', 'helperFunctions', 'userInfo', 'REST_URLS',
+    '$uibModal', 'softwareList', 'helperFunctions', 'userInfo', 'REST_URLS', '$timeout', "osList",
     function ($rootScope, $http, $state, $scope, $stateParams,
-              localConfig, growl, $translate, Environments, $uibModal, softwareList, helperFunctions, userInfo, REST_URLS) {
+              localConfig, growl, $translate, Environments, $uibModal, softwareList, helperFunctions, userInfo, REST_URLS, $timeout, osList) {
         var vm = this;
 
         vm.config = localConfig.data;
@@ -29,10 +30,18 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                         }
                         if(element.envType != 'base')
                             return;
+                        
                         if((element.archive == 'default' && vm.viewArchive === 0) ||
                             ((element.archive == "public" || element.archive == 'emulators') && vm.viewArchive === 1) ||
                             (element.archive == "remote" && vm.viewArchive === 2))
-                                rowData.push({name: element.title, id: element.envId, archive: element.archive, owner: (element.owner) ? element.owner : "shared"});
+                            rowData.push({name: element.title, 
+                                id: element.envId, 
+                                archive: element.archive, 
+                                owner: (element.owner) ? element.owner : "shared",
+                                timestamp: element.timestamp,
+                                description: element.description,
+                                os: getOsLabelById(osList.operatingSystems, element.operatingSystem),
+                            });
                     });
                 else if (vm.view == 1) {
                     vm.envs.forEach(function (element) {
@@ -51,9 +60,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                     })
                 }
                 vm.rowCount = rowData.length;
-                vm.gridOptions.api.setRowData(rowData);
-                vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-                vm.gridOptions.api.sizeColumnsToFit();
+                if(vm.gridOptions.api) {
+                    vm.gridOptions.api.setRowData(rowData);
+                    vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+                    vm.gridOptions.api.sizeColumnsToFit();
+                }
             });
         };
 
@@ -65,14 +76,58 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
         else
             vm.view = 0;
 
-        vm.exportEnvironment = function(envId) {
-            $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.exportEnvironmentUrl, envId))
-                .then(function(response) {
-                    if (response.data.status === "0") {
-                        growl.success("export successful");
-                    } else {
-                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
+        vm.checkState = function(_taskId, _modal)
+        {
+            var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function(response){
+                if(response.data.status == "0")
+                {
+                    if(response.data.isDone)
+                    {
+                        _modal.close();
+                        growl.success("Export finished.");
                     }
+                    else
+                        $timeout(function() {vm.checkState(_taskId, _modal);}, 2500);
+                }
+                else
+                {
+                    _modal.close();
+                }
+            });
+        };
+
+        vm.exportEnv = function(envId, archive)
+        {
+            console.log("export " + envId + " " + archive);
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/export.html'),
+                controller: ["$scope", function($scope) {
+                    this.envId = envId;
+                    this.standalone = false;
+                    this.deleteAfterExport = false;
+                    this.doExport = function() {
+                        $http.post(localConfig.data.eaasBackendURL + REST_URLS.exportEnvironmentUrl, {
+                            envId: envId,
+                            standalone: this.standalone,
+                            deleteAfterExport: this.deleteAfterExport,
+                            archive: archive,
+                        }).then(function(response) {
+                            var taskId = response.data.taskId;
+                            var modal = $uibModal.open({
+                                animation: true,
+                                backdrop: 'static',
+                                template: require('./modals/wait.html')
+                            });
+                            vm.checkState(taskId, modal);
+                        }, function(error) {
+                            console.log(error);
+                            growl.error("Error exporting image", "tbd.");
+                        }
+                        );
+                    } 
+                }],
+                controllerAs: "exportDialogCtrl"
             });
         };
 
@@ -89,6 +144,18 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             });
         };
 
+        vm.addObject = function(envId) {
+            $uibModal.open({
+                animation: true,
+                template: require('./modals/select-sw.html'),
+                controller: ["$scope", function($scope) {
+                    this.envId = envId;
+                    this.software = softwareList.data.descriptions;
+                    this.returnToObjects = $stateParams.showObjects;
+                }],
+                controllerAs: "addSoftwareDialogCtrl"
+            });
+        };
         var confirmDeleteFn = function(envId)
         {
             console.log("confirmed");
@@ -336,7 +403,10 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 {headerName: "ID", field: "id", width: 100},
                 {headerName: "Archive", field: "archive", hide: true}
             ];
-
+            if(vm.view == 0)
+            {
+                columnDefs.push({headerName: "Operating System", field: "os"});
+            }
 
             columnDefs.push({headerName: "Owner", field: "owner", width: 100},);
             if (vm.view == 1) {
@@ -367,13 +437,12 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
             suppressRowClickSelection: true,
             domLayout: 'autoHeight',
             suppressHorizontalScroll: true,
-            animateRows: true,
             onGridReady: function (params) {
                  vm.updateTable(0);
                  vm.gridOptions.api.redrawRows();
             },
             pagination: true,
-            paginationPageSize: 20,
+            paginationPageSize: 10,
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },

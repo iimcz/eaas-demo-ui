@@ -16,7 +16,7 @@ module.exports = ["$scope", "$uibModalInstance", "$uibModalStack", "sessionIds",
          $scope.selected = [];
          $scope.attachComponentId = null;
 
-         $scope.ok = function () {
+         $scope.connect = function () {
              $scope.isModuleVisible = false;
 
               var data = {
@@ -68,9 +68,9 @@ module.exports = ["$scope", "$uibModalInstance", "$uibModalStack", "sessionIds",
 //             });
          };
 
-         $scope.cancel = function () {
-             $uibModalInstance.dismiss('cancel');
-             $uibModalStack.dismissAll();
+         $scope.run = function () {
+            $uibModalInstance.close({ selected: [] });
+            $uibModalStack.dismissAll();
          };
 
          $scope.OnClickSelect = function (item) {

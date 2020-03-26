@@ -1,0 +1,39 @@
+<div class="form-group">
+    <div>
+        <input type="checkbox" ng-model="$ctrl.uiOptions.enablePrinting">
+        <label>{{'EDITENV_PRINTING' | translate}}</label>
+    </div>
+
+    <div>
+        <input type="checkbox" ng-model="$ctrl.uiOptions.enableRelativeMouse">
+        <label>{{'EDITENV_RELMOUSE' | translate}}</label>
+    </div>
+    <!--
+    <div class="form-group">
+        <input type="checkbox" ng-model="editEnvCtrl.canProcessAdditionalFiles">
+        <label>User file upload</label>
+    </div>
+    -->
+    <div>
+        <input type="checkbox" ng-model="$ctrl.uiOptions.useWebRTC">
+        <label>{{'EDITENV_WEBRTC' | translate}}</label>
+    </div>
+
+    <div>
+        <input type="checkbox" ng-model="$ctrl.uiOptions.useXpra">
+        <label>{{'EDITENV_XPRA' | translate}}</label>
+        <select ng-if="$ctrl.uiOptions.useXpra" ng-model="$ctrl.uiOptions.xpraEncoding">
+            <option value="jpeg">jpeg</option>
+            <option value="png">png</option>
+            <option value="rgb24">rgb24</option>
+            <option value="rgb32">rgb32</option>
+            <option value="h264">h264</option>
+            <option value="auto">auto</option>
+        </select>
+    </div>
+
+    <div>
+        <input type="checkbox" ng-model="$ctrl.uiOptions.shutdownByOs">
+        <label>{{'EDITENV_SHUTDOWNBYOS' | translate}}</label>
+    </div>
+</div>

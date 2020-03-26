@@ -1,0 +1,40 @@
+<h2 class="m-t-0">Disk Images</h2>
+
+
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="input-group" style="width: 100%">
+            <input type="text" class="form-control" ng-model="imagesCtrl.gridOptions.quickFilterText"
+                placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" />
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <span class="input-group-btn" style="text-align: right;
+            width: 100%;
+            display: inline-block;">
+            <button type="submit" class="btn btn-default" ng-click="imagesCtrl.importDlg();"><span
+                    class="glyphicon glyphicon-plus"></span>
+                New Image
+            </button>
+        </span>
+    </div>
+</div>
+
+<div style="width: 100%;" ag-grid="gridOptions" class="ag-theme-material">
+</div>
+
+<div style="padding: 4px; margin-top: -3.5em; position: relative; font-size: 12px; width: max-content;">
+    <!-- <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{standardEnvsOverviewCtrl.rowCount}}</b></div>-->
+    <div>
+        Page Size:
+        <select ng-click="onPageSizeChanged()" ng-model="imagesCtrl.pageSize">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
+    </div>
+</div>

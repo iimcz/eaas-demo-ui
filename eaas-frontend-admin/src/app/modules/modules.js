@@ -21,7 +21,7 @@ emilUIModule.controller('SoftwareOverviewController', require('./software/overvi
 emilUIModule.controller('SyncImageArchivesController', require('./sync/syncImageArchives.ctrl.js'));
 
 // environments
-emilUIModule.controller('CreateOrImportEnvironmentController', require('./environments/createOrImport.ctrl.js'));
+emilUIModule.controller('CreateOrImportEnvironmentController', require('./environments/create.ctrl.js'));
 emilUIModule.controller('EditEnvironmentController', require('./environments/edit.ctrl.js'));
 emilUIModule.controller('EnvironmentsOverviewController', require('./environments/overview.ctrl.js'));
 emilUIModule.controller('UserSessionsListController', require('./environments/sessions.ctrl.js'));
@@ -30,7 +30,7 @@ emilUIModule.controller('UserSessionsListController', require('./environments/se
 emilUIModule.controller('EmulatorStartController', require('./emulator/start.ctrl.js'));
 emilUIModule.controller('EmulatorActionsController', require('./emulator/actions.ctrl.js'));
 emilUIModule.controller('EmulatorConnectedEnvsController', require('./emulator/modals/connected-envs.ctrl.js'));
-
+emilUIModule.controller('ImagesOverviewController', require('./images/overview.ctrl.js'));
 // handle
 emilUIModule.controller('HandleOverviewController', require('./handle/overview.ctrl.js'));
 emilUIModule.controller('EditHandleController', require('./handle/edit.ctrl.js'));

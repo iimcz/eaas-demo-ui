@@ -1,11 +1,15 @@
 import {publisher} from "./templates/publish-environment";
-
+import {Drives} from "../../lib/drives.js"
+import {
+    imageList
+} from '../../lib/images.js'
+import {getOsById} from '../../lib/os.js'
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
-            "growl", "$translate", "objectDependencies", "helperFunctions", "operatingSystemsMetadata", "softwareList", "$uibModal",
-             "$timeout", "nameIndexes", "REST_URLS",
+            "growl", "$translate", "objectDependencies", "helperFunctions", "osList", "softwareList", "$uibModal",
+             "$timeout", "nameIndexes", "REST_URLS", "Objects",
     function ($http, $rootScope, $scope, $state, $stateParams, Environments, localConfig,
-            growl, $translate, objectDependencies, helperFunctions, operatingSystemsMetadata, softwareList, $uibModal,
-            $timeout, nameIndexes, REST_URLS) {
+            growl, $translate, objectDependencies, helperFunctions, osList, softwareList, $uibModal,
+            $timeout, nameIndexes, REST_URLS, Objects) {
 
        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
@@ -13,23 +17,34 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
        vm.networking = {};
        vm.config = localConfig.data;
 
-       vm.editMode = false;
-       let emulatorContainerVersionSpillter = "|";
+       vm.softwareList = softwareList.data.descriptions; 
 
-       vm.showAdvanced = false;
+       vm.objectList = [];
+       Objects.query({archiveId: "zero conf"}).$promise.then(function(response) {
+            vm.objectList = response;
+       });
+   
+       vm.uiOptions = {};
+
        vm.landingPage = localConfig.data.landingPage;
 
        vm.isObjectEnv = $stateParams.objEnv;
 
-       vm.operatingSystemsMetadata = {};
-       if(operatingSystemsMetadata)
-         vm.operatingSystemsMetadata = operatingSystemsMetadata.data.operatingSystemInformations;
+       vm.osList = osList.operatingSystems;
 
        this.dependencies = objectDependencies.data;
        vm.isObjectEnv = $stateParams.objEnv;
        vm.emulator = null;
 
-        this.env = {};
+       vm.imageList = [];
+       imageList($http, localConfig).then((result) => {
+            vm.imageList = result;
+        }, 
+        (e) => {
+            throw new Error(e);
+        });
+
+            this.env = {};
         if(!$stateParams.envId)
         {
             $state.go('admin.standard-envs-overview', {}, {reload: false});
@@ -43,41 +58,54 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.emulator = vm.env.emulator;
 
             if (typeof vm.env.xpraEncoding != "undefined" && vm.env.xpraEncoding != null)
-                vm.xpraEncoding = vm.env.xpraEncoding;
+                vm.uiOptions.xpraEncoding = vm.env.xpraEncoding;
             else
-                vm.xpraEncoding = "jpeg";
-
+                vm.uiOptions.xpraEncoding = "jpeg";
+                
             vm.timestamp = (new Date(vm.env.timestamp)).toString();
             vm.envTitle = vm.env.title;
             vm.author = vm.env.author;
             vm.envDescription = vm.env.description;
-            vm.enableRelativeMouse = vm.env.enableRelativeMouse;
-            vm.enablePrinting = vm.env.enablePrinting;
+            vm.uiOptions.enableRelativeMouse = vm.env.enableRelativeMouse;
+            vm.uiOptions.enablePrinting = vm.env.enablePrinting;
             vm.nativeConfig = vm.env.nativeConfig;
             if (vm.env.networking)
                 vm.networking = vm.env.networking;
-            vm.useXpra = vm.env.useXpra;
-            vm.useWebRTC = vm.env.useWebRTC;
-            vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
-            vm.shutdownByOs = vm.env.shutdownByOs;
+            vm.uiOptions.useXpra = vm.env.useXpra;
+            vm.uiOptions.useWebRTC = vm.env.useWebRTC;
+            vm.uiOptions.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
+            vm.uiOptions.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
-            vm.drives = vm.env.drives;
+            vm.drives = new Drives(vm.env.drives);
             vm.isLinuxRuntime = vm.env.isLinuxRuntime;
             vm.envHelpText = vm.env.helpText;
             if(vm.env.timeContext)
             {
                vm.datetimePicker.date.setTime(vm.env.timeContext);
                console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
-               vm.showDateContextPicker = false;
+               vm.showDateContextPicker = true;
             }
 
-            for (var i = 0; i < vm.operatingSystemsMetadata.length; i++) {
-                if (vm.operatingSystemsMetadata[i].id === vm.env.os)
-                {
-                    vm.os = vm.operatingSystemsMetadata[i];
+            vm.run = function()
+            {
+                if($scope.form.$dirty) {
+                    if (window.confirm("There are unsaved modifications. Proceed anyway?"))
+                    {
+                        $state.go("admin.emulator",  {
+                            envId: vm.env.envId, 
+                            objectId: vm.env.objectId, 
+                            objectArchive: vm.env.objectArchive
+                        }, {});
+                    }
                 }
+                else 
+                    $state.go("admin.emulator",  {
+                        envId: vm.env.envId, 
+                        objectId: vm.env.objectId, 
+                        objectArchive: vm.env.objectArchive
+                    }, {});
             }
-
+            vm.os = getOsById(osList.operatingSystems, vm.env.os);
             if(localConfig.data.features.handle) {
                 $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {
                      if (response.data.handles.includes(handlePrefix + vm.env.envId.toUpperCase())) {
@@ -115,6 +143,14 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                 vm.emulatorContainer = vm.nameIndexes[0];
         });
 
+        vm.guessBinding = function(index)
+        {
+            return vm.drives.renderBinding(index, vm.imageList, vm.softwareList, vm.objectList);
+        }
+
+        vm.selectMedium = function (index) {
+            vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, $uibModal);
+        }
             vm.getNameIndexObj = function(key, name, version){
                   return {
                       key: key,
@@ -160,6 +196,8 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    console.log('Date(UNIX Epoch): ' + vm.datetimePicker.date.getTime());
                    timecontext = vm.datetimePicker.date.getTime();
                }
+               else 
+                   timecontext = undefined;
 
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
@@ -169,22 +207,23 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    author: this.author,
                    description: this.envDescription,
                    time: timecontext,
-                   enablePrinting: vm.enablePrinting,
-                   enableRelativeMouse: this.enableRelativeMouse,
-                   shutdownByOs: this.shutdownByOs,
+                   enablePrinting: vm.uiOptions.enablePrinting,
+                   enableRelativeMouse: this.uiOptions.enableRelativeMouse,
+                   shutdownByOs: this.uiOptions.shutdownByOs,
                    os: this.os ? this.os.id : null,
                    userTag: this.userTag,
-                   useXpra : this.useXpra,
-                   useWebRTC : this.useWebRTC,
+                   useXpra : this.uiOptions.useXpra,
+                   useWebRTC : this.uiOptions.useWebRTC,
                    nativeConfig: this.nativeConfig,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
                    networking : vm.networking,
                    containerEmulatorName : vm.emulatorContainer.value.name,
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
-                   xpraEncoding: vm.xpraEncoding,
-                   drives : vm.drives,
+                   xpraEncoding: vm.uiOptions.xpraEncoding,
+                   drives : vm.drives.getList(),
                    linuxRuntime : vm.isLinuxRuntime,
                    helpText: vm.envHelpText,
+                   driveSettings : vm.drives.getUpdates(),
                }).then(function(response) {
                    if (response.data.status === "0") {
                        growl.success($translate.instant('JS_ENV_UPDATE'));
@@ -348,30 +387,5 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
               }
           };
 
-          vm.deleteDrive = function(index)
-          {
-              vm.drives.splice(index, 1);
-          };
-
-          vm.showDriveDetails = function(driveIdx) {
-              $uibModal.open({
-                  animation: true,
-                  template: require('./modals/drive-details.html'),
-                  controller: ["$scope", function($scope) {
-                    this.drive = {};
-                    if(driveIdx >= 0)
-                       this.drive = vm.drives[driveIdx];
-
-                    this.saveEdit = function()
-                    {
-                        if(driveIdx < 0)
-                            vm.drives.push(this.drive);
-
-                        console.log(vm.drives);
-                    }
-                  }],
-                  controllerAs: "editDriveCtrl"
-              });
-          };
 }];
 

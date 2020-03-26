@@ -1,6 +1,6 @@
 module.exports = ["clusters", "allClusterDetails", function (clusters, allClusterDetails) {
      const getFirstNumber = (str) => parseInt(str.match(/\d+/)[0], 10);
-
+     var vm = this;
      var allClusterProviders = allClusterDetails.reduce(function(result, clusterResponse, index) {
          var providers = clusterResponse.data.providers;
 
@@ -89,6 +89,15 @@ module.exports = ["clusters", "allClusterDetails", function (clusters, allCluste
      var vm = this;
 
      vm.resourceProviders = resourceProviders;
+
+     vm.getActiveMachines = function()
+     {
+        let activeCount = 0;
+        
+        for(node in vm.resourceProviders.node)
+            activeCount += node.allocations.length;
+     }
+
 
      vm.chartNodeUsageLabels = ['Used Nodes', 'Unused Nodes'];
      vm.chartNodeHealthLabels = ['Healthy Nodes', 'Unhealthy Nodes'];

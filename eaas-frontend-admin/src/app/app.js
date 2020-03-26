@@ -42,7 +42,13 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
+import {romList} from "./lib/images.js"
+
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
+import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
+import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
+import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
+import drivesOverviewTemplate from './modules/environments/templates/drives/overview.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
 
@@ -99,6 +105,7 @@ import 'angular-wizard/dist/angular-wizard.css';
 import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
 import './app.css';
+import { osLocalList } from './lib/os.js';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
@@ -174,6 +181,49 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
     })
 
+    .component('uiOptionsTemplate', {
+        template: uiOptionsTemplate,
+        bindings: {
+            uiOptions: '=',
+        }
+    })
+
+    .component('qemuOptions', {
+        template: qemuOptionsTemplate,
+        bindings: {
+            args: '=',
+            onUpdate: '&'
+        }
+    })
+
+    .component('macemuOptions', {
+        template: macemuOptionsTemplate,
+        controller: ["$scope", "$http", "localConfig", function($scope, $http, localConfig) {
+            var vm = this;
+            vm.romList = [];
+            console.log(this.args);
+            romList($http, localConfig).then((result) => {
+                vm.romList = result;
+                console.log(vm.romList);
+            }, (e) => {
+                throw new Error(e);
+            });
+        }],
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
+    .component('drivesOverview', {
+        template: drivesOverviewTemplate,
+        bindings: {
+            drives: "<",
+            select: '&',
+            render: '&',
+            context: '<',
+        }
+    })
 
     .directive('onInputFileChange', function() {
         return {
@@ -343,7 +393,7 @@ function($stateProvider,
 
     // automatically choose best language for user
     $translateProvider.determinePreferredLanguage();
-    // $translateProvider.preferredLanguage('en');
+    $translateProvider.preferredLanguage('en');
 
     var httpResponseErrorModal = null;
 
@@ -373,10 +423,10 @@ function($stateProvider,
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
-                if (rejection && rejection.status === 401) {
-                    $injector.get('$state').go('login');
-                    return $q.reject(rejection);
-                }
+                // if (rejection && rejection.status === 401) {
+                //     $injector.get('$state').go('login');
+                //     return $q.reject(rejection);
+                // }
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
@@ -507,32 +557,16 @@ function($stateProvider,
                 }
             }
         })
-        .state('admin.import-image', {
-            url: "/import-image",
+        .state('admin.create-machine', {
+            url: "/create",
             resolve: {
-                systemList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
+                systemList: function($http, localConfig) {
+                    return $http.get(localConfig.data.eaasBackendURL + "environment-repository/templates");
                 },
                 patches: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
-                }
-            },
-            views: {
-                'wizard': {
-                    template: require('./modules/environments/import.html'),
-                    controller: "CreateOrImportEnvironmentController as newImageCtrl"
-                }
-            }
-        })
-        .state('admin.create-image', {
-            url: "/create-image",
-            resolve: {
-                systemList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
                 },
-                patches: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
-                }
+                os: () => osLocalList(),
             },
             views: {
                 'wizard': {
@@ -609,7 +643,7 @@ function($stateProvider,
                 showContainers: false
             },
             resolve : {
-
+                osList : () => osLocalList(),
             },
             views: {
                 'wizard': {
@@ -640,8 +674,7 @@ function($stateProvider,
             resolve: {
                 objectDependencies: ($http, localConfig, $stateParams, helperFunctions, REST_URLS) =>
                      $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getObjectDependencies, $stateParams.envId)),
-                operatingSystemsMetadata : ($http, localConfig, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOperatingSystemsMetadata),
+                     osList : () => osLocalList(),
                 nameIndexes : ($http, localConfig, REST_URLS) =>
                      $http.get(localConfig.data.eaasBackendURL + REST_URLS.getNameIndexes)
             },
@@ -690,6 +723,7 @@ function($stateProvider,
                 isDetached: false,
                 networkInfo: null,
                 containerRuntime: null,
+                groupId : null
             },
             views: {
                 'wizard': {
@@ -730,7 +764,7 @@ function($stateProvider,
             url: "/edit-object-characterization?objectId&objectArchive",
             params: {userDescription: null, swId: "-1"},
             resolve: {
-                osList : ($http) => $http.get("osList.json"),
+                osList : () => osLocalList(),
                 softwareObj: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
                     // return empty object for new software
                     if ($stateParams.swId === "-1") {
@@ -819,6 +853,19 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/emulators/details.html'),
                     controller: "EmulatorsDetailsController as emusDetCtrl"
+                }
+            }
+        })
+        .state('admin.images', {
+            url: "/images",
+            params: {},
+            resolve: {
+               
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/images/overview.html'),
+                    controller: "ImagesOverviewController as imagesCtrl"
                 }
             }
         })
