@@ -178,7 +178,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      vm.saveSoftware = function() {
         vm.softwareObj.objectId = $stateParams.objectId;
         vm.softwareObj.label = vm.metadata.title;
-
+        vm.softwareObj.isPublic = vm.isPublic;
         vm.softwareObj.archiveId = $stateParams.objectArchive;
 
         if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)

@@ -61,6 +61,7 @@
     "systemjs": "0.19.40",
     "textangular": "1.5.3",
     "ui-select": "0.16.0",
+    "webcrypto-jwt": "^0.2.2",
     "whatwg-fetch": "^3.0.0",
     "zone.js": "^0.9.1"
   },
