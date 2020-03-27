@@ -13,7 +13,6 @@ build:
 
 build_multi_user_admin_ui:
   script:
-  - sed -i 's/myClientId/'"$UI_CLIENT_ID"'/g' eaas-frontend-admin/auth.env
   - ./build.sh
   only:
    refs:
