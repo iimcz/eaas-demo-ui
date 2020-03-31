@@ -413,8 +413,8 @@ function($stateProvider,
     var httpResponseErrorModal = null;
 
     angularAuth0Provider.init({
-        clientID: auth0config.CLIENT_ID,
-        domain: auth0config.DOMAIN,
+        clientID: auth0config.CLIENT_ID || "invalid",
+        domain: auth0config.DOMAIN || "invalid.invalid",
         responseType: 'token id_token',
         _sendTelemetry: false,
         overrides: {
