@@ -272,29 +272,40 @@ module.exports = ['$rootScope', '$scope', '$state', '$http', '$uibModal', '$stat
         });
     };
 
-        vm.checkpoint = function () {
+        vm.checkpoint = async function () {
             window.onbeforeunload = null;
-            jQuery.when(
-                eaasClient.disconnect(),
-                jQuery.Deferred(function (deferred) {
-                    jQuery(deferred.resolve);
-                })).done(function () {
-                    eaasClient.checkpoint({
-                        type: "newEnvironment",
-                        envId: vm.envId,
-                    }).then(function (newEnvId) {
-                        if (!newEnvId) {
-                            growl.error(status, { title: "Snapshot failed" });
-                            $state.go('admin.standard-envs-overview', {}, { reload: true });
-                            eaasClient.release();
-                        }
-                        console.log("Checkpointed environment saved as: " + newEnvId);
-                        growl.success(status, { title: "New snapshot created." });
-                        eaasClient.release();
-                        $state.go('admin.edit-env', { envId: newEnvId, objEnv: $stateParams.returnToObjects }, { reload: true });
-                    });
+            vm.waitModal.show("Creating checkpoint. This might take some time...");
+            
+            try { 
+                let newEnvId = await eaasClient.getActiveSession().checkpoint({
+                    type: "newEnvironment",
+                    envId: vm.envId,
                 });
-        };
+                
+                vm.waitModal.hide();
+
+                if (!newEnvId) {
+                    growl.error(status, { title: "Snapshot failed" });
+                    $state.go('admin.standard-envs-overview', {}, { reload: true });
+                    
+                }
+                else
+                {
+                    console.log("Checkpointed environment saved as: " + newEnvId);
+                    growl.success(status, { title: "New snapshot created." });
+                    $state.go('admin.edit-env', { envId: newEnvId, objEnv: $stateParams.returnToObjects }, { reload: true });    
+                }
+                eaasClient.release();
+            }
+            catch (e)
+            {
+                console.log(e);
+                vm.waitModal.hide();
+                growl.error(status, { title: "Snapshot failed" });
+                $state.go('admin.standard-envs-overview', {}, { reload: true });
+                eaasClient.release();
+            }       
+        }
 
         vm.switchEmulators = function (component) {
             vm.envId = component.env.data.environment;

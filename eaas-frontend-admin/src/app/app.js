@@ -307,11 +307,13 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             }
     });
 
+    /*
      const auth0config = localConfig.data.auth0Config || {};
      if(auth0config.AUTH_CONFIGURED) {
             console.log("authService", auth0config);
             await authService.handleAuthentication();
       }
+    */
 })
 
 .service('authService', function($state, angularAuth0, $timeout, localConfig) {

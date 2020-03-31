@@ -228,7 +228,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             }
             catch (e) {
                 console.error(e);
-                $state.go('error', { errorMsg: { title: "Emulation Error", message: e } });
+                $state.go('error', { errorMsg: { title: "Emulation Error", message: e.error } });
             }
         }
                     
