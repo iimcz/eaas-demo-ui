@@ -547,9 +547,9 @@ function($stateProvider,
             url: "/dashboard",
             resolve: {
                 clusters: ($http, localConfig) => $http.get(localConfig.data.dashboardClusterAPIBaseURL),
-                allClusterDetails: function ($q, $http, localConfig, clusters) {
+                descriptions: function ($q, $http, localConfig, clusters) {
                     return $q.all(clusters.data.map(function (cluster) {
-                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster)
+                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster + '/description')
                     }));
                 }
             },
