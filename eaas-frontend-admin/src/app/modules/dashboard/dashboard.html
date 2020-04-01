@@ -33,14 +33,14 @@
                             <h2 class="dashboard-entry-title-header">State <small>Current state of this resource provider</small></h2>
                         </div>
 
-                        <div><b>Node Count: </b> {{resourceProvider.num_nodes}}</div>
-                        <div><b>CPU Capacity: </b> {{resourceProvider.capacity_cpu}}</div>
+                        <div><b>CPU Capacity: </b> {{resourceProvider.capacity_cpu / 1000}} core(s)</div>
                         <div><b>Memory Capacity: </b> {{resourceProvider.capacity_memory}}MB</div>
+                        <div ng-show="resourceProvider.num_nodes > 0"><b>Node Count: </b> {{resourceProvider.num_nodes}}</div>
 
                         <br>
 
                         <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center" ng-show="resourceProvider.num_nodes">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center" ng-show="resourceProvider.num_nodes > 0">
                                 <div style="height: 260px; width: 230px; display: inline-block;">
                                     <h4 class="dashboard-entry-chart-label">Node Usage</h4>
                                     <canvas class="chart chart-doughnut"
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center" ng-show="resourceProvider.num_nodes">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center" ng-show="resourceProvider.num_nodes > 0">
                                 <div style="height: 260px; width: 230px; display: inline-block;">
                                     <h4 class="dashboard-entry-chart-label">Node Health</h4>
                                     <canvas class="chart chart-doughnut"
@@ -80,33 +80,19 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div ng-hide="resourceProvider.allocation_requests.num_entries === 0">
-                            <b>Allocation Requests</b>
-                            <div>
-                                <pre>{{resourceProvider.allocation_requests | json}}</pre>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 <div class="panel panel-default dashboard-node-panel" ng-repeat="node in resourceProvider.nodes">
                     <div class="panel-body dashboard-node-panel-body">
                         <div class="dashboard-entry-title">
-                            <h2 class="dashboard-entry-title-header">Node {{node.id}}<small>Associated resources of this single node</small></h2>
+                            <h2 class="dashboard-entry-title-header">Node: {{node.id}}<small>Associated resources of this single node</small></h2>
                         </div>
 
-                        <div><b>Used: </b> {{node.used}}</div>
-                        <div><b>Healthy: </b> {{node.healthy}}</div>
-
-                        <div ng-show="node.state">
-                            <b>State: </b> {{node.state}}
-                        </div>
-
-                        <div><b>CPU Capacity: </b> {{node.capacity_cpu}}</div>
+                        <div><b>State: </b> {{node.used ? 'used' : 'unused'}} ({{node.healthy ? 'healthy' : 'unhealthy'}})</div>
+                        <div><b>CPU Capacity: </b> {{node.capacity_cpu / 1000}} core(s)</div>
                         <div><b>Memory Capacity: </b> {{node.capacity_memory}}MB</div>
                         <div><b>Allocation Count: </b> {{node.allocations.length}}</div>
-
                         <br>
 
                         <div class="row" ng-show="node.allocations.length">
@@ -151,7 +137,7 @@
                                     <tbody>
                                         <tr ng-repeat="allocation in node.allocations">
                                             <td>{{allocation.id}}</td>
-                                            <td>{{allocation.allocated_cpu}}m</td>
+                                            <td>{{allocation.allocated_cpu}} mcores</td>
                                             <td>{{allocation.allocated_memory}}MB</td>
                                         </tr>
                                     </tbody>
