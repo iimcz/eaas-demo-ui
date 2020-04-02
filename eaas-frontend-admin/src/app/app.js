@@ -328,7 +328,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
            localStorage.removeItem('access_token');
            localStorage.removeItem('id_token');
            localStorage.removeItem('expires_at');
-           $state.go('login');
+           document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+           document.location = "/auth/realms/master/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Flocalhost%2Fadmin";
      }
 
      this.isAuthenticated = function() {
@@ -517,7 +518,7 @@ function($stateProvider,
                 vm.authService = authService;
                 vm.authService.login({
                     connection: 'Username-Password-Authentication',
-                    scope: 'openid profile email'
+                    scope: 'openid profile email roles'
                 });
             },
             controllerAs: "loginCtrl"
