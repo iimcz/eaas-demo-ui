@@ -24,9 +24,9 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
             modal.close();
             $state.go('admin.standard-envs-overview', {}, {reload: true});
         },
-        function(data) {
+        function(response) {
             modal.close();
-            $state.go('error', {errorMsg: data});
+            $state.go('error', { errorMsg: { title: "Harvesting Error", message: response.data.error } });
         });
     }
 
@@ -43,9 +43,9 @@ module.exports = ['$scope' , '$state', 'oaiHarvesterList', '$http', 'localConfig
                 modal.close();
                 $state.go('admin.standard-envs-overview', {}, {reload: true});
             },
-            function(data) {
+            function(response) {
                 modal.close();
-                $state.go('error', {errorMsg: data});
+                $state.go('error', { errorMsg: { title: "Harvesting Error", message: response.data.error } });
             });
         }
 
