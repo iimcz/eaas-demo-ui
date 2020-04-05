@@ -123,7 +123,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .constant('localConfig', (() => {
         const params = new URLSearchParams(location.hash.slice(1));
-
+    
         const token_type = params.get("token_type");
         // TODO: Check `state`!
         const state = params.get("state");
@@ -131,12 +131,15 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         const session_state = params.get("session_state");
         const expires_in = Number(params.get("expires_in"));
         const id_token = params.get("id_token");
+        const access_token = params.get("access_token");
 
         if (token_type === "bearer") {
             // TODO: Get `exp` from JWT instead of using `expires_in`?
             const expires_at = Date.now() + expires_in * 1000;
             Object.assign(localStorage, {id_token, expires_at});
+            Object.assign(localStorage, {access_token, expires_at});
             console.log({id_token, expires_at});
+            console.log({access_token, expires_at});
         }
 
         const xhr = new XMLHttpRequest();
