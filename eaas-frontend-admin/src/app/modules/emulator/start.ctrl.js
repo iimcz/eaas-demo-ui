@@ -1,7 +1,7 @@
 import {stopClient} from "./utils/stop-client";
 import {createData} from "EaasLibs/javascript-libs/eaas-data-creator.js";
 import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
-import {NetworkSession,requestPointerLock} from "EaasClient/eaas-client.js";
+import {NetworkSession,requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
 import {attach} from "EaasLibs/javascript-libs/network-environment-utils/attach.js";
 
 module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams', '$cookies', '$translate', '$http', 'localConfig', 'growl', 'Environments', 'EmilNetworkEnvironments', 'chosenEnv', 'eaasClient',
@@ -195,7 +195,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                     await eaasClient.connect($("#emulator-container")[0]);
 /*
                 eaasClient.realEnvId = $stateParams.realEnvId;
-              
+
             } else {
                 eaasClient.realEnvId = undefined;
 */
@@ -228,10 +228,12 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             }
             catch (e) {
                 console.error(e);
-                $state.go('error', { errorMsg: { title: "Emulation Error", message: e.error } });
+
+                const details = (e instanceof ClientError) ? e.toJson() : e.toString();
+                $state.go('error', { errorMsg: { title: "Emulation Error", message: details } });
             }
         }
-                    
+
         async function dealWithIt(resultPromise)
         {
             try {
