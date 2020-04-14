@@ -1,4 +1,6 @@
+import './crypto-fake-subtle'
 import {signJWT} from 'webcrypto-jwt';
+
 
 export async function createJwt(secret)
 {
