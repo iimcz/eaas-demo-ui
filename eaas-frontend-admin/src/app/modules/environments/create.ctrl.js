@@ -29,7 +29,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm.imageList = [];
         vm.romList = [];
 
-        vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL);
+        vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
 
         imageList($http, localConfig).then((result) => {
             vm.imageList = result;
