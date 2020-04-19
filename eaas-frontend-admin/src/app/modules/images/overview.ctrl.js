@@ -1,8 +1,7 @@
-import {imageList, importEmptyImage, importImage, deleteImage, importRomImage, importRuntimeImage} from '../../lib/images.js'
 import {WaitModal} from '../../lib/task.js'
 
-module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
-    function ($state, $scope, $http, localConfig, $uibModal)
+module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Images',
+    function ($state, $scope, $http, localConfig, $uibModal, Images)
 {
     var vm = this;
     vm.config = localConfig.data;
@@ -17,11 +16,11 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
         }
     };
 
-    vm.updateTable = async function()
+    vm.updateTable = async () =>
     {
         if ($scope.gridOptions && $scope.gridOptions.api)
             $scope.gridOptions.api.setRowData(null);
-        vm.imageList = await imageList($http, localConfig);
+        vm.imageList = await Images.list();
         vm.updateData();
     };
     vm.updateTable(0, "default");
@@ -68,20 +67,24 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
                     let result = undefined;
                     try {
                         if(this.mode ==='create')
-                            result = await importEmptyImage(localConfig, this.hdsize, this.label);
+                            result = await Images.createEmpty(this.hdsize, this.label);
                         else if(this.mode === "rom")
-                            result = await importRomImage(localConfig, this.romurl, this.label);
+                        {
+                            result = await Images.import(this.romurl, this.label, "roms");
+                        }
                         else if(this.mode === "runtime")
-                            result = await importRuntimeImage(localConfig, this.runtime, this.label);
+                            result = await Images.import(this.runtime, this.label, "runtime");
                         else
-                            result = await importImage(localConfig, this.hdurl, this.label);
+                            result = await Images.import(this.hdurl, this.label);
                     }
                     catch(e)
                     {
                         console.log(e);
                     }
-                    waitModal.hide();
-                    $state.reload();
+                    finally {
+                        waitModal.hide();
+                        $state.reload();
+                    }
                 }
             }],
             controllerAs: "importDlgCtrl"
@@ -146,7 +149,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal',
         if (!window.confirm(`Please confirm deleting disk: ${imageId}?` ))
             return false;
 
-        deleteImage(localConfig, "default", imageId);
+        Images.delete("default", imageId);
         $state.reload();
     }
 

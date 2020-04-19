@@ -1,14 +1,11 @@
 import {
-    imageList, romList
-} from '../../lib/images.js'
-import {
     MachineBuilder
 } from '../../lib/machineBuilder.js'
 
 import {Drives} from '../../lib/drives.js'
 
-module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "os", "Objects",
-    function ($http,  $state, systemList, softwareList, localConfig, $uibModal, os, Objects) {
+module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "os", "Objects", "Images",
+    function ($http,  $state, systemList, softwareList, localConfig, $uibModal, os, Objects, Images) {
         var vm = this;
 
         vm.systems = systemList.data;
@@ -31,7 +28,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
 
         vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
 
-        imageList($http, localConfig).then((result) => {
+        Images.list().then((result) => {
             vm.imageList = result;
         }, (e) => {
             throw new Error(e);

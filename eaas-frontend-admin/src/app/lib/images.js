@@ -1,165 +1,138 @@
 import {Task} from './task.js'
 import {_fetch} from './utils.js'
 
-export async function imagesListRaw($http, localConfig) 
+export class EaasImages
 {
-    let list = await $http.get(localConfig.data.eaasBackendURL + "environment-repository/images-index");
-    if(!list.data.entries.entry)
-        return [];
-    return list.data.entries.entry;
-}
+    constructor(api, idToken = null) {
+        this.api = api;
+        this.idToken = idToken;
+    }
 
-export async function imageList($http, localConfig)
-{
-    const rawImages = await imagesListRaw($http, localConfig);
-    let images = [];
-    rawImages.forEach(function(element, i) {
-        let image = {
-            imageId : element.value.image.id,
-            label : element.value.label,
-            type: element.value.image.type,
-        };
-        images.push(image);
-    });
+    async listRaw()
+    {
+        let list = await _fetch(`${this.api}/environment-repository/images-index`, "GET", null, this.idToken);
+        if(!list.entries.entry)
+            return [];
+        return list.entries.entry;
+    }
+
+    async list()
+    {
+        const rawImages = await this.listRaw();
+        let images = [];
+        rawImages.forEach(function(element, i) {
+            let image = {
+                imageId : element.value.image.id,
+                label : element.value.label,
+                type: element.value.image.type,
+            };
+            images.push(image);
+        });
+        
+        return images;
+    }
+
+    async roms() 
+    {
+        const rawImages = await this.listRaw();
+        let images = [];
+        rawImages.forEach(function(element, i) {
+            let image = {
+                imageId : element.value.image.id,
+                label : element.value.label,
+                type: element.value.image.type,
+            };
     
-    return images;
-}
-
-export async function romList($http, localConfig)
-{
-    const rawImages = await imagesListRaw($http, localConfig);
-    let images = [];
-    rawImages.forEach(function(element, i) {
-        let image = {
-            imageId : element.value.image.id,
-            label : element.value.label,
-            type: element.value.image.type,
-        };
-        if(image.type === 'roms')
-            images.push(image);
-    });
-    return images;
-}
-
-export async function runtimeList($http, localConfig)
-{
-    const rawImages = await imagesListRaw($http, localConfig);
-    let images = [];
-    rawImages.forEach(function(element, i) {
-        let image = {
-            imageId : element.value.image.id,
-            label : element.value.label,
-            type: element.value.image.type,
-        };
-        if(image.type === 'runtime')
-            images.push(image);
-    });
-    return images;
-}
-
-async function _createEmptyImage(localConfig, size) 
-{
-    try {
-        let result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/create-image`, "POST", {
-            size: size,
+            if(image.type === this.IMAGE_TYPE_ROM)
+                images.push(image);
         });
-        return result;
+        return images;
     }
-    catch (e) 
+
+    async runtimeImages() 
     {
-        throw new Error("environment-repository/create-image: " +
-             ' Request failed' 
-            + e);
-    }   
-}
-
-export async function deleteImage(localConfig, imageArchive, imageId) 
-{
-    try {
-        let result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/delete-image`, "POST", {
-            imageArchive: imageArchive,
-            imageId: imageId
+        const rawImages = await this.listRaw();
+        let images = [];
+        rawImages.forEach(function(element, i) {
+            let image = {
+                imageId : element.value.image.id,
+                label : element.value.label,
+                type: element.value.image.type,
+            };
+            if(image.type === this.IMAGE_TYPE_RUNTIME)
+                images.push(image);
         });
-        return result;
+        return images;
     }
-    catch (e) 
+
+    async _createEmptyImage(size) 
     {
-        throw new Error("environment-repository/delete-image: " +
-             ' Request failed' 
-            + e);
-    }   
-}
+        try {
+            let result = await _fetch(`${this.api}environment-repository/actions/create-image`, "POST", {
+                size: size,
+            }, this.idToken);
+            return result;
+        }
+        catch (e) 
+        {
+            throw new Error("environment-repository/create-image: " +
+                ' Request failed' 
+                + e);
+        }   
+    }
 
-
-export async function importImage(localConfig, url, label)
-{
-    let result;
-    try  {
-        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
-            url: url,
-            label: label
-        });
-        let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
-        let imageResult = await task.done;
-        return imageResult.imageId; 
-    }
-    catch(e) {
-        throw new Error("environment-repository/create-image: " 
-            +  ' Request failed: ' 
-            + e + "\n original message: " + result);
-    }
-}
-
-export async function importRomImage(localConfig, url, label)
-{
-    let result; 
-    try  {
-        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
-            url: url,
-            label: label,
-            imageType: 'roms',
-        });
-        let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
-        let imageResult = await task.done;
-        return imageResult.imageId; 
-    }
-    catch(e) {
-        throw new Error("environment-repository/create-image: " 
-            +  ' Request failed: ' 
-            + e + "\n original message: " + result);
-    }
-}
-
-export async function importRuntimeImage(localConfig, url, label)
-{
-    let result; 
-    try  {
-        result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/actions/import-image`,  "POST", {
-            url: url,
-            label: label,
-            imageType: 'runtime',
-        });
-        let task = new Task(result.taskId, localConfig.data.eaasBackendURL);
-        let imageResult = await task.done;
-        return imageResult.imageId; 
-    }
-    catch(e) {
-        throw new Error("environment-repository/create-image: " 
-            +  ' Request failed: ' 
-            + e + "\n original message: " + result);
-    }
-}
-
-export async function importEmptyImage(localConfig, size, label)
-{
-    try {
-        let createResult = await _createEmptyImage(localConfig, size, label);
-        let task = new Task(createResult.taskId, localConfig.data.eaasBackendURL);
-        let userData = await task.done;
-        return await importImage(localConfig, userData.imageUrl, label);
-    }
-    catch(e)
+    async delete(imageArchive, imageId) 
     {
-        throw new Error(e); 
+        try {
+            let result = await _fetch(`${this.api}environment-repository/actions/delete-image`, "POST", {
+                imageArchive: imageArchive,
+                imageId: imageId
+            }, this.idToken);
+            return result;
+        }
+        catch (e) 
+        {
+            throw new Error("environment-repository/delete-image: " +
+                ' Request failed' 
+                + e);
+        }   
+    }
+
+    async import(url, label, type = undefined)
+    {
+        let result;
+
+        if(type && (type != "runtime" || type != "roms"))
+            throw new Error("Unknown image type");
+
+        try  {
+            result = await _fetch(`${this.api}environment-repository/actions/import-image`,  "POST", {
+                url: url,
+                label: label,
+                imageType: type
+            }, this.idToken);
+            let task = new Task(result.taskId, this.api, this.idToken);
+            let imageResult = await task.done;
+            return imageResult.imageId; 
+        }
+        catch(e) {
+            throw new Error("environment-repository/create-image: " 
+                +  ' Request failed: ' 
+                + e + "\n original message: " + result);
+        }
+    }
+
+    async createEmpty(size, label)
+    {
+        try {
+            let createResult = await this._createEmptyImage( size, label);
+            let task = new Task(createResult.taskId, this.api, this.idToken);
+            let userData = await task.done;
+            return await this.import(userData.imageUrl, label);
+        }
+        catch(e)
+        {
+            throw new Error(e); 
+        }
     }
 }

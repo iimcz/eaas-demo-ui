@@ -1,15 +1,12 @@
 import {publisher} from "./templates/publish-environment";
 import {Drives} from "../../lib/drives.js"
-import {
-    imageList
-} from '../../lib/images.js'
 import {getOsById} from '../../lib/os.js'
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "osList", "softwareList", "$uibModal",
-             "$timeout", "nameIndexes", "REST_URLS", "Objects",
+             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images",
     function ($http, $rootScope, $scope, $state, $stateParams, Environments, localConfig,
             growl, $translate, objectDependencies, helperFunctions, osList, softwareList, $uibModal,
-            $timeout, nameIndexes, REST_URLS, Objects) {
+            $timeout, nameIndexes, REST_URLS, Objects, Images) {
 
        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
@@ -37,7 +34,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
        vm.emulator = null;
 
        vm.imageList = [];
-       imageList($http, localConfig).then((result) => {
+       Images.list().then((result) => {
             vm.imageList = result;
         }, 
         (e) => {

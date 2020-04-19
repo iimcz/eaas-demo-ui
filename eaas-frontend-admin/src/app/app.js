@@ -42,7 +42,7 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
-import {romList} from "./lib/images.js"
+import {EaasImages} from "./lib/images.js"
 import {_fetch} from './lib/utils.js'
 
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
@@ -239,11 +239,11 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .component('macemuOptions', {
         template: macemuOptionsTemplate,
-        controller: ["$scope", "$http", "localConfig", function($scope, $http, localConfig) {
+        controller: ["Images", function(Images) {
             var vm = this;
             vm.romList = [];
-            console.log(this.args);
-            romList($http, localConfig).then((result) => {
+            
+            Images.roms().then((result) => {
                 vm.romList = result;
                 console.log(vm.romList);
             }, (e) => {
@@ -352,7 +352,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 })
 .factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
     return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
- })
+})
+.factory('Images', function(localConfig) {
+    return new EaasImages(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+})
 .config(['$stateProvider',
         '$urlRouterProvider',
         'growlProvider',
