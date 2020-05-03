@@ -24,7 +24,6 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm._preSelectedSystem = undefined;
         vm.selectedOs = undefined;
         vm.imageList = [];
-        vm.romList = [];
 
         vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
 
@@ -58,7 +57,8 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         {
             const result =  os.operatingSystems.filter(
                 (element, i) => { 
-                    if(element.id.startsWith("os:" +  vm._preSelectedSystem))
+                    let templates = vm.systems.find(o => o.id === element.template);
+                    if(element.id.startsWith("os:" +  vm._preSelectedSystem) && templates)
                         return true;
                     return false;
                 }
@@ -123,10 +123,6 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             if (confStr.startsWith(" "))
                 confStr = confStr.substring(1);
             return confStr;
-        }
-
-        function updateMacConfig () {
-
         }
 
         vm.updateQemu = function () {
