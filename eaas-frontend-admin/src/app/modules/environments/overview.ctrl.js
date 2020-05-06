@@ -353,9 +353,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                     </a>
                   </li>
                   
-                  <li role="menuitem"><a ng-if="data.archive !== 'remote'" target="_blank" class="dropdown-content" 
-                  ng-click="switchAction(data.id, 'openLandingPage')"">{{'CONTAINER_LANDING_PAGE'| translate}}</a></li>
-                
+                  <li role="menuitem">
+                    <a ng-if="data.archive !== 'remote' && data.archive !== 'default'" 
+                        target="_blank" class="dropdown-content" 
+                        ng-click="switchAction(data.id, 'openLandingPage')">
+                            {{'CONTAINER_LANDING_PAGE'| translate}}
+                    </a>
+                  </li>
                 </ul>
                 
              </div>`;
@@ -417,7 +421,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
  //           if(vm.view ===4 ){
  //               window.open(vm.landingPage + "?id=" + id + "&isNetworkEnvironment=" + "true");
  //           } else
-                window.open(vm.landingPage + "?id=" + id)
+                window.open("/landing-page" + "?id=" + id)
         };
 
         $scope.onPageSizeChanged = function() {

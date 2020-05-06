@@ -8,7 +8,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Add Disk Media</div>
             <div class="panel-body">
-                <div class="form-group">
+                <div class="form-group" ng-if="!importDlgCtrl.mode === 'runtime'"> 
                     <label>Disk image label: </label>
                     <input class="form-control" type="text" ng-model="importDlgCtrl.label">
                 </div>
@@ -67,11 +67,14 @@
                 </div>
                 <div class="form-group" ng-if="importDlgCtrl.mode === 'runtime'">
                     <label>
-                        <span>Upload runtime image</span>
+                        <span>Import runtime image from Gitlab</span>
                     </label>
-                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.runtime"
-                        ng-disabled="importDlgCtrl.mode !== 'runtime'"
-                        ng-required="importDlgCtrl.mode == 'runtime'"/>
+                    <a href="{{importDlgCtrl.runtime}}">Gitlab source url</a>
+                    <p></p>
+                    <label>
+                        <span>Import Init-ISO from Gitlab</span>
+                    </label>
+                    <a href="{{importDlgCtrl.cloudInit}}">Gitlab source url</a>
                 </div>
             </div>
         </div>

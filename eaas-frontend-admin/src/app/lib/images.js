@@ -34,16 +34,18 @@ export class EaasImages
 
     async roms() 
     {
-        const rawImages = await this.listRaw();
+        let rawImages = await this.listRaw();
+
         let images = [];
         rawImages.forEach(function(element, i) {
+            console.log(element);
             let image = {
                 imageId : element.value.image.id,
                 label : element.value.label,
                 type: element.value.image.type,
             };
     
-            if(image.type === this.IMAGE_TYPE_ROM)
+            if(image.type === "roms");
                 images.push(image);
         });
         return images;
@@ -59,7 +61,7 @@ export class EaasImages
                 label : element.value.label,
                 type: element.value.image.type,
             };
-            if(image.type === this.IMAGE_TYPE_RUNTIME)
+            if(image.type === "runtime")
                 images.push(image);
         });
         return images;
@@ -102,7 +104,7 @@ export class EaasImages
     {
         let result;
 
-        if(type && (type != "runtime" || type != "roms"))
+        if(type && type != "runtime" && type != "roms")
             throw new Error("Unknown image type");
 
         try  {

@@ -5,11 +5,6 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
 
         $("#container-stopped").hide();
 
-        eaasClient.onError = function (message) {
-            window.onbeforeunload = null;
-            $state.go('error', {errorMsg: {title: "Error", message: message.error}});
-        };
-
         window.onbeforeunload = function (e) {
             var dialogText = $translate.instant('MESSAGE_QUIT');
             e.returnValue = dialogText;
@@ -76,6 +71,8 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                     }
                 }, {reload: true});
             } else {
+                $state.go('error', { errorMsg: { title: "Error", message: "No container runtime configured" } });
+                /*
                 $("#emulator-loading-container").show();
                 eaasClient.startContainer($stateParams.envId, params).then(function () {
                     $("#emulator-loading-container").hide();
@@ -99,6 +96,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                         eaasClient.release();
                     });
                 });
+                */
             }
         };
 

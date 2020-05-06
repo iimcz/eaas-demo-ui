@@ -5,14 +5,10 @@
         <input type="checkbox" ng-model="$ctrl.networking.connectEnvs">
         <label>Enable networking</label>
     </div>
-    <div ng-if="$ctrl.networking.connectEnvs">
-        <input type="checkbox" ng-model="$ctrl.networking.enableInternet">
-        <label>{{'EDITENV_ENABLE_INTERNET' | translate}}</label>
-    </div>
 
     <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
-        <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled">
-        <label>{{'EDITENV_ENABLE_DHCP' | translate}}</label>
+        <input type="checkbox" ng-model="$ctrl.networking.isTelnetEnabled">
+        <label>Enable Telnet</label>
     </div>
 
   <!--    <div class="form-group" ng-if="$ctrl.networking.connectEnvs">-->

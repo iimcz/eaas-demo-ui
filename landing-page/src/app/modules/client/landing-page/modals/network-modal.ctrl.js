@@ -1,17 +1,15 @@
-module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv', 'eaasClient', 'localConfig', 'growl', '$timeout', '$uibModalStack', 'REST_URLS', 'helperFunctions',
-    function ($state, $http, $scope, $uibModal, currentEnv, eaasClient, localConfig, growl, $timeout, $uibModalStack, REST_URLS, helperFunctions) {
+module.exports = ['$state', '$http', '$scope', 'currentEnv', 'eaasClient', 'localConfig', 'growl', 
+    function ($state, $http, $scope, currentEnv, eaasClient, localConfig, growl) {
 
         var modalCtrl = this;
 
         this.network = currentEnv.network;
         this.env = currentEnv;
 
-        if (eaasClient.networkTcpInfo) {
-            var url = new URL(eaasClient.networkTcpInfo.replace(/^info/, 'http'));
-            var pathArray = url.pathname.split('/');
-            modalCtrl.hostname = url.hostname.replace("https", "http");
-            modalCtrl.port = pathArray[2];
-            modalCtrl.network = "//" + modalCtrl.hostname + ":" + modalCtrl.port;
+        this.getServerAddress = function()
+        {
+            let out = "http://" + this.network;
+            return out;
         }
 
         function formatStr(format) {
@@ -52,7 +50,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv', 'eaasC
         this.localConnectionPort = 8080;
 
         this.getLocalProxy = function () {
-            return eaasClient.getProxyURL({localPort: modalCtrl.localConnectionPort}).then(
+            return eaasClient.getActiveSession().getProxyURL({localPort: modalCtrl.localConnectionPort}).then(
                 function (result) {
                     // use the result here
                     modalCtrl.proxy = result;

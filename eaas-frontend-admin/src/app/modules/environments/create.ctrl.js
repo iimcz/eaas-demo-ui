@@ -24,11 +24,18 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm._preSelectedSystem = undefined;
         vm.selectedOs = undefined;
         vm.imageList = [];
+        vm.runtimeList = [];
 
         vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
 
         Images.list().then((result) => {
             vm.imageList = result;
+        }, (e) => {
+            throw new Error(e);
+        });
+
+        Images.runtimeImages().then((result) => {
+            vm.runtimeList = result;
         }, (e) => {
             throw new Error(e);
         });
@@ -74,7 +81,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         }
 
         vm.selectMedium = function (index) {
-            vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, $uibModal);
+            vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, vm.runtimeList, $uibModal);
         }
 
         vm.onSelectSystem = function (item) {

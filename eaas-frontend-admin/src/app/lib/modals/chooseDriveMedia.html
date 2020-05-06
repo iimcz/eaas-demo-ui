@@ -28,7 +28,22 @@
                         </ui-select>
                     </div>
                     <hr ng-if="editDriveCtrl.drive.type === 'disk'">
-                    
+
+                    <div class="form-group">
+                        <input type="radio" ng-model="editDriveCtrl.diskType" value="runtime"> <label>Select from runtime library</label>
+                        <ui-select ng-model="editDriveCtrl.selectedRuntime" theme="bootstrap"
+                            title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
+                            ng-disabled="editDriveCtrl.diskType !== 'runtime'"
+                            ng-required="editDriveCtrl.diskType == 'runtime'">
+                            <ui-select-match placeholder="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}">
+                                {{$select.selected.label}}</ui-select-match>
+                            <ui-select-choices
+                                repeat="image in editDriveCtrl.runtimeList | filter: $select.search">
+                                <span ng-bind-html="image.label | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+
                     <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk'">
                     <input type="radio" ng-model="editDriveCtrl.diskType"  value="os"> <label>Select from operating-system media library</label>
                     

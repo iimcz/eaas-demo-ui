@@ -41,6 +41,13 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             throw new Error(e);
         });
 
+        vm.runtimeList = [];
+        Images.runtimeImages().then((result) => {
+            vm.runtimeList = result;
+        }, (e) => {
+            throw new Error(e);
+        });
+
             this.env = {};
         if(!$stateParams.envId)
         {
@@ -146,7 +153,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
         }
 
         vm.selectMedium = function (index) {
-            vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, $uibModal);
+            vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, vm.runtimeList, $uibModal);
         }
             vm.getNameIndexObj = function(key, name, version){
                   return {

@@ -248,23 +248,8 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
         }
     ])
-    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide, localConfig) {
+    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide) {
         angular.lowercase = angular.$$lowercase;
-
-        jwtOptionsProvider.config({
-            whiteListedDomains: "localhost",
-            tokenGetter: [ 'options', function(options) {
-                if (options && options.url.substr(options.url.length - 5) == '.html') {
-                    return null;
-                }
-                if (options && options.url.substr(options.url.length - 5) == '.json') {
-                    return null;
-                }
-                return localStorage.getItem('id_token');
-            }]
-        });
-        $httpProvider.interceptors.push('jwtInterceptor');
-
         /*
          * Use ng-sanitize for textangular, see https://git.io/vFd7y
          */

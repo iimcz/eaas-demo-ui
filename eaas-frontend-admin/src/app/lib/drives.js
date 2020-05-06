@@ -101,9 +101,10 @@ export class Drives
         return "<br><b>Media ID: </b>" + id;
     }
 
-    selectMedia(index, imageList, softwareList, objectList, $uibModal)
+    selectMedia(index, imageList, softwareList, objectList, runtimeList, $uibModal)
     {
         var _this = this;
+        console.log(runtimeList);
         return $uibModal.open({
             animation: true,
             template: require('./modals/chooseDriveMedia.html'),
@@ -112,6 +113,7 @@ export class Drives
                 this.drive = _this.drives[index];
                 this.virtio = (this.drive.iface === 'virtio');
                 this.imageList = imageList;
+                this.runtimeList = runtimeList;
                 this.softwareList = softwareList;
                 this.objectList = objectList;
 
@@ -138,10 +140,20 @@ export class Drives
                         update.setObject(this.selectedObject.id, this.selectedObject.archiveId);
                         _this.addDriveUpdate(update);
                     }
+                    else if (this.diskType == 'object') {
+                        let update = new DriveUpdate(this.drive, index);
+                        update.setObject(this.selectedObject.id, this.selectedObject.archiveId);
+                        _this.addDriveUpdate(update);
+                    }
                     else if (this.diskType == 'empty') {
                         let update = new DriveUpdate(this.drive, index);
                         update.setEmpty();
                         _this.addDriveUpdate(update);
+                    }
+                    else if (this.diskType == 'runtime') {
+                        let update = new DriveUpdate(this.drive, index);
+                        update.setImage(this.selectedRuntime.imageId, "default");
+                        _this.addDriveUpdate(update); 
                     }
                 }
             }],

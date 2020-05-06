@@ -30,6 +30,9 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
             animation: true,
             template: require ('./modals/import.html'),
             controller: ["$scope", "localConfig", function($scope, localConfig) {
+
+                this.runtime = "https://gitlab.com/emulation-as-a-service/linux-container-base-image/-/jobs/artifacts/master/raw/disk.img?job=build";
+                this.cloudInit = "https://gitlab.com/emulation-as-a-service/eaas-container-runtime/-/jobs/artifacts/master/raw/eaas-container-runtime/eaas-container-runtime.iso?job=build";
                 this.import = async () => 
                 {
                     if(!this.mode)
@@ -37,7 +40,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         window.alert("Please select an image type");
                         return;
                     }
-                    if(!this.label)
+                    if(this.mode !== 'runtime' && !this.label)
                     {
                         window.alert("Please set an image label");
                         return;
@@ -61,7 +64,10 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         return;
                     }
                     modal.close();
-
+                    
+                    let date = new Date();
+                    let shortDate =  date.getFullYear() + "/" + (date.getMonth() + 1) + "/" +  date.getDate();
+                    console.log(shortDate);
                     let waitModal = new WaitModal($uibModal);
                     waitModal.show("Import", "Please wait");
                     let result = undefined;
@@ -72,8 +78,10 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         {
                             result = await Images.import(this.romurl, this.label, "roms");
                         }
-                        else if(this.mode === "runtime")
-                            result = await Images.import(this.runtime, this.label, "runtime");
+                        else if(this.mode === "runtime") {
+                            result = await Images.import(this.runtime, `Runtime Image (${shortDate})`, "runtime");
+                            result = await Images.import(this.cloudInit, `CloudInit (${shortDate})`, "runtime");
+                        }
                         else
                             result = await Images.import(this.hdurl, this.label);
                     }

@@ -1,4 +1,4 @@
-module.exports = ['$scope', '$window', '$state', '$http', '$stateParams', function ($scope, $window, $state, $http, $stateParams) {
+module.exports = ['$state', function ( $state ) {
     var vm = this;
 
     vm.abort = function () {
