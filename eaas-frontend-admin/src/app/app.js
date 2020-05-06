@@ -332,7 +332,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
            localStorage.removeItem('id_token');
            localStorage.removeItem('expires_at');
            document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-           document.location = "/auth/realms/master/protocol/openid-connect/logout?redirect_uri=https%3A%2F%2Flocalhost%2Fadmin";
+           document.location = `/auth/realms/master/protocol/openid-connect/logout?${new URLSearchParams({redirect_uri: new URL("/admin", location)})}`;
      }
 
      this.isAuthenticated = function() {
@@ -736,7 +736,7 @@ function($stateProvider,
                     else
                         return null;
                 },
-                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
             },
             params: {
                 envId: null,
@@ -775,7 +775,7 @@ function($stateProvider,
                 chosenEnv: function($stateParams, Environments) {
                     return Environments.get({envId: $stateParams.envId}).$promise;
                 },
-                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
             },
             params: {
                 envId: null,

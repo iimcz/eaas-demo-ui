@@ -100,11 +100,11 @@
         </button>
 
         <button  class="btn btn-default"
-                 uib-dropdown-toggle ng-if="$root.idsData.length > 1"
+                 uib-dropdown-toggle ng-if="actionsCtrl.components.length > 1"
                  uib-dropdown on-toggle="toggled(open)">
             <div>Switch View</div>
             <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
-                <li ng-repeat="choice in idsData">
+                <li ng-repeat="choice in actionsCtrl.components">
                     <a ng-click="actionsCtrl.switchEmulators(choice)" href>{{choice.title}}</a>
                 </li>
             </ul>

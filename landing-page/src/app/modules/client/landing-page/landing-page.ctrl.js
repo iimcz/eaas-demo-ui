@@ -1,6 +1,7 @@
 import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
-import {createData} from "EaasLibs/javascript-libs/eaas-data-creator.js";
 import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
+import {MachineComponentBuilder} from "EaasClient/lib/componentBuilder";
+import {ClientOptions, TcpGatewayConfig} from "EaasClient/lib/clientOptions";
 
 module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', 'eaasClient', '$scope', 'localConfig', 'Environments', 'REST_URLS', 'EmilNetworkEnvironments', 'chosenEnvId', 'isNetworkEnvironment', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
     function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, eaasClient, $scope, localConfig, Environments, REST_URLS, EmilNetworkEnvironments, chosenEnvId, isNetworkEnvironment, buildInfo, WizardHandler, helperFunctions, growl) {
@@ -29,7 +30,6 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
     
         var vm = this;
         vm.eaasClient = eaasClient;
-
 
         (isNetworkEnvironment ? EmilNetworkEnvironments : Environments).get({envId: chosenEnvId}).$promise.then((response) => init(response));
 
@@ -119,48 +119,47 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 }
                 $("#container-stopped").hide();
 
-                let params = {};
-                params.input_data = [];
+                
+               //  params.input_data = [];
                 let input = {};
                 input.size_mb = vm.input_data.size_mb;
                 input.destination = vm.env.input;
                 input.content = inputs;
-                params.input_data.push(input);
+               
+                /*
+                if(input)
+                {
+                    console.log("fixme");
+                    params.input_data.push(input);
+                }
+                */
+
                 if (vm.env.objectId) {
+                    console.log("fixme");
                     params.object = vm.env.objectId;
                 }
 
+                let clientOptions = new ClientOptions();
                 if (vm.data) {
-
-                    if (vm.env.networking.localServerMode)
-                        params.hasTcpGateway = false;
-                    else
-                        params.hasTcpGateway = vm.env.networking.serverMode;
-
-                    params.hasInternet = vm.env.networking.enableInternet;
-                    if (params.hasTcpGateway || vm.env.networking.localServerMode) {
-                        params.tcpGatewayConfig = {
-                            socks: vm.env.enableSocks,
-                            gwPrivateIp: vm.env.networking.gwPrivateIp,
-                            gwPrivateMask: vm.env.networking.gwPrivateMask,
-                            serverPort: vm.env.networking.serverPort,
-                            serverIp: vm.env.networking.serverIp
-                        };
-                    }
+    
+                    clientOptions.enableNetworking();
+                    clientOptions.getNetworkConfig().enableInternet(vm.env.networking.enableInternet);
+                    let tcpGatewayConfig = new TcpGatewayConfig(vm.env.networking.serverIp, vm.env.networking.serverPort);
+                    tcpGatewayConfig.enableSocks(vm.env.enableSocks);
+                    tcpGatewayConfig.enableLocalMode(vm.env.networking.localServerMode);
+                    
+                    clientOptions.getNetworkConfig().setTcpGatewayConfig(tcpGatewayConfig);
                 }
                 vm.proxy = "";
-
 
                 vm.getOutput = function () {
                     const unloadBackup = eaasClient.deleteOnUnload;
                     eaasClient.deleteOnUnload = false;
                     vm.isContOutDownloading = true;
 
-                    let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
-
                     async function f() {
                         const containerOutput = await fetch(eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId).getContainerResultUrl(), {
-                            headers: _header,
+                            
                         });
                         const containerOutputBlob = await containerOutput.blob();
                         // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
@@ -224,45 +223,37 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 try {
                     if (localStorage.DEBUG_script) eval(localStorage.DEBUG_script);
                 } catch (e) {
+                    console.log(e);
                 }
-                let envs = [];
+            
+               let components = [];
                if(vm.env.isContainer && vm.env.runtimeId){
                    const runtimeEnv = await Environments.get({envId: vm.env.runtimeId}).$promise;
                    console.log("!!!!!!!!!!!!!!!! vm.env.runtimeId", vm.env.runtimeId);
                    console.log("params.input_data", params.input_data);
-                   const data = createData(
-                       vm.env.runtimeId,
-                       runtimeEnv.archive,
-                       "machine",
-                       null,
-                       null,
-                       null,
-                       null,
-                       null,
-                       null,
-                       {
-                           userContainerEnvironment: vm.env.envId,
-                           userContainerArchive: vm.env.archive,
-                           networking: vm.env.networking,
-                           input_data: params.input_data
-                       });
-                   envs.push({data, visualize: true});
+
+                   let component = new MachineComponentBuilder(vm.env.runtimeId, runtimeEnv.archive);
+                   component.setLinuxRuntime(
+                    {
+                        userContainerEnvironment: vm.env.envId,
+                        userContainerArchive: vm.env.archive,
+                        networking: vm.env.networking,
+                        input_data: params.input_data
+                    });
+                    component.setInteractive(true);
+                    components.push(component);
                } else if (vm.env.isContainer) {
-                   envs = vm.env.envId
+                   console.log("fixme");
+                   // envs = vm.env.envId
                } else {
-                   const data = createData(vm.env.envId,
-                       vm.env.archive,
-                       "machine",
-                       vm.env.objectArchive,
-                       vm.env.objectId,
-                       vm.env.userId,
-                       vm.env.softwareId
-                   );
-                   data.input_data = [];
-                   data.input_data.push(vm.input_data);
-                   envs.push({data, visualize: true});
+                    let component = new MachineComponentBuilder(vm.env.envId, vm.env.archive);
+                    component.setObject(vm.env.objectId, vm.env.objectArchive);
+                    if(vm.input_data)
+                        component.addInputMedia(vm.input_data);
+                    component.setInteractive(true);
+                    components.push(component);
                }
-               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : eaasClient[startFunction](envs, params)).then(function () {
+               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : eaasClient[startFunction](components, clientOptions)).then(function () {
                 let sessionToInitialize = undefined;
                 if(vm.componentIdToInitialize){
                    sessionToInitialize = eaasClient.getSession(vm.componentIdToInitialize);

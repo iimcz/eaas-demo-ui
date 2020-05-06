@@ -1,8 +1,9 @@
 import {stopClient} from "./utils/stop-client";
-import {createData} from "EaasLibs/javascript-libs/eaas-data-creator.js";
 import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
-import {NetworkSession,requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
+import {requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
 import {attach} from "EaasLibs/javascript-libs/network-environment-utils/attach.js";
+import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
+import { TcpGatewayConfig, ClientOptions } from "EaasClient/lib/clientOptions";
 
 module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams', '$cookies', '$translate', '$http', 'localConfig', 'growl', 'Environments', 'EmilNetworkEnvironments', 'chosenEnv', 'eaasClient',
     function ($rootScope, $uibModal, $scope, $state, $stateParams, $cookies, $translate, $http, localConfig, growl, Environments, EmilNetworkEnvironments, chosenEnv, eaasClient) {
@@ -17,10 +18,10 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
         if ($stateParams.containerRuntime != null) {
             $scope.containerRuntime = $stateParams.containerRuntime;
             if(chosenEnv == null) chosenEnv = {};
-            chosenEnv.networking = $stateParams.containerRuntime.networking;
+                chosenEnv.networking = $stateParams.containerRuntime.networking;
         }
+
         vm.runEmulator = async (selectedEnvs, attachId) => {
-            let type = "machine";
             await chosenEnv;
 
             window.onbeforeunload = function (e) {
@@ -80,92 +81,82 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 layout: {name: 'pc105'}
             };
 
-            let params = {};
-            if (chosenEnv) {
+            let clientOptions = new ClientOptions();
+            try {
+                if (chosenEnv) {
+                    if (chosenEnv.networking) {
+                        if (chosenEnv.networking.connectEnvs)
+                            clientOptions.enableNetworking();
 
-                if (chosenEnv.networking) {
-                    if (chosenEnv.networking.connectEnvs)
-                        params.enableNetwork = true;
-
-                    if (chosenEnv.networking.localServerMode) {
-                        params.hasTcpGateway = false;
-                    } else {
-                        params.hasTcpGateway = chosenEnv.networking.serverMode;
+                        clientOptions.getNetworkConfig().enableInternet(chosenEnv.networking.enableInternet);
+                        try {
+                            let tcpGatewayConfig = new TcpGatewayConfig(chosenEnv.networking.serverIp, chosenEnv.networking.serverPort);
+                            tcpGatewayConfig.enableSocks(chosenEnv.networking.enableSocks);
+                            tcpGatewayConfig.enableLocalMode(chosenEnv.networking.localServerMode);
+                            clientOptions.getNetworkConfig().setTcpGatewayConfig(tcpGatewayConfig);
+                        }
+                        catch(e)
+                        {
+                            // TcpGatewayConfig throws if serverIp / port is not set. 
+                        }
                     }
-                    params.enableInternet = chosenEnv.networking.enableInternet;
-                    if (params.hasTcpGateway || chosenEnv.networking.localServerMode) {
-                        params.tcpGatewayConfig = {
-                            socks: chosenEnv.networking.enableSocks,
-                            serverPort: chosenEnv.networking.serverPort,
-                            serverIp: chosenEnv.networking.serverIp
-                        };
-                    }
+                    clientOptions.setXpraEncoding(chosenEnv.xpraEncoding);
                 }
-                params.xpraEncoding = chosenEnv.xpraEncoding;
+            }
+            catch(e)
+            {
+                console.error(e);
+                const details = (e instanceof ClientError) ? e.toJson() : e.toString();
+                $state.go('error', { errorMsg: { title: "Emulation Error", message: details } });
             }
             // console.log(params);
 
-            var envs = [];
+            let components = [];
             for (let i = 0; i < selectedEnvs.length; i++) {
+                let component;
+
                 if (selectedEnvs[i].envType === "container" && selectedEnvs[i].runtimeId) {
-                    var runtimeEnv =  vm.environments.find(function(element) {
+                    let runtimeEnv =  vm.environments.find(function(element) {
                         return element.envId = selectedEnvs[i].runtimeId;
                     });
-                    data = createData(
-                        selectedEnvs[i].runtimeId,
-                        runtimeEnv.archive,
-                        type,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
+                    component = new MachineComponentBuilder(selectedEnvs[i].runtimeId, runtimeEnv.archive);
+                    component.setLinuxRuntime(
                         {
                             userContainerEnvironment: selectedEnvs[i].envId,
                             userContainerArchive: selectedEnvs[i].archive,
                             networking: selectedEnvs[i].networking,
                             input_data: selectedEnvs[i].input_data
-                        });
-
-
+                        }
+                    );
                 } else {
                     //since we can observe only single environment, keyboardLayout and keyboardModel are not relevant
-                    data = createData(selectedEnvs[i].envId,
-                        selectedEnvs[i].archive,
-                        type,
-                        selectedEnvs[i].objectArchive,
-                        selectedEnvs[i].objectId,
-                        selectedEnvs[i].userId,
-                        selectedEnvs[i].softwareId);
+                    component = new MachineComponentBuilder(selectedEnvs[i].envId, selectedEnvs[i].archive);
+                    component.setObject(selectedEnvs[i].objectId, selectedEnvs[i].objectArchive);
+                    component.setSoftware(selectedEnvs[i].softwareId);
                 }
-                envs.push({data, visualize: false});
+                components.push(component);
             }
 
-            var archive = (chosenEnv) ? chosenEnv.archive : "default";
+            let archive = (chosenEnv) ? chosenEnv.archive : "default";
             let environmentId= "";
             if (chosenEnv && chosenEnv.envId)
                 environmentId = chosenEnv.envId;
             else
                 environmentId = $stateParams.envId;
 
-            let data = createData(environmentId,
-                archive,
-                type,
-                $stateParams.objectArchive,
-                $stateParams.objectId,
-                $stateParams.userId,
-                $stateParams.softwareId,
-                kbLayoutPrefs.language.name,
-                kbLayoutPrefs.layout.name,
-                $stateParams.containerRuntime);
+            let component = new MachineComponentBuilder(environmentId, archive);
+            component.setObject( $stateParams.objectId, $stateParams.objectArchive);
+            component.setSoftware($stateParams.softwareId);
+            component.setKeyboard(kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name);
+            component.setLinuxRuntime($stateParams.containerRuntime);
 
             if ($stateParams.type == 'saveUserSession') {
-                data.lockEnvironment = true;
+                component.lockEnvironment(true);
                 // console.log("locking user session");
             }
+            component.setInteractive(true);
+            components.push(component);
 
-            envs.push({ data, visualize: true });
             $scope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
                 console.log("onStateChange");
                 if (!newUrl.endsWith("emulator")) {
@@ -190,7 +181,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                     if ($stateParams.isNetworkEnvironment) {
                         await startNetworkEnvironment(vm, eaasClient, chosenEnv, Environments, $http, $uibModal, localConfig);
                     } else {
-                        await eaasClient.start(envs, params, attachId);
+                        await eaasClient.start(components, clientOptions, attachId);
                     }
                     await eaasClient.connect($("#emulator-container")[0]);
 /*
@@ -251,6 +242,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
             }
         }
+        
         if ($stateParams.session || $stateParams.isNetworkEnvironment) {
             vm.runEmulator([]);
         } else if (!chosenEnv || !chosenEnv.networking || !chosenEnv.networking.connectEnvs) {
