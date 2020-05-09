@@ -7,8 +7,8 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
         vm.isOpen = false;
         vm.isContainer = true;
         vm.emilEnvironments = emilEnvironments;
-        vm.containerRuntimeEnv = {title: "native", runNatively: true};
-        vm.runtimeEnvs = [vm.containerRuntimeEnv];
+        
+        vm.runtimeEnvs = [];
 
         vm.showDateContextPicker = false;
         vm.networking = {};
@@ -50,7 +50,6 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
         };
 
         vm.saveEdit = function () {
-
             if(vm.processArgs.length === 0){
                 growl.error('Process is required');
                 return;

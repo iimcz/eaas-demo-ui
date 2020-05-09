@@ -121,7 +121,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" ng-if="!editEnvCtrl.isLinuxRuntime">
         <label>{{'EDITENV_HELPTEXT' | translate}} <a href="" ng-click="editEnvCtrl.editOs=true"><i
                     class="glyphicon glyphicon-pencil"></i></a></label>
         <div class="panel panel-default">
@@ -140,7 +140,7 @@
     </div>
 </div>
 
-    <div class="form-group">
+    <div class="form-group" ng-if="!editEnvCtrl.isLinuxRuntime">
         <label>{{'EDITENV_SOFTWARE' | translate}}</label>
         <div>
             <ul>
@@ -158,7 +158,7 @@
     </div>
 
     <!--  <h4> {{ 'EDITENV_SYSTEM_SETTINGS'| translate }} </h4> -->
-    <div class="form-group">
+    <div class="form-group" ng-if="!editEnvCtrl.isLinuxRuntime">
         <label>Set machine date <input type="checkbox" ng-model="editEnvCtrl.showDateContextPicker"></label>
 
         <div style="padding-left: 50px" ng-if="editEnvCtrl.showDateContextPicker">
@@ -186,8 +186,10 @@
     </div>
 
     <br>
-        <h4>Runtime options</h4>
-        <ui-Options-Template ui-options=editEnvCtrl.uiOptions></ui-Options-Template>
+        <div ng-if="!editEnvCtrl.isLinuxRuntime">
+          <h4>Runtime options</h4>
+             <ui-Options-Template ui-options=editEnvCtrl.uiOptions></ui-Options-Template>
+        </div>
 
         <hr>
         <h4>Drive Settings</h4>
