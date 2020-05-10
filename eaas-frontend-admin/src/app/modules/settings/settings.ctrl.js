@@ -1,3 +1,5 @@
+import {_fetch} from '../../lib/utils'
+
 module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbLayouts', 'REST_URLS',
     function ($state, $http, $scope, localConfig, $uibModal, kbLayouts, REST_URLS) {
 
@@ -23,6 +25,18 @@ module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbL
                     }
                 }
             );
+        };
+
+        vm.migrateDb = async function () {
+            try {
+                let result = await _fetch(`${localConfig.data.eaasBackendURL}/environment-repository/db-migration`, "GET", 
+                    null, localStorage.getItem('id_token'));
+                console.log(result);
+            }
+            catch(e) {
+                console.log(e);
+                $state.go('error', {});
+            }
         };
 
         vm.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
