@@ -50,7 +50,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 updateTableData(rowData);
             });
         }
-        vm.pageSize = "10";
+        vm.pageSize = "25";
 
         vm.checkState = function (_taskId, _modal) {
             var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
@@ -321,7 +321,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 vm.gridOptions.api.redrawRows();
             },
             pagination: true,
-            paginationPageSize: 10,
+            paginationPageSize: Number(vm.pageSize),
             paginationNumberFormatter: function (params) {
                 return '[' + params.value.toLocaleString() + ']';
             },
