@@ -5,7 +5,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
 {
     var vm = this;
     vm.config = localConfig.data;
-    vm.pageSize = "10";
+    vm.pageSize = "25";
     vm.imageList = [];
 
     vm.updateData = function () {
@@ -180,7 +180,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
             $scope.gridOptions.api.sizeColumnsToFit();
         },
         pagination: true,
-        paginationPageSize: 10,
+        paginationPageSize: Number(vm.pageSize),
         paginationNumberFormatter: function (params) {
             return '[' + params.value.toLocaleString() + ']';
         },

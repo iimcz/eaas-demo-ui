@@ -2,7 +2,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
    var vm = this;
    vm.swList = softwareList.data.descriptions;
 
-   vm.pageSize = "10";
+   vm.pageSize = "25";
 
     $scope.onPageSizeChanged = function() {
         vm.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
@@ -81,7 +81,7 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
             vm.gridOptions.api.sizeColumnsToFit();
         },
         pagination: true,
-        paginationPageSize: 10,
+        paginationPageSize: Number(vm.pageSize),
         paginationNumberFormatter: function(params) {
             return '[' + params.value.toLocaleString() + ']';
         },

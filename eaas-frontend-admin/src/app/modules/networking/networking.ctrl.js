@@ -3,7 +3,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
    
     var vm = this;
     vm.landingPage = localConfig.data.landingPage;
-    vm.pageSize = "10";
+    vm.pageSize = "25";
     vm.config = localConfig.data;
 
     $scope.onPageSizeChanged = function () {
@@ -269,7 +269,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
             vm.gridOptions.api.sizeColumnsToFit();
         },
         pagination: true,
-        paginationPageSize: 20,
+        paginationPageSize: Number(vm.pageSize),
         paginationNumberFormatter: function (params) {
             return '[' + params.value.toLocaleString() + ']';
         },

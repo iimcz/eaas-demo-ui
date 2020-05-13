@@ -84,7 +84,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             });
         };
 
-        vm.pageSize = "10";
+        vm.pageSize = "25";
         if($stateParams.showContainers)
              vm.view = 2;
         else if($stateParams.showObjects)
@@ -481,7 +481,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                  vm.gridOptions.api.redrawRows();
             },
             pagination: true,
-            paginationPageSize: 10,
+            paginationPageSize: Number(vm.pageSize),
             paginationNumberFormatter: function(params) {
                 return '[' + params.value.toLocaleString() + ']';
             },
