@@ -232,14 +232,15 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                 }
                     
                 this.isChangeMediaSubmitting = false;
-
+                console.log("opened change media dialog, ok " + this.isChangeMediaSubmitting);
                 this.changeMedium = async function(i) {
                     let mediaItem = vm.mediaList[i];
+                    console.log("change media ok");
                     if (mediaItem.chosen_medium_label == null) {
                         growl.warning($translate.instant('JS_MEDIA_NO_MEDIA'));
                         return;
                     }
-                    
+                    console.log(this.isChangeMediaSubmitting);
                     this.isChangeMediaSubmitting = true;
                     var postObj = {};
                     postObj.objectId = mediaItem.objectId;
@@ -249,6 +250,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                     $("html, body").addClass("wait");
                     try {
                         let result = await eaasClient.getActiveSession().changeMedia(postObj);
+                        console.loh("change media result");
                         console.log(result);
                         growl.success($translate.instant('JS_MEDIA_CHANGETO') + mediaItem.chosen_medium_label);
                         mediaItem.currentMediumLabel = mediaItem.chosen_medium_label;
