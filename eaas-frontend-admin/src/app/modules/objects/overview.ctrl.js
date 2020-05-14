@@ -6,7 +6,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     vm.config = localConfig.data;
     vm.activeView = 0;
     vm.archives = archives.data.archives;
-    vm.pageSize = "10";
+    vm.pageSize = "25";
 
     vm.updateTable = function(index, archive)
     {
@@ -128,7 +128,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
             $scope.gridOptions.api.sizeColumnsToFit();      
         },
         pagination: true,
-        paginationPageSize: 10,
+        paginationPageSize: Number(vm.pageSize),
         paginationNumberFormatter: function (params) {
             return '[' + params.value.toLocaleString() + ']';
         },
