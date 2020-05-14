@@ -539,14 +539,7 @@ function($stateProvider,
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
-                userInfo: ($http, localConfig, REST_URLS) =>
-                    {
-                        const auth0config = localConfig.data.auth0Config || {};
-                        if(auth0config.AUTH_CONFIGURED)
-                           return  $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo);
-                        else
-                           return {};
-                    }
+                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo)
             },
             controller: "BaseController as baseCtrl"
         })
