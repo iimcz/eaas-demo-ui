@@ -12,6 +12,8 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
     clientOptions.getNetworkConfig().setNetwork(networkEnivornment.network);
     clientOptions.getNetworkConfig().setGateway(networkEnivornment.gateway);
     clientOptions.getNetworkConfig().enableInternet(networkEnivornment.enableInternet);
+    if(!networkEnivornment.dnsServiceEnvId)
+        clientOptions.getNetworkConfig().enableSlirpDhcp(networkEnivornment.isDHCPenabled);
 
     try {
         let tcpGatewayConfig = new TcpGatewayConfig(networkEnivornment.networking.serverIp, networkEnivornment.networking.serverPort);

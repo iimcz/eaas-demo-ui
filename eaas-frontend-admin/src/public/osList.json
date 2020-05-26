@@ -187,6 +187,20 @@
       }
     },
     {
+      "id":"os:other:sparc-ss5", 
+      "puids" : [],
+      "label" : "Sun SPARC Station 5",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "20G",
+      "template" : "qemu-sparc",
+      "template_params" : 
+      {
+        "net" : "lance",
+        "args" : "-m 32"
+      }
+    },
+    {
       "id":"os:linux:cent:77", 
       "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
       "label": "CentOS",

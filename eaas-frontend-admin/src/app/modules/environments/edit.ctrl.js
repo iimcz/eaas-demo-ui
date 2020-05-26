@@ -3,10 +3,10 @@ import {Drives} from "../../lib/drives.js"
 import {getOsById} from '../../lib/os.js'
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "osList", "softwareList", "$uibModal",
-             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images",
+             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images", "userInfo",
     function ($http, $rootScope, $scope, $state, $stateParams, Environments, localConfig,
             growl, $translate, objectDependencies, helperFunctions, osList, softwareList, $uibModal,
-            $timeout, nameIndexes, REST_URLS, Objects, Images) {
+            $timeout, nameIndexes, REST_URLS, Objects, Images, userInfo) {
 
        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
@@ -17,7 +17,11 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
        vm.softwareList = softwareList.data.descriptions; 
 
        vm.objectList = [];
-       Objects.query({archiveId: "zero conf"}).$promise.then(function(response) {
+       let userArchiveId = "zero conf";
+       if(userInfo.data && userInfo.data.userId)
+          userArchiveId = "user_archive" + userInfo.data.userId;
+
+       Objects.query({archiveId: userArchiveId}).$promise.then(function(response) {
             vm.objectList = response;
        });
    

@@ -7,7 +7,8 @@
     <mat-label>Network</mat-label>
     <!--            allow ip or empty string-->
     <input [disabled]="isDisabled" matInput name='network' [(ngModel)]="networkingConfig.network"
-        placeholder="Set IP network / mask. Example: 10.0.0.0/24">
+        placeholder="Set IP network / mask. Example: 10.0.0.0/24" required #elem="ngModel">
+        <mat-error *ngIf="elem.invalid">Network is required. Example: 10.0.0.0/24</mat-error>
 </mat-form-field>
 
 <br>
@@ -28,7 +29,7 @@
         color="primary">{{'EDITENV_ENABLE_DHCP' | translate}}</mat-checkbox>
 </div>
 <mat-checkbox [disabled]="isDisabled" *ngIf="networkingConfig.enableInternet" class="paddingLeft example-section"
-    [(ngModel)]="networkingConfig.isArchivedInternetEnabled" color="primary">Archived Internet (Optional) (Coming soon)
+    [(ngModel)]="networkingConfig.isArchivedInternetEnabled" color="primary">Archived Internet
 </mat-checkbox>
 <!--date picker-->
 <mat-form-field *ngIf="networkingConfig.isArchivedInternetEnabled" class="paddingLeft example-section">

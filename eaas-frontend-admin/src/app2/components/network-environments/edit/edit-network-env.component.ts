@@ -74,11 +74,7 @@ export class EditNetworkComponent implements AfterViewInit {
                     .subscribe((reply: any) => {
                         if (reply.status == "0") {
                             this.growl.success("Done");
-                            this.$state.go('admin.standard-envs-overview', {
-                                showObjects: false,
-                                showContainers: false,
-                                showNetworkEnvs: true
-                            }, {reload: true});
+                            this.$state.go('admin.networking', {}, {reload: true});
                         } else {
                             this.growl.error("Saved failed! ", reply);
                             console.log(reply);
