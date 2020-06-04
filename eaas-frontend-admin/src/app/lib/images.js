@@ -26,7 +26,7 @@ export class EaasImages
                 label : element.value.label,
                 type: element.value.image.type,
             };
-            images.push(image);
+            images.push(image)
         });
         
         return images;
@@ -45,7 +45,7 @@ export class EaasImages
                 type: element.value.image.type,
             };
     
-            if(image.type === "roms");
+            if(image.type === "roms")
                 images.push(image);
         });
         return images;
