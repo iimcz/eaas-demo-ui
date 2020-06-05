@@ -411,7 +411,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         postReq.type = this.type;
 //                        if(postReq.type === 'objectEnvironment')
 //                            postReq.embeddedObject = true;
-                        postReq.envId = (eaasClient.realEnvId) ? eaasClient.realEnvId : vm.envId;
+                        // postReq.envId = (eaasClient.realEnvId) ? eaasClient.realEnvId : vm.envId;
                         postReq.message = this.envDescription;
                         postReq.title = this.envName;
                         postReq.softwareId = $stateParams.softwareId;
@@ -423,19 +423,13 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
                             let result = await eaasClient.getActiveSession().snapshot(postReq); 
-                            console.log(result);          
-                            if(eaasClient.realEnvId) {
-                                await _fetch(`${localConfig.data.eaasBackendURL}sessions/${eaasClient._groupId}/resources"`, 
-                                    "DELETE", 
-                                    [vm.envId], localStorage.getItem('id_token'));
-                            }
+                            console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
                             growl.error(e.name, {title: 'Error ' + e.message});
                         }
                         finally {
                             vm.waitModal.hide();
-                            eaasClient.realEnvId = undefined;
                             eaasClient.release();
 
                             if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
