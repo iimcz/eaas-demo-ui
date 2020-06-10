@@ -6,10 +6,11 @@
 
 <div class="main-block">
 
-    <div class="minContent" ng-if="!(containerLandingCtrl.networkSessionEnvironments && containerLandingCtrl.eaasClient.network)">
+    <div class="minContent" ng-if="!(containerLandingCtrl.started)">
         <img src="img/Eclipse-1s-200px.gif">
     </div>
 
+    
     <uib-accordion ng-if="(containerLandingCtrl.networkSessionEnvironments && containerLandingCtrl.networkSessionEnvironments.length > 0)
     && containerLandingCtrl.env
     && containerLandingCtrl.eaasClient.network">

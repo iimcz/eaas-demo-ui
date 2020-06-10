@@ -1,11 +1,8 @@
 import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
-import {attach} from "EaasLibs/javascript-libs/network-environment-utils/attach.js";
-import {createDataFromEnv} from "EaasLibs/javascript-libs/eaas-data-creator.js";
+import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
 
-
-module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', 'eaasClient', '$scope', 'localConfig', 'Environments', 'EmilNetworkEnvironments', 'buildInfo', 'sessionId', 'connectEnv', 'helperFunctions', 'growl',
-    function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload,
-              eaasClient, $scope, localConfig, Environments, EmilNetworkEnvironments, buildInfo, sessionId, connectEnv, helperFunctions, growl) {
+module.exports = ['$state', '$http', 'eaasClient', '$scope', 'localConfig', 'sessionId', 'connectEnv',
+    function ($state, $http, eaasClient, $scope, localConfig, sessionId, connectEnv) {
 
         showErrorIfNull(sessionId, $state);
         var vm = this;
@@ -14,24 +11,23 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
         async function getSession(id) {
             return await $http.get(localConfig.data.eaasBackendURL + "sessions/" + id).then((response) => {
                 response.data.sessionId = id;
-                response.data.componentIdToInitialize = response.data.components.find(e => {
-                    return e.type === "machine"
-                }).componentId;
                 return response.data;
             })
         }
 
         async function attachNewEnvironment(session) {
-            const data = createDataFromEnv(connectEnv, "machine");
-            session = await eaasClient.attachNewEnv(data, session);
-            attach(vm, session, $("#emulator-container")[0], eaasClient, Environments, EmilNetworkEnvironments).then(console.log("attachment is done"))
+            const component = new MachineComponentBuilder(connectEnv.envId, connectEnv.archive);
+            component.setInteractive(true);
+            
+            await eaasClient.attachNewEnv(session, $("#emulator-container")[0], component);
+            vm.started = true;
+            $scope.$apply();
         }
-
 
         getSession(sessionId).then((session) => {
             if (connectEnv)
                 attachNewEnvironment(session);
             else
-                attach(vm, session, $("#emulator-container")[0], eaasClient, Environments, EmilNetworkEnvironments)
+                eaasClient.attach(session, $("#emulator-container")[0])
         })
     }];

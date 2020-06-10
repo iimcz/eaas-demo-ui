@@ -1,5 +1,10 @@
-export async function attach(controller, session,  emulatorDiv, eaasClient, Environments, EmilNetworkEnvironments) {
+
+/*
+export async function attach(controller, session, emulatorDiv, eaasClient, Environments, EmilNetworkEnvironments) {    
     controller.networkSessionEnvironments = [];
+
+    console.log(session);
+    
     if (session.network.networkEnvironmentId) {
         controller.env = await EmilNetworkEnvironments.get({envId: session.network.networkEnvironmentId}).$promise;
             if(controller.env.dnsServiceEnvId){
@@ -32,8 +37,9 @@ export async function attach(controller, session,  emulatorDiv, eaasClient, Envi
                 }
             }
     }
-    eaasClient.load(session.sessionId, session.components, session.network);
+    
     let componentSession = eaasClient.getSession(session.componentIdToInitialize);
+    console.log(componentSession);
     await eaasClient.connect(emulatorDiv, componentSession);
-    eaasClient.network.sessionId = session.sessionId;
 }
+*/

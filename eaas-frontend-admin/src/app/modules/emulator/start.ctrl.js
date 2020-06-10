@@ -173,8 +173,8 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 if ($stateParams.componentId && $stateParams.session) {
                     if (!$stateParams.session.network)
                         throw new Error("reattch requires a network session");
-                    $stateParams.session.componentIdToInitialize = $stateParams.componentId;
-                    await attach(vm, $stateParams.session,  $("#emulator-container")[0], eaasClient, Environments, EmilNetworkEnvironments);
+                    
+                    await eaasClient.attach($stateParams.session, $("#emulator-container")[0], $stateParams.componentId);
                     $rootScope.emulator.detached = true;
                 } else
                     {
