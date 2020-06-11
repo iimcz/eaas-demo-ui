@@ -506,11 +506,13 @@ function($stateProvider,
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: ['$state', '$stateParams', 'localConfig', function($state, $stateParams, localConfig) {
+            controller: ['$state', '$stateParams', 'localConfig', '$rootScope', 
+                function($state, $stateParams, localConfig, $rootScope) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
                     $state.go('admin.standard-envs-overview');
                     return;
                 }
+                $rootScope.loaded = true;
                 this.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
                 this.errorMsg = $stateParams.errorMsg;
             }],
@@ -519,9 +521,10 @@ function($stateProvider,
         .state('login', {
             url: "/login",
             templateUrl: "partials/login.html",
-            controller: function(authService) {
+            controller: function(authService, $rootScope) {
                 var vm = this;
                 vm.authService = authService;
+                $rootScope.loaded = true;
                 vm.authService.login({
                     connection: 'Username-Password-Authentication',
                     scope: 'openid profile email roles'
@@ -534,6 +537,7 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
+                init: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "/admin/init"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {

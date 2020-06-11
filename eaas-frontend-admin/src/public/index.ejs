@@ -18,7 +18,11 @@
         <![endif]-->
         
         <!-- views will be injected here -->
-        <div ui-view></div>
+        <div class="spinner" ng-hide="loaded">
+            <img src="img/loading.png" height="50"> Loading app...
+        </div>
+    
+        <div ui-view ng-cloak ng-show="loaded"></div>
         
         <!-- growl directive -->
         <div growl></div>

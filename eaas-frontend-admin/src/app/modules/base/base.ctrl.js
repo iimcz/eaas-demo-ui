@@ -1,8 +1,9 @@
-module.exports = ["$uibModal","$scope", "$state", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
-function($uibModal, $scope, $state, localConfig, kbLayouts, buildInfo, userInfo, authService) {
+module.exports = ["$uibModal","$scope", "$rootScope", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
+function($uibModal, $scope, $rootScope, localConfig, kbLayouts, buildInfo, userInfo, authService) {
     var vm = this;
 
     $scope.isCollapsed = false;
+    $rootScope.loaded = true;
 
     $scope.$watch(function(){
         return $state.$current.name
