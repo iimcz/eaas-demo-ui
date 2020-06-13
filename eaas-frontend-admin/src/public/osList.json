@@ -173,6 +173,21 @@
       }
     },
     {
+      "id":"os:other:amiga-uae", 
+      "puids" : [],
+      "label" : "Amiga (UAE)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "20M",
+      "template" : "amiga-uae",
+      "template_params" : 
+      {
+        "rom" : "",
+        "models" : ["A500", "A500+", "A600", "A1000", "A1200", "A3000", "A4000", "CD32", "CDTV"],
+        "chosenModel" : ""
+      }
+    },
+    {
       "id":"os:mac:ppc-qemu", 
       "puids" : [{"puid": "bwfla/1"}, {"puid": "x-fmt/416"}],
       "label" : "Apple System 9.1.x - 10.4 (PPC)",

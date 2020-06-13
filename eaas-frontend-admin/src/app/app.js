@@ -49,6 +49,7 @@ import networkingTemplate from './modules/environments/templates/edit-networking
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
 import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
 import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
+import amigaOptionsTemplate from './modules/environments/templates/emulators/amiga-options.html';
 import drivesOverviewTemplate from './modules/environments/templates/drives/overview.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
@@ -239,6 +240,25 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .component('macemuOptions', {
         template: macemuOptionsTemplate,
+        controller: ["Images", function(Images) {
+            var vm = this;
+            vm.romList = [];
+            
+            Images.roms().then((result) => {
+                vm.romList = result;
+                console.log(vm.romList);
+            }, (e) => {
+                throw new Error(e);
+            });
+        }],
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
+    .component('amigaOptions', {
+        template: amigaOptionsTemplate,
         controller: ["Images", function(Images) {
             var vm = this;
             vm.romList = [];

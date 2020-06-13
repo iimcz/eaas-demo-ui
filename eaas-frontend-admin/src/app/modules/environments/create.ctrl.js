@@ -137,7 +137,21 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         }
 
         vm.updateMacemu = function () {
-        
+            vm.native_config = "rom rom://" + vm.config.template_params.rom.imageId;
+        }
+
+        vm.updateAmiga = function () {
+            vm.native_config = "";
+
+            if(vm.config.template_params.rom)
+            {
+                vm.native_config += "--kickstart_file=rom://" + vm.config.template_params.rom.imageId + " ";
+            }
+
+            if(vm.config.template_params.model)
+            {
+                vm.native_config += "--amiga_model=" + vm.config.template_params.model;
+            }
         }
 
         vm.save = function () {

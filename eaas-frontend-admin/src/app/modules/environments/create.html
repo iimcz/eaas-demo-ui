@@ -82,6 +82,9 @@
                 <macemu-options args="newImageCtrl.config.template_params" on-update="newImageCtrl.updateMacemu()" 
                     ng-if="newImageCtrl.config.template === 'sheepshaver' || newImageCtrl.config.template === 'basiliskII'"></macemu-options>
     
+                <amiga-options args="newImageCtrl.config.template_params" on-update="newImageCtrl.updateAmiga()" 
+                    ng-if="newImageCtrl.config.template === 'amiga-uae'"></amiga-options>
+
                 <div class="row" ng-if="newImageCtrl.config.template">
                     <div class="col-sm-10">
                         <h4>Runtime options</h4>
