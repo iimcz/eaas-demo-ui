@@ -1,7 +1,7 @@
 
 <div class="form-group" style="margin-left: 20px; margin-right: 20px">
     <label>Rom: </label>
-    <ui-select ng-model="$ctrl.args.rom" theme="bootstrap"
+    <ui-select ng-model="$ctrl.args.rom" theme="bootstrap" ng-change="$ctrl.onUpdate()"
         title="select ROM">
         <ui-select-match placeholder="available ROMs">
             {{$select.selected.label}} </ui-select-match>

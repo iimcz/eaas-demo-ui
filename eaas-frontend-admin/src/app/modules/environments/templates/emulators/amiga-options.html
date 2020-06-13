@@ -1,7 +1,7 @@
 <div class="form-group" style="margin-left: 20px; margin-right: 20px">
     <div class="form-group">
         <label>Amiga Model: </label>
-        <ui-select ng-model="$ctrl.args.chosenModel" theme="bootstrap" title="select Amiga model">
+        <ui-select ng-model="$ctrl.args.model" theme="bootstrap" title="select Amiga model" ng-change="$ctrl.onUpdate()">
             <ui-select-match placeholder="available models">
                 {{$select.selected}} </ui-select-match>
             <ui-select-choices repeat="m in $ctrl.args.models | filter: $select.search">
@@ -11,7 +11,7 @@
     </div>
     <div class="form-group">
         <label>Amiga ROM: </label>
-        <ui-select ng-model="$ctrl.args.rom" theme="bootstrap" title="select Amiga ROM">
+        <ui-select ng-model="$ctrl.args.rom" theme="bootstrap" title="select Amiga ROM" ng-change="$ctrl.onUpdate()">
             <ui-select-match placeholder="available ROMs">
                 {{$select.selected.label}} </ui-select-match>
             <ui-select-choices repeat="rom in $ctrl.romList | filter: $select.search">
