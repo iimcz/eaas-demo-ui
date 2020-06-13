@@ -1,5 +1,5 @@
-module.exports = ["$uibModal","$scope", "$rootScope", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
-function($uibModal, $scope, $rootScope, localConfig, kbLayouts, buildInfo, userInfo, authService) {
+module.exports = ["$uibModal","$state", "$scope", "$rootScope", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
+function($uibModal, $state, $scope, $rootScope, localConfig, kbLayouts, buildInfo, userInfo, authService) {
     var vm = this;
 
     $scope.isCollapsed = false;
