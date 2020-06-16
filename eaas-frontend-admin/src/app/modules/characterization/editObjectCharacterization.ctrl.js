@@ -76,38 +76,6 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
          }
      };
 
-     vm.openDefaultEnvDialog = function(osId, osLabel) {
-         $uibModal.open({
-             animation: true,
-             template: require('./modals/set-default-environment.html'),
-             controller: ["$scope", "helperFunctions", "REST_URLS", function($scope, helperFunctions, REST_URLS) {
-                 this.defaultEnv = null;
-
-                 this.environments = vm.environmentList;
-
-                 this.osId = osId;
-                 this.osLabel = osLabel;
-
-                 this.setEnvironment = function() {
-                     $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.setDefaultEnvironmentUrl, this.osId, this.defaultEnv.envId))
-                         .then(function(response) {
-                             if (response.data.status !== "0") {
-                                 growl.error(response.data.message, {title: 'Error ' + response.data.message});
-                                 $scope.$close();
-                             }
-                             else {
-                                 console.log("set default env for " + osId + " defaultEnv " + this.defaultEnv.envId);
-                             }
-                     })['finally'](function() {
-                         $scope.$close();
-                         $state.reload();
-                     });
-                 };
-             }],
-             controllerAs: "setDefaultEnvDialogCtrl"
-         });
-     };
-
      vm.openAddEnvDialog = function() {
          $uibModal.open({
              animation: true,

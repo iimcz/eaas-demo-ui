@@ -32,12 +32,12 @@ emilAdminUIHelpersModule.service('REST_URLS', function () {
     this.revertRevisionUrl = "EmilEnvironmentData/revertRevision";
     this.syncImagesUrl = "EmilEnvironmentData/sync";
     this.exportEnvironmentUrl = "EmilEnvironmentData/export";
-    this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
     this.overrideObjectCharacterizationUrl = "classification/overrideObjectCharacterization";
     this.getObjectDependencies = "EmilEnvironmentData/objectDependencies?envId={0}";
     this.replicateImage = "EmilEnvironmentData/replicateImage";
     this.getNameIndexes = "EmilEnvironmentData/getNameIndexes";
     this.getGroupIds = "sessions/";
+    this.setDefaultEnvironmentUrl = "EmilEnvironmentData/setDefaultEnvironment?osId={0}&envId={1}";
 
     this.getOriginRuntimeList = "EmilContainerData/getOriginRuntimeList";
     this.importContainerUrl = "EmilContainerData/importContainer";

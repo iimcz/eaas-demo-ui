@@ -563,7 +563,10 @@ function($stateProvider,
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
-                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo)
+                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo),
+                operatingSystemsMetadata : ($http, localConfig) =>
+                        $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/os-metadata`),
+
             },
             controller: "BaseController as baseCtrl"
         })
@@ -683,7 +686,7 @@ function($stateProvider,
                 showNetworkEnvs: false
             },
             resolve : {
-                osList : () => osLocalList(),
+                osList : () => osLocalList()
             },
             views: {
                 'wizard': {
@@ -900,6 +903,21 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/settings/runtime-overview.html'),
                     controller: "RuntimeOverviewCtrl as runtimeOverviewCtrl"
+                }
+            }
+        })
+
+        .state('admin.default-envs-overview', {
+            url: "/defaults",
+            params: {},
+            resolve: {
+                osList : () => osLocalList(),
+                defaultEnvironments: ($http, localConfig ) => $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/default-environments`)
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/default-envs-overview.html'),
+                    controller: "DefaultEnvsOverviewCtrl as defaultEnvsOverviewCtrl"
                 }
             }
         })
