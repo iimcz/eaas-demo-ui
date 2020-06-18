@@ -21,6 +21,10 @@ export class Task {
     {
         try {
             let result = await _fetch(`${this.API_URL}tasks/${this.taskId}`, "GET", null, this.idToken);
+            if(result.status === "1")
+            {
+                throw new console.error(result.message);
+            }
             if(result.isDone)
             {
                 clearInterval(this.pollStateIntervalId);
