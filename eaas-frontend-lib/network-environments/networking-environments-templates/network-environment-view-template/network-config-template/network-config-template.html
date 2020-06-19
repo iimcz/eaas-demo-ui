@@ -4,7 +4,8 @@
 
 <br>
 <mat-form-field class="full-width tekstMore">
-    <mat-label>Network</mat-label>
+
+    <mat-label>Network (e.g., 10.0.0.0/24)</mat-label>
     <!--            allow ip or empty string-->
     <input [disabled]="isDisabled" matInput name='network' [(ngModel)]="networkingConfig.network"
         placeholder="Set IP network / mask. Example: 10.0.0.0/24" required #elem="ngModel">
@@ -18,10 +19,10 @@
     color="primary">{{'EDITENV_ENABLE_INTERNET' | translate}}</mat-checkbox>
 <mat-form-field *ngIf="networkingConfig.enableInternet" class="paddingLeft example-section">
     <!--            allow ip or empty string-->
-    <mat-label>Network Gateway</mat-label>
+    <mat-label>Network Gateway (e.g., 10.0.0.1)</mat-label>
     <input [disabled]="isDisabled" matInput name='gateway' [(ngModel)]="networkingConfig.gateway"
-        pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)" placeholder="E.g. 10.0.0.1">
-    <mat-error>Entered ip is invalid!</mat-error>
+        pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)">
+    <mat-error>Entered IP address is invalid!</mat-error>
 </mat-form-field>
 <div class="paddingLeft">
     <mat-checkbox (ngModelChange)="ensureDNSexclusivity($event, 2)" [disabled]="isDisabled"
@@ -70,18 +71,17 @@
 </mat-form-field>
 <div *ngIf="isDnsDefined">
     <mat-form-field class="paddingLeft example-section" style="display:inline-block;margin-right:15px; width:40%;">
-        <mat-label>DHCP Server IP</mat-label>
-        <input [disabled]="isDisabled" matInput [(ngModel)]="networkingConfig.dhcpNetworkAddress"
-            placeholder="E.g. 10.0.0.2">
+        <mat-label>DHCP Server IP (e.g., 10.0.0.2)</mat-label>
+        <input [disabled]="isDisabled" matInput [(ngModel)]="networkingConfig.dhcpNetworkAddress">
     </mat-form-field>
 </div>
 <mat-form-field *ngIf="isDnsDefined" class="paddingLeft example-section"
     style="display:inline-block;margin-right:15px; width:40%;">
     <!--            allow ip or empty string-->
-    <mat-label>External DNS</mat-label>
+    <mat-label>External DNS (e.g., 1.0.0.1 (Cloudflare DNS) or 8.8.8.8 (Google Public DNS))</mat-label>
     <input [disabled]="isDisabled" matInput name='upstream_dns' [(ngModel)]="networkingConfig.upstream_dns"
-        pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)" placeholder="E.g. 1.0.0.1">
-    <mat-error>Entered ip is invalid!</mat-error>
+        pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)">
+    <mat-error>Entered IP address is invalid!</mat-error>
 </mat-form-field>
 
 <!--StartUp Environment during landing page attach-->
