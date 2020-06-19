@@ -1,7 +1,7 @@
 import {WaitModal} from '../../lib/task.js'
 
-module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Images',
-    function ($state, $scope, $http, localConfig, $uibModal, Images)
+module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Images', 'growl',
+    function ($state, $scope, $http, localConfig, $uibModal, Images, growl)
 {
     var vm = this;
     vm.config = localConfig.data;
@@ -88,6 +88,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                     catch(e)
                     {
                         console.log(e);
+                        growl.error(e.name + ': ' + e.message);
                     }
                     finally {
                         waitModal.hide();
