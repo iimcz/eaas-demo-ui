@@ -243,6 +243,11 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             }
         }
         
+
+        if (!chosenEnv || !chosenEnv.envId || !$stateParams.envId) 
+            $state.go('admin.standard-envs-overview', {showObjects: ($stateParams.objectId != null)}, {reload: false});
+
+
         if ($stateParams.session || $stateParams.isNetworkEnvironment) {
             vm.runEmulator([]);
         } else if (!chosenEnv || !chosenEnv.networking || !chosenEnv.networking.connectEnvs) {
