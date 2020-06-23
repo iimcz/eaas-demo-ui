@@ -31,7 +31,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 vm.envs = response;
                 vm.envs.forEach(function (element) {
                     console.log(element);
-                    if (!element.isLinuxRuntime)
+                    if (!element.linuxRuntime)
                         return;
 
                     if (element.envType != 'base')

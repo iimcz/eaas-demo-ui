@@ -36,7 +36,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                         if(element.envType != 'base')
                             return;
                         
-                        if (element.isLinuxRuntime) 
+                        if (element.linuxRuntime) 
                             return;
                         
                         if((element.archive == 'default' && vm.viewArchive === 0) ||

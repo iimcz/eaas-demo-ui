@@ -26,7 +26,7 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
             container.envs = response;
             container.envs.forEach(function (element) {
                 
-                if (!element.isLinuxRuntime)
+                if (!element.linuxRuntime)
                     return;
                 
                 container.runtimes.push(element);

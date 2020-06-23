@@ -85,7 +85,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
             vm.uiOptions.shutdownByOs = vm.env.shutdownByOs;
             vm.userTag = vm.env.userTag;
             vm.drives = new Drives(vm.env.drives);
-            vm.isLinuxRuntime = vm.env.isLinuxRuntime;
+            vm.linuxRuntime = vm.env.linuxRuntime;
             vm.envHelpText = vm.env.helpText;
             if(vm.env.timeContext)
             {
@@ -229,7 +229,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    containerEmulatorVersion : vm.emulatorContainer.value.version,
                    xpraEncoding: vm.uiOptions.xpraEncoding,
                    drives : vm.drives.getList(),
-                   linuxRuntime : vm.isLinuxRuntime,
+                   linuxRuntime : vm.linuxRuntime,
                    helpText: vm.envHelpText,
                    driveSettings : vm.drives.getUpdates(),
                }).then(function(response) {

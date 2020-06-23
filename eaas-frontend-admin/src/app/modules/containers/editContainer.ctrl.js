@@ -39,7 +39,7 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
                 if (element.envId === vm.env.runtimeId) {
                     vm.containerRuntimeEnv = element;
                 }
-                if (element.isLinuxRuntime) {
+                if (element.linuxRuntime) {
                     vm.runtimeEnvs.push(element);
                 }
             });
