@@ -124,7 +124,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .constant('localConfig', (() => {
         const params = new URLSearchParams(location.hash.slice(1));
-    
+        
         const token_type = params.get("token_type");
         // TODO: Check `state`!
         const state = params.get("state");
@@ -134,7 +134,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         const id_token = params.get("id_token");
         const access_token = params.get("access_token");
 
-        if (token_type === "bearer") {
+        if (token_type === "bearer" || token_type === "Bearer") {
             // TODO: Get `exp` from JWT instead of using `expires_in`?
             const expires_at = Date.now() + expires_in * 1000;
             Object.assign(localStorage, {id_token, expires_at});
@@ -150,6 +150,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         ret.data = JSON.parse(xhr.responseText);
         return ret;
     })())
+
     .directive(
         'addNetworkEnvironment',
         downgradeComponent({component: AddNetworkComponent})
@@ -547,7 +548,7 @@ function($stateProvider,
                 $rootScope.loaded = true;
                 vm.authService.login({
                     connection: 'Username-Password-Authentication',
-                    scope: 'openid profile email roles'
+                    scope: 'openid profile email'
                 });
             },
             controllerAs: "loginCtrl"
