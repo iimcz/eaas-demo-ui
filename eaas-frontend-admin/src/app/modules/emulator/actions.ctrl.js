@@ -56,6 +56,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             vm.enableSaveEnvironment = true; // fallback to old metadata
     }
 
+    /*
     if(vm.enablePrinting) {
         $rootScope.$on('emulatorStart', function(event, args) {
             eaasClient.eventSource.addEventListener('print-job', function(e) {
@@ -75,6 +76,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             });
         });
     }
+    */
 
    $scope.screenshot = function () {
         var canvas = document.getElementsByTagName("canvas")[0];
@@ -107,6 +109,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     vm.openPrintDialog = async function () {
         try {
             let result = await eaasClient.getActiveSession().getPrintJobs();
+            
             $uibModal.open({
                 animation: true,
                 template: require('./modals/printed-list.html'),
