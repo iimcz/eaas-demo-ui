@@ -54,7 +54,7 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
             input.content = await modal.result;
             input_data.push(input);
             component = new MachineComponentBuilder(env.runtimeId, runtimeEnv.archive);
-            component.setLinxRuntime(
+            component.setLinuxRuntime(
                 {
                     userContainerEnvironment: env.envId,
                     userContainerArchive: env.archive,
