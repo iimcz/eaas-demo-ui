@@ -389,7 +389,6 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         };
 
     vm.openSaveEnvironmentDialog = function() {
-        $('#emulator-container').hide();
         var saveDialog = function()
         {
             let modal = $uibModal.open({
@@ -442,6 +441,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         }
                         $('#emulator-container').show();
                     };
+
                     this.showEmu = function() {
                         $('#emulator-container').show();
                     }
@@ -451,6 +451,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             modal.closed.then(() => $('#emulator-container').show());
         };
 
+        $('#emulator-container').hide();
         let modal = $uibModal.open({
             animation: false,
             template: require('./modals/confirm-snapshot.html'),
@@ -465,9 +466,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             }],
             controllerAs: "confirmSnapshotDialogCtrl"
         });
-        modal.closed.then(() => $('#emulator-container').show());
-
-
+        // modal.closed.then(() => $('#emulator-container').show());
     }
     /*
     var closeEmulatorOnTabLeaveTimer = null;
