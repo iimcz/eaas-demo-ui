@@ -53,9 +53,7 @@ export class EditNetworkComponent implements AfterViewInit {
         console.log(this.selectedNetworkEnvironment);
 
         if (this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
-            
             this.selectedNetworkEnvironment.emilEnvironments.forEach(networkElement => {
-                    networkElement.title = this.environments.find((env => env.envId == networkElement.envId)).title;
                     networkElement.uiID = uuid.v4();
                 }
             )
