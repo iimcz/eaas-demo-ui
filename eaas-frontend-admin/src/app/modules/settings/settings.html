@@ -4,8 +4,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 text-center"><a ui-sref="admin.emulators"
-                    href="">
+            <div class="col-md-3 text-center"><a ui-sref="admin.emulators" href="">
                     <img src="img/emulator.png" height="80px"></br>
                     <small class="text-secondary">Manage Emulators</small>
 
@@ -44,10 +43,10 @@
                 </a>
             </div>
             <div class="col-md-3 text-center"> <a href="{{settingsCtrl.downloadLogUrl}}">
-                <img src="img/errorlog.png" height="80px"></br>
-                <small class="text-secondary">Download Error Log</small>
+                    <img src="img/errorlog.png" height="80px"></br>
+                    <small class="text-secondary">Download Error Log</small>
 
-                <p>Error-Log</p>
+                    <p>Error-Log</p>
                 </a>
             </div>
 
@@ -61,18 +60,27 @@
             </div>
 
             <div class="col-md-3 text-center"><a ui-sref="admin.default-envs-overview" href="">
-                <img src="img/default_envs.png" height="80px"></br>
-                <small class="text-secondary">Default Environments</small>
-                <p>Manage Default Environments</p>
+                    <img src="img/default_envs.png" height="80px"></br>
+                    <small class="text-secondary">Default Environments</small>
+                    <p>Manage Default Environments</p>
                 </a>
-             </div>
-            
-             <div class="col-md-3 text-center" ><a ui-sref="admin.metadata" href="">
-                <img src="img/oaipmh.png" height="80px"></br>
-                <small class="text-secondary">Sync Environments via OAI-PMH</small>
-                <p>OAI-PMH Sync</p>
-                </a>
-             </div>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <div ng-if="baseCtrl.config.features.oaipmh">
+                    <a ui-sref="admin.metadata" href="">
+                        <img src="img/oaipmh.png" height="80px"></br>
+                        <small class="text-secondary">Sync Environments via OAI-PMH</small>
+                        <p>OAI-PMH Sync</p>
+                    </a>
+                </div>
+                <div ng-if="!baseCtrl.config.features.oaipmh">
+                    <a href=""><img src="img/oaipmh.png" height="80px"></br>
+                        <small class="text-secondary">Sync Environments via OAI-PMH</small>
+                        <p>OAI-PMH Sync</p>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
