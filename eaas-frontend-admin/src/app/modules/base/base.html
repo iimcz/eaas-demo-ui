@@ -31,7 +31,6 @@
                             <hr/>
                             <!--<li><a ui-sref="admin.synchronize-image-archives" href="">{{'BASE_MENU_UPLOAD'| translate}}</a></li>-->
                             <li><a ui-sref="admin.images" href="">Images</a></li>
-                            <li><a ng-if="baseCtrl.config.features.containers" ui-sref="admin.new-container" href="">{{'BASE_MENU_CONTAINER' | translate }}</a></li>
                             <li><a ui-sref="admin.settings" href="">{{'BASE_MENU_SHOW_SETTINGS_DLG' | translate}}</a></li>
                             <li><a ng-if="baseCtrl.config.features.advanced" ng-click="baseCtrl.showAdvancedDialog()" href="">{{'BASE_MENU_ADVANCED' | translate}}</a></li>
                             <li ng-if="baseCtrl.config.helpUrl"><a href="{{baseCtrl.config.helpUrl}}" target="_blank">{{'BASE_MENU_HELP' | translate}}</a></li>
