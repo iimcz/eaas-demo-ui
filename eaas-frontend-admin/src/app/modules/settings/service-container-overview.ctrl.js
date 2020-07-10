@@ -1,5 +1,5 @@
-module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$uibModal', '$timeout', 'WizardHandler', 'REST_URLS', 'Environments',
-    function ($http, $state, growl, localConfig, containerList, $uibModal, $timeout, WizardHandler, REST_URLS, Environments) {
+module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$uibModal', '$timeout', 'REST_URLS', 'Environments',
+    function ($http, $state, growl, localConfig, containerList, $uibModal, $timeout, REST_URLS, Environments) {
 
         var container = this;
 
