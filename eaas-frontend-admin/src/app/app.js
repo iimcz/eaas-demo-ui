@@ -369,7 +369,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 })
 
 .factory('Environments', function($http, $resource, localConfig) {
-   return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
+   return $resource(localConfig.data.eaasBackendURL + '/environment-repository/environments/:envId');
 })
 .factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
     return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
