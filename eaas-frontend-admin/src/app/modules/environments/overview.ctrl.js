@@ -28,7 +28,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             vm.view = index;
             let rowData = [];
            
-            vm.envs = Environments.query().$promise.then(function(response) {
+            vm.envs = Environments.query({localOnly: false}).$promise.then(function(response) {
                 vm.rowCount = 0;
                 vm.envs = response;
                 vm.envs.forEach(function (element) {
