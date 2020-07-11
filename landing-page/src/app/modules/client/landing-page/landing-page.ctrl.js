@@ -2,6 +2,7 @@ import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environm
 import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
 import {MachineComponentBuilder} from "EaasClient/lib/componentBuilder";
 import {ClientOptions, TcpGatewayConfig} from "EaasClient/lib/clientOptions";
+import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client"
 
 module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', 'eaasClient', '$scope', 'localConfig', 'Environments', 'REST_URLS', 'EmilNetworkEnvironments', 'chosenEnvId', 'isNetworkEnvironment', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
     function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, eaasClient, $scope, localConfig, Environments, REST_URLS, EmilNetworkEnvironments, chosenEnvId, isNetworkEnvironment, buildInfo, WizardHandler, helperFunctions, growl) {
@@ -180,7 +181,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 };
 
                 vm.sendCtrlAltDel = function () {
-                    eaasClient.sendCtrlAltDel();
+                    sendCtrlAltDel();
                 };
 
                 eaasClient.onEmulatorStopped = function () {
