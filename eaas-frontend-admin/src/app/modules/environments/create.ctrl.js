@@ -169,9 +169,17 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 }
 
                 vm.builder.build()
-                    .then(() => $state.go('admin.standard-envs-overview', {}, {
-                        reload: true
-                    }))
+                    .then(() => 
+                    {
+                        // hack: this should be solved by a ui template 
+                        // https://gitlab.com/openslx/demo-ui/-/issues/86   
+                        if(vm.template.id === "runtime") {
+                            $state.go('admin.runtime-overview', {}, {reload: true});
+                        }
+                        else {
+                            $state.go('admin.standard-envs-overview', {}, {reload: true});
+                        }
+                    })
                     .catch((e) => $state.go('error', {
                         errorMsg: e
                     }));
