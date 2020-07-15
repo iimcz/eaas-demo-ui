@@ -105,9 +105,9 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                         <li role="menuitem">
                               <a ng-click="deleteSession(data.id)"  class="dropdown-content">Delete</a>           
                         </li>
-                        <li role="menuitem" ng-if="landingPage">
+                        <!-- <li role="menuitem" ng-if="landingPage">
                               <a ng-click="openLandingPage(data.id)"  class="dropdown-content">Landing Page</a>           
-                        </li>
+                        </li> -->
                         <li role="menuitem" ng-if="landingPage">
                               <a ng-click="connectEnv(data.id)"  class="dropdown-content">Connect Environment</a>           
                         </li>
