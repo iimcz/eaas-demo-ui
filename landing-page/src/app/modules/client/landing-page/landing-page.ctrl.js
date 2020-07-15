@@ -16,7 +16,8 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                         if (netEnv.networkEnvId === vm.env.envId) {
                             console.log("!! Running Network Environment Found!", netEnv);
                             console.log("redirecting to attach!");
-                            window.location.href = localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page";
+                            console.log(localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page")
+                            // window.location.href = localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page";
                         }
                     });
                     vm.env.emilEnvironments.push({
