@@ -347,11 +347,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                             {{'CHOOSE_ENV_DEL'| translate}}
                     </a>
                   </li>
-                  <li ng-if="data.archive !== 'remote'" role="menuitem">
-                    <a class="dropdown-content" ng-click="switchAction(data.id, 'addSoftware')">
-                        {{'CHOOSE_ENV_ADDSW'| translate}}
-                    </a>
-                  </li>
                   
                   <li role="menuitem">
                     <a ng-if="data.archive !== 'remote' && data.archive !== 'default'" 
