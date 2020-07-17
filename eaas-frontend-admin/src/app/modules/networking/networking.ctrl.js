@@ -85,8 +85,8 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                         </a>
                     </li>
                     <li role="menuitem">
-                        <a ng-if="data.archive == 'default'" class="dropdown-content" ng-click="deleteNetwork(data.id)">
-                            {{'CHOOSE_ENV_DEL'| translate}}
+                        <a class="dropdown-content" ng-click="deleteNetwork(data.id)">
+                            delete    
                         </a>
                     </li>
                 </ul>
@@ -100,16 +100,16 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                     
                     <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                         <li role="menuitem">
-                              <a ng-click="connect(data.id)"  class="dropdown-content">Connect</a>           
+                              <a ng-click="connect(data.id)"  class="dropdown-content">reattach</a>           
                         </li>
                         <li role="menuitem">
-                              <a ng-click="deleteSession(data.id)"  class="dropdown-content">Delete</a>           
+                              <a ng-click="deleteSession(data.id)"  class="dropdown-content">delete</a>           
                         </li>
                         <li role="menuitem" ng-if="landingPage">
-                              <a ng-click="openLandingPage(data.id)"  class="dropdown-content">Landing Page</a>           
+                              <a ng-click="openLandingPage(data.id)"  class="dropdown-content">preview landing page</a>           
                         </li>
                         <li role="menuitem" ng-if="landingPage">
-                              <a ng-click="connectEnv(data.id)"  class="dropdown-content">Connect Environment</a>           
+                              <a ng-click="connectEnv(data.id)"  class="dropdown-content">connect new environment</a>           
                         </li>
                     </ul>
                 </div>`;

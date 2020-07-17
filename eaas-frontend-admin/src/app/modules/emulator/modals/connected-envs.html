@@ -1,29 +1,26 @@
 <div ng-show="isModuleVisible"></div>
 <div class="modal-header">
-    <h3 class="modal-title">Create ad-hoc network</h3>
+    <h3 class="modal-title">Network connect</h3>
 </div>
 
-        <div class="modal-body">
-            <label>
-                <p>
-                    Add multiple machines to an ad-hoc network.<br> 
-                </p>
-            </label>
-            <ui-select multiple ng-model="selectedEnvs" theme="bootstrap" on-remove="OnRemoveSelect($item)" 
-                ui-outer-click="cancel()" on-select="OnClickSelect($item)"  
-                close-on-select="true"  ng-disabled="disabled" style="width: 550px;" title="Choose environment">
-                <ui-select-match placeholder="Select environment or leave it empty...">
-                    <p align="left">{{$item.title}} ({{$item.envId}})</p>
-                </ui-select-match>
-                <ui-select-choices repeat="item in (envs | filter: $select.search) track by item.envId">
-                    <span style="font-size: small;">{{item.title}} ({{item.envId}})</span>
-                </ui-select-choices>
-            </ui-select>
-        </div>
+<div class="modal-body">
+    <label>
+        <p>
+            Should this environment be connected to a running network?  <br>
+        </p>
+    </label>
 
-        <div class="modal-footer">
-            <button class="btn btn-primary" ng-disabled="!selected.length" type="button" ng-click="connect()">Connect</button>
-            <button class="btn btn-default" type="button" ng-click="run()">Proceed without connecting</button>
-        </div>
+    <ui-select ng-model="selected.session" theme="bootstrap" style="width: 550px;" title="Choose a network">
+        <ui-select-match placeholder="Active networks">
+            {{$select.selected.name}}
+        </ui-select-match>
+        <ui-select-choices repeat="item in (availableGroupIds | filter: $select.search)">
+            {{item.name}}
+        </ui-select-choices>
+    </ui-select>
+</div>
 
-
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-disable="!$scope.selected.session" ng-click="connect()">Connect</button>
+    <button class="btn btn-default" type="button" ng-click="run()">Proceed without connecting</button>
+</div>
