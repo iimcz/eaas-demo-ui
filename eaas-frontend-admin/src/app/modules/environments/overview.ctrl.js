@@ -449,7 +449,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             }
 
             columnDefs.push({
-                headerName: "Actions", field: "actions", cellRenderer: actionsCellRendererFunc, suppressSorting: true,
+                headerName: "Actions", field: "actions", cellRenderer: actionsCellRendererFunc, 
                 suppressMenu: true
             });
 
@@ -463,9 +463,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             rowSelection: 'multiple',
             angularCompileRows: true,
             rowMultiSelectWithClick: true,
-            enableColResize: true,
-            enableSorting: true,
-            enableFilter: true,
+            defaultColDef : {
+                resizable: true,
+                defilter: true,
+                sortable: true,
+            },
             enableCellChangeFlash: true,
             onRowSelected: onRowSelected,
             suppressRowClickSelection: true,

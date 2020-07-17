@@ -1,7 +1,6 @@
 import {stopClient} from "./utils/stop-client";
 import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
 import {requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
-import {attach} from "EaasLibs/javascript-libs/network-environment-utils/attach.js";
 import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
 import { TcpGatewayConfig, ClientOptions } from "EaasClient/lib/clientOptions";
 
@@ -21,8 +20,10 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 chosenEnv.networking = $stateParams.containerRuntime.networking;
         }
 
-        vm.runEmulator = async (selectedEnvs, attachId) => {
+        vm.runEmulator = async (networkSessionId) => {
             await chosenEnv;
+
+            console.log(networkSessionId);
 
             window.onbeforeunload = function (e) {
                 var dialogText = $translate.instant('MESSAGE_QUIT');
@@ -38,9 +39,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
 
             vm.getOutput = function () {
                 $("#emulator-loading-container").hide();
-
                 let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
-
                 async function f() {
                     const containerOutput = await fetch(eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId).getContainerResultUrl(), {
                         headers: _header,
@@ -58,10 +57,12 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 f();
             };
 
+            /*
             this.link = localConfig.data.baseEmulatorUrl + "/#/emulationSession?environmentId=" + $stateParams.envId;
             if ($stateParams.objectId)
                 this.link += "&objectId=" + $stateParams.objectId;
-
+            */
+           
             eaasClient.onEmulatorStopped = function () {
                 if ($rootScope.emulator.state == 'STOPPED')
                     return;
@@ -111,6 +112,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             }
             // console.log(params);
 
+            /*
             let components = [];
             for (let i = 0; i < selectedEnvs.length; i++) {
                 let component;
@@ -136,6 +138,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 }
                 components.push(component);
             }
+            */
 
             let archive = (chosenEnv) ? chosenEnv.archive : "default";
             let environmentId= "";
@@ -155,7 +158,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 // console.log("locking user session");
             }
             component.setInteractive(true);
-            components.push(component);
+            
 
             $scope.$on('$locationChangeStart', function (event, newUrl, oldUrl) {
                 console.log("onStateChange");
@@ -174,14 +177,17 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                     if (!$stateParams.session.network)
                         throw new Error("reattch requires a network session");
                     
-                    await eaasClient.attach($stateParams.session, $("#emulator-container")[0], $stateParams.componentId);
+                    await eaasClient.attach($stateParams.session.sessionId, $("#emulator-container")[0], $stateParams.componentId);
                     $rootScope.emulator.detached = true;
+                } else if(networkSessionId) {
+                    await eaasClient.attachNewEnv(networkSessionId, $("#emulator-container")[0], component);
+                    vm.started = true;
                 } else
                     {
                     if ($stateParams.isNetworkEnvironment) {
                         await startNetworkEnvironment(vm, eaasClient, chosenEnv, Environments, $http, $uibModal, localConfig);
                     } else {
-                        await eaasClient.start(components, clientOptions, attachId);
+                        await eaasClient.start([component], clientOptions);
                     }
                     await eaasClient.connect($("#emulator-container")[0]);
 /*
@@ -229,37 +235,36 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
         {
             try {
                 let data = await resultPromise;
-                if(data.attachComponentId)
-                    vm.runEmulator(data.selected, data.attachComponentId.id);
-                else
-                    vm.runEmulator(data.selected);
+                if(data.session)
+                    vm.runEmulator(data.session.id);
+                else 
+                    vm.runEmulator();
             }
             catch(error)
             {
                 let isObjectEnv = false;
                 if ($stateParams.objectId != null)
                     isObjectEnv = true;
+                growl.error(error);
                 $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
             }
         }
         
-
         if (!chosenEnv || !chosenEnv.envId || !$stateParams.envId) 
             $state.go('admin.standard-envs-overview', {showObjects: ($stateParams.objectId != null)}, {reload: false});
 
-
         if ($stateParams.session || $stateParams.isNetworkEnvironment) {
-            vm.runEmulator([]);
+            vm.runEmulator();
         } else if (!chosenEnv || !chosenEnv.networking || !chosenEnv.networking.connectEnvs) {
-            vm.runEmulator([]);
+            vm.runEmulator();
         }
         else {
             let modal = $uibModal.open({
                 template: require('./modals/connected-envs.html'),
                 animation: false,
+                backdrop: 'static',
                 resolve: {
-                    environments : (Environments) => Environments.query().$promise,
-                    sessionIds : ($http, localConfig, helperFunctions, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
+                    sessionIds : ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
                 },
                 controller: "EmulatorConnectedEnvsController as connectedEnvs"
             });
