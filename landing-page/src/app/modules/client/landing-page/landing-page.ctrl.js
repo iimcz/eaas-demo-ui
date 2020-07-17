@@ -122,7 +122,6 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 $("#container-stopped").hide();
 
                 
-               //  params.input_data = [];
                 let input = {};
                 input.size_mb = vm.input_data.size_mb;
                 input.destination = vm.env.input;
@@ -138,7 +137,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
                 if (vm.env.objectId) {
                     console.log("fixme");
-                    params.object = vm.env.objectId;
+                   //  params.object = vm.env.objectId;
                 }
 
                 let clientOptions = new ClientOptions();
@@ -160,9 +159,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     vm.isContOutDownloading = true;
 
                     async function f() {
-                        const containerOutput = await fetch(eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId).getContainerResultUrl(), {
-                            
-                        });
+                        const containerOutput = await fetch(vm.downloadUrl, {});
                         const containerOutputBlob = await containerOutput.blob();
                         // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
 
@@ -186,13 +183,18 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 };
 
                 eaasClient.onEmulatorStopped = function () {
+                    eaasClient.onEmulatorStopped = null;
+                    const currentSession = eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId);
+                    vm.isContOutDownloading = true;
+                    vm.downloadUrl = currentSession.getContainerResultUrl().then( function () {
+                        vm.isContOutDownloading = false; $scope.$apply();
+                    });
                     $("#emulator-loading-container").hide();
                     $("#emulator-container").hide();
                     $("#emulator-footer").hide();
                     $("#container-running").hide();
                     $("#container-stopped").show();
-                    const currentSession = eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId);
-                    console.log("done " + currentSession.getContainerResultUrl());
+                    eaasClient.disconnect();
                 };
 
                 eaasClient.onError = function (msg) {
@@ -231,16 +233,14 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                let components = [];
                if(vm.env.isContainer && vm.env.runtimeId){
                    const runtimeEnv = await Environments.get({envId: vm.env.runtimeId}).$promise;
-                   console.log("!!!!!!!!!!!!!!!! vm.env.runtimeId", vm.env.runtimeId);
-                   console.log("params.input_data", params.input_data);
-
                    let component = new MachineComponentBuilder(vm.env.runtimeId, runtimeEnv.archive);
+                   let input_data = [];
                    component.setLinuxRuntime(
                     {
                         userContainerEnvironment: vm.env.envId,
                         userContainerArchive: vm.env.archive,
                         networking: vm.env.networking,
-                        input_data: params.input_data
+                        input_data: input_data
                     });
                     component.setInteractive(true);
                     components.push(component);
