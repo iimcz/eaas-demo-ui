@@ -1,7 +1,7 @@
 import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
 import { ClientOptions, NetworkComponentConfig, TcpGatewayConfig } from "EaasClient/lib/clientOptions";
 
-export async function startNetworkEnvironment(controller, eaasClient, networkEnivornment, Environments, $http, $uibModal, localConfig) {
+export async function startNetworkEnvironment(controller, eaasClient, networkEnvironment, Environments, $http, $uibModal, localConfig) {
  
  //    controller.networkSessionEnvironments = [];
 
@@ -9,16 +9,16 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
     const clientOptions = new ClientOptions();
 
     clientOptions.enableNetworking();
-    clientOptions.getNetworkConfig().setNetwork(networkEnivornment.network);
-    clientOptions.getNetworkConfig().setGateway(networkEnivornment.gateway);
-    clientOptions.getNetworkConfig().enableInternet(networkEnivornment.enableInternet);
-    if(!networkEnivornment.dnsServiceEnvId)
-        clientOptions.getNetworkConfig().enableSlirpDhcp(networkEnivornment.isDHCPenabled);
+    clientOptions.getNetworkConfig().setNetwork(networkEnvironment.network);
+    clientOptions.getNetworkConfig().setGateway(networkEnvironment.gateway);
+    clientOptions.getNetworkConfig().enableInternet(networkEnvironment.enableInternet);
+    if(!networkEnvironment.dnsServiceEnvId)
+        clientOptions.getNetworkConfig().enableSlirpDhcp(networkEnvironment.isDHCPenabled);
 
     try {
-        let tcpGatewayConfig = new TcpGatewayConfig(networkEnivornment.networking.serverIp, networkEnivornment.networking.serverPort);
-        tcpGatewayConfig.enableSocks(networkEnivornment.networking.enableSocks);
-        tcpGatewayConfig.enableLocalMode(networkEnivornment.networking.localServerMode);
+        let tcpGatewayConfig = new TcpGatewayConfig(networkEnvironment.networking.serverIp, networkEnvironment.networking.serverPort);
+        tcpGatewayConfig.enableSocks(networkEnvironment.networking.enableSocks);
+        tcpGatewayConfig.enableLocalMode(networkEnvironment.networking.localServerMode);
         clientOptions.getNetworkConfig().setTcpGatewayConfig(tcpGatewayConfig);
     }
     catch(e) {
@@ -27,7 +27,7 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
 
    //  networkEnivornment.networking.envId = networkEnivornment.envId;
 
-    for (const networkElement of networkEnivornment.emilEnvironments) {
+    for (const networkElement of networkEnvironment.emilEnvironments) {
         let env = await Environments.get({envId: networkElement.envId}).$promise;
         let component;
 
@@ -93,12 +93,12 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
         */
     }
 
-    if(networkEnivornment.startupEnvId){
-        controller.startupEnv = await Environments.get({envId: networkEnivornment.startupEnvId}).$promise;
+    if(networkEnvironment.startupEnvId){
+        controller.startupEnv = await Environments.get({envId: networkEnvironment.startupEnvId}).$promise;
     }
 
-    if (networkEnivornment.dnsServiceEnvId) {
-        let env = await Environments.get({envId: networkEnivornment.dnsServiceEnvId}).$promise;
+    if (networkEnvironment.dnsServiceEnvId) {
+        let env = await Environments.get({envId: networkEnvironment.dnsServiceEnvId}).$promise;
         if (env.runtimeId) {
             const runtimeEnv = await Environments.get({envId: env.runtimeId}).$promise;
             controller.dnsServiceEnv = env;
@@ -108,7 +108,7 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEni
             input.size_mb = 512;
             input.destination = env.input;
 
-            const url = await $http.get(localConfig.data.eaasBackendURL + "network-environments/" + networkEnivornment.envId + "?jsonUrl=true");
+            const url = await $http.get(localConfig.data.eaasBackendURL + "network-environments/" + networkEnvironment.envId + "?jsonUrl=true");
             input.content = [{
                 "action": "copy",
                 "url": sessionStorage.DEBUG_network_json_url ? sessionStorage.DEBUG_network_json_url : url.data.url,
