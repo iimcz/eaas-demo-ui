@@ -39,6 +39,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     vm.waitModal = new WaitModal($uibModal);
     if (chosenEnv)
     {
+        console.log(chosenEnv);
+
         vm.enablePrinting = chosenEnv.enablePrinting;
         vm.shutdownByOs = chosenEnv.shutdownByOs;
         if(chosenEnv.nativeConfig)
@@ -52,6 +54,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                     vm.enableSaveEnvironment = true;
             }
         }
+        else if(chosenEnv.linuxRuntime)
+            vm.enableSaveEnvironment = false;
         else
             vm.enableSaveEnvironment = true; // fallback to old metadata
     }
