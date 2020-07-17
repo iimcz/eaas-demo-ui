@@ -85,10 +85,12 @@
 </mat-form-field>
 
 <!--StartUp Environment during landing page attach-->
+<!--
 <mat-checkbox [disabled]="isDisabled" class="example-section" [(ngModel)]="networkingConfig.isShared" color="primary">
     Shared Network
     <mat-icon style="font-size: 18px;" title="Landing Page Clients will share this network">info</mat-icon>
 </mat-checkbox>
+-->
 
 <mat-form-field class="paddingLeft example-section" *ngIf="networkingConfig.isShared"
     style="display:inline-block;margin-right:15px; width:40%;">
