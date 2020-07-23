@@ -11,6 +11,11 @@
         <label>Enable Telnet</label>
     </div>
 
+    <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
+        <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled">
+        <label>Enable DHCP</label>
+    </div>
+
   <!--    <div class="form-group" ng-if="$ctrl.networking.connectEnvs">-->
 <!--        <input type="checkbox"  ng-model="$ctrl.networking.serverMode">-->
 <!--        <label>{{'EDITENV_ENABLE_SERVERMODE' | translate}}</label>-->
