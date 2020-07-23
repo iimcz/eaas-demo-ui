@@ -63,7 +63,6 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEnv
                 });
         } else {
             component = new MachineComponentBuilder(env.envId, env.archive);
-            component.setEthernetAddress(networkElement.macAddress);
             component.setObject(env.objectId, env.objectArchive);
         }
         
@@ -75,6 +74,8 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEnv
         let networkComponentConfig = new NetworkComponentConfig(networkElement.label, networkElement.macAddress);
         networkComponentConfig.setServerConfiguration(networkElement.serverIp, networkElement.serverPorts);
         component.setNetworkConfig(networkComponentConfig);
+
+        component.setEthernetAddress(networkElement.macAddress);
         
         components.push(component);
         
