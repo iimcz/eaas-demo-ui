@@ -30,8 +30,8 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
             vm.description = vm.env.description;
             vm.envInput = vm.env.input;
             vm.envOutput = vm.env.output;
-            vm.processArgs = vm.env.processArgs; // todo deep copy
-            vm.processEnvs = vm.env.processEnvs;
+            vm.processArgs = (vm.env.processArgs) ? vm.env.processArgs : [];  // todo deep copy
+            vm.processEnvs = vm.env.processEnvs ? vm.env.processEnvs : [];
             if (vm.env.networking)
                 vm.networking = vm.env.networking;
 
