@@ -73,6 +73,7 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEnv
 
         let networkComponentConfig = new NetworkComponentConfig(networkElement.label, networkElement.macAddress);
         networkComponentConfig.setServerConfiguration(networkElement.serverIp, networkElement.serverPorts);
+        networkComponentConfig.setFqdn(networkElement.fqdn);
         component.setNetworkConfig(networkComponentConfig);
 
         component.setEthernetAddress(networkElement.macAddress);
