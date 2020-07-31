@@ -1,6 +1,6 @@
 module.exports = ["$scope", "$uibModalInstance", "$uibModalStack", "sessionIds",
      function ($scope, $uibModalInstance, $uibModalStack, sessionIds) {
-         $scope.availableGroupIds = sessionIds.data;
+         $scope.availableGroupIds = sessionIds;
          $scope.selected = {};
 
          if(!$scope.availableGroupIds || !$scope.availableGroupIds.length)
