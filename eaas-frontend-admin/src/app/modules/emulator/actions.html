@@ -72,8 +72,7 @@
             {{'ACTIONS_RESTART' | translate}}
         </button>
 
-        <button class="btn btn-default"
-                ng-if="(chosenEnv.networking.serverMode || chosenEnv.networking.localServerMode)"
+        <button class="btn btn-default" 
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openNetworkDialog()">
             Connection Info

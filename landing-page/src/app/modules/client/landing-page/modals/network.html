@@ -10,22 +10,28 @@
 -->
 
 <div class="modal-body">
+    <!--
     <p ng-hide="networkModalCtrl.localServerMode">As soon as emulator boots, you would be able to connect with following
         address:
         <a href="{{networkModalCtrl.getServerAddress()}}"
             target="_blank">{{networkModalCtrl.hostname}}:{{networkModalCtrl.port}}</a>
     </p>
+    -->
 
-    <p ng-hide="!networkModalCtrl.localServerMode">
+    <div ng-if="networkModalCtrl.hasOpenPorts">
         <label> Select a port and initialize a local connection</label>
         <div class="input-group">
             <input type="number" ng-model="networkModalCtrl.localConnectionPort">
             <button ng-click="networkModalCtrl.getLocalProxy()" class="btn btn-default">Initialize local
                 connection</button>
         </div>
-
+    </div>
+    <p ng-if="!networkModalCtrl.hasOpenPorts">
+        <label> This machine has no open network ports.</label>
+    </p>
+    <p>
         <br>
-        <div class="alert alert-warning alert-dismissible role="alert" ng-hide="!networkModalCtrl.localServerMode">
+        <div class="alert alert-warning alert-dismissible" role="alert" ng-hide="!networkModalCtrl.hasOpenPorts">
             <div class="container">
                 <div class="row">
                         <div class="col-12"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
@@ -60,6 +66,7 @@
         </div>
     </p>
 
+    <!-- 
     <p ng-if="networkModalCtrl.env.networking.enableSocks" ng-hide="networkModalCtrl.localServerMode"><br> Please
         note!<br>
         Socks connection could be accessible with following commands (Linux): <br>
@@ -71,7 +78,8 @@
         </i></p>
 
     <br ng-show="networkModalCtrl.localServerMode">
-
+    -->
+    
     <!--
     <div ng-if="networkModalCtrl.proxy"><b>3)</b> Wait untill machine is booted and press on
         <a target="_blank" ng-if="networkModalCtrl.proxy"
