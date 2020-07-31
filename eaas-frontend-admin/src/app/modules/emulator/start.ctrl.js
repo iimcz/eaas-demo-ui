@@ -3,6 +3,7 @@ import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environm
 import {requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
 import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
 import { TcpGatewayConfig, ClientOptions } from "EaasClient/lib/clientOptions";
+import { _fetch } from "../../lib/utils";
 
 module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams', '$cookies', '$translate', '$http', 'localConfig', 'growl', 'Environments', 'EmilNetworkEnvironments', 'chosenEnv', 'eaasClient',
     function ($rootScope, $uibModal, $scope, $state, $stateParams, $cookies, $translate, $http, localConfig, growl, Environments, EmilNetworkEnvironments, chosenEnv, eaasClient) {
@@ -230,25 +231,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                 $state.go('error', { errorMsg: { title: "Emulation Error", message: details } });
             }
         }
-
-        async function dealWithIt(resultPromise)
-        {
-            try {
-                let data = await resultPromise;
-                if(data.session)
-                    vm.runEmulator(data.session.id);
-                else 
-                    vm.runEmulator();
-            }
-            catch(error)
-            {
-                let isObjectEnv = false;
-                if ($stateParams.objectId != null)
-                    isObjectEnv = true;
-                growl.error(error);
-                $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
-            }
-        }
         
         if (!chosenEnv || !chosenEnv.envId || !$stateParams.envId) 
             $state.go('admin.standard-envs-overview', {showObjects: ($stateParams.objectId != null)}, {reload: false});
@@ -259,16 +241,48 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             vm.runEmulator();
         }
         else {
-            let modal = $uibModal.open({
-                template: require('./modals/connected-envs.html'),
-                animation: false,
-                backdrop: 'static',
-                resolve: {
-                    sessionIds : ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
-                },
-                controller: "EmulatorConnectedEnvsController as connectedEnvs"
-            });
+            // check if there are running sessions. 
+            // if we find sessions, allow ad-hoc connections 
+            // if no session is found, proceed 
+            const f = async () => {
+                try {
+                    vm.sessionIds = await _fetch(`${localConfig.data.eaasBackendURL}/sessions`, "GET", null, localStorage.getItem('id_token'));
+                    if(!vm.sessionIds || vm.sessionIds.length == 0)
+                        throw new Error("no running environments found");
 
-            modal.closed.then(() => dealWithIt(modal.result));
+                    let modal = $uibModal.open({
+                        template: require('./modals/connected-envs.html'),
+                        animation: false,
+                        backdrop: 'static',
+                        resolve: {
+                            sessionIds : () => { return vm.sessionIds }
+                        },
+                        controller: "EmulatorConnectedEnvsController as connectedEnvs"
+                    });
+                    await modal.closed;
+                    
+                    try {
+                        let data = await modal.result;
+                        if(data.session)
+                            vm.runEmulator(data.session.id);
+                        else 
+                            vm.runEmulator();
+                    }
+                    catch(error)
+                    {
+                        let isObjectEnv = false;
+                        if ($stateParams.objectId != null)
+                            isObjectEnv = true;
+                        growl.error(error);
+                        $state.go('admin.standard-envs-overview', {showObjects: isObjectEnv}, {reload: false});
+                    }
+
+                }
+                catch(e) {
+                    console.log(e);
+                    vm.runEmulator();
+                }
+            }
+            f();
         }
     }];
