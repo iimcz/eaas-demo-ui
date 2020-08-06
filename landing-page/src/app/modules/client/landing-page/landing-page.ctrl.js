@@ -276,9 +276,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     
                     $("#emulator-loading-container").hide();
                         $("#emulator-container").show();
-                        $("#emulator-downloadable-attachment-link").show();
-
-
+                    
                         var erd = elementResizeDetectorMaker();
 
                         erd.listenTo(document.getElementById("emulator-container"), function (element) {

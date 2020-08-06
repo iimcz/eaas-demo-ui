@@ -309,7 +309,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     });
 
     // For any unmatched url
-    $urlRouterProvider.otherwise("/container-landing-page");
+    $urlRouterProvider.otherwise("/basic-client");
 
     // Now set up the states
     $stateProvider
@@ -335,6 +335,14 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
                 eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
             },
             controller: "ContainerLandingCtrl as containerLandingCtrl"
+        })
+        .state('basic-client', {
+            url: "/basic-client?envId&url&mediumType",
+            template: require('./modules/client/basic-client/basic-client.html'),
+            resolve: {
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
+            },
+            controller: "BasicLandingCtrl as basicLandingCtrl"
         })
         .state('attach-landing-page', {
             url: "/attach-landing-page",

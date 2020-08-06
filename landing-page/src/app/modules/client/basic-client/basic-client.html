@@ -1,0 +1,24 @@
+<div class="modal-title">
+    <div class="ex3">
+        <div id="header"><img height="70" src="img/logo.png"/></div>
+    </div>
+</div>
+
+<div class="main-block">
+
+    <div class="minContent" ng-if="!(basicLandingCtrl.started)">
+        <img src="img/Eclipse-1s-200px.gif">
+    </div>
+
+    <br>
+    <div style="top: 100px;" class="centered-content">
+        <div class="minContent" id="emulator-container"
+             class="eaas-emulator-container-transcursor"></div>
+        <br>
+        <div class="modal-footer">
+            <button ng-hide="basicLandingCtrl.env.isContainer && !basicLandingCtrl.env.runtimeId" type="submit"
+                    class="btn btn-default"
+                    ng-click="basicLandingCtrl.eaasClient.sendCtrlAltDel()">{{'ACTIONS_CTRLALTDEL' | translate}}</button>
+        </div>
+    </div>
+</div>
