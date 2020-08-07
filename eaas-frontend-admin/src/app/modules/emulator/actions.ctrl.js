@@ -152,7 +152,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
     vm.close = function () {
         window.onbeforeunload = null;
-        stopClient($uibModal, true, eaasClient);
+        eaasClient.release();
         $state.go('admin.standard-envs-overview', {}, { reload: true });
     };
 
