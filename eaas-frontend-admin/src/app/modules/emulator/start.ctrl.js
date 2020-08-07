@@ -170,7 +170,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             });
 
             $scope.$on('$destroy', function (event) {
-                stopClient($uibModal, $rootScope.emulator.detached, eaasClient);
+                stopClient($uibModal, $stateParams.isNetworkEnvironment || $rootScope.emulator.detached, eaasClient);
             });
 
             try {
