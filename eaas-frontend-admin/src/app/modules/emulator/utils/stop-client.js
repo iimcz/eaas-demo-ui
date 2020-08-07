@@ -10,7 +10,7 @@ export async function stopClient($uibModal, onlyDisconnect, eaasClient) {
             backdropClass: "white-backdrop",
             template: require('../modals/wait.html')
         });
-        await eaasClient.release();
+        await eaasClient.release(true);
         window.onbeforeunload = null;
         modal.close();
     }
