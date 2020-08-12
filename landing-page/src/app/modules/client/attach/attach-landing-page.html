@@ -1,0 +1,46 @@
+<div class="modal-title">
+    <div class="ex3">
+        <div id="header"><img height="70" src="img/logo.png"/></div>
+    </div>
+</div>
+
+<div class="main-block">
+
+    <div class="minContent" ng-if="!(containerLandingCtrl.started)">
+        <img src="img/Eclipse-1s-200px.gif">
+    </div>
+
+    
+    <uib-accordion ng-if="(containerLandingCtrl.networkSessionEnvironments && containerLandingCtrl.networkSessionEnvironments.length > 0)
+    && containerLandingCtrl.env
+    && containerLandingCtrl.eaasClient.network">
+        <div uib-accordion-group class="panel-default" is-open="status.open">
+            <uib-accordion-heading>
+                Connection Details <i class="pull-right glyphicon"
+                                      ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+            </uib-accordion-heading>
+            <div class="tekstMore">
+                <started-network-environment-overview
+                    [network-Session-Environments]="containerLandingCtrl.networkSessionEnvironments"
+                    [selected-Network-Environment]="containerLandingCtrl.env"
+                    [dns-Service-Env]="containerLandingCtrl.dnsServiceEnv"
+                    [startup-Env]="containerLandingCtrl.startupEnv"
+                    [eaas-Client]="containerLandingCtrl.eaasClient">
+                </started-network-environment-overview>
+            </div>
+        </div>
+    </uib-accordion>
+
+
+    <br>
+    <div style="top: 100px;" class="centered-content">
+        <div class="minContent" id="emulator-container"
+             class="eaas-emulator-container-transcursor"></div>
+        <br>
+        <div  ng-if="containerLandingCtrl.networkSessionEnvironments && containerLandingCtrl.eaasClient.network" class="modal-footer">
+            <button ng-hide="containerLandingCtrl.env.isContainer && !containerLandingCtrl.env.runtimeId" type="submit"
+                    class="btn btn-default"
+                    ng-click="containerLandingCtrl.eaasClient.sendCtrlAltDel()">{{'ACTIONS_CTRLALTDEL' | translate}}</button>
+        </div>
+    </div>
+</div>

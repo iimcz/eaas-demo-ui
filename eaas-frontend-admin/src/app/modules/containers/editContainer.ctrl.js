@@ -7,8 +7,8 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
         vm.isOpen = false;
         vm.isContainer = true;
         vm.emilEnvironments = emilEnvironments;
-        vm.containerRuntimeEnv = {title: "native", runNatively: true};
-        vm.runtimeEnvs = [vm.containerRuntimeEnv];
+        
+        vm.runtimeEnvs = [];
 
         vm.showDateContextPicker = false;
         vm.networking = {};
@@ -30,8 +30,8 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
             vm.description = vm.env.description;
             vm.envInput = vm.env.input;
             vm.envOutput = vm.env.output;
-            vm.processArgs = vm.env.processArgs; // todo deep copy
-            vm.processEnvs = vm.env.processEnvs;
+            vm.processArgs = (vm.env.processArgs) ? vm.env.processArgs : [];  // todo deep copy
+            vm.processEnvs = vm.env.processEnvs ? vm.env.processEnvs : [];
             if (vm.env.networking)
                 vm.networking = vm.env.networking;
 
@@ -39,7 +39,7 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
                 if (element.envId === vm.env.runtimeId) {
                     vm.containerRuntimeEnv = element;
                 }
-                if (element.isLinuxRuntime) {
+                if (element.linuxRuntime) {
                     vm.runtimeEnvs.push(element);
                 }
             });
@@ -50,7 +50,6 @@ module.exports = ['$http', '$scope', '$state', '$timeout', '$stateParams', '$uib
         };
 
         vm.saveEdit = function () {
-
             if(vm.processArgs.length === 0){
                 growl.error('Process is required');
                 return;

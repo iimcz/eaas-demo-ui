@@ -2,19 +2,21 @@
     <div class="row">
         <div class="col-xs-12"><div id="header"><img height="70" src="img/logo.png" /></div></div>
     </div>
-    
+
     <div class="row">
         <div id="error-panel" class="panel panel-default">
             <div class="panel-body">
                 <div id="error-panel" class="alert alert-danger" role="alert">
-                    {{errorCtrl.errorMsg.title}}
+                    <b>{{errorCtrl.errorMsg.title}}</b>
                 </div>
-                
                 <pre>{{errorCtrl.errorMsg.message | json}}</pre>
-                <p><a href="{{errorCtrl.downloadLogUrl}}">You may download the debug output and forward it to your administrator.</a></p>
+                <br>
+                <p>
+                    <b>NOTE: </b><a href="{{errorCtrl.downloadLogUrl}}">You can download detailed error-report here</a>.
+                    If you intend to submit a support request, please add it as an attachment!</p>
             </div>
         </div>
-        
+
         <div style="text-align: right;">
             <button type="submit" class="btn btn-primary" ui-sref="admin.dashboard">{{'ERROR_RETURN_BTN' | translate}}</button>
         </div>

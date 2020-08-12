@@ -8,6 +8,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var WriteFilePlugin = require ('write-file-webpack-plugin');
+var path = require('path');
 
 /**
  * Env
@@ -24,18 +25,6 @@ var PRODUCTION_PATH = '/admin/';
 // Include git commit hash
 var commitHash = require('child_process').execSync('git rev-parse --short=10 HEAD').toString().toUpperCase();
 
-var auth0config = {
-    AUTH_CONFIGURED: false,
-    CLIENT_ID : JSON.stringify('not configured'),
-    DOMAIN : JSON.stringify('not configured')
-};
-try {
-  auth0config  = require('./auth.env');
-}
-catch(err) {
-    console.log(err);
-}
-
 module.exports = function makeWebpackConfig() {
   /**
    * Config
@@ -49,7 +38,8 @@ module.exports = function makeWebpackConfig() {
    * Reference: http://webpack.github.io/docs/configuration.html#entry
    */
   config.entry = {
-    app: './src/app/app.js'
+    polyfills: './src/app2/polyfills.js',
+    app: './src/app2/app.module.ts'
   };
 
   /**
@@ -82,7 +72,7 @@ module.exports = function makeWebpackConfig() {
     config.devtool = 'source-map';
   }
   else {
-    config.devtool = 'eval';
+    config.devtool = 'source-map';
   }
 
   /**
@@ -124,6 +114,22 @@ module.exports = function makeWebpackConfig() {
         ],
       })
     }, {
+      test: /\.scss$/,
+        use: [
+            {
+                loader: 'style-loader'
+            },
+            {
+                loader: 'to-string-loader'
+            },
+            {
+                loader: 'css-loader'
+            },
+            {
+                loader: 'sass-loader'
+            }
+        ]
+    }, {
       // ASSET LOADER
       // Reference: https://github.com/webpack/file-loader
       // Copy png, jpg, jpeg, gif, svg, woff, woff2, ttf, eot files to output
@@ -141,7 +147,8 @@ module.exports = function makeWebpackConfig() {
       // Allow loading html through js
       test: /\.html$/,
       loader: 'raw-loader'
-    }]
+    },
+    { test: /\.tsx?$/,exclude: /\.node_modules/, loader: "ts-loader" }]
   };
 
   /**
@@ -176,7 +183,6 @@ module.exports = function makeWebpackConfig() {
     }),
     new webpack.DefinePlugin({
         __UI_COMMIT_HASH__: JSON.stringify(commitHash),
-        'auth0config': auth0config
     })
   ];
 
@@ -212,7 +218,7 @@ module.exports = function makeWebpackConfig() {
       /* new UglifyJSPlugin({
         uglifyOptions: {
 		  // mangle: false
-		}
+		    }
       }), */
 
       // Copy assets from the public folder
@@ -241,6 +247,14 @@ module.exports = function makeWebpackConfig() {
     },
 	open: true
   };
-
+  config.resolve = {
+    alias: {
+        EaasLibs: path.resolve(__dirname, '../eaas-frontend-lib/'),
+        EaasAdmin: path.resolve(__dirname, './src/'),
+        '@angular': path.resolve(__dirname, './node_modules/@angular'),
+        'uuid': path.resolve(__dirname, './node_modules/uuid'),
+        'EaasClient': path.resolve(__dirname, '../eaas-client/')
+    }
+};
   return config;
 }();

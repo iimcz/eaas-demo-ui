@@ -6,7 +6,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     vm.config = localConfig.data;
     vm.activeView = 0;
     vm.archives = archives.data.archives;
-    vm.pageSize = "10";
+    vm.pageSize = "25";
 
     vm.updateTable = function(index, archive)
     {
@@ -35,13 +35,8 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
     vm.initColumnDefs = function () {
         return [
-            {headerName: "ID", field: "id"},
             {
-                headerName: "title", field: "title", sort: "asc"
-            },
-            {
-                headerName: "description", field: "description", cellRenderer: descriptiponRenderer, suppressSorting: true,
-                suppressMenu: true
+                headerName: "Object", field: "object", sort: "asc", cellRenderer: userObjectRenderer, width: 700,
             },
             {
                 headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
@@ -95,9 +90,13 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         });
     }
 
-    function descriptiponRenderer(params) {
-        params.$scope.selected = $scope.selected;
-        return `<abbr title="{{data.description}}">{{data.description}}</abbr>`;
+    function userObjectRenderer(params) {
+        return `
+        <div style="padding-top: 10px; padding-bottom: 10px;" >
+            <div class="overview-label">{{data.title}}<br>
+            <span class="overview-content">
+                <b>ID:</b> {{data.id}} 
+            </span></div></div>`;
     }
 
     vm.getArchiveHeader = function(item)
@@ -112,7 +111,7 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
     $scope.gridOptions = {
         columnDefs: vm.initColumnDefs(),
-        rowHeight: 31,
+        rowHeight: 75,
         groupUseEntireRow: true,
         rowSelection: 'multiple',
         angularCompileRows: true,
@@ -126,10 +125,10 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
         suppressHorizontalScroll: true,
         animateRows: true,
         onGridReady: function (params) {
-            $scope.gridOptions.api.sizeColumnsToFit();
+            $scope.gridOptions.api.sizeColumnsToFit();      
         },
         pagination: true,
-        paginationPageSize: 20,
+        paginationPageSize: Number(vm.pageSize),
         paginationNumberFormatter: function (params) {
             return '[' + params.value.toLocaleString() + ']';
         },

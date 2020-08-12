@@ -8,6 +8,19 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
           archive: null
        };
 
+       var mediaTypes = {
+        "Q495265" : "ISO",
+        "Q493576" : "Floppy",
+        "Q82753" : "Files",
+        };
+
+        $scope.getMediaTypeLabel = function(t)
+        {
+            console.log("xxx");
+            console.log(mediaTypes[t]);
+            return mediaTypes[t];
+        }
+
        vm.repositories = repositoriesList.data.archives;
        vm.selectedFiles = [];
 

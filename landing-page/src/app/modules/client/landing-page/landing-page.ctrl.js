@@ -1,31 +1,49 @@
-module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', '$scope', 'localConfig', 'Environments', 'chosenEnvId', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
-    function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, $scope, localConfig, Environments, chosenEnvId, buildInfo, WizardHandler, helperFunctions, growl) {
+import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
+import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
+import {MachineComponentBuilder} from "EaasClient/lib/componentBuilder";
+import {ClientOptions, TcpGatewayConfig} from "EaasClient/lib/clientOptions";
+import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client"
 
+module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uibModal', 'Upload', 'eaasClient', '$scope', 'localConfig', 'Environments', 'REST_URLS', 'EmilNetworkEnvironments', 'chosenEnvId', 'isNetworkEnvironment', 'buildInfo', 'WizardHandler', 'helperFunctions', 'growl',
+    function ($state, $sce, $http, $stateParams, $translate, $uibModal, Upload, eaasClient, $scope, localConfig, Environments, REST_URLS, EmilNetworkEnvironments, chosenEnvId, isNetworkEnvironment, buildInfo, WizardHandler, helperFunctions, growl) {
 
-
-    console.log("!!!" , chosenEnvId);
-        if (chosenEnvId == null) {
-            $state.go('error', {
-                errorMsg: {
-                    title: "Error ",
-                    message: "ID is not found. Please follow the pattern: {SERVER_URL}?id={containerId}"
-                }
-            });
+        showErrorIfNull(chosenEnvId, $state);
+        async function checkIfShared() {
+            //check if shared network is enabled
+            if (isNetworkEnvironment && vm.env.startupEnvId) {
+                $http.get(localConfig.data.eaasBackendURL + REST_URLS.detachedNetEnvs).then((response) => {
+                    response.data.forEach((netEnv) => {
+                        if (netEnv.networkEnvId === vm.env.envId) {
+                            console.log("!! Running Network Environment Found!", netEnv);
+                            console.log("redirecting to attach!");
+                            console.log(localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page")
+                            // window.location.href = localConfig.data.landingPage + "?sessionId=" + netEnv.session.id + "&connectEnvId=" + vm.env.startupEnvId + "#!/attach-landing-page";
+                        }
+                    });
+                    vm.env.emilEnvironments.push({
+                        envId: vm.env.startupEnvId,
+                        label: "Temp Client",
+                        toVisualize: true
+                    })
+                })
+            }
         }
+
+    
         var vm = this;
+        vm.eaasClient = eaasClient;
 
+        (isNetworkEnvironment ? EmilNetworkEnvironments : Environments).get({envId: chosenEnvId}).$promise.then((response) => init(response));
 
-        Environments.get({envId: chosenEnvId}).$promise.then(function (response) {
-
-
+        async function init(response) {
+            console.log("!!!!", response);
             vm.env = response;
-
-            vm.env.isContainer = vm.env.envType ==="container";
+            await checkIfShared();
+        
+            vm.env.isContainer = vm.env.envType === "container";
             vm.network = "";
             vm.buildInfo = buildInfo.data.version;
             vm.uiCommitHash = __UI_COMMIT_HASH__;
-
-            console.log("vm.env 2", vm.env);
 
             vm.canProcessAdditionalFiles = vm.env.canProcessAdditionalFiles;
             vm.inputs = [];
@@ -93,56 +111,55 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
             vm.input_data.size_mb = 512;
 
 
-            var confirmStartFn = function (inputs) {
+            var confirmStartFn = async function (inputs) {
 
-                if (vm.env.isContainer)
+                if (vm.env.isContainer && !vm.env.runtimeId)
                     var startFunction = "startContainer";
                 else {
-                    var startFunction = "startEnvironment";
+                    var startFunction = "start";
                     $("#container-running").hide();
                 }
                 $("#container-stopped").hide();
 
-                let params = {};
-                params.input_data = [];
+                
                 let input = {};
                 input.size_mb = vm.input_data.size_mb;
                 input.destination = vm.env.input;
                 input.content = inputs;
-                params.input_data.push(input);
+               
+                /*
+                if(input)
+                {
+                    console.log("fixme");
+                    params.input_data.push(input);
+                }
+                */
 
+                if (vm.env.objectId) {
+                    console.log("fixme");
+                   //  params.object = vm.env.objectId;
+                }
+
+                let clientOptions = new ClientOptions();
                 if (vm.data) {
-
-                    if (vm.env.networking.localServerMode)
-                        params.hasTcpGateway = false;
-                    else
-                        params.hasTcpGateway = vm.env.networking.serverMode;
-
-                    params.hasInternet = vm.env.networking.enableInternet;
-                    if (params.hasTcpGateway || vm.env.networking.localServerMode) {
-                        params.tcpGatewayConfig = {
-                            socks: vm.env.enableSocks,
-                            gwPrivateIp: vm.env.networking.gwPrivateIp,
-                            gwPrivateMask: vm.env.networking.gwPrivateMask,
-                            serverPort: vm.env.networking.serverPort,
-                            serverIp: vm.env.networking.serverIp
-                        };
-                    }
+    
+                    clientOptions.enableNetworking();
+                    clientOptions.getNetworkConfig().enableInternet(vm.env.networking.enableInternet);
+                    let tcpGatewayConfig = new TcpGatewayConfig(vm.env.networking.serverIp, vm.env.networking.serverPort);
+                    tcpGatewayConfig.enableSocks(vm.env.enableSocks);
+                    tcpGatewayConfig.enableLocalMode(vm.env.networking.localServerMode);
+                    
+                    clientOptions.getNetworkConfig().setTcpGatewayConfig(tcpGatewayConfig);
                 }
                 vm.proxy = "";
-
 
                 vm.getOutput = function () {
                     const unloadBackup = eaasClient.deleteOnUnload;
                     eaasClient.deleteOnUnload = false;
                     vm.isContOutDownloading = true;
 
-                    let _header = localStorage.getItem('id_token') ? {"Authorization": "Bearer " + localStorage.getItem('id_token')} : {};
-
                     async function f() {
-                        const containerOutput = await fetch(window.eaasClient.getContainerResultUrl(), {
-                            headers: _header,
-                        });
+                        const containerOutput = await fetch(vm.downloadUrl, {});
                         const containerOutputBlob = await containerOutput.blob();
                         // window.open(URL.createObjectURL(containerOutputBlob), '_blank');
 
@@ -162,19 +179,25 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 };
 
                 vm.sendCtrlAltDel = function () {
-                    window.eaasClient.sendCtrlAltDel();
+                    sendCtrlAltDel();
                 };
 
-                window.eaasClient = new EaasClient.Client(localConfig.data.eaasBackendURL, $("#emulator-container")[0]);
-
-                window.eaasClient.onEmulatorStopped = function () {
+                eaasClient.onEmulatorStopped = function () {
+                    eaasClient.onEmulatorStopped = null;
+                    const currentSession = eaasClient.sessions.find((session) => eaasClient.activeView.componentId === session.componentId);
+                    vm.isContOutDownloading = true;
+                    vm.downloadUrl = currentSession.getContainerResultUrl().then( function () {
+                        vm.isContOutDownloading = false; $scope.$apply();
+                    });
                     $("#emulator-loading-container").hide();
+                    $("#emulator-container").hide();
+                    $("#emulator-footer").hide();
                     $("#container-running").hide();
                     $("#container-stopped").show();
-                    console.log("done " + eaasClient.getContainerResultUrl());
+                    eaasClient.disconnect();
                 };
 
-                window.eaasClient.onError = function (msg) {
+                eaasClient.onError = function (msg) {
                     $state.go('error', {errorMsg: {title: "Error ", message: msg}});
                 };
 
@@ -204,16 +227,56 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                 try {
                     if (localStorage.DEBUG_script) eval(localStorage.DEBUG_script);
                 } catch (e) {
+                    console.log(e);
+                }
+            
+               let components = [];
+               if(vm.env.isContainer && vm.env.runtimeId){
+                   const runtimeEnv = await Environments.get({envId: vm.env.runtimeId}).$promise;
+                   let component = new MachineComponentBuilder(vm.env.runtimeId, runtimeEnv.archive);
+                   let input_data = [];
+                   component.setLinuxRuntime(
+                    {
+                        userContainerEnvironment: vm.env.envId,
+                        userContainerArchive: vm.env.archive,
+                        networking: vm.env.networking,
+                        input_data: input_data
+                    });
+                    component.setInteractive(true);
+                    components.push(component);
+               } else if (vm.env.isContainer) {
+                   console.log("fixme");
+                   // envs = vm.env.envId
+               } else {
+                    let component = new MachineComponentBuilder(vm.env.envId, vm.env.archive);
+                    component.setObject(vm.env.objectId, vm.env.objectArchive);
+                    if(vm.input_data)
+                        component.addInputMedia(vm.input_data);
+                    component.setInteractive(true);
+                    components.push(component);
+               }
+               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : eaasClient[startFunction](components, clientOptions)).then(function () {
+                let sessionToInitialize = undefined;
+                if(vm.componentIdToInitialize){
+                   sessionToInitialize = eaasClient.getSession(vm.componentIdToInitialize);
                 }
 
-                eaasClient[startFunction](vm.env.envId, params, vm.input_data).then(function () {
+                eaasClient.connect($("#emulator-container")[0], sessionToInitialize).then(function () {
+                    window.onbeforeunload = function (e) {
+                        var dialogText = $translate.instant('MESSAGE_QUIT');
+                        e.returnValue = dialogText;
+                        return dialogText;
+                    };
 
-                    eaasClient.connect().then(function () {
-                        $("#emulator-loading-container").hide();
+                    window.onunload = function () {
+                        if (eaasClient)
+                            eaasClient.release();
+                        window.onbeforeunload = null;
+                    };
+                    
+                    $("#emulator-loading-container").hide();
                         $("#emulator-container").show();
-                        $("#emulator-downloadable-attachment-link").show();
-
-
+                    
                         var erd = elementResizeDetectorMaker();
 
                         erd.listenTo(document.getElementById("emulator-container"), function (element) {
@@ -315,7 +378,7 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
 
                     // Have to remember the chosen destination and action for the file
                     Upload.upload({
-                        url: localConfig.data.eaasBackendURL + "EmilContainerData/uploadUserInput",
+                        url: localConfig.data.eaasBackendURL + "upload",
                         name: vm.uploadFiles[i].filename,
                         destination: vm.uploadFiles[i].destination,
                         action: vm.uploadFiles[i].action,
@@ -326,13 +389,13 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                         console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                         if (vm.env.isContainer)
                             $scope.containerLandingCtrl.inputs.push({
-                                url: resp.data.userDataUrl,
+                                url: resp.data.uploads[0],
                                 name: resp.config.destination,
                                 action: resp.config.action,
                                 compression_format: resp.config.compression_format
                             });
                         else $scope.containerLandingCtrl.content.push({
-                            url: resp.data.userDataUrl,
+                            url: resp.data.uploads[0],
                             name: resp.config.destination,
                             action: resp.config.action,
                             compression_format: resp.config.compression_format
@@ -511,6 +574,5 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
             vm.inputSourceButtonText = "Choose Input Source";
             vm.activeInputMethod = null;
             vm.uploadFiles = [];
-        });
-
+        }
 }];

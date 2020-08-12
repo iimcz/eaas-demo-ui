@@ -37,6 +37,10 @@
             <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isSoftware" ng-disabled="editObjectCharacterizationCtrl.isSoftware">
             <label>Object is software</label>
         </div>
+        <div class="form-group" ng-if="editObjectCharacterizationCtrl.isSoftware">
+            <input type="checkbox"  ng-model="editObjectCharacterizationCtrl.isPublic" ng-disabled="editObjectCharacterizationCtrl.isPublic">
+            <label>Software is public</label>
+        </div>
     </div>
 
     <br/>
@@ -47,7 +51,6 @@
                 <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.openEnv, 'glyphicon-chevron-right': !status.openEnv}"></i>
             </uib-accordion-heading>
             <div class="row">
-
                     <div style="text-align: right; margin-bottom: 15px;">
                         <div style="display: inline-block;">
                             <button type="submit" class="btn btn-default" ng-click="editObjectCharacterizationCtrl.automaticCharacterization(false, true)">
@@ -59,8 +62,7 @@
                                 <span style="color: green" class="glyphicon glyphicon-plus"></span> {{'CHAR_ADD' | translate}}</button>
                         </div>
                     </div>
-
-                    <ul class="list-group-item" ng-sortable="{animation: 150, handle: '.handle'}">
+                    <ul ng-if="editObjectCharacterizationCtrl.objEnvironments.length" class="list-group-item" ng-sortable="{animation: 150, handle: '.handle'}">
                             <li class="list-group-item" ng-repeat="env in editObjectCharacterizationCtrl.objEnvironments">
                             <div class="handle btn btn-primary"><i class="glyphicon glyphicon-move"></i></div>
                             <div style="display: inline-block;">{{env.label}} <span ng-if="env.objectEnvironment">(OE)</span></div>

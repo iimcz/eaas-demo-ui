@@ -50,8 +50,13 @@ const appendScript = function(scriptText) {
 import guacamolejs from 'raw-loader!../../../eaas-client/guacamole/guacamole.js';
 appendScript(guacamolejs);
 
-import eaasclientjs from 'raw-loader!../../../eaas-client/eaas-client.js';
-appendScript(eaasclientjs);
+import {Client, hideCursor, showCursor, requestPointerLock} from '../../../eaas-client/eaas-client.js';
+import {textAngularComponent} from 'EaasLibs/javascript-libs/text-angularjs.component.js';
+
+// angular upgraded
+import {downgradeComponent} from '@angular/upgrade/static';
+import {StartedNetworkOverview} from "EaasLibs/network-environments/run/started-network-overview.component.ts";
+
 
 /*
  * Import application specific modules
@@ -72,7 +77,7 @@ import 'angular-growl-v2/build/angular-growl.css';
 import 'angular-loading-bar/build/loading-bar.css';
 import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
-import './app.css';
+import './app.scss';
 
 
 var env = {};
@@ -95,6 +100,11 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             return ret;
      })())
 
+     .directive(
+        'startedNetworkEnvironmentOverview',
+        downgradeComponent({component: StartedNetworkOverview})
+    )
+    .component('descriptionText', textAngularComponent)
     .component('containerInputList', {
         templateUrl: 'partials/containerInputList.html',
         bindings: {
@@ -228,6 +238,9 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     .factory('Environments', function ($http, $resource, localConfig) {
         return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
     })
+    .factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
+        return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
+    })
     .config([
         '$compileProvider',
         function ($compileProvider) {
@@ -235,23 +248,8 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
             // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
         }
     ])
-    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide, localConfig) {
+    .config(function ($stateProvider, $urlRouterProvider, growlProvider,jwtOptionsProvider, $httpProvider, $translateProvider, $provide) {
         angular.lowercase = angular.$$lowercase;
-
-        jwtOptionsProvider.config({
-            whiteListedDomains: "localhost",
-            tokenGetter: [ 'options', function(options) {
-                if (options && options.url.substr(options.url.length - 5) == '.html') {
-                    return null;
-                }
-                if (options && options.url.substr(options.url.length - 5) == '.json') {
-                    return null;
-                }
-                return localStorage.getItem('id_token');
-            }]
-        });
-        $httpProvider.interceptors.push('jwtInterceptor');
-
         /*
          * Use ng-sanitize for textangular, see https://git.io/vFd7y
          */
@@ -311,7 +309,7 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
     });
 
     // For any unmatched url
-    $urlRouterProvider.otherwise("/container-landing-page");
+    $urlRouterProvider.otherwise("/basic-client");
 
     // Now set up the states
     $stateProvider
@@ -330,9 +328,39 @@ export default angular.module('emilUI', ['angular-loading-bar', 'ngSanitize', 'n
                 chosenEnvId: function() {
                     return new URLSearchParams(window.location.search).get('id')
                 },
+                isNetworkEnvironment: function() {
+                    return new URLSearchParams(window.location.search).get('isNetworkEnvironment')
+                },
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
             },
             controller: "ContainerLandingCtrl as containerLandingCtrl"
+        })
+        .state('basic-client', {
+            url: "/basic-client?envId&url&mediumType",
+            template: require('./modules/client/basic-client/basic-client.html'),
+            resolve: {
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
+            },
+            controller: "BasicLandingCtrl as basicLandingCtrl"
+        })
+        .state('attach-landing-page', {
+            url: "/attach-landing-page",
+            template: require('./modules/client/attach/attach-landing-page.html'),
+            resolve: {
+                sessionId: () => {
+                    return new URLSearchParams(window.location.search).get('sessionId')
+                },
+                connectEnv: (Environments) => {
+                    const envId = new URLSearchParams(window.location.search).get('connectEnvId');
+                    if (envId)
+                        return Environments.get({envId: envId}).$promise;
+                    else return undefined;
+                },
+                buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL)
+            },
+            controller: "AttachLandingCtrl as containerLandingCtrl"
         });
 
     growlProvider.globalTimeToLive(5000);

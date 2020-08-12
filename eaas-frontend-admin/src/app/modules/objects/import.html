@@ -14,7 +14,7 @@
                 <div class="panel-body">
                     <ul>
                         <li ng-repeat="f in uploadCtrl.selectedFiles" style="font:smaller">
-                            <b>{{f.file.name}}</b> -- MediaType: {{f.mediaType}} <button type="button" class="btn btn-default" ng-click="uploadCtrl.removeFile($index)">delete</button></li>
+                            <b>{{f.file.name}}</b> -- Asset Type: {{ getMediaTypeLabel(f.mediaType) }} <button type="button" class="btn btn-default" ng-click="uploadCtrl.removeFile($index)">delete</button></li>
                     </ul>
                 </div>
                 <div class="panel-footer" style="text-align: right;">

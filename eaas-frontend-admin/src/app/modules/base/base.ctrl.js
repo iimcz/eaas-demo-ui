@@ -1,15 +1,17 @@
-module.exports = ["$uibModal","$scope", "$state", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
-function($uibModal, $scope, $state, localConfig, kbLayouts, buildInfo, userInfo, authService) {
+module.exports = ["$uibModal","$state", "$scope", "$rootScope", "localConfig", "kbLayouts", "buildInfo", "userInfo", "authService",
+function($uibModal, $state, $scope, $rootScope, localConfig, kbLayouts, buildInfo, userInfo, authService) {
     var vm = this;
 
     $scope.isCollapsed = false;
+    $rootScope.loaded = true;
 
     $scope.$watch(function(){
         return $state.$current.name
     }, function(newVal, oldVal){
         $scope.isCollapsed = newVal == "admin.emulator"
-    })
+    });
 
+    const auth0config = localConfig.data.auth0Config || {};
     vm.authEnabled = auth0config.AUTH_CONFIGURED;
     
     vm.open = function() {

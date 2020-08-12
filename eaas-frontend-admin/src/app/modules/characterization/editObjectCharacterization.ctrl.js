@@ -15,6 +15,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
+        vm.objEnvironments = response.objectEnvironments.environmentList;
      });
 
     Environments.query().$promise.then(function(response) {
@@ -73,38 +74,6 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
                     modal.close();
                 });
          }
-     };
-
-     vm.openDefaultEnvDialog = function(osId, osLabel) {
-         $uibModal.open({
-             animation: true,
-             template: require('./modals/set-default-environment.html'),
-             controller: ["$scope", "helperFunctions", "REST_URLS", function($scope, helperFunctions, REST_URLS) {
-                 this.defaultEnv = null;
-
-                 this.environments = vm.environmentList;
-
-                 this.osId = osId;
-                 this.osLabel = osLabel;
-
-                 this.setEnvironment = function() {
-                     $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.setDefaultEnvironmentUrl, this.osId, this.defaultEnv.envId))
-                         .then(function(response) {
-                             if (response.data.status !== "0") {
-                                 growl.error(response.data.message, {title: 'Error ' + response.data.message});
-                                 $scope.$close();
-                             }
-                             else {
-                                 console.log("set default env for " + osId + " defaultEnv " + this.defaultEnv.envId);
-                             }
-                     })['finally'](function() {
-                         $scope.$close();
-                         $state.reload();
-                     });
-                 };
-             }],
-             controllerAs: "setDefaultEnvDialogCtrl"
-         });
      };
 
      vm.openAddEnvDialog = function() {
@@ -179,6 +148,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
         if(vm.metadata)
             vm.softwareObj.label = vm.metadata.title;
 
+        vm.softwareObj.isPublic = vm.isPublic;
         vm.softwareObj.archiveId = $stateParams.objectArchive;
 
         if(vm.softwareObj.isOperatingSystem && vm.operatingSystemId)

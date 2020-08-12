@@ -1,5 +1,5 @@
-module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'localConfig', 'growl', '$timeout', '$uibModalStack', 'REST_URLS', 'helperFunctions',
-    function ($state, $http, $scope, $uibModal, curentEnv , localConfig, growl, $timeout, $uibModalStack, REST_URLS, helperFunctions) {
+module.exports = ['$state', 'currentEnv', 'eaasClient',
+    function ($state, curentEnv, eaasClient) {
 
         var modalCtrl = this;
 
@@ -21,6 +21,8 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', 'currentEnv' , 'loca
         this.sessionName;
         this.componentName = eaasClient.componentId;
         this.detach = function () {
+            if ($rootScope.emulator)
+                $rootScope.emulator.detached = true;
             eaasClient.detach(this.sessionName, this.detachTime, this.componentName);
             $state.go('admin.networking', {});
         };

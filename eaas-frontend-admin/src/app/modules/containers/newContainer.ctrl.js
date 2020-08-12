@@ -1,5 +1,5 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'Upload', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'helperFunctions', 'REST_URLS',
-    function ($http, $scope, $state, $stateParams, runtimeList, growl, Upload, localConfig, $uibModal, $timeout, WizardHandler, helperFunctions, REST_URLS) {
+module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'Upload', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'REST_URLS', 'Environments',
+    function ($http, $scope, $state, $stateParams, runtimeList, growl, Upload, localConfig, $uibModal, $timeout, WizardHandler, REST_URLS, Environments) {
 
         var container = this;
         container.runtimes = runtimeList.data.runtimes;
@@ -21,6 +21,18 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         container.imageOutput = "/output";
         container.customSubdir = null;
         container.isCustomSubdir = false;
+
+        container.linuxRuntimes = [];
+        Environments.query().$promise.then(function (response) {
+
+            response.forEach(function (element) {
+                
+                if (!element.linuxRuntime)
+                    return;
+                
+                container.linuxRuntimes.push(element);
+            });
+        });
 
         //TODO: ?
         container.onSelectRuntime = function (item, model) {
@@ -61,6 +73,12 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             if (!container.containerDescription) {
                 growl.error("Description is required");
                 return false;
+            }
+
+            if(!container.selectedRuntime)
+            {
+                growl.error("Select a container runtime"); 
+                return false; 
             }
             // if (!container.author) {
             //     growl.error("Author is required");
@@ -103,7 +121,8 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 id: container.id,
                 title: container.title,
                 description: container.containerDescription,
-                author: container.author
+                author: container.author,
+                runtimeId: container.selectedRuntime.envId
             }).then(function (response) {
                 if (response.data.status == "0") {
                     growl.success("import successful.");
@@ -204,7 +223,6 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
             $http.post(localConfig.data.eaasBackendURL + REST_URLS.importContainerUrl,
                 {
                     urlString: container.imageUrl,
-                    runtimeID: container.runtime,
                     name: (container.name) ? container.name : "tmp",
                     tag: container.tag,
                     processArgs: container.args,

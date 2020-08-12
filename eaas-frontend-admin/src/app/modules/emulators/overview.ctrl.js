@@ -48,8 +48,8 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                                  {
                                      urlString: _vm.imageUrl,
                                      runtimeID: _vm.runtime,
-                                     tag: _vm.tag,
-                                     alias: _vm.alias,
+                                     tag: (_vm.tag) ? _vm.tag : "latest",
+                                     alias: (_vm.alias) ? _vm.alias : "latest",
                                      isEmulator: true,
                                      imageType: "dockerhub",
                                  }).then(function (response) {

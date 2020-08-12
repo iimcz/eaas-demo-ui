@@ -10,11 +10,36 @@
     text-align: center;
 }
 
+.top-bar-link
+{
+    padding-top: 5px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px;
+}
+
+.top-bar-link img
+{
+    height: 30px;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+}
 /* ==========================================================================
         Menu
    ========================================================================== */
 @media (min-width: 768px) {
-    .collapsing {
+    
+      
+    .container {
+        width: 90%;
+    }
+
+    .navbar-emulator {
+        border-color: #e7e7e7;
+        min-height: auto !important;
+    }
+   .collapsing {
         transition: none !important;
     }
     .sidebar-nav .navbar  {
@@ -38,6 +63,7 @@
     .sidebar-nav .navbar li a {
         padding-top: 12px;
         padding-bottom: 12px;
+        font-size: 16px;
     }
     .navbar-header {
         float: none;
@@ -535,4 +561,13 @@ abbr[title] {
 		  z-index: 2;
 		}
 	}
+}
+
+.overview-label {
+    font-size: 14px; line-height: 1.0em;
+}
+
+.overview-content {
+    font-size: 10px; 
+    line-height: 1.1em;
 }

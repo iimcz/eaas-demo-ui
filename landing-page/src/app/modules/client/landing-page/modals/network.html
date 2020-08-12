@@ -1,37 +1,96 @@
 <div class="modal-header">
-    <h3 class="modal-title">Network</h3>
+    <h3 class="modal-title">Connect</h3>
 </div>
 
+<!--
 <div class="ex1">
     <text-angular ta-toolbar="[]" ta-bind="text" ng-readonly=true
                   ng-model="networkModalCtrl.networkHelp"></text-angular>
 </div>
+-->
 
 <div class="modal-body">
-    <p ng-hide="networkModalCtrl.localServerMode">As soon as emulator boots, you would be able to connect with following address:</p>
-    <a href="{{networkModalCtrl.network}}" target="_blank">{{networkModalCtrl.hostname}}:{{networkModalCtrl.port}}</a>
-
-    <p ng-hide="!networkModalCtrl.localServerMode">Please note!<br> for local connection you would need: <br> <b>1)</b> Download and run following software
-        <br> <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy.app.zip?job=build" ng-show="networkModalCtrl.localServerMode" target="eaas-proxy"> MAC</a>
-        <br> <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy.exe?job=build" ng-show="networkModalCtrl.localServerMode" target="eaas-proxy"> Windows </a>
-        <br> <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy?job=build" ng-show="networkModalCtrl.localServerMode" target="eaas-proxy"> Linux </a>
+    <!--
+    <p ng-hide="networkModalCtrl.localServerMode">As soon as emulator boots, you would be able to connect with following
+        address:
+        <a href="{{networkModalCtrl.getServerAddress()}}"
+            target="_blank">{{networkModalCtrl.hostname}}:{{networkModalCtrl.port}}</a>
     </p>
-    <p ng-hide="!networkModalCtrl.localServerMode"> <b>2)</b> Select a port and initialize a local connection </p>
+    -->
 
-    <p ng-if="networkModalCtrl.env.networking.enableSocks" ng-hide="networkModalCtrl.localServerMode"><br> Please note!<br> Socks connection could be accessible with following commands (Linux): <br>
-        <i>export ALL_PROXY="socks5://{{networkModalCtrl.hostname}}:{{networkModalCtrl.port}}"<br>
-           <div ng-if="networkModalCtrl.env.networking.enableSocks && networkModalCtrl.env.networking.serverIp && networkModalCtrl.env.networking.serverPort"> curl "{{networkModalCtrl.env.networking.serverIp}}:{{networkModalCtrl.env.networking.serverPort}}" </div> </i></p>
-    <input ng-show="networkModalCtrl.localServerMode" type="number" ng-model="networkModalCtrl.localConnectionPort">
-    <button ng-show="networkModalCtrl.localServerMode" ng-click="networkModalCtrl.getLocalProxy()" class="btn btn-default">Initialize local connection</button>
-    <br ng-show="networkModalCtrl.localServerMode">
-    <div ng-if="networkModalCtrl.proxy"><b>3)</b> Wait untill machine is booted and press on
-    <a target="_blank" ng-if="networkModalCtrl.proxy" href="http://localhost:{{networkModalCtrl.localConnectionPort}}">Your Link</a>
+    <div ng-if="networkModalCtrl.hasOpenPorts">
+        <label> Select a port and initialize a local connection</label>
+        <div class="input-group">
+            <input type="number" ng-model="networkModalCtrl.localConnectionPort">
+            <button ng-click="networkModalCtrl.getLocalProxy()" class="btn btn-default">Initialize local
+                connection</button>
+        </div>
     </div>
+    <p ng-if="!networkModalCtrl.hasOpenPorts">
+        <label> This machine has no open network ports.</label>
+    </p>
+    <p>
+        <br>
+        <div class="alert alert-warning alert-dismissible" role="alert" ng-hide="!networkModalCtrl.hasOpenPorts">
+            <div class="container">
+                <div class="row">
+                        <div class="col-12"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+                </div>
+                <div class="row">
+                    <div class="col-12"><span class="text-primary">Note: For local connections you will need to 
+                        download and run (once) the following software </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy.app.zip?job=build"
+                            ng-show="networkModalCtrl.localServerMode" target="eaas-proxy">
+                            <img src="img/apple.png" height="80px"></br>
+                            <small class="text-secondary">MAC</small>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy.exe?job=build"
+                            ng-show="networkModalCtrl.localServerMode" target="eaas-proxy">
+                            <img src="img/windows.png" height="80px"></br>
+                            <small class="text-secondary">Windows</small>
+                        </a>
+                    </div>
+                    <div class="col-md-4 text-center">
+                    <a href="https://gitlab.com/emulation-as-a-service/eaas-proxy/-/jobs/artifacts/master/raw/eaas-proxy/eaas-proxy?job=build"
+                        ng-show="networkModalCtrl.localServerMode" target="eaas-proxy">
+                        <img src="img/linux.png" height="80px"></br>
+                        <small class="text-secondary">Linux</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </p>
+
+    <!-- 
+    <p ng-if="networkModalCtrl.env.networking.enableSocks" ng-hide="networkModalCtrl.localServerMode"><br> Please
+        note!<br>
+        Socks connection could be accessible with following commands (Linux): <br>
+        <i>export ALL_PROXY="socks5://{{networkModalCtrl.hostname}}:{{networkModalCtrl.port}}"<br>
+            <div
+                ng-if="networkModalCtrl.env.networking.enableSocks && networkModalCtrl.env.networking.serverIp && networkModalCtrl.env.networking.serverPort">
+                curl "{{networkModalCtrl.env.networking.serverIp}}:{{networkModalCtrl.env.networking.serverPort}}"
+            </div>
+        </i></p>
+
+    <br ng-show="networkModalCtrl.localServerMode">
+    -->
+    
+    <!--
+    <div ng-if="networkModalCtrl.proxy"><b>3)</b> Wait untill machine is booted and press on
+        <a target="_blank" ng-if="networkModalCtrl.proxy"
+            href="http://localhost:{{networkModalCtrl.localConnectionPort}}">Your Link</a>
+    </div>
+    -->
+
     <iframe id="eaas-proxy-iframe" name="eaas-proxy" hidden sandbox></iframe>
 
 </div>
 
-
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="$close()">OK</button>
+    <button class="btn btn-primary" type="button" ng-click="$close()">Close</button>
 </div>

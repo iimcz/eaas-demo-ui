@@ -1,0 +1,12 @@
+<h2 class="m-t-0">Edit Network Environment </h2>
+
+<div class="borderAround tekst">
+    <mat-divider></mat-divider>
+</div>
+
+<network-environment-view
+    [environments]="environments"
+    [networkingConfig]="networkingConfig"
+    [chosenEnvs]="selectedNetworkEnvironment.emilEnvironments"
+    [networkEnvironmentTitle]="selectedNetworkEnvironment.title">
+</network-environment-view>

@@ -42,7 +42,15 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
+import {EaasImages} from "./lib/images.js"
+import {_fetch} from './lib/utils.js'
+
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
+import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
+import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
+import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
+import amigaOptionsTemplate from './modules/environments/templates/emulators/amiga-options.html';
+import drivesOverviewTemplate from './modules/environments/templates/drives/overview.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
 
@@ -74,10 +82,8 @@ Object.defineProperty(window, "EMULATORS_LIST", {
 
 import guacamolejs from 'raw-loader!../../../eaas-client/guacamole/guacamole.js';
 appendScript(guacamolejs);
-
-import eaasclientjs from 'raw-loader!../../../eaas-client/eaas-client.js';
-appendScript(eaasclientjs);
-
+import {Client, hideCursor, showCursor, requestPointerLock} from '../../../eaas-client/eaas-client.js';
+import {textAngularComponent} from 'EaasLibs/javascript-libs/text-angularjs.component.js';
 /*
  * Import application specific modules
  */
@@ -98,7 +104,18 @@ import 'font-awesome/css/font-awesome.css';
 import 'angular-wizard/dist/angular-wizard.css';
 import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
-import './app.css';
+
+import './app.scss';
+
+/**
+ * angular 8 modules
+ */
+import {downgradeComponent} from '@angular/upgrade/static';
+import {AddNetworkComponent} from '../app2/components/network-environments/add/add-network-env.component.ts';
+import {EditNetworkComponent} from "../app2/components/network-environments/edit/edit-network-env.component.ts";
+import {StartedNetworkOverview} from "EaasLibs/network-environments/run/started-network-overview.component.ts";
+
+import { osLocalList } from './lib/os.js';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
@@ -106,6 +123,26 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
                                    'emilAdminUI.modules', 'angular-jwt', 'ngFileUpload', 'agGrid', 'auth0.auth0'])
 
     .constant('localConfig', (() => {
+        const params = new URLSearchParams(location.hash.slice(1));
+        
+        const token_type = params.get("token_type");
+        // TODO: Check `state`!
+        const state = params.get("state");
+        // TODO: Save `session_state`, handle (unattended) renewal of token
+        const session_state = params.get("session_state");
+        const expires_in = Number(params.get("expires_in"));
+        const id_token = params.get("id_token");
+        const access_token = params.get("access_token");
+
+        if (token_type === "bearer" || token_type === "Bearer") {
+            // TODO: Get `exp` from JWT instead of using `expires_in`?
+            const expires_at = Date.now() + expires_in * 1000;
+            Object.assign(localStorage, {id_token, expires_at});
+            Object.assign(localStorage, {access_token, expires_at});
+            console.log({id_token, expires_at});
+            console.log({access_token, expires_at});
+        }
+
         const xhr = new XMLHttpRequest();
         xhr.open("GET", localStorage.eaasConfigURL || "config.json", false);
         xhr.send();
@@ -114,6 +151,19 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         return ret;
     })())
 
+    .directive(
+        'addNetworkEnvironment',
+        downgradeComponent({component: AddNetworkComponent})
+    )
+    .directive(
+        'startedNetworkEnvironmentOverview',
+        downgradeComponent({component: StartedNetworkOverview})
+    )
+    .directive(
+        'editNetworkEnvironment',
+        downgradeComponent({component: EditNetworkComponent})
+    )
+    .component('descriptionText', textAngularComponent)
     .component('inputList', {
         templateUrl: 'partials/components/inputList.html',
         bindings: {
@@ -174,6 +224,68 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
     })
 
+    .component('uiOptionsTemplate', {
+        template: uiOptionsTemplate,
+        bindings: {
+            uiOptions: '=',
+        }
+    })
+
+    .component('qemuOptions', {
+        template: qemuOptionsTemplate,
+        bindings: {
+            args: '=',
+            onUpdate: '&'
+        }
+    })
+
+    .component('macemuOptions', {
+        template: macemuOptionsTemplate,
+        controller: ["Images", function(Images) {
+            var vm = this;
+            vm.romList = [];
+            
+            Images.roms().then((result) => {
+                vm.romList = result;
+                console.log(vm.romList);
+            }, (e) => {
+                throw new Error(e);
+            });
+        }],
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
+    .component('amigaOptions', {
+        template: amigaOptionsTemplate,
+        controller: ["Images", function(Images) {
+            var vm = this;
+            vm.romList = [];
+            
+            Images.roms().then((result) => {
+                vm.romList = result;
+                console.log(vm.romList);
+            }, (e) => {
+                throw new Error(e);
+            });
+        }],
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
+    .component('drivesOverview', {
+        template: drivesOverviewTemplate,
+        bindings: {
+            drives: "<",
+            select: '&',
+            render: '&',
+            context: '<',
+        }
+    })
 
     .directive('onInputFileChange', function() {
         return {
@@ -210,63 +322,38 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         if (!$rootScope.chk.transitionEnable) {
             event.preventDefault();
-            // $scope.toState = toState;
-            // $scope.open();
-            //  console.log("prevent: $stateChangeStart: "+toState.name);
+            $scope.toState = toState;
+        //    $scope.open();
+            console.log("prevent: $stateChangeStart: "+toState.name);
         }
-//            else {
-//                console.log("$stateChangeStart: "+toState.name);
-//            }
+            else {
+                console.log("$stateChangeStart: "+toState.name);
+            }
     });
 
+    /*
+     const auth0config = localConfig.data.auth0Config || {};
      if(auth0config.AUTH_CONFIGURED) {
             console.log("authService", auth0config);
             await authService.handleAuthentication();
-        }
+      }
+    */
 })
 
-.service('authService', function($state, angularAuth0, $timeout) {
-
+.service('authService', function($state, angularAuth0, $timeout, localConfig) {
+      const auth0config = localConfig.data.auth0Config || {};
       this.login = function (data) {
           data.redirectUri = String( new URL(auth0config.REDIRECT_URL, location));
           angularAuth0.authorize(data);
       };
-
-      this.handleAuthentication = async function () {
-        let resolve, reject;
-        const promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
-
-        angularAuth0.parseHash(
-        function(err, authResult) {
-            if (authResult && authResult.idToken && authResult.accessToken) {
-                setSession(authResult);
-                resolve();
-            } else if (err) {
-                $timeout(function() {
-                $state.go('login');
-           });
-           console.log('Error: ' + err.error + '. Check the console for further details.');
-        }
-        });
-
-        await promise;
-     }
-
-    function setSession(authResult) {
-           // Set the time that the access token will expire at
-           let expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-           localStorage.setItem('access_token', authResult.accessToken);
-           localStorage.setItem('id_token', authResult.idToken);
-           localStorage.setItem('expires_at', expiresAt);
-           console.log(authResult.idToken);
-     }
 
      this.logout = function () {
            // Remove tokens and expiry time from localStorage
            localStorage.removeItem('access_token');
            localStorage.removeItem('id_token');
            localStorage.removeItem('expires_at');
-           $state.go('login');
+           document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+           document.location = `/auth/realms/master/protocol/openid-connect/logout?${new URLSearchParams({redirect_uri: new URL("/admin", location)})}`;
      }
 
      this.isAuthenticated = function() {
@@ -282,9 +369,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 })
 
 .factory('Environments', function($http, $resource, localConfig) {
-   return $resource(localConfig.data.eaasBackendURL + 'EmilEnvironmentData/:envId');
+   return $resource(localConfig.data.eaasBackendURL + '/environment-repository/environments/:envId');
 })
-
+.factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
+    return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
+})
+.factory('Images', function(localConfig) {
+    return new EaasImages(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+})
 .config(['$stateProvider',
         '$urlRouterProvider',
         'growlProvider',
@@ -308,6 +400,7 @@ function($stateProvider,
         angularAuth0Provider,
         localConfig
 ) {
+    const auth0config = localConfig.data.auth0Config || {};
     angular.lowercase = angular.$$lowercase;
     /*
      * Use ng-sanitize for textangular, see https://git.io/vFd7y
@@ -339,21 +432,30 @@ function($stateProvider,
       'de_*': 'de'
     });
 
+    $translateProvider.fallbackLanguage('en');
+
     // automatically choose best language for user
     $translateProvider.determinePreferredLanguage();
-    // $translateProvider.preferredLanguage('en');
+    $translateProvider.preferredLanguage('en');
 
     var httpResponseErrorModal = null;
 
     angularAuth0Provider.init({
-        clientID: auth0config.CLIENT_ID,
-        domain: auth0config.DOMAIN,
+        clientID: auth0config.CLIENT_ID || "invalid",
+        domain: auth0config.DOMAIN || "invalid.invalid",
         responseType: 'token id_token',
+        _sendTelemetry: false,
+        overrides: {
+            // The following values can usually be found in </.well-known/openid-configuration>:
+            __jwks_uri: auth0config.jwks_uri,
+            __token_issuer: auth0config.issuer,
+        },
     });
 
     // Please note we're annotating the function so that the $injector works when the file is minified
     jwtOptionsProvider.config({
-      whiteListedDomains: "localhost",
+      whiteListedDomains: [new URL(localConfig.data.eaasBackendURL, location).hostname],
+      urlParam: "access_token",
       tokenGetter: [ 'options', function(options) {
         if (options && options.url.substr(options.url.length - 5) == '.html') {
             return null;
@@ -371,8 +473,13 @@ function($stateProvider,
     $httpProvider.interceptors.push(function($q, $injector, $timeout, $rootScope) {
         return {
             responseError: function(rejection) {
+
                 if (rejection && rejection.status === 401) {
-                    $injector.get('$state').go('login');
+                     $injector.get('$state').go('login');
+                     return $q.reject(rejection);
+                } else if (rejection && rejection.status === 403)
+                {
+                    $injector.get('$state').go('unauthorized');
                     return $q.reject(rejection);
                 }
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
@@ -423,22 +530,37 @@ function($stateProvider,
             params: {
                 errorMsg: {title: "", message: ""}
             },
-            controller: ['$state', '$stateParams', 'localConfig', function($state, $stateParams, localConfig) {
+            controller: ['$state', '$stateParams', 'localConfig', '$rootScope', 
+                function($state, $stateParams, localConfig, $rootScope) {
                 if ($stateParams.errorMsg.title === "" && $stateParams.errorMsg.title === "") {
                     $state.go('admin.standard-envs-overview');
                     return;
                 }
+                $rootScope.loaded = true;
                 this.downloadLogUrl = localConfig.data.eaasBackendURL + "error-report";
                 this.errorMsg = $stateParams.errorMsg;
             }],
             controllerAs: "errorCtrl"
         })
+        .state('unauthorized', {
+            url: "/unauthorized",
+            templateUrl: "partials/not-authorized.html",
+            controller: [ 
+                function() {
+            }],
+            controllerAs: "nonAuthorizedCtrl"
+        })
         .state('login', {
             url: "/login",
             templateUrl: "partials/login.html",
-            controller: function(authService) {
+            controller: function(authService, $rootScope) {
                 var vm = this;
                 vm.authService = authService;
+                $rootScope.loaded = true;
+                vm.authService.login({
+                    connection: 'Username-Password-Authentication',
+                    scope: 'openid profile email'
+                });
             },
             controllerAs: "loginCtrl"
         })
@@ -447,41 +569,26 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-                kbLayouts: ($http) => $http.get("kbLayouts.json"),
+                init: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "/admin/init"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
-
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getSoftwarePackageDescriptions)
                 },
-                userInfo: ($http, localConfig, REST_URLS) =>
-                    {
-                        if(auth0config.AUTH_CONFIGURED)
-                           return  $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo);
-                        else
-                           return {};
-                    }
+                userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo),
+                operatingSystemsMetadata : ($http, localConfig) =>
+                        $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/os-metadata`),
+
             },
             controller: "BaseController as baseCtrl"
         })
         .state('admin.dashboard', {
             url: "/dashboard",
             resolve: {
-                clusters: function($http, localConfig) {
-                    return $http.get(localConfig.data.dashboardClusterAPIBaseURL, {
-                        headers: {
-                            'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                },
-                allClusterDetails: function ($q, $http, localConfig, clusters) {
+                clusters: ($http, localConfig) => $http.get(localConfig.data.dashboardClusterAPIBaseURL),
+                descriptions: function ($q, $http, localConfig, clusters) {
                     return $q.all(clusters.data.map(function (cluster) {
-                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster, {
-                                headers: {
-                                    'X-Admin-Access-Token': localConfig.data.dashboardAccessToken,
-                                    'Cache-Control': 'no-cache'
-                            }
-                        })
+                        return $http.get(localConfig.data.dashboardClusterAPIBaseURL + cluster + '/description')
                     }));
                 }
             },
@@ -504,32 +611,16 @@ function($stateProvider,
                 }
             }
         })
-        .state('admin.import-image', {
-            url: "/import-image",
+        .state('admin.create-machine', {
+            url: "/create",
             resolve: {
-                systemList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
+                systemList: function($http, localConfig) {
+                    return $http.get(localConfig.data.eaasBackendURL + "environment-repository/templates");
                 },
                 patches: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
-                }
-            },
-            views: {
-                'wizard': {
-                    template: require('./modules/environments/import.html'),
-                    controller: "CreateOrImportEnvironmentController as newImageCtrl"
-                }
-            }
-        })
-        .state('admin.create-image', {
-            url: "/create-image",
-            resolve: {
-                systemList: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getEnvironmentTemplates);
                 },
-                patches: function($http, localConfig, REST_URLS) {
-                    return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
-                }
+                os: () => osLocalList(),
             },
             views: {
                 'wizard': {
@@ -603,10 +694,11 @@ function($stateProvider,
             url: "/environments",
             params: {
                 showObjects: false,
-                showContainers: false
+                showContainers: false,
+                showNetworkEnvs: false
             },
             resolve : {
-
+                osList : () => osLocalList()
             },
             views: {
                 'wizard': {
@@ -618,8 +710,9 @@ function($stateProvider,
         .state('admin.metadata', {
             url: "/metadata",
             resolve : {
-                oaiHarvesterList: ($http, localConfig, helperFunctions, REST_URLS) =>
-                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters")
+                oaiHarvesterList: ($http, localConfig) =>
+                    $http.get(localConfig.data.oaipmhServiceBaseUrl + "harvesters"),
+                apiKey: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "admin/apikey")
             },
             views: {
                 'wizard': {
@@ -637,8 +730,7 @@ function($stateProvider,
             resolve: {
                 objectDependencies: ($http, localConfig, $stateParams, helperFunctions, REST_URLS) =>
                      $http.get(localConfig.data.eaasBackendURL + helperFunctions.formatStr(REST_URLS.getObjectDependencies, $stateParams.envId)),
-                operatingSystemsMetadata : ($http, localConfig, REST_URLS) =>
-                     $http.get(localConfig.data.eaasBackendURL + REST_URLS.getOperatingSystemsMetadata),
+                     osList : () => osLocalList(),
                 nameIndexes : ($http, localConfig, REST_URLS) =>
                      $http.get(localConfig.data.eaasBackendURL + REST_URLS.getNameIndexes)
             },
@@ -667,15 +759,20 @@ function($stateProvider,
         .state('admin.emulator', {
             url: "/emulator",
             resolve: {
-                chosenEnv: function($stateParams, Environments) {
-                    if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
-                        return  Environments.get({envId: $stateParams.envId}).$promise;
+                chosenEnv: function($stateParams, Environments, EmilNetworkEnvironments) {
+                    if($stateParams.isNetworkEnvironment){
+                        return EmilNetworkEnvironments.get({envId: $stateParams.envId}).$promise;
+                    }
+                    else if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                        return Environments.get({envId: $stateParams.envId}).$promise;
                     else
                         return null;
-                }
+                },
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
             },
             params: {
                 envId: null,
+                isNetworkEnvironment: null,                
                 type: 'saveRevision',
                 softwareId: null,
                 isUserSession: false,
@@ -689,6 +786,10 @@ function($stateProvider,
                 containerRuntime: null,
                 uvi: null,
                 enableDownload: false,
+                realEnvId: null,
+                componentId: null,
+                session: null,
+                groupId : null
             },
             views: {
                 'wizard': {
@@ -707,7 +808,8 @@ function($stateProvider,
             resolve: {
                 chosenEnv: function($stateParams, Environments) {
                     return Environments.get({envId: $stateParams.envId}).$promise;
-                }
+                },
+                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
             },
             params: {
                 envId: null,
@@ -740,7 +842,7 @@ function($stateProvider,
             url: "/edit-object-characterization?objectId&objectArchive",
             params: {userDescription: null, swId: "-1"},
             resolve: {
-                osList : ($http) => $http.get("osList.json"),
+                osList : () => osLocalList(),
                 softwareObj: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
                     // return empty object for new software
                     if ($stateParams.swId === "-1") {
@@ -782,7 +884,6 @@ function($stateProvider,
             url: "/networking",
             resolve: {
                 localConfig: ($http) => $http.get(localStorage.eaasConfigURL || "config.json"),
-                groupdIds: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getGroupIds)
             },
             views: {
                 'wizard': {
@@ -804,6 +905,61 @@ function($stateProvider,
                 }
             }
         })
+        .state('admin.settings', {
+            url: "/settings",
+            params: {},
+            resolve: {
+                kbLayouts: ($http) => $http.get("kbLayouts.json"),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/settings.html'),
+                    controller: "SettingsCtrl as settingsCtrl"
+                }
+            }
+        })
+        .state('admin.runtime-overview', {
+            url: "/runtimes",
+            params: {},
+            resolve: {
+                osList : () => osLocalList(),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/runtime-overview.html'),
+                    controller: "RuntimeOverviewCtrl as runtimeOverviewCtrl"
+                }
+            }
+        })
+
+        .state('admin.default-envs-overview', {
+            url: "/defaults",
+            params: {},
+            resolve: {
+                osList : () => osLocalList(),
+                defaultEnvironments: ($http, localConfig ) => $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/default-environments`)
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/default-envs-overview.html'),
+                    controller: "DefaultEnvsOverviewCtrl as defaultEnvsOverviewCtrl"
+                }
+            }
+        })
+
+        .state('admin.service-containers', {
+            url: "/service-containers",
+            params: {},
+            resolve: {
+               containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/service-container-overview.html'),
+                    controller: "ServiceContainerCtrl as serviceContainerCtrl"
+                }
+            }
+        })
         .state('admin.emulators', {
             url: "/emulators",
             params: {},
@@ -818,6 +974,53 @@ function($stateProvider,
                 }
             }
         })
+        .state('admin.create-network-environment', {
+            url: "/create-network-environment",
+            resolve: {
+                environments: (Environments) => {
+                    return Environments.query().$promise;
+                }
+            },
+            views: {
+                'wizard': {
+                    template: '<add-Network-Environment' +
+                        '  [environments] = environments>' +
+                        '</add-Network-Environment>',
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                        $scope.environments = environments.filter(env => env.networkEnabled === true);
+                        if ($scope.environments.length === 0) {
+                            growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
+                    }]
+                }
+            }
+        })
+        .state('admin.edit-network-environment', {
+            url: "/edit-network-environment",
+            params: {selectedNetworkEnvironment: null},
+            resolve: {
+                environments: (Environments) => {
+                    return Environments.query().$promise;
+                }
+            },
+            views: {
+                'wizard': {
+                    template: '<edit-Network-Environment ' +
+                        '[environments] = environments '+
+                        '[selected-Network-Environment] = selectedNetworkEnvironment>' +
+                        '</edit-Network-Environment>',
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                        $scope.environments = environments.filter(env => env.networkEnabled === true);
+                        if ($scope.environments.length === 0) {
+                            growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
+                        $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
+                    }]
+                }
+            }
+        })
         .state('admin.emulators_details', {
             url: "/emulators",
             params: {entries: null, emuName: null},
@@ -829,6 +1032,19 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/emulators/details.html'),
                     controller: "EmulatorsDetailsController as emusDetCtrl"
+                }
+            }
+        })
+        .state('admin.images', {
+            url: "/images",
+            params: {},
+            resolve: {
+               
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/images/overview.html'),
+                    controller: "ImagesOverviewController as imagesCtrl"
                 }
             }
         })

@@ -1,0 +1,12 @@
+
+<ul class="list-group-item">
+    <li class="list-group-item" style="padding-bottom: 25px;" ng-repeat="drive in $ctrl.drives">
+        <div style="display: inline-block;"><b>Drive Type:</b> {{drive.type}}
+            <span ng-bind-html="$ctrl.render({index: $index})"></span>
+            <br>{{ drive.boot ? "boot drive" : "" }}</em></div>
+
+        <div class="btn btn-default" style="float: right;" ng-click="$ctrl.select({index: $index})">
+            <i class="glyphicon glyphicon-cog"></i>
+        </div>
+    </li>
+</ul>

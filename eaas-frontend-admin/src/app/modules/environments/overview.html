@@ -5,52 +5,69 @@
     <uib-tab index="0" ng-click="standardEnvsOverviewCtrl.updateTable(0)" heading="{{'CHOOSE_BASEENV_L' | translate}}">
 
     </uib-tab>
-    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-click="standardEnvsOverviewCtrl.updateTable(1)" ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
+    <uib-tab index="1" heading="{{'CHOOSE_OBJENV_L' | translate}}" ng-click="standardEnvsOverviewCtrl.updateTable(1)" 
+        ng-if="standardEnvsOverviewCtrl.config.features.objectEnvironments" >
     </uib-tab>
 
-    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers" ng-if="standardEnvsOverviewCtrl.config.features.containers">
+    <uib-tab index="2" ng-click="standardEnvsOverviewCtrl.updateTable(2)" heading="Containers" 
+        ng-if="standardEnvsOverviewCtrl.config.features.containers">
     </uib-tab>
-
-    <uib-tab index="3" ng-click="standardEnvsOverviewCtrl.updateTable(3)" heading="Container Runtimes" ng-if="standardEnvsOverviewCtrl.config.features.containers">
-    </uib-tab>
-
 </uib-tabset>
 <p></p>
-<uib-tabset ng-if="!standardEnvsOverviewCtrl.config.features.standalone && standardEnvsOverviewCtrl.view != 1" active="standardEnvsOverviewCtrl.viewArchive" type="pills">
+
+<uib-tabset ng-if="!standardEnvsOverviewCtrl.config.features.standalone && standardEnvsOverviewCtrl.view != 1" 
+    active="standardEnvsOverviewCtrl.viewArchive" type="pills">
     <uib-tab index="0" heading="Private" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
     <uib-tab index="1" heading="Public" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
     <uib-tab index="2" heading="Remote" ng-click="standardEnvsOverviewCtrl.updateTable(standardEnvsOverviewCtrl.view)"></uib-tab>
 </uib-tabset>
 
-<div class="tekstMore"></div>
-<div style="float: right;">
-    <input type="text" class="form-control" ng-model="standardEnvsOverviewCtrl.gridOptions.quickFilterText"
-           placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}"/>
-</div>
-<div style="padding: 4px;">
-    <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{standardEnvsOverviewCtrl.rowCount}}</b></div>
-
-    <div style="top: 0; left: 0;">
-        <div class="ag-theme-balham"> Page Size:
-            <select ng-click="onPageSizeChanged()" ng-model="standardEnvsOverviewCtrl.pageSize">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="25">25</option>
-                <option value="100">100</option>
-                <option value="500">500</option>
-            </select>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="input-group" style="width: 100%">
+            <input type="text" class="form-control" ng-model="standardEnvsOverviewCtrl.gridOptions.quickFilterText"
+                placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" />
         </div>
     </div>
+    <div class="col-lg-6">
+        <span ng-if="standardEnvsOverviewCtrl.view == 0"class="input-group-btn" style="text-align: right;
+        width: 100%;
+        display: inline-block;">
+            <button type="submit" class="btn btn-default" ui-sref="admin.create-machine"><span 
+                    class="glyphicon glyphicon-plus"></span>
+                {{'BASE_MENU_CREATE_ENV' | translate}}
+            </button>
+        </span>
+
+        <span ng-if="standardEnvsOverviewCtrl.view == 2"class="input-group-btn" style="text-align: right;
+        width: 100%;
+        display: inline-block;">
+            <button type="submit" class="btn btn-default" ui-sref="admin.new-container"><span 
+                    class="glyphicon glyphicon-plus"></span>
+                    {{'BASE_MENU_CONTAINER' | translate }}
+            </button>
+        </span>
+    </div>
 </div>
+
+<br>
 
 <div style="width: 100%;"
      ag-grid="standardEnvsOverviewCtrl.gridOptions"
      class="ag-theme-balham">
 </div>
 
-<div id="overviewDeleteButton" hidden class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="standardEnvsOverviewCtrl.deleteSelected()">
-        {{'CHOOSE_DELETE_SELECTED' | translate}}
-    </button>
+<div style="padding: 4px; margin-top: -2.25em; position: relative; font-size: 12px; width: max-content;">
+    <!-- <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{standardEnvsOverviewCtrl.rowCount}}</b></div>-->
+    <div class="ag-theme-balham">
+        Page Size:
+        <select ng-click="onPageSizeChanged()" ng-model="standardEnvsOverviewCtrl.pageSize">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="25">25</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select>
+    </div>
 </div>

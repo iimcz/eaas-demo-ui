@@ -1,0 +1,82 @@
+<form method="post" #f="ngForm" (ngSubmit)="submitForm(f)" name="network-env-form" id="network-env-form">
+    <mat-form-field class="full-width">
+        <input [(ngModel)]="networkEnvironmentTitle" name="evnLabel" required matInput #evnLabel="ngModel"
+               placeholder="Network Environment Title">
+        <mat-error *ngIf="!f.valid">Title is required</mat-error>
+    </mat-form-field>
+
+
+    <!--Networking Checkboxes sections-->
+    <network-config-template
+        [(networkingConfig)]="networkingConfig"
+        [isDisabled]="false"
+        [environments]="environments"
+    ></network-config-template>
+</form>
+<br>
+<div class="borderAround tekst">
+    <mat-divider></mat-divider>
+</div>
+<br>
+<!--Add new environments section-->
+<h4>Add Environment</h4>
+<mat-form-field style="display:inline-block;margin-right:15px; width:40%;">
+    <mat-label>{{"CHOOSE_ENV_SEARCH_NETWORK" | translate}}</mat-label>
+    <mat-select [(value)]="selectedEnv">
+        <mat-option *ngFor="let env of environments" [value]="env">
+            {{env.title}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<div style="display:inline-block;margin-right:15px;">
+    <mat-form-field>
+        <input matInput [(ngModel)]="envLabel" placeholder="{{'ADD_NETWORK_ENVIRONMENT_LABEL' | translate}}">
+    </mat-form-field>
+</div>
+
+<div style="display:inline-block">
+    <button (click)="addEnv()" [disabled]="!(envLabel && selectedEnv && selectedEnv.title)" mat-raised-button color="primary">
+        {{ 'ADDENV_L' | translate }}
+    </button>
+</div>
+
+<br>
+<div *ngIf="chosenEnvs.length > 0">
+    <h4 class="centered-content">Chosen environments</h4>
+    <table mat-table [dataSource]="chosenEnvs" class="mat-elevation-z8 full-width">
+        <ng-container matColumnDef="environment">
+            <th mat-header-cell *matHeaderCellDef>Environment</th>
+            <td mat-cell *matCellDef="let element"> {{ element.title}} 
+                <br><small>Id: {{element.envId}}</small>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="label">
+            <th mat-header-cell *matHeaderCellDef>Label</th>
+            <td mat-cell *matCellDef="let element"> {{element.label}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Action </th>
+            <td mat-cell *matCellDef="let element">
+                <button (click)="openEditDialog(element)" style="margin-right:5px;" mat-raised-button >Edit</button>
+                <button (click)="deleteEnv(element)" mat-raised-button color="warn">delete</button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+</div>
+<br>
+<div class="borderAround tekst">
+    <mat-divider></mat-divider>
+</div>
+<!--Bottom buttons-->
+<br>
+<div mat-dialog-actions align="end">
+    <button type="submit" value="submit" [disabled]="chosenEnvs.length == 0 && !networkingConfig.dnsServiceEnv" mat-raised-button style="margin-right:5px;" color="primary"
+            (click)="submitForm(f)">{{"CHAR_SAVE" | translate}}</button>
+    <button mat-stroked-button (click)="$state.go('admin.standard-envs-overview', {showNetworkEnvs: true}, {reload: true})">{{"ADDENV_CANCEL" | translate}}</button>
+</div>

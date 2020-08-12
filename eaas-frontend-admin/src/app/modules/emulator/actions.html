@@ -10,7 +10,7 @@
         </button>
 
         <button type="submit" class="btn btn-default" ng-click="actionsCtrl.openPrintDialog()"
-                ng-disabled="actionsCtrl.emulator.state !== 'STARTED' || !actionsCtrl.printJobsAvailable"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-show="actionsCtrl.enablePrinting">
             {{'ACTIONS_PRINT' | translate}}
         </button>
@@ -18,7 +18,7 @@
         <button type="submit" class="btn btn-default"
                 ng-click="actionsCtrl.openChangeMediaDialog()"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
-                ng-show="actionsCtrl.driveId >= 0">
+                ng-show="actionsCtrl.mediaList.length > 0">
             {{'ACTIONS_CHANGE_MEDIA' | translate}}
         </button>
 
@@ -72,15 +72,14 @@
             {{'ACTIONS_RESTART' | translate}}
         </button>
 
-        <button class="btn btn-default"
-                ng-if="(chosenEnv.networking.serverMode || chosenEnv.networking.localServerMode || actionsCtrl.emulator.detached)"
+        <button class="btn btn-default" 
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openNetworkDialog()">
             Connection Info
         </button>
 
         <button class="btn btn-default"
-                ng-if="!actionsCtrl.emulator.detached && chosenEnv.networking.connectEnvs"
+                ng-if="!actionsCtrl.emulator.detached && actionsCtrl.isNetworkEnvironment"
                 ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
                 ng-click="actionsCtrl.openDetachDialog()" >
             Detach Network
@@ -88,7 +87,7 @@
 
         <button type="submit" class="btn btn-default"
                 ng-if="!actionsCtrl.emulator.detached"
-                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED' && actionsCtrl.emulator.state !== 'STOPPED'"
                 ng-click="actionsCtrl.stopEmulator()">
             {{'ACTIONS_STOP' | translate}}
         </button>
@@ -105,11 +104,11 @@
                 >Alternative Environments</button>
 
         <button  class="btn btn-default"
-                 uib-dropdown-toggle ng-if="$root.idsData.length > 1"
+                 uib-dropdown-toggle ng-if="actionsCtrl.components.length > 1"
                  uib-dropdown on-toggle="toggled(open)">
             <div>Switch View</div>
             <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="simple-dropdown">
-                <li ng-repeat="choice in idsData">
+                <li ng-repeat="choice in actionsCtrl.components">
                     <a ng-click="actionsCtrl.switchEmulators(choice)" href>{{choice.title}}</a>
                 </li>
             </ul>

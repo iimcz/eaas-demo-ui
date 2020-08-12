@@ -8,6 +8,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
             backdropClass: "white-backdrop",
             template: require('../modals/wait.html')
         });
+        
         if (doRelease)
         {
             console.log("releasing from stop ");
@@ -15,6 +16,7 @@ export async function stopClient($uibModal, onlyDisconnect, download, eaasClient
         }   
         else 
             result = await eaasClient.stopEnvironment(true);
+
         window.onbeforeunload = null;
         modal.close();
         return result;
