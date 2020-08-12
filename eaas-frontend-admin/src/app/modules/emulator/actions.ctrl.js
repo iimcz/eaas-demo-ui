@@ -193,7 +193,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             animation: true,
             template: require('./modals/confirm-stop.html'),
             controller: ['$scope', function($scope) {
-                this.confirmed = function() {
+                this.confirmed = async function() {
                     window.onbeforeunload = null;
                     await stopClient($uibModal, false, $stateParams.enableDownload, eaasClient);
                     $('#emulator-stopped-container').show();
