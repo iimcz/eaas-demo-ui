@@ -1,9 +1,18 @@
 import {_fetch} from '../../lib/utils'
 
-module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbLayouts', 'REST_URLS',
-    function ($state, $http, $scope, localConfig, $uibModal, kbLayouts, REST_URLS) {
+module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbLayouts', 'REST_URLS', 'userInfo',
+    function ($state, $http, $scope, localConfig, $uibModal, kbLayouts, REST_URLS, userInfo) {
 
         var vm = this;
+
+        vm.userInfo = userInfo.data;
+        if(!vm.userInfo || !vm.userInfo.role)
+           vm.isAdmin = true;
+        else
+           vm.isAdmin = false;
+
+        if(vm.userInfo && vm.userInfo.role === 'ADMIN')
+            vm.isAdmin = true;
 
         vm.showSetKeyboardLayoutDialog = function () {
             $uibModal.open({

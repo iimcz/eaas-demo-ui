@@ -4,87 +4,100 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 text-center"><a ui-sref="admin.emulators" href="">
-                    <img src="img/emulator.png" height="80px"></br>
-                    <small class="text-secondary">Manage Emulators</small>
-
-                    <p>Emulators</p>
-                </a>
-            </div>
-
-            <div class="col-md-3 text-center"> <a ui-sref="admin.runtime-overview" href="">
-                    <img src="img/container_runtime.png" height="80px"></br>
-                    <small class="text-secondary">Runtime Overview</small>
-
-                    <p>Container Runtimes</p>
-            </div>
-
             <div class="col-md-3 text-center"> <a ng-click="settingsCtrl.showSetKeyboardLayoutDialog()">
                     <img src="img/keyboard.png" height="80px"></br>
                     <small class="text-secondary">Keyboard Settings</small>
-
                     <p>Keyboard</p>
                 </a>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3 text-center"><a ng-click="settingsCtrl.syncImages()" href="">
-                    <img src="img/sync.png" height="80px"></br>
-                    <small class="text-secondary">Synchronize Backend</small>
-                    <p>Sync</p>
+
+            <div class="col-md-3 text-center"><a href="/auth/realms/master/account">
+                    <img src="img/account.png" height="80px"></br>
+                    <small class="text-secondary">User Account Settings</small>
+                    <p>Account Settings</p>
                 </a>
             </div>
 
-            <div class="col-md-3 text-center"><a ui-sref="admin.service-containers" href="">
-                    <img src="img/network_services.png" height="80px"></br>
-                    <small class="text-secondary">Network Services</small>
-
-                    <p>Manage Services</p>
-                </a>
-            </div>
             <div class="col-md-3 text-center"> <a href="{{settingsCtrl.downloadLogUrl}}">
                     <img src="img/errorlog.png" height="80px"></br>
                     <small class="text-secondary">Download Error Log</small>
-
                     <p>Error-Log</p>
                 </a>
             </div>
-
         </div>
-        <div class="row">
-            <div class="col-md-3 text-center"><a ng-click="settingsCtrl.migrateDb()" href="">
-                    <img src="img/migrate_db.png" height="80px"></br>
-                    <small class="text-secondary">Migrate old DB data</small>
-                    <p>DB Data Migration</p>
-                </a>
-            </div>
 
-            <div class="col-md-3 text-center"><a ui-sref="admin.default-envs-overview" href="">
-                    <img src="img/default_envs.png" height="80px"></br>
-                    <small class="text-secondary">Default Environments</small>
-                    <p>Manage Default Environments</p>
-                </a>
-            </div>
-
-            <div class="col-md-3 text-center">
-                <div ng-if="baseCtrl.config.features.oaipmh">
-                    <a ui-sref="admin.metadata" href="">
-                        <img src="img/oaipmh.png" height="80px"></br>
-                        <small class="text-secondary">Sync Environments via OAI-PMH</small>
-                        <p>OAI-PMH Sync</p>
+        <div ng-if="settingsCtrl.isAdmin">
+            <div class="row">
+                <div class="col-md-3 text-center"><a ui-sref="admin.emulators" href="">
+                        <img src="img/emulator.png" height="80px"></br>
+                        <small class="text-secondary">Manage Emulators</small>
+                        <p>Emulators</p>
                     </a>
                 </div>
-                <div ng-if="!baseCtrl.config.features.oaipmh">
-                    <a href=""><img src="img/oaipmh.png" height="80px"></br>
-                        <small class="text-secondary">Sync Environments via OAI-PMH</small>
-                        <p>OAI-PMH Sync</p>
+
+                <div class="col-md-3 text-center"> <a ui-sref="admin.runtime-overview" href="">
+                        <img src="img/container_runtime.png" height="80px"></br>
+                        <small class="text-secondary">Runtime Overview</small>
+
+                        <p>Container Runtimes</p>
+                </div>
+
+                <div class="col-md-3 text-center"><a ui-sref="admin.service-containers" href="">
+                        <img src="img/network_services.png" height="80px"></br>
+                        <small class="text-secondary">Network Services</small>
+
+                        <p>Manage Services</p>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 text-center"><a href="/auth/admin/master/console">
+                        <img src="img/realm.png" height="80px"></br>
+                        <small class="text-secondary">Manage Security Realm</small>
+
+                        <p>Manage Realm</p>
+                    </a>
+                </div>
+
+                <div class="col-md-3 text-center"><a ui-sref="admin.default-envs-overview" href="">
+                        <img src="img/default_envs.png" height="80px"></br>
+                        <small class="text-secondary">Default Environments</small>
+                        <p>Manage Default Environments</p>
+                    </a>
+                </div>
+
+                <div class="col-md-3 text-center">
+                    <div ng-if="baseCtrl.config.features.oaipmh">
+                        <a ui-sref="admin.metadata" href="">
+                            <img src="img/oaipmh.png" height="80px"></br>
+                            <small class="text-secondary">Sync Environments via OAI-PMH</small>
+                            <p>OAI-PMH Sync</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 text-center"><a ng-click="settingsCtrl.syncImages()" href="">
+                        <img src="img/sync.png" height="80px"></br>
+                        <small class="text-secondary">Synchronize Backend</small>
+                        <p>Sync</p>
+                    </a>
+                </div>
+
+                <div class="col-md-3 text-center"><a ng-click="settingsCtrl.migrateDb()" href="">
+                        <img src="img/migrate_db.png" height="80px"></br>
+                        <small class="text-secondary">Migrate old DB data</small>
+                        <p>DB Data Migration</p>
                     </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!--
+<!--
     <button class="btn btn-default btn-lg btn-block" type="button"
             ng-click="settingsDialogCtrl.importEnvs()">{{'SETTINGS_DLG_IMPORT_ENVS'|
         translate}}</button>
@@ -97,11 +110,11 @@
     <button class="btn btn-default btn-lg btn-block" type="button"
             ng-click="settingsDialogCtrl.exportMetadata()">Export Metadata</button>
         -->
-    <!--<button class="btn btn-default btn-lg btn-block" type="button"-->
-    <!--ng-click="settingsDialogCtrl.syncObjects()">{{'SETTINGS_DLG_SYNC_OBJECTS'|-->
-    <!--translate}}</button>-->
+<!--<button class="btn btn-default btn-lg btn-block" type="button"-->
+<!--ng-click="settingsDialogCtrl.syncObjects()">{{'SETTINGS_DLG_SYNC_OBJECTS'|-->
+<!--translate}}</button>-->
 
-    <!--
+<!--
     <a href="{{settingsDialogCtrl.serverLogUrl}}">Server Log</a>
     <hr>
     <a href="{{settingsDialogCtrl.usageLogUrl}}">Usage Log</a>
