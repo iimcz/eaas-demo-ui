@@ -188,6 +188,18 @@
       }
     },
     {
+      "id":"os:other:vgba", 
+      "puids" : [],
+      "label" : "GameBoy Advance",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "",
+      "template" : "visualboyadvance",
+      "template_params" : 
+      { 
+      }
+    },
+    {
       "id":"os:mac:ppc-qemu", 
       "puids" : [{"puid": "bwfla/1"}, {"puid": "x-fmt/416"}],
       "label" : "Apple System 9.1.x - 10.4 (PPC)",

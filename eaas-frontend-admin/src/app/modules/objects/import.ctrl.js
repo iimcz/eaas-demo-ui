@@ -12,6 +12,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
         "Q495265" : "ISO",
         "Q493576" : "Floppy",
         "Q82753" : "Files",
+        "Q633454" : "ROM Cartridge"
         };
 
         $scope.getMediaTypeLabel = function(t)
