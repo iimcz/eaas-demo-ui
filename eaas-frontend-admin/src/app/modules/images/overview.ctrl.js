@@ -1,4 +1,5 @@
 import {WaitModal} from '../../lib/task.js'
+import { _fetch } from "../../lib/utils";
 
 module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Images', 'growl',
     function ($state, $scope, $http, localConfig, $uibModal, Images, growl)
@@ -24,6 +25,42 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
         vm.updateData();
     };
     vm.updateTable(0, "default");
+
+
+    vm.patchDlg = function(id) {
+        let modal = $uibModal.open({
+            animation: true,
+            template: require ('./modals/patch.html'),
+            resolve: {
+                patchList : ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "/environment-repository/patches"),
+            },
+            controller: ["$scope", "localConfig", "patchList", function($scope, localConfig, patchList) {
+                $scope.patchList = patchList.data;
+                $scope.selected = {};
+
+                this.patch = async() =>
+                {
+                    let req = {
+                        "archive": "default",
+                        "imageType": "user",
+                        "imageId": id
+                    };
+                    try {
+                        await _fetch(`${localConfig.data.eaasBackendURL}/environment-repository/patches/${$scope.selected.patch.name}`, "POST", req, localStorage.getItem('id_token'));
+                    }
+                    catch(e)
+                    {
+                        growl.error(e.name + ': ' + e.message);
+                    }
+                    finally {
+                        modal.close();
+                        $state.reload();
+                    }
+                }
+            }],
+            controllerAs: "patchDlgCtrl"
+        });
+    }
 
     vm.importDlg = function () {
         let modal = $uibModal.open({
@@ -145,6 +182,10 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                   {{\'CHOOSE_ACTION\'| translate}} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                  <li role="menuitem">
+                    <a class="dropdown-content"
+                        ng-click="ctrl.patchDlg(data.imageId)">generalize</a></li>
+            
                   <li role="menuitem">
                     <a class="dropdown-content"
                         ng-click="ctrl._delete(data.imageId)">delete</a></li>

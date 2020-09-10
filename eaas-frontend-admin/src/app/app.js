@@ -763,7 +763,7 @@ function($stateProvider,
                     if($stateParams.isNetworkEnvironment){
                         return EmilNetworkEnvironments.get({envId: $stateParams.envId}).$promise;
                     }
-                    else if(!$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
+                    else if($stateParams.envId && !$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
                         return Environments.get({envId: $stateParams.envId}).$promise;
                     else
                         return null;

@@ -44,5 +44,5 @@
 <div class="modal-footer">
     <button class="btn btn-primary" type="button" ng-click="$close()">{{'SETTINGS_DLG_CLOSE_DLG'
         | translate}}</button>
-    <button type="button" class="btn btn-primary" ng-click="importEmulatorCtrl.doImport()">{{'ADVANCED_IMPORT_EMULATOR' | translate}}</button>
+    <button type="button" class="btn btn-primary" ng-disabled="!importEmulatorCtrl.imageUrl" ng-click="importEmulatorCtrl.doImport()">{{'ADVANCED_IMPORT_EMULATOR' | translate}}</button>
 </div>

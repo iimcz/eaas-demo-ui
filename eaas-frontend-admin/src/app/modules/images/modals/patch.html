@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h3 class="modal-title">Image Generalization</h3>
+</div>
+
+<form name="myForm">
+<div class="modal-body">
+    <label>
+        <p>
+            Select a generalization script. The script should match the version of the installed OS.<br>
+        </p>
+    </label>
+
+    <ui-select ng-model="selected.patch" theme="bootstrap" style="width: 550px;" title="Choose a script">
+        <ui-select-match placeholder="Available scripts">
+            {{$select.selected.description}}
+        </ui-select-match>
+        <ui-select-choices repeat="item in (patchList | filter: $select.search)">
+            {{item.description}}
+        </ui-select-choices>
+    </ui-select>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="patchDlgCtrl.patch();">OK </button>
+    <button class="btn btn-default" type="button" ng-click="$close()">Cancel</button>
+</div>
+</form>
