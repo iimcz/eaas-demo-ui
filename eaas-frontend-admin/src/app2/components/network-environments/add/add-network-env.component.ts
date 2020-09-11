@@ -27,19 +27,23 @@ export class AddNetworkComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         // Override submitForm
-        this.networkEnvironmentView.submitForm = (f: NgForm) => {
+        this.networkEnvironmentView.submitForm = (f: NgForm, run: boolean=false) => {
             if (f.valid) {
                 // You will get form value if your form is valid
                 // You will get form value if your form is valid
+                const _uuid :string = uuid.v4();
                 saveNetworkEnv(this.http,
                     'put',
                     `${this.localConfig.data.eaasBackendURL}${this.REST_URLS.networkEnvironmentUrl}`,
                     this.networkEnvironmentView,
-                    uuid.v4())
+                    _uuid)
                     .subscribe((reply: any) => {
                         if (reply.status == "0") {
                             this.growl.success("Done");
-                            this.$state.go('admin.networking', {}, {reload: true});
+                            if(!run)
+                                this.$state.go('admin.networking', {}, {reload: true});
+                            else
+                                this.$state.go('admin.emulator', {envId: _uuid, isNetworkEnvironment: true}, {reload: true});
                         } else {
                             this.growl.error("Saved failed! ", reply);
                             console.log(reply);

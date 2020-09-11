@@ -84,5 +84,5 @@ export class NetworkEnvironmentView {
     }
 
     // Abstract method to be overwritten by the parent component
-    submitForm(f: NgForm) {}
+    submitForm(f: NgForm, run: boolean=false) {}
 }
