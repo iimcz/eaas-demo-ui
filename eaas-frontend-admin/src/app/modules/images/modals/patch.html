@@ -11,7 +11,7 @@
     </label>
 
     <ui-select ng-model="selected.patch" theme="bootstrap" style="width: 550px;" title="Choose a script">
-        <ui-select-match placeholder="Available scripts">
+        <ui-select-match placeholder="Choose an Operating System">
             {{$select.selected.description}}
         </ui-select-match>
         <ui-select-choices repeat="item in (patchList | filter: $select.search)">
