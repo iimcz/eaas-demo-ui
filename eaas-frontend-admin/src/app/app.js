@@ -1003,6 +1003,11 @@ function($stateProvider,
                             growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
                             $state.go("admin.standard-envs-overview", {}, {reload: true});
                         }
+                        if(!$stateParams.selectedNetworkEnvironment)
+                        {
+                            growl.error("no environment selected");
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
                         $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
                     }]
                 }
