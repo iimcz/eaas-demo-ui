@@ -1040,6 +1040,21 @@ function($stateProvider,
                 }
             }
         })
+
+        .state('admin.update', {
+            url: "/update",
+            params: {},
+            resolve: {
+                current: ($http, localConfig) =>
+                    $http.get(localConfig.data.eaasBackendURL + "operator/api/v1/deployment/current"),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/update.html'),
+                    controller: "UpdateController as updateCtrl"
+                }
+            }
+        })
     ;
     growlProvider.globalTimeToLive(5000);
 }]);
