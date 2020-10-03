@@ -12,7 +12,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
 
         window.$rootScope = $rootScope;
         $rootScope.emulator.state = '';
-        $rootScope.emulator.detached = false;
         vm.emulator = $rootScope.emulator;
 
         if ($stateParams.containerRuntime != null) {
@@ -69,7 +68,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                     return;
 
                 $rootScope.emulator.state = 'STOPPED';
-                $rootScope.emulator.detached = false;
                 $("#emulator-container").hide();
                 $("#emulator-loading-container").show();
                 $("#emulator-loading-container").text($translate.instant('JS_EMU_STOPPED'));
@@ -170,7 +168,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             });
 
             $scope.$on('$destroy', function (event) {
-                stopClient($uibModal, $stateParams.isNetworkEnvironment || $rootScope.emulator.detached, eaasClient);
+                stopClient($uibModal, $stateParams.isNetworkEnvironment, eaasClient);
             });
 
             try {
@@ -179,7 +177,6 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
                         throw new Error("reattch requires a network session");
                     
                     await eaasClient.attach($stateParams.session.sessionId, $("#emulator-container")[0], $stateParams.componentId);
-                    $rootScope.emulator.detached = true;
                 } else if(networkSessionId) {
                     await eaasClient.attachNewEnv(networkSessionId, $("#emulator-container")[0], component);
                     vm.started = true;

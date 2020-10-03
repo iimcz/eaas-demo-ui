@@ -1003,6 +1003,11 @@ function($stateProvider,
                             growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
                             $state.go("admin.standard-envs-overview", {}, {reload: true});
                         }
+                        if(!$stateParams.selectedNetworkEnvironment)
+                        {
+                            growl.error("no environment selected");
+                            $state.go("admin.standard-envs-overview", {}, {reload: true});
+                        }
                         $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
                     }]
                 }
@@ -1032,6 +1037,21 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/images/overview.html'),
                     controller: "ImagesOverviewController as imagesCtrl"
+                }
+            }
+        })
+
+        .state('admin.update', {
+            url: "/update",
+            params: {},
+            resolve: {
+                current: ($http, localConfig) =>
+                    $http.get(localConfig.data.eaasBackendURL + "operator/api/v1/deployment/current"),
+            },
+            views: {
+                'wizard': {
+                    template: require('./modules/settings/update.html'),
+                    controller: "UpdateController as updateCtrl"
                 }
             }
         })
