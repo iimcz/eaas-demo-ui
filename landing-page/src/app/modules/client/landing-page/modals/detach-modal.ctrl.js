@@ -21,8 +21,6 @@ module.exports = ['$state', 'currentEnv', 'eaasClient',
         this.sessionName;
         this.componentName = eaasClient.componentId;
         this.detach = function () {
-            if ($rootScope.emulator)
-                $rootScope.emulator.detached = true;
             eaasClient.detach(this.sessionName, this.detachTime, this.componentName);
             $state.go('admin.networking', {});
         };
