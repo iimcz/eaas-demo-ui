@@ -474,14 +474,10 @@ function($stateProvider,
         return {
             responseError: function(rejection) {
 
-                if (rejection && rejection.status === 401) {
+                if (rejection && (rejection.status === 401 || rejection.status === 403)) {
                      $injector.get('$state').go('login');
                      return $q.reject(rejection);
-                } else if (rejection && rejection.status === 403)
-                {
-                    $injector.get('$state').go('unauthorized');
-                    return $q.reject(rejection);
-                }
+                } 
                 if ($rootScope.waitingForServer && (rejection.status === 0 || rejection.status === 404)) {
                     var $http = $injector.get('$http');
 
