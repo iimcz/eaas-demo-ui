@@ -248,7 +248,7 @@
     {
       "id":"os:linux:ubuntu", 
       "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
-      "label": "Ubuntu",
+      "label": "Debian/Ubuntu",
       "kvm_available" : true,
       "qid" : "",
       "disk" : "60G",
