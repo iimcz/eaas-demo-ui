@@ -138,7 +138,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     };
 
     vm.restartEmulator = function () {
-        eaasClient.release();
+        eaasClient.release(true);
         $state.reload();
     };
 
@@ -437,9 +437,11 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         }
                         finally {
                             vm.waitModal.hide();
-                            eaasClient.release();
+                            eaasClient.release(true);
 
-                            if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                            if(vm.isNetworkEnvironment)
+                                $state.go('admin.networking', {}, {reload: true});
+                            else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                 $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                             else
                                 $state.go('admin.standard-envs-overview', {}, {reload: true})
