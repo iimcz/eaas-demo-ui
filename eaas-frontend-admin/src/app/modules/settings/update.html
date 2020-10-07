@@ -1,0 +1,37 @@
+<h2 class="m-t-0">Update</h2>
+
+<div class="jumbotron">
+    <p>
+        <b>Update current instance:</b>
+        Once you start the update process, the instance will be restarted. This process will take a few minutes. 
+    </p>
+</div>
+<p></p>
+<table id="update-table" st-table="releases" st-safe-src="updateCtrl.updateList" class="table">
+    <thead>
+    <tr>
+        <th >
+           Channel
+        </th>
+        <th>
+            Release
+        </th>
+        <th>
+            Release Date
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+
+    <tbody>
+        <tr ng-repeat="row in releases">
+            <td>{{row.channel}}</td>
+            <td>{{row.version}} <span ng-if="updateCtrl.latestVersion == row.version"><img height="30" src="img/new.png"></span></td>
+            <td>{{row.date}}</td>
+            <td>
+                <button ng-if="updateCtrl.currentVersion != row.version" ng-click="updateCtrl.update(row)">install</button>
+                <p ng-if="updateCtrl.currentVersion == row.version">installed</p>
+            </td>
+        </tr>
+    </tbody>
+</table>

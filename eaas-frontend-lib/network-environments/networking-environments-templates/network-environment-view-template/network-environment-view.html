@@ -77,6 +77,8 @@
 <br>
 <div mat-dialog-actions align="end">
     <button type="submit" value="submit" [disabled]="chosenEnvs.length == 0 && !networkingConfig.dnsServiceEnv" mat-raised-button style="margin-right:5px;" color="primary"
+            (click)="submitForm(f, true)">Save & Run</button>
+    <button type="submit" value="submit" [disabled]="chosenEnvs.length == 0 && !networkingConfig.dnsServiceEnv" mat-raised-button style="margin-right:5px;" color="primary"
             (click)="submitForm(f)">{{"CHAR_SAVE" | translate}}</button>
     <button mat-stroked-button (click)="$state.go('admin.networking', {}, {reload: true})">{{"ADDENV_CANCEL" | translate}}</button>
 </div>

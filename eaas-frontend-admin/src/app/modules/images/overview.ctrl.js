@@ -37,7 +37,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
             controller: ["$scope", "localConfig", "patchList", function($scope, localConfig, patchList) {
                 $scope.patchList = patchList.data;
                 $scope.selected = {};
-
+                let waitModal; 
                 this.patch = async() =>
                 {
                     let req = {
@@ -46,6 +46,8 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         "imageId": id
                     };
                     try {
+                        waitModal = new WaitModal($uibModal);
+                        waitModal.show("Patching disk image", "Please wait");
                         await _fetch(`${localConfig.data.eaasBackendURL}/environment-repository/patches/${$scope.selected.patch.name}`, "POST", req, localStorage.getItem('id_token'));
                     }
                     catch(e)
@@ -53,6 +55,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         growl.error(e.name + ': ' + e.message);
                     }
                     finally {
+                        waitModal.hide();
                         modal.close();
                         $state.reload();
                     }

@@ -65,3 +65,4 @@ emilUIModule.controller('RuntimeOverviewCtrl', require('./settings/runtime-overv
 emilUIModule.controller('DefaultEnvsOverviewCtrl', require('./settings/default-envs-overview.ctrl.js'));
 emilUIModule.controller('ServiceContainerCtrl', require('./settings/service-container-overview.ctrl.js'));
 emilUIModule.controller('NetworkGroupManagerCtrl', require('./networking/modals/connectEnvToNetwork.ctrl.js'));
+emilUIModule.controller('UpdateController', require('./settings/update.ctrl.js'));

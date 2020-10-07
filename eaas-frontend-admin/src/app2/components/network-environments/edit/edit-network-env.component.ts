@@ -61,7 +61,7 @@ export class EditNetworkComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.networkEnvironmentView.submitForm = (f: NgForm) => {
+        this.networkEnvironmentView.submitForm = (f: NgForm, run: boolean=false) => {
             if (f.valid) {
                 // You will get form value if your form is valid
                 saveNetworkEnv(this.http,
@@ -72,7 +72,10 @@ export class EditNetworkComponent implements AfterViewInit {
                     .subscribe((reply: any) => {
                         if (reply.status == "0") {
                             this.growl.success("Done");
-                            this.$state.go('admin.networking', {}, {reload: true});
+                            if(!run)
+                                this.$state.go('admin.networking', {}, {reload: true});
+                            else
+                                this.$state.go('admin.emulator', {envId: this.selectedNetworkEnvironment.envId, isNetworkEnvironment: true}, {reload: true}); 
                         } else {
                             this.growl.error("Saved failed! ", reply);
                             console.log(reply);
