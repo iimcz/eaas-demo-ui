@@ -149,7 +149,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
 
             let component = null;
             if($stateParams.uvi)
-                componet = new UviMachineComponentBuilder($stateParams.uvi, environmentId, archive); 
+                component = new UviMachineComponentBuilder($stateParams.uvi, environmentId, archive); 
             else
                 component = new MachineComponentBuilder(environmentId, archive);
 
