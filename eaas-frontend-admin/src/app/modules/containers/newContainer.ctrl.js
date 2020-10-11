@@ -3,6 +3,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
 
         var container = this;
         container.runtimes = runtimeList.data.runtimes;
+        console.log(container.runtimes);
 
         // initialize default values of the form
         container.imageSize = 1024;

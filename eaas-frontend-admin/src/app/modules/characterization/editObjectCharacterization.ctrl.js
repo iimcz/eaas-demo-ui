@@ -51,7 +51,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
 
      vm.automaticCharacterization = function(updateClassification, updateProposal) {
          if (window.confirm($translate.instant('JS_START_CHAR'))) {
-
+             
              const modal = $uibModal.open({
                 animation: true,
                 template: require('./modals/wait.html'),
@@ -145,7 +145,9 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
 
      vm.saveSoftware = function() {
         vm.softwareObj.objectId = $stateParams.objectId;
-        vm.softwareObj.label = vm.metadata.title;
+        if(vm.metadata)
+            vm.softwareObj.label = vm.metadata.title;
+
         vm.softwareObj.isPublic = vm.isPublic;
         vm.softwareObj.archiveId = $stateParams.objectArchive;
 

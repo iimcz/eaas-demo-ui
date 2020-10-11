@@ -1,0 +1,22 @@
+<div class="modal-header">
+        <h3 class="modal-title">{{'UPLOAD_FILE_TITLE' | translate}}</h3>
+    </div>
+    
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label>{{'UPLOAD_FILE_SELECTED'| translate }}: </label> <span > {{ selectFileModalCtrl.selectedFile.name }}  
+                    
+                        <span style="float: right"><button type="button" class="btn btn-default" 
+                            ngf-select="selectFileModalCtrl.select()" 
+                            ng-model="selectFileModalCtrl.selectedFile" ngf-multiple="false" >Choose</button></span></span>
+            </div>
+    
+            <div style="text-align: right;">
+                <button type="submit" class="btn btn-default" ng-click="$close()">{{'ADDSW_DIALOG_CANCEL' | translate}}</button>
+                <button type="submit" class="btn btn-primary"
+                        ng-click="$close();selectFileModalCtrl.add()"
+                        ng-disabled="!selectFileModalCtrl.selectedFile">{{'UPLOAD_FILE_ADD' | translate}}</button>
+            </div>
+        </form>
+    </div>

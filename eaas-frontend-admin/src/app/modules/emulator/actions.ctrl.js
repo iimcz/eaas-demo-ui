@@ -20,6 +20,13 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     vm.mediaList = [];
     vm.removableMediaList = [];
 
+    if($stateParams.uvi)
+    {
+        vm.objEnvironments = $stateParams.uvi.environments
+    }
+    else 
+        vm.objEnvironments = [];
+
     /*
     var objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
     var objectId = $stateParams.softwareId ? $stateParams.softwareId : $stateParams.objectId;
@@ -156,14 +163,39 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         $state.go('admin.standard-envs-overview', {}, { reload: true });
     };
 
+    vm.openChangeEnvDialog = function() {
+        $uibModal.open({
+            animation: true,
+            template: require('./modals/choose-env-dialog.html'),
+            controller: ["$scope", function($scope) {
+                this.custom_env = null;
+                this.environments = vm.objEnvironments;
+
+                this.changeEnv= function()
+                {
+                    window.eaasClient.release();
+                    let data = {envId: this.custom_env.id};
+
+                    if($stateParams.uvi)
+                    {
+                        data.enableDownload = $stateParams.enableDownload,
+                        data.uvi = $stateParams.uvi
+                    }
+                    $state.go('admin.emulator', data, {reload: true});
+                };
+            }],
+            controllerAs: "changeEnvDialogCtrl"
+        });
+    };
+
     vm.stopEmulator = function () {
         $uibModal.open({
             animation: true,
             template: require('./modals/confirm-stop.html'),
             controller: ['$scope', function($scope) {
-                this.confirmed = function() {
+                this.confirmed = async function() {
                     window.onbeforeunload = null;
-                    stopClient($uibModal, false, eaasClient);
+                    await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
                     $('#emulator-stopped-container').show();
 
                     if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
@@ -430,7 +462,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
                             let result = await eaasClient.getActiveSession().snapshot(postReq, vm.isNetworkEnvironment ? vm.envId : undefined); 
-                            console.log(result);
+                            // console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
                             growl.error(e.name, {title: 'Error ' + e.message});
