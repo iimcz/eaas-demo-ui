@@ -195,7 +195,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             controller: ['$scope', function($scope) {
                 this.confirmed = async function() {
                     window.onbeforeunload = null;
-                    await stopClient($uibModal, false, $stateParams.enableDownload, eaasClient);
+                    await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
                     $('#emulator-stopped-container').show();
 
                     if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
@@ -462,7 +462,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
                             let result = await eaasClient.getActiveSession().snapshot(postReq, vm.isNetworkEnvironment ? vm.envId : undefined); 
-                            console.log(result);
+                            // console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
                             growl.error(e.name, {title: 'Error ' + e.message});

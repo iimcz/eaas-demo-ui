@@ -174,13 +174,19 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             });
 
             $scope.$on('$destroy', function (event) {
-                stopClient($uibModal, $stateParams.isNetworkEnvironment, false, eaasClient);
+                window.onbeforeunload = null;
+                if($stateParams.isNetworkEnvironment)
+                {
+                    eaasClient.release();
+                }
+                else 
+                    stopClient($uibModal, false, eaasClient);
             });
 
             try {
                 if ($stateParams.componentId && $stateParams.session) {
                     if (!$stateParams.session.network)
-                        throw new Error("reattch requires a network session");
+                        throw new Error("reattach requires a network session");
                     
                     await eaasClient.attach($stateParams.session.sessionId, $("#emulator-container")[0], $stateParams.componentId);
                 } else if(networkSessionId) {
