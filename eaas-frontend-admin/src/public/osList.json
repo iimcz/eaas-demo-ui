@@ -64,7 +64,7 @@
       "template" : "qemu-x86",
       "template_params" : 
       {
-        "vga" : "cirrus",
+        "vga" : "std",
         "cpu" : "4",
         "net" : "e1000",
         "audio" : "hda",
