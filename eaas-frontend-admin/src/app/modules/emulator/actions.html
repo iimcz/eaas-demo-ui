@@ -98,6 +98,11 @@
             Close
         </button>
 
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.openChangeEnvDialog()"
+                ng-if="actionsCtrl.objEnvironments.length > 1"
+                ng-disabled="actionsCtrl.emulator.state !== 'STARTED'"
+                >Alternative Environments</button>
+
         <button  class="btn btn-default"
                  uib-dropdown-toggle ng-if="actionsCtrl.components.length > 1"
                  uib-dropdown on-toggle="toggled(open)">

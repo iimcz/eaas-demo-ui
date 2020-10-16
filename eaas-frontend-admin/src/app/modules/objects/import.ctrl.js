@@ -46,7 +46,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 animation: true,
                 template: require('./modals/add-file-dialog.html'),
                 controller: ["$scope", function($scope) {
-                    this.select = function()
+                    this.select = function() 
                     {
                         console.log(this.selectedFile);
                         console.log(this.mediumType);
@@ -55,12 +55,12 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                     this.add = function()
                     {
                         vm.add(this.selectedFile, this.mediumType);
-                    }
+                    } 
                 }],
                 controllerAs: "selectFileModalCtrl"
             });
         };
-
+       
 
        vm.checkState = function(_taskId, _modal)
        {
@@ -150,7 +150,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                 modal.close();
 
             });
-
+            
         }
 
        vm.upload = function()
@@ -185,11 +185,11 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                          console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data.userDataUrl);
                          uploadCnt--;
                          let deviceId =  vm.selectedFiles.find(x => x.file.name === resp.config.data.file.name).mediaType;
-                         let fileInfo = {
-                             filename: resp.config.data.file.name,
-                             url: resp.data.uploads[0],
-                             deviceId: deviceId,
-                            } ;
+                         let fileInfo = { 
+                             filename: resp.config.data.file.name, 
+                             url: resp.data.uploads[0], 
+                             deviceId: deviceId, 
+                            };
                          objectMetaData.files.push(fileInfo);
                          if(uploadCnt === 0) {
                             vm.importMetaData(modal, objectMetaData);

@@ -4,6 +4,7 @@ import {requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
 import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
 import { TcpGatewayConfig, ClientOptions } from "EaasClient/lib/clientOptions";
 import { _fetch } from "../../lib/utils";
+import { UviMachineComponentBuilder } from "../../../../../eaas-client/lib/componentBuilder";
 
 module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams', '$cookies', '$translate', '$http', 'localConfig', 'growl', 'Environments', 'EmilNetworkEnvironments', 'chosenEnv', 'eaasClient',
     function ($rootScope, $uibModal, $scope, $state, $stateParams, $cookies, $translate, $http, localConfig, growl, Environments, EmilNetworkEnvironments, chosenEnv, eaasClient) {
@@ -146,7 +147,12 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             else
                 environmentId = $stateParams.envId;
 
-            let component = new MachineComponentBuilder(environmentId, archive);
+            let component = null;
+            if($stateParams.uvi)
+                component = new UviMachineComponentBuilder($stateParams.uvi, environmentId, archive); 
+            else
+                component = new MachineComponentBuilder(environmentId, archive);
+
             component.setObject( $stateParams.objectId, $stateParams.objectArchive);
             component.setSoftware($stateParams.softwareId);
             component.setKeyboard(kbLayoutPrefs.language.name, kbLayoutPrefs.layout.name);
@@ -168,13 +174,19 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
             });
 
             $scope.$on('$destroy', function (event) {
-                stopClient($uibModal, $stateParams.isNetworkEnvironment, eaasClient);
+                window.onbeforeunload = null;
+                if($stateParams.isNetworkEnvironment)
+                {
+                    eaasClient.release();
+                }
+                else 
+                    stopClient($uibModal, false, eaasClient);
             });
 
             try {
                 if ($stateParams.componentId && $stateParams.session) {
                     if (!$stateParams.session.network)
-                        throw new Error("reattch requires a network session");
+                        throw new Error("reattach requires a network session");
                     
                     await eaasClient.attach($stateParams.session.sessionId, $("#emulator-container")[0], $stateParams.componentId);
                 } else if(networkSessionId) {
