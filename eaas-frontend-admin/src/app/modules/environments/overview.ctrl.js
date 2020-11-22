@@ -335,23 +335,29 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                
                 <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                   <li ng-if="data.archive !='remote'" role="menuitem dropdown-content">
-                        <a class="dropdown-content" ng-click="switchAction(data.id, 'run')">{{'CHOOSE_ENV_PROPOSAL'| translate}}</a>
+                        <a class="dropdown-content" ng-click="switchAction(data.id, 'run', data.archive)">{{'CHOOSE_ENV_PROPOSAL'| translate}}</a>
                   </li>
                   
                   <li role="menuitem">
-                    <a class="dropdown-content" ng-click="switchAction(data.id, 'edit')">{{'CHOOSE_ENV_EDIT'| translate}}</a>
+                    <a class="dropdown-content" ng-click="switchAction(data.id, 'edit', data.archive)">{{'CHOOSE_ENV_EDIT'| translate}}</a>
                   </li>
                   <li role="menuitem">
                     <a ng-if="data.archive == 'default'" 
-                        class="dropdown-content" ng-click="switchAction(data.id, 'deleteEnvironment')">
+                        class="dropdown-content" ng-click="switchAction(data.id, 'deleteEnvironment', data.archive)">
                             {{'CHOOSE_ENV_DEL'| translate}}
+                    </a>
+                  </li>
+
+                  <li role="menuitem">
+                    <a class="dropdown-content" ng-click="switchAction(data.id, 'export', data.archive)">
+                            export
                     </a>
                   </li>
                   
                   <li role="menuitem">
                     <a ng-if="data.archive !== 'remote' && data.archive !== 'default'" 
                         target="_blank" class="dropdown-content" 
-                        ng-click="switchAction(data.id, 'openLandingPage')">
+                        ng-click="switchAction(data.id, 'openLandingPage', data.archive)">
                             {{'CONTAINER_LANDING_PAGE'| translate}}
                     </a>
                   </li>
@@ -366,11 +372,11 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 </button>
                 <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                 
-                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'run')">{{'CHOOSE_ENV_PROPOSAL'| translate}}</a></li>
-                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'edit')">{{'CHOOSE_ENV_EDIT'| translate}}</a></li>
-                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'deleteContainer')">{{'CHOOSE_ENV_DEL\'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'run', data.archive)">{{'CHOOSE_ENV_PROPOSAL'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'edit', data.archive)">{{'CHOOSE_ENV_EDIT'| translate}}</a></li>
+                  <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, 'deleteContainer', data.archive)">{{'CHOOSE_ENV_DEL\'| translate}}</a></li>
                   <li role="menuitem"><a ng-if="landingPage && data.archive !== 'remote' && data.archive !== 'default'" target="_blank" class="dropdown-content"
-                  ng-click="switchAction(data.id, 'openLandingPage')"">{{'CONTAINER_LANDING_PAGE'| translate}} {{ data.archive }}</a></li>
+                  ng-click="switchAction(data.id, 'openLandingPage', data.archive)"">{{'CONTAINER_LANDING_PAGE'| translate}} {{ data.archive }}</a></li>
                 </ul>
              </div>`;
 
@@ -380,8 +386,8 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 return environmentRenderer;
         }
 
-        function switchAction(id, selected) {
-            vm[selected](id);
+        function switchAction(id, selected, archive) {
+            vm[selected](id, archive);
         }
 
         vm.run = function (id) {

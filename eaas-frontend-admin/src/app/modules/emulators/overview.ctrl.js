@@ -44,16 +44,27 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                      var _vm = this;
                      _vm.doImport = function () {
 
-                                $http.post(localConfig.data.eaasBackendURL + REST_URLS.importEmulator,
-                                 {
-                                     urlString: _vm.imageUrl,
-                                     runtimeID: _vm.runtime,
-                                     tag: (_vm.tag) ? _vm.tag : "latest",
-                                     alias: (_vm.alias) ? _vm.alias : "latest",
-                                     isEmulator: true,
-                                     imageType: "dockerhub",
-                                 }).then(function (response) {
+                           let postObj;
+                           
+                           if(_vm.imageUrl)
+                                postObj = {
+                                    urlString: _vm.imageUrl,
+                                    runtimeID: _vm.runtime,
+                                    tag: (_vm.tag) ? _vm.tag : "latest",
+                                    alias: (_vm.alias) ? _vm.alias : "latest",
+                                    isEmulator: true,
+                                    imageType: "dockerhub",
+                                };
+                            else
+                                postObj = {
+                                    urlString: _vm.qcowImageUrl,
+                                    isEmulator: true,
+                                    alias: (_vm.alias) ? _vm.alias : "latest",
+                                    imageType: "readymade",
+                                };
 
+                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.importEmulator, postObj
+                            ).then(function (response) {
                                  if (response.data.status === "0") {
                                      var taskId = response.data.taskId;
                                      _vm.modal = $uibModal.open({
