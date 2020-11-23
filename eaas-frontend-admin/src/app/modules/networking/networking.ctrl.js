@@ -142,7 +142,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                 vm.envs = vm.envs.filter(function (env) {
                     return env.envId !== envId;
                 });
-                growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                growl.success("Network has been deleted");
                 $state.go('admin.networking', {}, {reload: true});
             } else {
                 growl.error(response.data.message, {title: 'Error ' + response.data.status});
@@ -210,6 +210,10 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
     }
 
     function deleteSession(id) {
+        let confirmationResult = window.confirm("Delete network session?");
+        if (!confirmationResult) 
+            return;
+        
         $http.delete(localConfig.data.eaasBackendURL + "sessions/" + id).then((response) => {
             console.log(response);
             $state.go('admin.networking', {}, {reload: true});
