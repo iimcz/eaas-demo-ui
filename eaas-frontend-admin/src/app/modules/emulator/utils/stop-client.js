@@ -13,11 +13,11 @@ export async function stopClient($uibModal, download, eaasClient) {
         if (doRelease)
         {
             console.log("releasing from stop ");
-            await eaasClient.release();
+            await eaasClient.release(true);
         }   
         else {
             console.log("trying to stop...");
-            result = await eaasClient.stopEnvironment(true);
+            result = await eaasClient.stop();
         }
 
         window.onbeforeunload = null;

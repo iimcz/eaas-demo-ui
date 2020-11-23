@@ -1,4 +1,3 @@
-import {stopClient} from "./utils/stop-client";
 import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
 import {requestPointerLock, ClientError} from "EaasClient/eaas-client.js";
 import { MachineComponentBuilder } from "EaasClient/lib/componentBuilder";
@@ -175,12 +174,7 @@ module.exports = ['$rootScope', '$uibModal', '$scope', '$state', '$stateParams',
 
             $scope.$on('$destroy', function (event) {
                 window.onbeforeunload = null;
-                if($stateParams.isNetworkEnvironment)
-                {
-                    eaasClient.release();
-                }
-                else 
-                    stopClient($uibModal, false, eaasClient);
+                eaasClient.release();
             });
 
             try {

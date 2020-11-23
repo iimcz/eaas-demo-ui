@@ -173,7 +173,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
                 this.changeEnv= function()
                 {
-                    window.eaasClient.release();
+                    eaasClient.release();
                     let data = {envId: this.custom_env.id};
 
                     if($stateParams.uvi)
