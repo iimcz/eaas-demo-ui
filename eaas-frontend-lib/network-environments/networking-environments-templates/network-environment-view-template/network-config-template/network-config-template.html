@@ -58,33 +58,31 @@
 </div>
 
 <!-- DNS/DHCP Service-->
-<mat-checkbox [disabled]="isDisabled" class="example-section" [(ngModel)]="isDnsDefined"
-    (ngModelChange)="ensureDNSexclusivity($event, 1)" color="primary">DNS/DHCP Service</mat-checkbox>
+<div *ngIf="isDnsAvailable">
+    <mat-checkbox [disabled]="isDisabled" class="example-section" [(ngModel)]="isDnsDefined"
+        (ngModelChange)="ensureDNSexclusivity($event, 1)" color="primary">DNS/DHCP Service</mat-checkbox>
 
-<mat-form-field class="paddingLeft example-section" *ngIf="isDnsDefined"
-    style="display:inline-block;margin-right:15px; width:40%;">
-    <mat-label>DNS/DHCP</mat-label>
-    <mat-select [disabled]="isDisabled" [(value)]="networkingConfig.dnsServiceEnv">
-        <mat-option *ngFor="let env of environments" [value]="env">
-            {{env.title}}
-        </mat-option>
-    </mat-select>
-</mat-form-field>
-<div *ngIf="isDnsDefined">
-    <mat-form-field class="paddingLeft example-section" style="display:inline-block;margin-right:15px; width:40%;">
-        <mat-label>DHCP Server IP (e.g., 10.0.0.2)</mat-label>
-        <input [disabled]="isDisabled" matInput [(ngModel)]="networkingConfig.dhcpNetworkAddress">
+    <div *ngIf="isDnsDefined">
+        <mat-form-field class="paddingLeft example-section" style="display:inline-block;margin-right:15px; width:40%;">
+            <mat-label>DHCP Server IP (e.g., 10.0.0.2)</mat-label>
+            <input [disabled]="isDisabled" matInput [(ngModel)]="networkingConfig.dhcpNetworkAddress">
+        </mat-form-field>
+    </div>
+    <mat-form-field *ngIf="isDnsDefined" class="paddingLeft example-section"
+        style="display:inline-block;margin-right:15px; width:40%;">
+        <!--            allow ip or empty string-->
+        <mat-label>External DNS (e.g., 1.0.0.1 (Cloudflare DNS) or 8.8.8.8 (Google Public DNS))</mat-label>
+        <input [disabled]="isDisabled" matInput name='upstream_dns' [(ngModel)]="networkingConfig.upstream_dns"
+            pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)">
+        <mat-error>Entered IP address is invalid!</mat-error>
     </mat-form-field>
 </div>
-<mat-form-field *ngIf="isDnsDefined" class="paddingLeft example-section"
-    style="display:inline-block;margin-right:15px; width:40%;">
-    <!--            allow ip or empty string-->
-    <mat-label>External DNS (e.g., 1.0.0.1 (Cloudflare DNS) or 8.8.8.8 (Google Public DNS))</mat-label>
-    <input [disabled]="isDisabled" matInput name='upstream_dns' [(ngModel)]="networkingConfig.upstream_dns"
-        pattern="^([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})[.]([0-9]{1,3})$|(^$)">
-    <mat-error>Entered IP address is invalid!</mat-error>
-</mat-form-field>
 
+<!-- Storage Service-->
+<div *ngIf="isSmbAvailable">
+    <mat-checkbox [disabled]="isDisabled" class="example-section" [(ngModel)]="isSmbDefined"
+        color="primary">Windows Network Storage Service</mat-checkbox>
+</div>
 <!--StartUp Environment during landing page attach-->
 <!--
 <mat-checkbox [disabled]="isDisabled" class="example-section" [(ngModel)]="networkingConfig.isShared" color="primary">

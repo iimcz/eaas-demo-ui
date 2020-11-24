@@ -19,6 +19,7 @@ export class NetworkEnvironmentView {
     @Input() chosenEnvs: any[] = [];
     @Input() networkingConfig: any;
     @Input() networkEnvironmentTitle: string;
+    @Input() containerList: any;
 
     @ViewChild(NetworkConfigTemplate, {static: false})
     networkConfigTemplate: NetworkConfigTemplate;
@@ -40,7 +41,8 @@ export class NetworkEnvironmentView {
 
     ngOnInit () {
         if (this.networkingConfig){
-            this.networkingConfig.dnsServiceEnv = this.environments.find((env => env.envId == this.networkingConfig.dnsServiceEnvId));
+            this.networkingConfig.dnsServiceEnvId = this.environments.find((env => env.envId == this.networkingConfig.dnsServiceEnvId));
+            this.networkingConfig.smbServiceEnvId = this.environments.find((env => env.envId == this.networkingConfig.smbServiceEnvId));
             this.networkingConfig.startupEnv = this.environments.find((env => env.envId == this.networkingConfig.startupEnvId));
         }
         else

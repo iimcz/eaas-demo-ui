@@ -14,6 +14,8 @@ import {saveNetworkEnv} from "EaasLibs/network-environments/network-environment-
 })
 export class AddNetworkComponent implements AfterViewInit {
     @Input() environments: any;
+    @Input() containerList: any;
+    
     @ViewChild(NetworkEnvironmentView, {static: false})
     private networkEnvironmentView: NetworkEnvironmentView;
 

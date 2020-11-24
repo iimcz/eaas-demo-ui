@@ -975,15 +975,20 @@ function($stateProvider,
             resolve: {
                 environments: (Environments) => {
                     return Environments.query().$promise;
-                }
+                },
+                containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
             },
             views: {
                 'wizard': {
                     template: '<add-Network-Environment' +
-                        '  [environments] = environments>' +
+                        ' [environments] = environments' +
+                        ' [container-List] = containerList>' +
                         '</add-Network-Environment>',
-                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', 'containerList',
+                        function ($scope, $state, $stateParams, $translate, environments, growl, containerList) {
                         $scope.environments = environments.filter(env => env.networkEnabled === true);
+                        $scope.containerList = containerList;
+
                         if ($scope.environments.length === 0) {
                             growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
                             $state.go("admin.standard-envs-overview", {}, {reload: true});
@@ -998,15 +1003,21 @@ function($stateProvider,
             resolve: {
                 environments: (Environments) => {
                     return Environments.query().$promise;
-                }
+                },
+                containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
             },
             views: {
                 'wizard': {
                     template: '<edit-Network-Environment ' +
                         '[environments] = environments '+
-                        '[selected-Network-Environment] = selectedNetworkEnvironment>' +
+                        '[selected-Network-Environment] = selectedNetworkEnvironment ' +
+                        '[container-List] = containerList >' +
                         '</edit-Network-Environment>',
-                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', function ($scope, $state, $stateParams, $translate, environments, growl) {
+                    controller: ["$scope", "$state", '$stateParams', '$translate', 'environments', 'growl', 'containerList',
+                        function ($scope, $state, $stateParams, $translate, environments, growl, containerList) {
+                        
+                            console.log(containerList);
+
                         $scope.environments = environments.filter(env => env.networkEnabled === true);
                         if ($scope.environments.length === 0) {
                             growl.error($translate.instant('NO_ENVIRONMENTS_WITH_NETWORK'));
@@ -1018,6 +1029,7 @@ function($stateProvider,
                             $state.go("admin.standard-envs-overview", {}, {reload: true});
                         }
                         $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
+                        $scope.containerList = containerList;
                     }]
                 }
             }

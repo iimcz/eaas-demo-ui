@@ -13,6 +13,7 @@ import {saveNetworkEnv} from "EaasLibs/network-environments/network-environment-
 export class EditNetworkComponent implements AfterViewInit {
     @Input() selectedNetworkEnvironment: any;
     @Input() environments: any;
+    @Input() containerList: any;
 
     @ViewChild(NetworkEnvironmentView, {static: false})
     private networkEnvironmentView: NetworkEnvironmentView;
@@ -42,15 +43,12 @@ export class EditNetworkComponent implements AfterViewInit {
             gateway: this.selectedNetworkEnvironment.gateway,
             upstream_dns: this.selectedNetworkEnvironment.upstream_dns,
             dnsServiceEnvId: this.selectedNetworkEnvironment.dnsServiceEnvId,
+            smbServiceEnvId: this.selectedNetworkEnvironment.smbServiceEnvId,
             startupEnvId: this.selectedNetworkEnvironment.startupEnvId,
             isShared: !!this.selectedNetworkEnvironment.startupEnvId,
             description: this.selectedNetworkEnvironment.description,
         };
         // enrich chosenEnvs with title and implicit id
-
-        console.log("nginit");
-        console.log(this.environments);
-        console.log(this.selectedNetworkEnvironment);
 
         if (this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
             this.selectedNetworkEnvironment.emilEnvironments.forEach(networkElement => {
