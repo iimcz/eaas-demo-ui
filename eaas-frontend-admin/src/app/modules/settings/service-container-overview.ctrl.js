@@ -33,17 +33,17 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
             });
         });
 
-        container.checkState = function (_taskId, stayAtPage) {
+        container.checkState = function (_taskId, stayAtPage, selectedContainer) {
             var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
                 if (response.data.status == "0") {
                     if (response.data.isDone) {
 
                         container.id = response.data.userData.environmentId;
-                        container.saveImportedContainer();
+                        container.saveImportedContainer(selectedContainer);
                     }
                     else
                         $timeout(function () {
-                            container.checkState(_taskId, stayAtPage);
+                            container.checkState(_taskId, stayAtPage, selectedContainer);
                         }, 2500);
                 }
                 else {
@@ -53,11 +53,11 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
             });
         };
 
-        container.saveImportedContainer = function () {
+        container.saveImportedContainer = function (selectedContainer) {
             $http.post(localConfig.data.eaasBackendURL + REST_URLS.saveImportedContainer, {
                 id: container.id,
-                title: container.selectedContainer.title,
-                description: container.selectedContainer.description,
+                title: selectedContainer.title,
+                description: selectedContainer.description,
                 author: "OpenSLX",
                 enableNetwork: true,
                 runtimeId: container.selectedRuntime.envId,
@@ -98,6 +98,7 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
                     urlString: container.selectedContainer.imageUrl,
                     runtimeID: container.runtime,
                     name: container.selectedContainer.id,
+                    serviceContainerId: container.selectedContainer.id,
                     tag: (container.tag) ? container.tag : "latest",
                     processArgs: container.args,
                     processEnvs: container.env,
@@ -116,7 +117,7 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
                             animation: true,
                             templateUrl: 'partials/wait.html'
                         });
-                        container.checkState(taskId, true);
+                        container.checkState(taskId, true, container.selectedContainer);
                     }
                     else {
                         $state.go('error', {errorMsg: {title: 'Error ' + response.data.message + "\n\n" + container.description}});

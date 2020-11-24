@@ -146,5 +146,43 @@ export async function startNetworkEnvironment(controller, eaasClient, networkEnv
             */
         }
     }
+
+    if (networkEnvironment.smbServiceEnvId) {
+        let env = await Environments.get({envId: networkEnvironment.smbServiceEnvId}).$promise;
+        if (env.runtimeId) {
+            const runtimeEnv = await Environments.get({envId: env.runtimeId}).$promise;
+            controller.ServiceEnv = env;
+           
+            const component = new MachineComponentBuilder(env.runtimeId, runtimeEnv.archive);
+            const sts = await $http.get(localConfig.data.eaasBackendURL + "user-data-storage/sts");
+
+            env.networking.isDHCPenabled = true;
+            component.setLinuxRuntime(
+            {
+                userContainerEnvironment: env.envId,
+                userContainerArchive: env.archive,
+                networking: env.networking,
+                userEnvironment : [ "EAAS_STORAGE_CONFIG=" + JSON.stringify(sts.data)]
+            });
+
+            let networkComponentConfig = new NetworkComponentConfig("Windows Network Storage Service");
+            networkComponentConfig.setFqdn("storage");
+            component.setNetworkConfig(networkComponentConfig);
+            components.push(component);
+
+            /*
+            controller.networkSessionEnvironments.push({
+                "envId": env.envId,
+                "title": env.title,
+                "label": "dns",
+                "componentId": componentSession.componentId,
+                "networkData": {
+                    serverIp: "",
+                    serverPorts: []
+                }
+            });
+            */
+        }
+    }
     await eaasClient.start(components, clientOptions);
 }

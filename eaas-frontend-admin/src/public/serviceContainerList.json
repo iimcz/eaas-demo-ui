@@ -1,8 +1,16 @@
 {
-    "container" : [{
-        "id" : "dns",
-        "title" : "DNS / DHCP Service",
-        "imageUrl" :  "registry.gitlab.com/emulation-as-a-service/experiments/fake-dns",
-        "description" : "DNS / DHCP service container"
-    }]
+    "container" : [
+        {
+            "id" : "service-dns",
+            "title" : "DNS / DHCP Service",
+            "imageUrl" :  "registry.gitlab.com/emulation-as-a-service/experiments/fake-dns",
+            "description" : "DNS / DHCP service container"
+        },
+        {
+            "id" : "service-smb",
+            "title" : "User Storage (SMB)",
+            "imageUrl" :  "eaas/eaas-smb-storage",
+            "description" : "Windows shared drive"
+        }
+    ]
 }

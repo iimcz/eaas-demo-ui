@@ -18,9 +18,8 @@ export function saveNetworkEnv(http, method, endpoint, networkEnvironmentView, e
         network: networkEnvironmentView.networkingConfig.network,
         startupEnvId: networkEnvironmentView.networkingConfig.isShared && networkEnvironmentView.networkingConfig.startupEnv ?
             networkEnvironmentView.networkingConfig.startupEnv.envId : undefined,
-        dnsServiceEnvId:
-        networkEnvironmentView.networkConfigTemplate.isDnsDefined && networkEnvironmentView.networkingConfig.dnsServiceEnv ?
-                networkEnvironmentView.networkingConfig.dnsServiceEnv.envId : undefined,
+        dnsServiceEnvId: networkEnvironmentView.networkConfigTemplate.isDnsDefined ? "service-dns" : undefined,
+        smbServiceEnvId: networkEnvironmentView.networkConfigTemplate.isSmbDefined ? "service-smb" : undefined,
         emilEnvironments: networkEnvironmentView.chosenEnvs,
         title: networkEnvironmentView.networkEnvironmentTitle,
         description: networkEnvironmentView.networkingConfig.description,
