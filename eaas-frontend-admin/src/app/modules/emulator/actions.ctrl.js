@@ -145,8 +145,18 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     };
 
     vm.restartEmulator = function () {
-        eaasClient.release(true);
-        $state.reload();
+
+        $uibModal.open({
+            animation: true,
+            template: require('./modals/confirm-restart.html'),
+            controller: ['$scope', function($scope) {
+                this.confirmed = async function() {
+                    eaasClient.release(true);
+                    $state.reload();
+                };
+            }],
+            controllerAs: "confirmStopDialogCtrl"
+        });
     };
 
     vm.sendEsc = function () {
