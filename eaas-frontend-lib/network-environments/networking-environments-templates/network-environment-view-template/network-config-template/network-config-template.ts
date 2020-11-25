@@ -1,8 +1,10 @@
 import {Component, Input} from '@angular/core';
+import { ControlContainer, NgForm } from '@angular/forms';
 
 @Component({
     selector: 'network-config-template',
     template: require('./network-config-template.html'),
+    viewProviders: [ { provide: ControlContainer, useExisting: NgForm } ]
 })
 export class NetworkConfigTemplate {
     @Input() networkingConfig: any;
@@ -24,8 +26,11 @@ export class NetworkConfigTemplate {
         this.isSmbAvailable = false;
         
         if(this.containerList.container.find((container => container.id === 'service-dns')))
+        {
             this.isDnsAvailable = true;
-        
+            if(!this.networkingConfig.upstream_dns)
+                this.networkingConfig.upstream_dns = "1.0.0.1";
+        }
         if(this.containerList.container.find((container => container.id === 'service-smb')))
             this.isSmbAvailable = true;
         
