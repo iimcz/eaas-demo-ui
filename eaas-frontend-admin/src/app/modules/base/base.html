@@ -54,7 +54,7 @@
         <p class="muted credit">
             <span ng-if="baseCtrl.userInfo.status === '0'">
                 <span ng-if="baseCtrl.userInfo.username">User: {{baseCtrl.userInfo.username}} </br></span>
-                Role: {{baseCtrl.userInfo.role}}<br>
+                <span ng-if="baseCtrl.userInfo.role">Role: {{baseCtrl.userInfo.role}} </br></span>
             </span>
             Build: {{baseCtrl.buildInfo}}</br>
             UI-Build: {{baseCtrl.uiCommitHash}}
