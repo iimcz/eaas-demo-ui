@@ -103,7 +103,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                               <a ng-click="connect(data.id)"  class="dropdown-content">reattach</a>           
                         </li>
                         <li role="menuitem">
-                              <a ng-click="deleteSession(data.id)"  class="dropdown-content">delete</a>           
+                              <a ng-click="deleteSession(data.id)"  class="dropdown-content">end network session</a>           
                         </li>
 			<!--
                         <li role="menuitem" ng-if="landingPage">
