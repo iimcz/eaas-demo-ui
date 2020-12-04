@@ -347,6 +347,17 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
           angularAuth0.authorize(data);
       };
 
+      const nodeCb = (func) => new Promise((resolve, reject) =>
+        func((err, data) => err == null ? resolve(data) : reject(data)));
+
+      this.tryGetRenewedToken = async function () {
+        const redirectUri = String(new URL("auth-callback.html", new URL(auth0config.REDIRECT_URL, location)));
+        // https://auth0.github.io/auth0.js/global.html#renewAuth
+        return nodeCb(cb => angularAuth0.renewAuth({
+            redirectUri,
+        }, cb));
+      };
+
      this.logout = function () {
            // Remove tokens and expiry time from localStorage
            localStorage.removeItem('access_token');
@@ -356,12 +367,40 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
            document.location = `/auth/realms/master/protocol/openid-connect/logout?${new URLSearchParams({redirect_uri: new URL("/admin", location)})}`;
      }
 
+     // TODO: Should rather be async but probably not supported by jwtOptionsProvider/tokenGetter
+     this.getToken = function () {
+        return localStorage.getItem('id_token');
+     };
+
      this.isAuthenticated = function() {
            // Check whether the current time is past the
            // access token's expiry time
            let expiresAt = JSON.parse(localStorage.getItem('expires_at'));
            return new Date().getTime() < expiresAt;
      }
+
+     this.updateToken = function ({id_token, access_token, expires_at, expires_in}) {
+        expires_in = Number(expires_in);
+        if (expires_at == null) {
+            expires_at = Date.now() + expires_in * 1000;
+        }
+        expires_at = Number(expires_at);
+        Object.assign(localStorage, {id_token, expires_at});
+        Object.assign(localStorage, {access_token, expires_at});
+        console.debug("Will try to renew OAuth token in", expires_at - Date.now() - 60 * 1000);
+        setTimeout(async () => {
+            console.debug("Trying to renew OAuth token");
+            const newToken = await this.tryGetRenewedToken();
+            console.debug("New OAuth token", newToken);
+            this.updateToken({
+                id_token: newToken.idToken,
+                access_token: newToken.accessToken,
+                expires_in: newToken.expiresIn,
+            });
+        }, expires_at - Date.now() - 60 * 1000);
+     };
+
+     this.updateToken(localStorage);
 })
 
 .factory('Objects', function($http, $resource, localConfig) {
@@ -374,8 +413,8 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 .factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
     return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
 })
-.factory('Images', function(localConfig) {
-    return new EaasImages(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+.factory('Images', function(localConfig, authService) {
+    return new EaasImages(localConfig.data.eaasBackendURL, () => authService.getToken());
 })
 .config(['$stateProvider',
         '$urlRouterProvider',
@@ -448,7 +487,8 @@ function($stateProvider,
         overrides: {
             // The following values can usually be found in </.well-known/openid-configuration>:
             __jwks_uri: auth0config.jwks_uri,
-            __token_issuer: auth0config.issuer,
+            // HACK: Canonicalize URL to get rid of default ports
+            __token_issuer: String(new URL(auth0config.issuer)),
         },
     });
 
@@ -463,6 +503,7 @@ function($stateProvider,
         if (options && options.url.substr(options.url.length - 5) == '.json') {
             return null;
         }
+        // TODO: Should be `authService.getToken()` but creates a dependency problem
         return localStorage.getItem('id_token');
       }]
     });
@@ -764,7 +805,7 @@ function($stateProvider,
                     else
                         return null;
                 },
-                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
+                eaasClient: (localConfig, authService) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken())
             },
             params: {
                 envId: null,
@@ -805,7 +846,7 @@ function($stateProvider,
                 chosenEnv: function($stateParams, Environments) {
                     return Environments.get({envId: $stateParams.envId}).$promise;
                 },
-                eaasClient: (localConfig) => new Client(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'))
+                eaasClient: (localConfig, authService) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken())
             },
             params: {
                 envId: null,
