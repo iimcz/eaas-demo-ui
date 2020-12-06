@@ -392,6 +392,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
             console.debug("Trying to renew OAuth token");
             const newToken = await this.tryGetRenewedToken();
             console.debug("New OAuth token", newToken);
+            if (newToken == null) throw new Error("Could not renew OAuth token");
             this.updateToken({
                 id_token: newToken.idToken,
                 access_token: newToken.accessToken,
