@@ -401,7 +401,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }, expires_at - Date.now() - 60 * 1000);
      };
 
-     this.updateToken(localStorage);
+     if (localStorage.getItem("expires_in") != null) this.updateToken(localStorage);
 })
 
 .factory('Objects', function($http, $resource, localConfig) {
