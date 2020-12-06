@@ -348,7 +348,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
       };
 
       const nodeCb = (func) => new Promise((resolve, reject) =>
-        func((err, data) => err == null ? resolve(data) : reject(data)));
+        func((err, data) => err == null ? resolve(data) : reject(err)));
 
       this.tryGetRenewedToken = async function () {
         const redirectUri = String(new URL("auth-callback.html", new URL(auth0config.REDIRECT_URL, location)));
