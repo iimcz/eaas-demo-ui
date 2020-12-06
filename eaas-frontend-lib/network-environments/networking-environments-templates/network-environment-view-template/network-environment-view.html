@@ -1,4 +1,4 @@
-<form method="post" #f="ngForm" (ngSubmit)="submitForm(f)" name="network-env-form" id="network-env-form">
+<form method="post" #f="ngForm" name="network-env-form" id="network-env-form">
     <mat-form-field class="full-width">
         <input [(ngModel)]="networkEnvironmentTitle" name="evnLabel" required matInput #evnLabel="ngModel"
                placeholder="Network Environment Title">
