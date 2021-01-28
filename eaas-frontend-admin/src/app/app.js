@@ -489,7 +489,7 @@ function($stateProvider,
             // The following values can usually be found in </.well-known/openid-configuration>:
             __jwks_uri: auth0config.jwks_uri,
             // HACK: Canonicalize URL to get rid of default ports
-            __token_issuer: String(new URL(auth0config.issuer || "https://invalid.invalid")),
+            __token_issuer: String(new URL(auth0config.issuer)),
         },
     });
 
