@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-</head>
-
 <body>
-
     <wizard on-finish="finished()" hide-indicators="true" name="containerImportWizard">
         <wz-step wz-title="STEP 1" wz-order="1">
             <h3 class="m-t-0">{{'SW_NEW_CONTAINER_HEADER' | translate}}</h3> <br>
-
 
             <label>{{'SW_NEW_CONTAINER_CHOOSE_ORIGIN_RUNTIME' | translate}}</label>
             <div style="max-width: 450px;">
@@ -25,8 +16,6 @@
                     </ui-select-choices>
                 </ui-select>
             </div>
-
-            <br>
 
             <div class="panel panel-default" ng-show=newContainerCtrl.runtime==0>
                 <div class="panel-heading">runC</div>
@@ -75,47 +64,8 @@
                             class="form-control" ng-model="newContainerCtrl.customSubdir" />
                     </div>
 
-                    <input-list list="newContainerCtrl.env" heading="{{'SW_NEW_CONTAINER_ENVIRONMENT_H' | translate}}"
-                        list-empty-note="{{'SW_NEW_CONTAINER_ENVIRONMENT_NOTE' | translate}}"
-                        input-placeholder="{{'SW_NEW_CONTAINER_ENVIRONMENT_PH' | translate}}" add-button-text="+">
-                    </input-list>
-                    <input-list list="newContainerCtrl.args" heading="{{'SW_NEW_CONTAINER_ARGUMENTS_H' | translate}}"
-                        list-empty-note="{{'SW_NEW_CONTAINER_ARGUMENTS_NOTE' | translate}}"
-                        input-placeholder="{{'SW_NEW_CONTAINER_ARGUMENTS_PH' | translate}}" add-button-text="+">
-                    </input-list>
-
-                    <!--
-                <input-list list="newContainerCtrl.inputs"
-                            heading="{{'SW_NEW_CONTAINER_INPUT_H' | translate}}"
-                            list-empty-note="{{'SW_NEW_CONTAINER_INPUT_NOTE' | translate}}"
-                            input-placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}"
-                            add-button-text="+">
-                </input-list>
-                -->
-                    <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageInput" ng-disabled="newContainerCtrl.importMethod == ''"
-                        ng-required="newContainerCtrl.imageType == 'url'" />
-
-                    <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageOutput" ng-disabled="newContainerCtrl.importMethod == ''"
-                        ng-required="newContainerCtrl.imageType == 'url'" />
-
                     <br>
-                    <div class="form-group">
-                        <div style="max-width: 450px;">
-                            <label>Select container runtime</label>
-                            <ui-select ng-model="newContainerCtrl.selectedRuntime" theme="bootstrap"
-                                title="Container Runtime" required>
-                                <ui-select-match placeholder="select runtime">
-                                    {{$select.selected.title}}</ui-select-match>
-                                <ui-select-choices repeat="obj in newContainerCtrl.linuxRuntimes | filter: $select.search">
-                                    <span ng-bind-html="obj.title | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <div class="panel panel-default" ng-show=newContainerCtrl.runtime==1>
@@ -138,16 +88,6 @@
                             class="form-control" ng-model="newContainerCtrl.imageCommand"
                             ng-disabled="newContainerCtrl.imageType != 'url'"
                             ng-required="newContainerCtrl.imageType == 'url'" />
-                        <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
-                        <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}"
-                            class="form-control" ng-model="newContainerCtrl.imageInput"
-                            ng-disabled="newContainerCtrl.imageType != 'url'"
-                            ng-required="newContainerCtrl.imageType == 'url'" />
-                        <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
-                        <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}"
-                            class="form-control" ng-model="newContainerCtrl.imageOutput"
-                            ng-disabled="newContainerCtrl.imageType != 'url'"
-                            ng-required="newContainerCtrl.imageType == 'url'" />
                     </div>
 
 
@@ -167,34 +107,7 @@
                                     ng-required="newContainerCtrl.imageType == 'dockerhub'" /></label>
                         </div>
                     </div>
-                    <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageInput"
-                        ng-required="newContainerCtrl.imageType == 'dockerhub'" />
-                    <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageOutput"
-                        ng-required="newContainerCtrl.imageType == 'dockerhub'" />
-
-
-                    <br>
-
-                    <div class="form-group">
-                        <div style="max-width: 450px;">
-                            <label>Select container runtime</label>
-                            <ui-select ng-model="newContainerCtrl.selectedRuntime" theme="bootstrap"
-                                title="Container Runtime" required>
-                                <ui-select-match placeholder="select runtime">
-                                    {{$select.selected.title}}</ui-select-match>
-                                <ui-select-choices repeat="obj in newContainerCtrl.linuxRuntimes | filter: $select.search">
-                                    <span ng-bind-html="obj.title | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
                 </div>
-
-            </div>
             </div>
 
             <div class="panel panel-default" ng-show=newContainerCtrl.runtime==2>
@@ -233,46 +146,8 @@
 
 
                     <label>{{'SW_NEW_CONTAINER_ARCHIVE_T' | translate}}</label>
-
-                    <br>
-
-                    <input-list list="newContainerCtrl.env" heading="{{'SW_NEW_CONTAINER_ENVIRONMENT_H' | translate}}"
-                        list-empty-note="{{'SW_NEW_CONTAINER_ENVIRONMENT_NOTE' | translate}}"
-                        input-placeholder="{{'SW_NEW_CONTAINER_ENVIRONMENT_PH' | translate}}" add-button-text="+">
-                    </input-list>
-                    <input-list list="newContainerCtrl.args" heading="{{'SW_NEW_CONTAINER_ARGUMENTS_H' | translate}}"
-                        list-empty-note="{{'SW_NEW_CONTAINER_ARGUMENTS_NOTE' | translate}}"
-                        input-placeholder="{{'SW_NEW_CONTAINER_ARGUMENTS_PH' | translate}}" add-button-text="+">
-                    </input-list>
-
-
-                    <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageInput" ng-disabled="newContainerCtrl.importMethod == ''"
-                        ng-required="newContainerCtrl.importMethod != ''" />
-                    <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
-                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control"
-                        ng-model="newContainerCtrl.imageOutput" ng-disabled="newContainerCtrl.importMethod == ''"
-                        ng-required="newContainerCtrl.importMethod != ''" />
-
-                    <br>    
-                    <div class="form-group">
-                        <div style="max-width: 450px;">
-                            <label>Select container runtime</label>
-                            <ui-select ng-model="newContainerCtrl.selectedRuntime" theme="bootstrap"
-                                title="Container Runtime" required>
-                                <ui-select-match placeholder="select runtime">
-                                    {{$select.selected.title}}</ui-select-match>
-                                <ui-select-choices repeat="obj in newContainerCtrl.linuxRuntimes | filter: $select.search">
-                                    <span ng-bind-html="obj.title | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select>
-                        </div>
-                    </div>
-                        
                 </div>
             </div>
-            <br>
 
             <div style="text-align: right;">
                 <button type="button" ng-if="newContainerCtrl.runtime" class="btn btn-default"
@@ -291,21 +166,54 @@
             </div>
 
             <div class="modal-body">
+                <div class="form-group">
+                    <label>{{'NEW_CONTAINER_TITLE' | translate}}</label>
+                    <input type="text" class="form-control" ng-model="newContainerCtrl.title" ng-required="true" />
+                </div>
 
+                <div class="form-group">
+                    <div style="max-width: 450px;">
+                        <label>Select container runtime</label>
+                        <ui-select ng-model="newContainerCtrl.selectedRuntime" theme="bootstrap"
+                            title="Container Runtime" required>
+                            <ui-select-match placeholder="select runtime">
+                                {{$select.selected.title}}</ui-select-match>
+                            <ui-select-choices repeat="obj in newContainerCtrl.linuxRuntimes | filter: $select.search">
+                                <span ng-bind-html="obj.title | highlight: $select.search"></span>
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
 
-                <br>
-
-                <label>{{'NEW_CONTAINER_TITLE' | translate}}</label>
-                <input type="text" class="form-control" ng-model="newContainerCtrl.title" ng-required="true" />
-                <div style="height:10px;font-size:1px;">&nbsp;</div>
-                <label>{{'NEW_CONTAINER_AUTHOR' | translate}}</label>
-                <input type="text" class="form-control" ng-model="newContainerCtrl.author" />
-                <div style="height:10px;font-size:1px;">&nbsp;</div>
+                <div class="form-group">
+                    <label>{{'NEW_CONTAINER_AUTHOR' | translate}}</label>
+                    <input type="text" class="form-control" ng-model="newContainerCtrl.author" />
+                    <div style="height:10px;font-size:1px;">&nbsp;</div>
+                </div>
                 <p>
                     <b>{{'EDIT_CONTAINER_HELPTEXT' | translate}}:</b> <br />
                     <text-angular ng-model="newContainerCtrl.containerDescription"></text-angular>
                 </p>
 
+                <div class="form-group">
+                    <input-list list="newContainerCtrl.env" heading="{{'SW_NEW_CONTAINER_ENVIRONMENT_H' | translate}}"
+                        list-empty-note="{{'SW_NEW_CONTAINER_ENVIRONMENT_NOTE' | translate}}"
+                        input-placeholder="{{'SW_NEW_CONTAINER_ENVIRONMENT_PH' | translate}}" add-button-text="+">
+                    </input-list>
+                    <input-list list="newContainerCtrl.args" heading="{{'SW_NEW_CONTAINER_ARGUMENTS_H' | translate}}"
+                        list-empty-note="{{'SW_NEW_CONTAINER_ARGUMENTS_NOTE' | translate}}"
+                        input-placeholder="{{'SW_NEW_CONTAINER_ARGUMENTS_PH' | translate}}" add-button-text="+">
+                    </input-list>
+                </div>
+
+                <div class="form-group">
+                    <label>{{'SW_NEW_CONTAINER_INPUT' | translate}}</label>
+                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_INPUT_PH' | translate}}" class="form-control"
+                        ng-model="newContainerCtrl.imageInput" />
+                    <label>{{'SW_NEW_CONTAINER_OUTPUT' | translate}}</label>
+                    <input type="text" placeholder="{{'SW_NEW_CONTAINER_OUTPUT_PH' | translate}}" class="form-control"
+                        ng-model="newContainerCtrl.imageOutput" />
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -338,8 +246,6 @@
                 </div>
             </div>
 
-
-
             <div class="modal-footer">
                 <button class="btn btn-default" ng-hide="hideme" type="button"
                     ng-click="hideme=true;newContainerCtrl.saveHandle()">Yes</button>
@@ -349,8 +255,6 @@
             </div>
         </wz-step>
     </wizard>
-
-
 </body>
 
 </html>

@@ -1,5 +1,5 @@
-import {Task} from './task.js'
-import {_fetch} from './utils.js'
+import {Task} from './task.js';
+import {_fetch} from './utils.js';
 
 export class EaasImages
 {
@@ -115,7 +115,7 @@ export class EaasImages
             }, this.idToken);
             let task = new Task(result.taskId, this.api, this.idToken);
             let imageResult = await task.done;
-            return imageResult.imageId; 
+            return imageResult.userData.imageId; 
         }
         catch(e) {
             throw new Error("environment-repository/create-image: " 
