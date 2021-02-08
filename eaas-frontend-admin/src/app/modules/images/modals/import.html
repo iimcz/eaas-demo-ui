@@ -61,21 +61,7 @@
                         ng-disabled="importDlgCtrl.mode !== 'rom'"
                         ng-required="importDlgCtrl.mode == 'rom'"/>
                 </div>
-                <hr>
-                <div class="form-group">
-                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="runtime"> <label>Import Container Runtime Asset</label>
-                </div>
-                <div class="form-group" ng-if="importDlgCtrl.mode === 'runtime'">
-                    <label>
-                        <span>Import runtime image from Gitlab</span>
-                    </label>
-                    <a href="{{importDlgCtrl.runtime}}">Gitlab source url</a>
-                    <p></p>
-                    <label>
-                        <span>Import Init-ISO from Gitlab</span>
-                    </label>
-                    <a href="{{importDlgCtrl.cloudInit}}">Gitlab source url</a>
-                </div>
+            
             </div>
         </div>
 </div>

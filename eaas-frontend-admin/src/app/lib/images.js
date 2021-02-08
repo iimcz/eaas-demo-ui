@@ -129,11 +129,12 @@ export class EaasImages
         try {
             let createResult = await this._createEmptyImage( size, label);
             let task = new Task(createResult.taskId, this.api, this.idToken);
-            let userData = await task.done;
-            return await this.import(userData.imageUrl, label);
+            let result = await task.done;
+            return await this.import(result.userData.imageUrl, label);
         }
         catch(e)
         {
+            console.log(e);
             throw new Error(e); 
         }
     }

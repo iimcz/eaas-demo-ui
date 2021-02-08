@@ -1,17 +1,25 @@
 import {
     getOsLabelById
-} from '../../lib/os.js'
-module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
+} from '../../lib/os.js';
+
+import {
+    MachineBuilder
+} from '../../lib/machineBuilder.js';
+
+import { WaitModal } from "../../lib/task.js";
+import {Drives} from '../../lib/drives.js';
+
+module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
     'localConfig', 'growl', '$translate', 'Environments',
     '$uibModal', 
-    'REST_URLS', '$timeout', "osList",
-    function ($rootScope, $http, $state, $scope, $stateParams,
-        localConfig, growl, $translate, Environments,
+    'REST_URLS', '$timeout', "osList", "systemList",
+    function ($rootScope, $http, $state, $scope, Images,
+        localConfig, growl, $translate, Environments, 
         $uibModal, 
-        REST_URLS, $timeout, osList) {
+        REST_URLS, $timeout, osList, systemList) {
 
         var vm = this;
-
+        vm.systems = systemList.data;
         vm.config = localConfig.data;
 
         function updateTableData(rowData) {
@@ -228,6 +236,74 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
         vm.edit = function (id) {
             $state.go('admin.edit-env', {
                 envId: id
+            });
+        };
+
+        vm.createNewRuntime = function() 
+        {
+            vm.rtModal = $uibModal.open({
+                animation: true,
+                template: require('./modals/create-runtime.html'),
+                controller: ["$scope", function($scope) {
+                    this.createRuntime = async function() {
+
+                        const runtime = "https://gitlab.com/emulation-as-a-service/linux-container-base-image/-/jobs/artifacts/master/raw/disk.img?job=build";
+                        const cloudInit = "https://gitlab.com/emulation-as-a-service/eaas-container-runtime/-/jobs/artifacts/master/raw/eaas-container-runtime/eaas-container-runtime.iso?job=build";
+                        
+                        let date = new Date();
+                        let shortDate =  date.getFullYear() + "/" + (date.getMonth() + 1) + "/" +  date.getDate();
+                        console.log(shortDate);
+                       
+                        let template = vm.systems.find(o => o.id === "runtime");
+                        if(!template) {
+                            vm.rtModal.close();
+                            $state.go('error', {
+                                errorMsg: {
+                                    title: "Error ",
+                                    message: "no runtime template available"
+                                }
+                            });
+                        }
+
+                        let drives = new Drives(template.drive);
+                        let waitModal = new WaitModal($uibModal);
+
+                        waitModal.show("Import", "Please wait");
+
+                        let rtImageResult = await Images.import(runtime, `Runtime Image (${shortDate})`, "runtime");
+                        let rtCdromResult = await Images.import(cloudInit, `CloudInit (${shortDate})`, "runtime");
+
+                        try{ 
+                            drives.setRuntime(rtImageResult, rtCdromResult);
+                        }
+                        catch (e)
+                        {
+                            console.log(e);
+                            waitModal.hide();
+                            vm.rtModal.close();
+                            $state.go('error', {errorMsg: e});
+                        }
+
+                        let builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                        builder.label = this.label;
+                        builder.nativeConfig = "-smp 1 -net nic,model=e1000 -m 2048 -usb -usbdevice tablet";
+                        builder.templateId = template.id;
+                        builder.setDrives(drives);
+
+                        builder.build().then(() => {
+                            waitModal.hide();
+                            vm.rtModal.close();
+                            vm.updateTable();  
+                        })
+                        .catch((e) => {
+                            console.log(e);
+                            waitModal.close();
+                            vm.rtModal.close();
+                            $state.go('error', {errorMsg: e});
+                        });
+                    }; 
+                }],
+                controllerAs: "newRuntimeCtrl"
             });
         };
 

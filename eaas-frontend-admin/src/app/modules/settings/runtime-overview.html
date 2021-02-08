@@ -11,7 +11,8 @@
         <span class="input-group-btn" style="text-align: right;
         width: 100%;
         display: inline-block;">
-            <button type="submit" class="btn btn-default" ui-sref="admin.create-machine"><span 
+            <button type="button" class="btn btn-default" ng-click="runtimeOverviewCtrl.createNewRuntime()">
+                <span 
                     class="glyphicon glyphicon-plus"></span>
                 {{'BASE_MENU_CREATE_ENV' | translate}}
             </button>

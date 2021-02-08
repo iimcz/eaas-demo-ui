@@ -42,8 +42,8 @@ import "ag-grid-community/dist/styles/ag-theme-bootstrap.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-theme-fresh.css";
 
-import {EaasImages} from "./lib/images.js"
-import {_fetch} from './lib/utils.js'
+import {EaasImages} from "./lib/images.js";
+import {_fetch} from './lib/utils.js';
 
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
@@ -961,6 +961,9 @@ function($stateProvider,
             params: {},
             resolve: {
                 osList : () => osLocalList(),
+                systemList: ($http, localConfig)  => {
+                    return $http.get(localConfig.data.eaasBackendURL + "environment-repository/templates");
+                },
             },
             views: {
                 'wizard': {

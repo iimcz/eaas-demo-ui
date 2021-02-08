@@ -10,7 +10,14 @@ export class MachineBuilder {
         this.templateId = undefined;
         this.label = undefined;
         this.nativeConfig = undefined;
-        this.uiOptions = undefined;
+        this.uiOptions = {
+            enablePrinting : false,
+            useWebRTC : false,
+            useXpra : false,
+            enableRelativeMouse :false,
+            xpraEncoding : null,
+            shutdownByOs : false
+        };
         this.rom = undefined;
         this.romLabel = undefined;
     }

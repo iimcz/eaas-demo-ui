@@ -27,6 +27,36 @@ export class Drives
         }
     }
 
+    setRuntime(disk, cdrom)
+    {
+        let diskUpdate = false;
+        let cdromUpdate = false;
+        for(let index = 0; index < this.drives.length; index++)
+        {
+            let drive = this.drives[index];
+            if(drive.type === "disk" && drive.boot)
+            {
+                let update = new DriveUpdate(drive, index);
+                update.setImage(disk, "default");
+                this.addDriveUpdate(update);
+                diskUpdate = true;
+            }
+
+            if(drive.type === "cdrom")
+            {
+                let update = new DriveUpdate(drive, index);
+                update.setImage(cdrom, "default");
+                this.addDriveUpdate(update);      
+                cdromUpdate = true;
+            }
+           
+            if(diskUpdate && cdromUpdate)
+                return;
+        }
+
+        throw new Error("could not find suitable drives to initialize runtime drives");
+    }
+
     addDriveUpdate(update)
     {
         if(!update)
@@ -101,10 +131,9 @@ export class Drives
         return "<br><b>Media ID: </b>" + id;
     }
 
-    selectMedia(index, imageList, softwareList, objectList, runtimeList, $uibModal)
+    selectMedia(index, imageList, softwareList, objectList, $uibModal)
     {
         var _this = this;
-        console.log(runtimeList);
         return $uibModal.open({
             animation: true,
             template: require('./modals/chooseDriveMedia.html'),
@@ -113,7 +142,6 @@ export class Drives
                 this.drive = _this.drives[index];
                 this.virtio = (this.drive.iface === 'virtio');
                 this.imageList = imageList;
-                this.runtimeList = runtimeList;
                 this.softwareList = softwareList;
                 this.objectList = objectList;
 
@@ -150,12 +178,7 @@ export class Drives
                         update.setEmpty();
                         _this.addDriveUpdate(update);
                     }
-                    else if (this.diskType == 'runtime') {
-                        let update = new DriveUpdate(this.drive, index);
-                        update.setImage(this.selectedRuntime.imageId, "default");
-                        _this.addDriveUpdate(update); 
-                    }
-                }
+                };
             }],
             controllerAs: "editDriveCtrl"
         });// .result.then(//() => $scope.$apply());
