@@ -1,8 +1,16 @@
-module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'localConfig', 'growl', '$translate', '$timeout',  '$uibModalStack',
+import {
+    ContainerImageBuilder,
+    EmulatorBuilder,
+} from "../../lib/containerBuilder.js";
+import {
+    WaitModal,
+    Task
+} from "../../lib/task.js";
+
+module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'growl', '$translate', '$timeout', '$uibModalStack',
     '$uibModal', 'helperFunctions', 'nameIndexes', 'REST_URLS',
-    function ($rootScope, $http, $state, $scope, $stateParams,
-              localConfig, growl, $translate, $timeout, $uibModalStack, $uibModal, helperFunctions, nameIndexes, REST_URLS)
-{
+    function ($http, $state, $scope, $stateParams,
+        localConfig, growl, $translate, $timeout, $uibModalStack, $uibModal, helperFunctions, nameIndexes, REST_URLS) {
         var vm = this;
         vm.nameIndexes = nameIndexes.data;
         vm.emulators = window.EMULATORS_LIST;
@@ -12,9 +20,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 let rowElement = {};
                 rowElement.entries = [];
                 rowElement.name = window.EMULATORS_LIST[i];
-                if(vm.nameIndexes.entries.entry) {
+                if (vm.nameIndexes.entries.entry) {
                     vm.nameIndexes.entries.entry.forEach(
-                        function (element) {
+                        (element) => {
                             if (element.key.indexOf(window.EMULATORS_LIST[i]) !== -1) {
                                 rowElement.entries.push(element);
                             }
@@ -34,88 +42,91 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 </button>`;
         }
 
-        vm.import = function()
-        {
+        vm.import = function () {
             $uibModal.open({
                 animation: false,
                 template: require('./modals/import-emulator.html'),
-                controller: ["$scope", function($scope) {
+                controller: ["$scope", function ($scope) {
 
-                     var _vm = this;
-                     _vm.doImport = function () {
+                    var _vm = this;
+                    _vm.doImport = async function () {
+                        const api = localConfig.data.eaasBackendURL;
+                        const idToken = localStorage.getItem('id_token');
+                        if (_vm.imageUrl) {
+                            try {
+                                _vm.modal = $uibModal.open({
+                                    backdrop: 'static',
+                                    animation: true,
+                                    templateUrl: 'partials/wait.html'
+                                });
+                                let imageBuilder = new ContainerImageBuilder(_vm.imageUrl, "dockerhub");
+                                imageBuilder.setTag((_vm.tag) ? _vm.tag : "latest");
+                                let imageBuilderResult = await imageBuilder.build(api, idToken);
+                                let task = new Task(imageBuilderResult.taskId, api, idToken);
 
-                           let postObj;
-                           
-                           if(_vm.imageUrl)
-                                postObj = {
-                                    urlString: _vm.imageUrl,
-                                    runtimeID: _vm.runtime,
-                                    tag: (_vm.tag) ? _vm.tag : "latest",
-                                    alias: (_vm.alias) ? _vm.alias : "latest",
-                                    isEmulator: true,
-                                    imageType: "dockerhub",
-                                };
-                            else
-                                postObj = {
-                                    urlString: _vm.qcowImageUrl,
-                                    isEmulator: true,
-                                    alias: (_vm.alias) ? _vm.alias : "latest",
-                                    imageType: "readymade",
-                                };
+                                let buildResult = await task.done;
+                                let object = JSON.parse(buildResult.object);
+                                console.log(object);
 
-                            $http.post(localConfig.data.eaasBackendURL + REST_URLS.importEmulator, postObj
-                            ).then(function (response) {
-                                 if (response.data.status === "0") {
-                                     var taskId = response.data.taskId;
-                                     _vm.modal = $uibModal.open({
-                                         backdrop: 'static',
-                                         animation: true,
-                                         templateUrl: 'partials/wait.html'
-                                     });
-                                     _vm.checkState(taskId, true);
-                                     $uibModalStack.dismissAll();
-                                 }
-                                 else {
-                                     $state.go('error', {errorMsg: {title: 'Error ' + response.data.message + "\n\n" + _vm.description}});
-                                     $uibModalStack.dismissAll();
-                                 }
-                             });
-                         };
+                                let emulatorBuilder = new EmulatorBuilder(object.containerUrl);
+                                let importResult = await emulatorBuilder.build(api, idToken);
+                                task = new Task(importResult.taskId, api, idToken);
+                                await task.done;
+                                $uibModalStack.dismissAll();
+                            } catch (e) {
+                                console.log(e);
+                                $state.go('error', {
+                                    errorMsg: {
+                                        title: e
+                                    }
+                                });
+                                $uibModalStack.dismissAll();
+                            }
+                        } else {
+                            try {
+                                _vm.modal = $uibModal.open({
+                                    backdrop: 'static',
+                                    animation: true,
+                                    templateUrl: 'partials/wait.html'
+                                });
+                                let builder = new EmulatorBuilder(_vm.qcowImageUrl);
+                                let builderResult = await builder.build(api, idToken);
+                                let task = new Task(builderResult.taskId, api, idToken);
 
-                         _vm.checkState = function (_taskId, stayAtPage) {
-                             var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
-                                 if (response.data.status == "0") {
-                                     if (response.data.isDone) {
-                                         _vm.id = response.data.userData.environmentId;
-                                         _vm.modal.close();
-                                         growl.success("Import successful.");
-                                         $state.go('admin.emulators', {}, {reload: true});
-                                     }
-                                     else
-                                         $timeout(function () {
-                                             _vm.checkState(_taskId, stayAtPage);
-                                         }, 2500);
-                                 }
-                                 else {
-                                     _vm.modal.close();
-                                     $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
-                                 }
-                             });
-                         };
-
+                                await task.done;
+                                $uibModalStack.dismissAll();
+                            } catch (e) {
+                                console.log(e); 
+                                $state.go('error', {
+                                    errorMsg: {
+                                        title: 'Error ' + e
+                                    }
+                                });
+                                $uibModalStack.dismissAll();
+                            }
+                        }
+                    };
                 }],
                 controllerAs: "importEmulatorCtrl"
             });
-        }
+        };
 
         vm.initColumnDefs = function () {
-            return [
-                {headerName: "Name", field: "name"},
-                {headerName: "Number of images", valueGetter: function aPlusBValueGetter(params) {
-                        return params.data.entries.length;
-                    }},
+            return [{
+                    headerName: "Name",
+                    field: "name"
+                },
                 {
-                    headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
+                    headerName: "Number of images",
+                    valueGetter: function aPlusBValueGetter(params) {
+                        return params.data.entries.length;
+                    }
+                },
+                {
+                    headerName: "",
+                    field: "edit",
+                    cellRenderer: editBtnRenderer,
+                    suppressSorting: true,
                     suppressMenu: true
                 }
             ];
@@ -145,4 +156,5 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 'lo
                 return '[' + params.value.toLocaleString() + ']';
             },
         };
-    }];
+    }
+];

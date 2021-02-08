@@ -5,6 +5,7 @@ module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbL
 
         var vm = this;
 
+        vm.oidcClientId = localConfig.data.auth0Config.CLIENT_ID;
         vm.userInfo = userInfo.data;
         if(!vm.userInfo || !vm.userInfo.role)
            vm.isAdmin = true;

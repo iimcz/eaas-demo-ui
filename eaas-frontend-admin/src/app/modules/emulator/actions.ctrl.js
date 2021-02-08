@@ -1,7 +1,7 @@
 import {stopClient} from "./utils/stop-client";
-import {WaitModal} from "../../lib/task.js"
+import {WaitModal} from "../../lib/task.js";
 import { _fetch, ClientError } from "../../lib/utils";
-import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client"
+import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client";
 
 module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'eaasClient',
@@ -22,7 +22,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
     if($stateParams.uvi)
     {
-        vm.objEnvironments = $stateParams.uvi.environments
+        vm.objEnvironments = $stateParams.uvi.environments;
     }
     else 
         vm.objEnvironments = [];

@@ -28,9 +28,7 @@
 </div>
 
 <div style="text-align: right;">
-    <button type="button" ng-if="serviceContainerCtrl.runtime" class="btn btn-default"
-        ui-sref="admin.settings">Back</button>
-        <button type="button" ng-if="serviceContainerCtrl.runtime" class="btn btn-primary" 
-            ng-disable="!serviceContainerCtrl.selectedContainer && !serviceContainerCtrl.selectedRuntime"
-            ng-click="serviceContainerCtrl.import()">Import / Update</button>
+    <button type="button" ng-if="serviceContainerCtrl.selectedRuntime" class="btn btn-primary"
+        ng-disable="!serviceContainerCtrl.selectedContainer && !serviceContainerCtrl.selectedRuntime"
+        ng-click="serviceContainerCtrl.import()">Import / Update</button>
 </div>

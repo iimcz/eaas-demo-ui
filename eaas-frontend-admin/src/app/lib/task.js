@@ -1,4 +1,4 @@
-import {_fetch} from './utils.js'
+import {_fetch} from './utils.js';
 
 export class Task {
     constructor(taskId, api, idToken = null) {
@@ -21,14 +21,17 @@ export class Task {
     {
         try {
             let result = await _fetch(`${this.API_URL}tasks/${this.taskId}`, "GET", null, this.idToken);
+            
             if(result.status === "1")
             {
-                throw new console.error(result.message);
+                clearInterval(this.pollStateIntervalId);
+                throw new Error(result.message);
+                
             }
             if(result.isDone)
             {
+                this._resolve(result);
                 clearInterval(this.pollStateIntervalId);
-                this._resolve(result.userData);
             }
         }
         catch(e)
