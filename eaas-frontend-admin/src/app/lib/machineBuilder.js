@@ -1,5 +1,5 @@
 
-import {_fetch} from './utils.js'
+import {_fetch} from './utils.js';
 
 export class MachineBuilder {
     constructor(api, idToken = null) {

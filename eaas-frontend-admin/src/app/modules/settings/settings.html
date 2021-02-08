@@ -11,7 +11,8 @@
                 </a>
             </div>
 
-            <div class="col-md-3 text-center"><a href="/auth/realms/master/account">
+            <div class="col-md-3 text-center"><a
+                    href="/auth/realms/master/account?referrer={{settingsCtrl.oidcClientId}}">
                     <img src="img/account.png" height="80px"></br>
                     <small class="text-secondary">User Account Settings</small>
                     <p>Account Settings</p>
@@ -35,28 +36,30 @@
                     </a>
                 </div>
 
-                <div class="col-md-3 text-center"> <a ui-sref="admin.runtime-overview" href="">
-                        <img src="img/container_runtime.png" height="80px"></br>
-                        <small class="text-secondary">Runtime Overview</small>
-
-                        <p>Container Runtimes</p>
+                <div class="col-md-3 text-center"><a ui-sref="admin.update" href="">
+                        <img src="img/update.png" height="80px"></br>
+                        <small class="text-secondary">Manage Updates</small>
+                        <p>Update</p>
+                    </a>
                 </div>
+
+                <div class="col-md-3 text-center"><a href="/auth/admin/master/console">
+                        <img src="img/realm.png" height="80px"></br>
+                        <small class="text-secondary">Manage Security Realm</small>
+
+                        <p>Manage User Accounts</p>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="row">
 
                 <div class="col-md-3 text-center"><a ui-sref="admin.service-containers" href="">
                         <img src="img/network_services.png" height="80px"></br>
                         <small class="text-secondary">Network Services</small>
 
                         <p>Manage Services</p>
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-3 text-center"><a href="/auth/admin/master/console">
-                        <img src="img/realm.png" height="80px"></br>
-                        <small class="text-secondary">Manage Security Realm</small>
-
-                        <p>Manage Realm</p>
                     </a>
                 </div>
 
@@ -92,12 +95,13 @@
                         <p>DB Data Migration</p>
                     </a>
                 </div>
-                <div class="col-md-3 text-center"><a ui-sref="admin.update" href="">
-                    <img src="img/update.png" height="80px"></br>
-                    <small class="text-secondary">Update</small>
-                    <p>Update</p>
-                </a>
-            </div>
+
+                <div class="col-md-3 text-center"> <a ui-sref="admin.runtime-overview" href="">
+                        <img src="img/container_runtime.png" height="80px"></br>
+                        <small class="text-secondary">Runtime Overview</small>
+
+                        <p>Container Runtimes</p>
+                </div>
             </div>
         </div>
     </div>

@@ -1,15 +1,21 @@
-module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'growl', 'Upload', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'REST_URLS', 'Environments',
-    function ($http, $scope, $state, $stateParams, runtimeList, growl, Upload, localConfig, $uibModal, $timeout, WizardHandler, REST_URLS, Environments) {
+import {WaitModal, Task} from "../../lib/task.js";
+import { 
+    ContainerImageBuilder,
+    ContainerBuilder
+ } from "../../lib/containerBuilder.js";
+
+module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localConfig', '$uibModal', '$timeout', 'WizardHandler', 'REST_URLS', 'Environments',
+    function ($http, $state, runtimeList, growl, Upload, localConfig, $uibModal, $timeout, WizardHandler, REST_URLS, Environments) {
 
         var container = this;
         container.runtimes = runtimeList.data.runtimes;
-        console.log(container.runtimes);
+        
+        container.waitModal = new WaitModal($uibModal);
 
         // initialize default values of the form
         container.imageSize = 1024;
         container.imageType = '';
         container.importMethod = '';
-
 
         container.landingPage = localConfig.data.landingPage;
 
@@ -61,6 +67,7 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 return false;
             }
 
+
             return true;
         };
 
@@ -80,59 +87,66 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                 growl.error("Select a container runtime"); 
                 return false; 
             }
+
             // if (!container.author) {
             //     growl.error("Author is required");
             //     return false;
             // }
 
-
             return true;
         };
 
-        container.checkState = function (_taskId, stayAtPage) {
-            var taskInfo = $http.get(localConfig.data.eaasBackendURL + `tasks/${_taskId}`).then(function (response) {
-                if (response.data.status == "0") {
-                    if (response.data.isDone) {
-
-                        container.id = response.data.userData.environmentId;
-                        container.modal.close();
-                        growl.success("import successful.");
-                        if (typeof stayAtPage == "undefined" || !stayAtPage)
-                            $state.go('admin.standard-envs-overview', {}, {reload: true});
-                    }
-                    else
-                        $timeout(function () {
-                            container.checkState(_taskId, stayAtPage);
-                        }, 2500);
-                }
-                else {
-                    container.modal.close();
-                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
-                }
-            });
-        };
-
-        container.saveImportedContainer = function () {
-
-            if (!container.isMetaDataValid())
+        container.saveImportedContainer = async function () {
+            if (!container.isMetaDataValid() || !container.imageResult)
                 return;
 
-            $http.post(localConfig.data.eaasBackendURL + REST_URLS.saveImportedContainer, {
-                id: container.id,
-                title: container.title,
-                description: container.containerDescription,
-                author: container.author,
-                runtimeId: container.selectedRuntime.envId
-            }).then(function (response) {
-                if (response.data.status == "0") {
-                    growl.success("import successful.");
-                    WizardHandler.wizard('containerImportWizard').next();
-                    // $state.go('wf-s.standard-envs-overview', {}, {reload: true});
-                }
-                else {
-                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message}});
-                }
-            });
+            let convertedEnv = [];
+            let convertedArgs = [];
+            let escapeEl = document.createElement('textarea');
+
+            if (container.runtime === "2" && container.args.length === 0) {
+                container.args.push("/bin/sh", "-c", '. /environment; exec "$0" "$@"', "/singularity");
+            }
+
+            let unescape = (html) => {
+                escapeEl.innerHTML = html;
+                return escapeEl.textContent;
+            };
+
+            for (let _e in container.env) {
+                convertedEnv.push(unescape(container.env[_e]));
+            }
+
+            for (let _a in container.args) {
+                convertedArgs.push(unescape(container.args[_a]));
+            }
+
+            let containerBuilder = new ContainerBuilder(container.imageType, container.imageResult.containerUrl, container.imageResult.metadata);
+            containerBuilder.setTitle(container.title);
+            containerBuilder.setAuthor(container.author);
+            containerBuilder.setDescription(container.containerDescription);
+            containerBuilder.setRuntime(container.selectedRuntime.envId);
+            containerBuilder.setName((container.name) ? container.name : "tmp");
+            containerBuilder.enableGui(container.gui);
+            containerBuilder.setInputFolder(container.imageInput);
+            containerBuilder.setOutputFolder(container.imageOutput);
+            containerBuilder.configureProcess(convertedArgs, convertedEnv);
+        
+            try {
+                container.waitModal.show("Importing container as EaaS image");
+                let _result = await containerBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                let task = new Task(_result.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                await task.done;
+                growl.success("import successful.");
+                container.waitModal.hide();
+                WizardHandler.wizard('containerImportWizard').next();
+            }
+            catch(e)
+            {
+                console.log(e);
+                container.waitModal.hide();
+                $state.go('error', {errorMsg: {title: 'Error ' + e}});
+            }
         };
 
         container.saveHandle = function () {
@@ -180,31 +194,10 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
         };
 
         //Next Step
-        container.import = function () {
+        container.import = async function () {
 
             if (!container.isValid())
                 return;
-
-            var convertedEnv = [];
-            var convertedArgs = [];
-            var escapeEl = document.createElement('textarea');
-
-            if (container.runtime === "2" && container.args.length === 0) {
-                container.args.push("/bin/sh", "-c", '. /environment; exec "$0" "$@"', "/singularity");
-            }
-
-            var unescape = function (html) {
-                escapeEl.innerHTML = html;
-                return escapeEl.textContent;
-            };
-
-            for (var _e in container.env) {
-                convertedEnv.push(unescape(container.env[_e]));
-            }
-
-            for (var _a in container.args) {
-                convertedArgs.push(unescape(container.args[_a]));
-            }
 
             switch (container.runtime) {
                 case "0":
@@ -215,42 +208,35 @@ module.exports = ['$http', '$scope', '$state', '$stateParams', 'runtimeList', 'g
                     break;
                 case "2":
                     container.imageType = "simg";
+                    break;
+                default:
+                    $state.go('error', {errorMsg: {title: 'Error: unkown container fmt'}});
             }
 
-            console.log("container.importType", container.imageType);
+            let imageBuilder = new ContainerImageBuilder(container.imageUrl, container.imageType);
+            imageBuilder.setTag(container.tag);
 
+            container.waitModal.show("Preparing container");
+            let imageBuilderTask = await imageBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+            let task = new Task(imageBuilderTask.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+            let buildResult = await task.done;
 
-            $http.post(localConfig.data.eaasBackendURL + REST_URLS.importContainerUrl,
+            try {
+                let object = JSON.parse(buildResult.object);
+                container.imageResult = object;
+                
+                if(object.metadata)
                 {
-                    urlString: container.imageUrl,
-                    name: (container.name) ? container.name : "tmp",
-                    tag: container.tag,
-                    processArgs: container.args,
-                    processEnvs: container.env,
-                    inputFolder: container.imageInput,
-                    outputFolder: container.imageOutput,
-                    imageType: container.imageType,
-                    title: container.title,
-                    description: container.containerDescription,
-                    author: container.author,
-                    guiRequired: container.gui,
-                    customSubdir: container.customSubdir
-                }).then(function (response) {
-
-                if (response.data.status === "0") {
-
-                    var taskId = response.data.taskId;
-                    container.modal = $uibModal.open({
-                        backdrop: 'static',
-                        animation: true,
-                        templateUrl: 'partials/wait.html'
-                    });
-                    container.checkState(taskId, true);
-                    WizardHandler.wizard('containerImportWizard').next();
+                    container.args = object.metadata.entryProcesses;
+                    container.env = object.metadata.envVariables;
                 }
-                else {
-                    $state.go('error', {errorMsg: {title: 'Error ' + response.data.message + "\n\n" + container.description}});
-                }
-            });
+                container.waitModal.hide();
+                WizardHandler.wizard('containerImportWizard').next();
+            }
+            catch(e)
+            {
+                container.waitModal.hide();
+                $state.go('error', {errorMsg: {title: 'Error ' + e}});
+            }
         };
     }];

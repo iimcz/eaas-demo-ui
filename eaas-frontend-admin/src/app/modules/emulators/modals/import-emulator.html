@@ -5,48 +5,29 @@
 <div class="modal-body">
 
     <div class="panel panel-default">
-        <div class="panel-body">
-
-            <p>Import emulator</p>
-
-            <div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">{{'SW_NEW_CONTAINER_DOCKER' | translate}}</div>
-                    <div class="panel-body">
-                        <div class="tekst">
-                            Name:
-                            <input type="text" placeholder="eaas/qemu-eaas" class="form-control"
-                                ng-model="importEmulatorCtrl.imageUrl" />
-                        </div>
-                        <div class="tekst">
-                            Tag (optional):
-                            <input type="text" placeholder="latest" class="form-control"
-                                ng-model="importEmulatorCtrl.tag" />
-
-                        </div>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">{{'SW_NEW_CONTAINER_DOCKER' | translate}}</div>
+            <div class="panel-body">
+                <div class="tekst">
+                    Name:
+                    <input type="text" placeholder="eaas/qemu-eaas" class="form-control"
+                        ng-model="importEmulatorCtrl.imageUrl" />
                 </div>
+                <div class="tekst">
+                    Tag (optional):
+                    <input type="text" placeholder="latest" class="form-control" ng-model="importEmulatorCtrl.tag" />
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">Download emulator image</div>
-                    <div class="panel-body">
-                        <div class="tekst">
-                            URL:
-                            <input type="text" placeholder="eaas/qemu-eaas" class="form-control"
-                                ng-model="importEmulatorCtrl.qcowImageUrl" />
-                        </div>
-                    </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">Local Alias</div>
-                    <div class="panel-body">
-                        <div class="tekst">
-                            {{'ADVANCED_IMPORT_EMULATOR_ALIAS' | translate}} (optional):
-                            <input type="text" placeholder="latest" class="form-control"
-                                ng-model="importEmulatorCtrl.alias" />
-                        </div>
-                    </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Download emulator image</div>
+            <div class="panel-body">
+                <div class="tekst">
+                    URL:
+                    <input type="text" placeholder="eaas/qemu-eaas" class="form-control"
+                        ng-model="importEmulatorCtrl.qcowImageUrl" />
                 </div>
             </div>
         </div>
