@@ -268,7 +268,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                         let drives = new Drives(template.drive);
                         let waitModal = new WaitModal($uibModal);
 
-                        waitModal.show("Import", "Please wait");
+                        waitModal.show("Creating runtime", "Please wait");
 
                         let rtImageResult = await Images.import(runtime, `Runtime Image (${shortDate})`, "runtime");
                         let rtCdromResult = await Images.import(cloudInit, `CloudInit (${shortDate})`, "runtime");

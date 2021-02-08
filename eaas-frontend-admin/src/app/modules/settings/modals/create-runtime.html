@@ -7,14 +7,14 @@
         <div class="panel-heading">Runtime environment</div>
         <div class="panel-body">
             <div class="form-group">
-                <label>Runtime Name</label>
-                <input type="text" class="form-control" ng-model="newRuntimeCtrl.label"></input>
+                <label>Name
+                <input type="text" class="form-control" ng-model="newRuntimeCtrl.label"></input></label>
             </div>
         </div>
     </div>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="newRuntimeCtrl.createRuntime()">{{'DEFAULTENV_SAVE' | translate}}</button>
+    <button class="btn btn-primary" type="button" ng-click="newRuntimeCtrl.createRuntime()">OK</button>
     <button class="btn btn-default" type="button" ng-click="$close()">{{'DEFAULTENV_CANCEL' | translate}}</button>
 </div>
