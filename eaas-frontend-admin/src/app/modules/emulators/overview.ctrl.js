@@ -68,7 +68,7 @@ module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'g
                                 let object = JSON.parse(buildResult.object);
                                 console.log(object);
 
-                                let emulatorBuilder = new EmulatorBuilder(object.containerUrl);
+                                let emulatorBuilder = new EmulatorBuilder(object.containerUrl, object.metadata);
                                 let importResult = await emulatorBuilder.build(api, idToken);
                                 task = new Task(importResult.taskId, api, idToken);
                                 await task.done;

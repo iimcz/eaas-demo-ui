@@ -79,8 +79,9 @@ export class ContainerBuilder {
 }
 
 export class EmulatorBuilder {
-    constructor(url) {
+    constructor(url, metadata=null) {
         this.imageUrl = url;
+        this.metadata = metadata;
     }
 
     async build(api, idToken = null)
@@ -96,8 +97,7 @@ export class ContainerImageBuilder {
 
         if(this.containerType != "rootfs" && 
             this.containerType != "simg" &&
-            this.containerType != "dockerhub" && 
-            this.containerType != "readymade")
+            this.containerType != "dockerhub")
             throw new Error(`invalid container source '${containerSource}'. valid types are rootfs, simg, dockerhub, readymade`);
 
         this.tag = undefined;
