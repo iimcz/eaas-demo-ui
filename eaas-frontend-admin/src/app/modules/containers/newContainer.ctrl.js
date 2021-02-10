@@ -77,10 +77,11 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
                 growl.error("Title is required");
                 return false;
             }
-            if (!container.containerDescription) {
-                growl.error("Description is required");
-                return false;
-            }
+           
+           // if (!container.containerDescription) {
+           //     growl.error("Description is required");
+           //     return false;
+           // }
 
             if(!container.selectedRuntime)
             {
