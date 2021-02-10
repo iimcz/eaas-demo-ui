@@ -1,0 +1,12 @@
+<div class="modal-header">
+    <h3 class="modal-title">Confirm delete</h3>
+</div>
+
+<div class="modal-body">
+    <h4>Delete software? The software object remains available as long as it is availble in the object repository but will not be listed as software anymore</h4>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="$close();confirmDeleteDialogCtrl.confirmed();" >{{'CONFIRM_DELETE_OK' | translate}}</button>
+    <button class="btn btn-default" type="button" ng-click="$close()">{{'CONFIRM_DELETE_CANCEL' | translate}}</button>
+</div>

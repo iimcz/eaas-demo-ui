@@ -1,4 +1,5 @@
-module.exports = ['softwareList', '$scope', '$stateParams', function (softwareList, $scope, $stateParams) {
+module.exports = ['softwareList', '$scope', '$http', '$state', "localConfig", "$uibModal",
+    function (softwareList, $scope, $http, $state, localConfig, $uibModal) {
    var vm = this;
    vm.swList = softwareList.data.descriptions;
 
@@ -13,17 +14,63 @@ module.exports = ['softwareList', '$scope', '$stateParams', function (softwareLi
             {headerName: "ID", field: "id"},
             {headerName: "Name", field: "label", sort: "asc"},
             {headerName: "Operating System", field: "isOperatingSystem"},
-            {headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
+            {headerName: "", field: "edit", cellRenderer: actionsCellRendererFunc, suppressSorting: true,
                 suppressMenu: true}
         ];
     };
 
-    function editBtnRenderer(params) {
+    function actionsCellRendererFunc(params) {
+        params.$scope.switchAction = switchAction;
         params.$scope.selected = $scope.selected;
-        return  `<button id="single-button" ui-sref="admin.edit-object-characterization({swId: data.id, objectId: data.id, objectArchive: data.archiveId})" type="button" class="dropbtn">
-                  {{'SW_OVERVIEW_SW_EDIT'| translate}}
-                </button>`;
+        params.$scope.changeClass = function (id) {
+            if (($("#dropdowm" + id).is(":visible"))) {
+                return "dropbtn2";
+            } else {
+                return "dropbtn";
+            }
+        };
+        let environmentRenderer = `
+         <div class="" uib-dropdown dropdown-append-to-body>
+            <button id="single-button{{data.id}}" type="button" ng-class="changeClass(data.id)" uib-dropdown-toggle ng-disabled="disabled">
+              {{'CHOOSE_ACTION'| translate}} <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+              
+             <li role="menuitem dropdown-content">
+                    <a class="dropdown-content" 
+                        ui-sref="admin.edit-object-characterization({swId: data.id, objectId: data.id, objectArchive: data.archiveId})">
+                        {{'SW_OVERVIEW_SW_EDIT'| translate}}
+                    </a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-content" 
+                    ng-click="switchAction(data.id, \'delete\')">delete</a>
+                </li>
+            </ul>
+            
+         </div>`;
+        return environmentRenderer;
     }
+
+    function switchAction(id, selected) {
+        vm[selected](id);
+    }
+
+    vm.delete = function(id)
+    {
+        $uibModal.open({
+            animation: true,
+            template: require('./modals/confirm-delete.html'),
+            controller: ["$scope", function ($scope) {
+                this.confirmed = () => {
+                    $http.delete(localConfig.data.eaasBackendURL + "/software-repository/packages/" + id).then((response) => {
+                        $state.go('admin.sw-overview', {}, {reload: true});
+                    });
+                };
+            }],
+            controllerAs: "confirmDeleteDialogCtrl"
+        });  
+    };
 
     vm.updateTable = function(index)
     {
