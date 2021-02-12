@@ -235,7 +235,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             }
         };
 
-        vm.deleteEnvironment = function (envId, isConfirmed) {
+        vm.deleteEnvironment = function (envId, archive, isConfirmed) {
             $rootScope.chk.transitionEnable = false;
             let confirmationResult = null;
             if (typeof isConfirmed != "undefined")
@@ -307,7 +307,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             var selectedRowData = vm.gridOptions.api.getSelectedRows();
             if (window.confirm($translate.instant('JS_DELENV_OK')))
                 selectedRowData.forEach(selectedRowData => {
-                    vm.deleteEnvironment(selectedRowData.id, true)
+                    vm.deleteEnvironment(selectedRowData.id, undefined, true);
                 });
         };
         $scope.selected = "";
