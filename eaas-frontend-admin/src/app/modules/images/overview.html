@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-lg-6">
         <div class="input-group" style="width: 100%">
-            <input type="text" class="form-control" ng-model="gridOptions.quickFilterText"
+            <input type="text" class="form-control" ng-model="imagesCtrl.gridOptions.quickFilterText"
                 placeholder="{{'CHOOSE_ENV_SEARCH' | translate}}" />
         </div>
     </div>
@@ -21,14 +21,14 @@
     </div>
 </div>
 
-<div style="width: 100%;" ag-grid="gridOptions" class="ag-theme-material">
+<div style="width: 100%;" ag-grid="imagesCtrl.gridOptions" class="ag-theme-material">
 </div>
 
 <div style="padding: 4px; margin-top: -3.5em; position: relative; font-size: 12px; width: max-content;">
     <!-- <div class="ag-theme-balham"><b>{{'CHOOSE_ENV_COUNT' | translate}}: {{standardEnvsOverviewCtrl.rowCount}}</b></div>-->
     <div>
         Page Size:
-        <select ng-click="onPageSizeChanged()" ng-model="imagesCtrl.pageSize">
+        <select ng-click="imagesCtrl.onPageSizeChanged()" ng-model="imagesCtrl.pageSize">
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>

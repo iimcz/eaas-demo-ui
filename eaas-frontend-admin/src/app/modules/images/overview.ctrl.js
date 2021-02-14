@@ -13,17 +13,17 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
     vm.imageList = [];
 
     vm.updateData = function () {
-        if ($scope.gridOptions && $scope.gridOptions.api != null) {
-            $scope.gridOptions.api.setRowData(vm.imageList);
-            $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-            $scope.gridOptions.api.sizeColumnsToFit();
+        if (vm.gridOptions && vm.gridOptions.api != null) {
+            vm.gridOptions.api.setRowData(vm.imageList);
+            vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+            vm.gridOptions.api.sizeColumnsToFit();
         }
     };
 
     vm.updateTable = async () =>
     {
-        if ($scope.gridOptions && $scope.gridOptions.api)
-            $scope.gridOptions.api.setRowData(null);
+        if (vm.gridOptions && vm.gridOptions.api)
+            vm.gridOptions.api.setRowData(null);
         vm.imageList = await Images.list();
         vm.updateData();
     };
@@ -123,14 +123,14 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
                         waitModal.hide();
                         $state.reload();
                     }
-                }
+                };
             }],
             controllerAs: "importDlgCtrl"
         });
     }
 
     $scope.onPageSizeChanged = function () {
-        $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
+        vm.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
     };
 
     function diskEntryRenderer()
@@ -145,7 +145,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
 
     vm.initColumnDefs = function () {
         return [
-            {headerName: "User Images", field: "", cellRenderer: diskEntryRenderer, width: 600},
+            {headerName: "User Images", field: "label", cellRenderer: diskEntryRenderer, width: 600},
             {
                 headerName: "", field: "Actions", cellRenderer: detailsBtnRenderer, suppressSorting: true,
                 suppressMenu: true, width: 150
@@ -193,9 +193,9 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
 
         Images.delete("default", imageId);
         $state.reload();
-    }
+    };
 
-    $scope.gridOptions = {
+    vm.gridOptions = {
         columnDefs: vm.initColumnDefs(),
         rowHeight: 75,
         groupUseEntireRow: true,
@@ -211,7 +211,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
         suppressHorizontalScroll: true,
         animateRows: true,
         onGridReady: function (params) {
-            $scope.gridOptions.api.sizeColumnsToFit();
+           vm.gridOptions.api.sizeColumnsToFit();
         },
         pagination: true,
         paginationPageSize: Number(vm.pageSize),
@@ -223,7 +223,7 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
     // setup the grid after the page has finished loading
     document.addEventListener('DOMContentLoaded', function () {
         var gridDiv = document.querySelector('#myGrid');
-        new agGrid.Grid(gridDiv, gridOptions);
-        gridOptions.api.sizeColumnsToFit();
+        new agGrid.Grid(gridDiv, vm.gridOptions);
+        vm.gridOptions.api.sizeColumnsToFit();
     });
 }];
