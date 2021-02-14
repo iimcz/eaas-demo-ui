@@ -137,6 +137,7 @@ export class Drives
         return $uibModal.open({
             animation: true,
             template: require('./modals/chooseDriveMedia.html'),
+            backdrop: false,
             controller: ["$scope", function ($scope) {
                 this.driveLabel = _this.renderBinding(index, imageList, softwareList, objectList);
                 this.drive = _this.drives[index];

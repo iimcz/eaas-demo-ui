@@ -14,12 +14,13 @@
                     <hr ng-if="editDriveCtrl.driveLabel">
 
                     <div class="form-group" ng-if="editDriveCtrl.drive.type === 'disk'">
-                        <input type="radio" ng-model="editDriveCtrl.diskType" value="image"> <label>Select from disk image library</label>
+                        <input type="radio" ng-model="editDriveCtrl.diskType" value="image" id="_disk"> 
+                            <label for="_disk">Select from disk image library</label>
                         <ui-select ng-model="editDriveCtrl.selectedImage" theme="bootstrap"
-                            title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
+                            title="Select disk image"
                             ng-disabled="editDriveCtrl.diskType !== 'image'"
                             ng-required="editDriveCtrl.diskType == 'image'">
-                            <ui-select-match placeholder="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}">
+                            <ui-select-match placeholder="Select disk image">
                                 {{$select.selected.label}}</ui-select-match>
                             <ui-select-choices
                                 repeat="image in editDriveCtrl.imageList | filter: $select.search">
@@ -30,13 +31,14 @@
                     <hr ng-if="editDriveCtrl.drive.type === 'disk'">
 
                     <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk'">
-                    <input type="radio" ng-model="editDriveCtrl.diskType"  value="os"> <label>Select from operating-system media library</label>
+                    <input type="radio" ng-model="editDriveCtrl.diskType" value="os" id="_os"> 
+                        <label for="_os">Select from operating-system media library</label>
                     
                             <ui-select ng-model="editDriveCtrl.selectedOs" theme="bootstrap"
-                                title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
+                                title="Select operating system"
                                 ng-disabled="editDriveCtrl.diskType !== 'os'"
                                 ng-required="editDriveCtrl.diskType == 'os'">
-                                <ui-select-match placeholder="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}">
+                                <ui-select-match placeholder="Select operating-system">
                                     {{$select.selected.label}}</ui-select-match>
                                 <ui-select-choices
                                     repeat="obj in editDriveCtrl.softwareList | filter: {isOperatingSystem:true}| filter: $select.search">
@@ -46,13 +48,13 @@
                     </div>
                     <hr ng-if="editDriveCtrl.drive.type !== 'disk'">
                     <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk'">
-                    <input type="radio" ng-model="editDriveCtrl.diskType"  value="software"> <label>Select from software library</label>
-                    
+                    <input type="radio" ng-model="editDriveCtrl.diskType"  value="software" id="software"> 
+                        <label for="_software">Select from software library</label>
                             <ui-select ng-model="editDriveCtrl.selectedSoftware" theme="bootstrap"
-                                title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
+                                title="Select software"
                                 ng-disabled="editDriveCtrl.diskType !== 'software'"
                                 ng-required="editDriveCtrl.diskType == 'software'">
-                                <ui-select-match placeholder="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}">
+                                <ui-select-match placeholder="Select software">
                                     {{$select.selected.label}}</ui-select-match>
                                 <ui-select-choices
                                     repeat="obj in editDriveCtrl.softwareList | filter: {isOperatingSystem:false}| filter: $select.search">
@@ -62,8 +64,8 @@
                     </div>
                     <hr ng-if="editDriveCtrl.drive.type !== 'disk'">
                     <div class="form-group" ng-if="editDriveCtrl.drive.type !== 'disk' && editDriveCtrl.context !== 'create' ">
-                    <input type="radio" ng-model="editDriveCtrl.diskType"  value="object"> <label>Select from user assets</label>
-                    
+                    <input type="radio" ng-model="editDriveCtrl.diskType"  value="object" id="_object"> 
+                        <label for="_object">Select from user assets</label>
                             <ui-select ng-model="editDriveCtrl.selectedObject" theme="bootstrap"
                                 title="{{'SW_NEW_IMAGE_CHOOSE_SOFTWARE_PH' | translate}}"
                                 ng-disabled="editDriveCtrl.diskType !== 'object'"
@@ -77,7 +79,8 @@
                             </ui-select>
                     </div>
                     <hr>
-                    <input type="radio" ng-model="editDriveCtrl.diskType" value="empty"> <label>Empty drive</label>
+                    <input type="radio" ng-model="editDriveCtrl.diskType" value="empty" id="_empty"> 
+                        <label for="_empty">Empty drive</label>
                 </div>
             </div>
             <div class="panel panel-default">
