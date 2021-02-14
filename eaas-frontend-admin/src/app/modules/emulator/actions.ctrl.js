@@ -1,6 +1,6 @@
 import {stopClient} from "./utils/stop-client";
 import {WaitModal} from "../../lib/task.js";
-import { _fetch, ClientError } from "../../lib/utils";
+import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
 import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client";
 
 module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
@@ -144,19 +144,17 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         }
     };
 
-    vm.restartEmulator = function () {
-
-        $uibModal.open({
-            animation: true,
-            template: require('./modals/confirm-restart.html'),
-            controller: ['$scope', function($scope) {
-                this.confirmed = async function() {
-                    eaasClient.release(true);
-                    $state.reload();
-                };
-            }],
-            controllerAs: "confirmStopDialogCtrl"
-        });
+    vm.restartEmulator = async function () {
+        try {
+            await confirmDialog($uibModal, "Restart machine?", "Restarting the session will reset any changes made!");
+            eaasClient.release(true);
+            $state.reload();
+        }
+        catch(e)
+        {
+            console.log(e);
+            return;
+        }
     };
 
     vm.sendEsc = function () {
@@ -198,24 +196,26 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         });
     };
 
-    vm.stopEmulator = function () {
-        $uibModal.open({
-            animation: true,
-            template: require('./modals/confirm-stop.html'),
-            controller: ['$scope', function($scope) {
-                this.confirmed = async function() {
-                    window.onbeforeunload = null;
-                    await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
-                    $('#emulator-stopped-container').show();
+    vm.stopEmulator = async function () {
+        try {
+            await confirmDialog($uibModal, 
+                $translate.instant('CONFIRM_STOP_H'), 
+                $translate.instant('CONFIRM_STOP_T'));
+           
+            window.onbeforeunload = null;
+            await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
+            $('#emulator-stopped-container').show();
 
-                    if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                        $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
-                    else
-                        $state.go('admin.standard-envs-overview', {}, {reload: true});
-                };
-            }],
-            controllerAs: "confirmStopDialogCtrl"
-        });
+            if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
+                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
+            else
+                $state.go('admin.standard-envs-overview', {}, {reload: true});
+        }
+        catch(e)
+        {
+            console.log(e);
+            return;
+        }
     };
 
     var eaasClientReadyTimer = function() {
@@ -438,8 +438,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             }
         };
 
-    vm.openSaveEnvironmentDialog = function() {
-        var saveDialog = function()
+    vm.openSaveEnvironmentDialog = async function() {
+        let saveDialog = function()
         {
             let modal = $uibModal.open({
                 animation: false,
@@ -496,7 +496,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
                     this.showEmu = function() {
                         $('#emulator-container').show();
-                    }
+                    };
                 }],
                 controllerAs: "openSaveEnvironmentDialogCtrl"
             });
@@ -504,22 +504,19 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         };
 
         $('#emulator-container').hide();
-        let modal = $uibModal.open({
-            animation: false,
-            template: require('./modals/confirm-snapshot.html'),
-            controller: ["$scope", function($scope) {
-                this.confirmed = function()
-                {
-                    saveDialog();
-                };
-                this.showEmu = function() {
-                    $('#emulator-container').show();
-                }
-            }],
-            controllerAs: "confirmSnapshotDialogCtrl"
-        });
+        try {
+            await confirmDialog($uibModal, 
+                $translate.instant('CONFIRM_SNAPSHOT_H'), 
+                $translate.instant('CONFIRM_SNAPSHOT_T'));
+                saveDialog();
+        }
+        catch(e)
+        {
+            $('#emulator-container').show();
+            console.log(e);
+        }
         // modal.closed.then(() => $('#emulator-container').show());
-    }
+    };
     /*
     var closeEmulatorOnTabLeaveTimer = null;
     var leaveWarningShownBefore = false;

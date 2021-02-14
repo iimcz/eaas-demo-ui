@@ -62,12 +62,10 @@
     <!--  save button -->
     <button class="btn btn-primary" type="button"
             ng-click="openSaveEnvironmentDialogCtrl.saveEnvironment()"
-            ng-disabled="!openSaveEnvironmentDialogCtrl.editEnvForm.$valid || openSaveEnvironmentDialogCtrl.isSavingEnvironment">{{'SAVEENV_SAVE'
-        | translate}}</button>
+            ng-disabled="!openSaveEnvironmentDialogCtrl.editEnvForm.$valid || openSaveEnvironmentDialogCtrl.isSavingEnvironment">OK</button>
 
     <!--  cancel button -->
     <button class="btn btn-default" type="button" ng-click="$close();openSaveEnvironmentDialogCtrl.showEmu()"
-            ng-disabled="openSaveEnvironmentDialogCtrl.isSavingEnvironment">{{'SAVEENV_CANCEL'
-        | translate}}</button>
+            ng-disabled="openSaveEnvironmentDialogCtrl.isSavingEnvironment">Cancel</button>
 
 </div>

@@ -1,12 +1,14 @@
-import {getOsLabelById} from '../../lib/os.js'
+import {getOsLabelById} from '../../lib/os.js';
+import { _fetch, confirmDialog } from "../../lib/utils";
+
 module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 
                     'localConfig', 'growl', '$translate', 'Environments', 
                     '$uibModal', 'softwareList', 
-                    'REST_URLS', '$timeout', "osList",
+                    'REST_URLS', '$timeout', "osList", "authService",
     function ($rootScope, $http, $state, $scope, $stateParams,
               localConfig, growl, $translate, Environments, 
               $uibModal, softwareList,  
-              REST_URLS, $timeout, osList) {
+              REST_URLS, $timeout, osList, authService) {
         
         var vm = this;
 
@@ -172,121 +174,98 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 controllerAs: "addSoftwareDialogCtrl"
             });
         };
-        var confirmDeleteFn = function(envId)
-        {
-            console.log("confirmed");
-            $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
+        
+        vm.deleteContainer = async function (envId) {
+            try {
+                await confirmDialog($uibModal, "Delete container?", `Please confirm deleting container: ${envId}?` );
+            }
+            catch(e)
+            {
+                console.log(e);
+                return;
+            }
+
+            const req = {
+                envId: envId,
+                deleteMetaData: true,
+                deleteImage: false,
+                force: false
+            };
+
+            let result = await _fetch(localConfig.data.eaasBackendURL + REST_URLS.deleteContainerUrl, 
+                "POST", req, authService.getToken());
+            
+            if (result.status === "0") {
+                // remove env locally
+                vm.envs = vm.envs.filter(function (env) {
+                    return env.envId !== envId;
+                });
+                
+                growl.success($translate.instant('JS_DELENV_SUCCESS'));
+                $state.go('admin.standard-envs-overview', {
+                    showContainers: true,
+                    showObjects: false
+                }, {reload: true});
+            }
+            else {
+                growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                $state.go('admin.standard-envs-overview', {
+                    showContainers: true,
+                    showObjects: false
+                }, {reload: true});
+            }    
+        };
+
+        vm.deleteEnvironment = async function (envId, archive) {
+            try {
+                await confirmDialog($uibModal, "Delete machine?", `Please confirm deleting machine: ${envId}?` );
+            }
+            catch(e)
+            {
+                console.log(e);
+                return;
+            }
+
+            const req = {
                 envId: envId,
                 deleteMetaData: true,
                 deleteImage: true,
-                force: true
-            }).then(function(_response) {
-                if (_response.data.status === "0") {
-                    // remove env locally
-                    vm.envs = vm.envs.filter(function(env) {
-                        return env.envId !== envId;
-                    });
-                    $rootScope.chk.transitionEnable = true;
-                    growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                    $state.go('admin.standard-envs-overview', {}, {reload: true});
+                force: false
+            };
+   
+            let result = await _fetch(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, 
+                "POST", req, authService.getToken());
+            if (result.status === "0" || result .status === 0) {
+                // remove env locally
+                growl.success($translate.instant('JS_DELENV_SUCCESS'));
+            } else if (result.status === "2") {
+                try {
+                    await confirmDialog($uibModal, 
+                            $translate.instant('CONFIRM_DELETE_H'), 
+                            $translate.instant('CONFIRM_DELETE_T'));
+                } catch(e) {
+                    console.log(e);
+                    return;
                 }
-                else {
-                    $rootScope.chk.transitionEnable = true;
-                    growl.error(_response.data.message, {title: 'Error ' + _response.data.status});
-                    $state.go('admin.standard-envs-overview', {}, {reload: true});
 
+                req.force = true;
+                let result = await _fetch(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, 
+                    "POST", req, authService.getToken());
+                if(result.status != "0")
+                {
+                    growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                    $state.go('admin.standard-envs-overview', {}, {reload: true});   
                 }
-            });
-        };
-
-
-        vm.deleteContainer = function (envId) {
-            $rootScope.chk.transitionEnable = false;
-            if (window.confirm($translate.instant('JS_DELENV_OK'))) {
-                $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteContainerUrl, {
-                    envId: envId,
-                    deleteMetaData: true,
-                    deleteImage: true,
-                    force: false
-                }).then(function (response) {
-                    if (response.data.status === "0") {
-                        // remove env locally
-                        vm.envs = vm.envs.filter(function (env) {
-                            return env.envId !== envId;
-                        });
-                        $rootScope.chk.transitionEnable = true;
-                        growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                        $state.go('admin.standard-envs-overview', {
-                            showContainers: true,
-                            showObjects: false
-                        }, {reload: true});
-                    }
-                    else {
-                        $rootScope.chk.transitionEnable = true;
-                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                        $state.go('admin.standard-envs-overview', {
-                            showContainers: true,
-                            showObjects: false
-                        }, {reload: true});
-                    }
-                });
+                growl.success($translate.instant('JS_DELENV_SUCCESS'));
             } else {
-                $rootScope.chk.transitionEnable = true;
-            }
-        };
-
-        vm.deleteEnvironment = function (envId, archive, isConfirmed) {
-            $rootScope.chk.transitionEnable = false;
-            let confirmationResult = null;
-            if (typeof isConfirmed != "undefined")
-                confirmationResult = isConfirmed;
-            else {
-                confirmationResult = window.confirm($translate.instant('JS_DELENV_OK'));
+                growl.error(response.data.message, {title: 'Error ' + response.data.status});
+                $state.go('admin.standard-envs-overview', {}, {reload: true});
             }
 
-            if (confirmationResult) {
-                let promise = null;
-
-                promise = $http.post(localConfig.data.eaasBackendURL + REST_URLS.deleteEnvironmentUrl, {
-                    envId: envId,
-                    deleteMetaData: true,
-                    deleteImage: true,
-                    force: false
-                });
-                
-                promise.then( (response) => {
-                    console.log(response.data);
-
-                    if (response.data.status === "0" || response.data.status === 0) {
-                    // remove env locally
-                    vm.envs = vm.envs.filter(function (env) {
-                        return env.envId !== envId;
-                    });
-                    $rootScope.chk.transitionEnable = true;
-                    growl.success($translate.instant('JS_DELENV_SUCCESS'));
-                    $state.go('admin.standard-envs-overview', {}, {reload: true});
-                } else if (response.data.status === "2") {
-
-                    $uibModal.open({
-                        animation: true,
-                        template: require('./modals/confirm-delete.html'),
-                        controller: ["$scope", function ($scope) {
-                            this.envId = envId;
-                            this.confirmed = confirmDeleteFn;
-                        }],
-                        controllerAs: "confirmDeleteDialogCtrl"
-                    });
-                } else {
-                        $rootScope.chk.transitionEnable = true;
-                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
-                        $state.go('admin.standard-envs-overview', {}, {reload: true});
-                }
+            vm.envs = vm.envs.filter(function (env) {
+                return env.envId !== envId;
             });
-            } else {
-                $rootScope.chk.transitionEnable = true;
-                $state.go('admin.standard-envs-overview', {showContainers: false,
-                    showObjects: false}, {reload: false});
-            }
+            $state.go('admin.standard-envs-overview', {}, {reload: true});
         };
 
         vm.showObjects = $stateParams.showObjects;
@@ -302,16 +281,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
 
             console.log(inputMethod);
         };
-        vm.selectedRowData = {};
-        vm.deleteSelected = function () {
-            var selectedRowData = vm.gridOptions.api.getSelectedRows();
-            if (window.confirm($translate.instant('JS_DELENV_OK')))
-                selectedRowData.forEach(selectedRowData => {
-                    vm.deleteEnvironment(selectedRowData.id, undefined, true);
-                });
-        };
-        $scope.selected = "";
-
 
         function actionsCellRendererFunc(params) {
 
