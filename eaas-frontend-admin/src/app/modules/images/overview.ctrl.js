@@ -1,11 +1,11 @@
 import {WaitModal} from '../../lib/task.js';
-import { _fetch } from "../../lib/utils";
+import { _fetch, confirmDialog } from "../../lib/utils";
 import {
     MachineBuilder
 } from '../../lib/machineBuilder.js';
 
-module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Images', 'growl',
-    function ($state, $scope, $http, localConfig, $uibModal, Images, growl)
+module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'growl',
+    function ($state, $scope, localConfig, $uibModal, Images, growl)
 {
     var vm = this;
     vm.config = localConfig.data;
@@ -186,11 +186,18 @@ module.exports = ['$state', '$scope', '$http', 'localConfig', '$uibModal', 'Imag
         return imageActions;
     }
 
-    vm._delete = function(imageId) {
+    vm._delete = async function(imageId) {
 
-        if (!window.confirm(`Please confirm deleting disk: ${imageId}?` ))
-            return false;
-
+        try {
+            await confirmDialog($uibModal, "Delete image", `Please confirm deleting disk: ${imageId}?` );
+        }
+        catch(e)
+        {
+            console.log(e);
+            return;
+        }
+        
+        console.log("deleteing image " + imageId);
         Images.delete("default", imageId);
         $state.reload();
     };

@@ -22,3 +22,18 @@ export async function _fetch(url, method = "GET", obj, token = null) {
 
     throw new Error(`${res.status} @ ${url} : ${await res.text()}`);
 }
+
+export function confirmDialog($uibModal, header, text)
+{
+    let modal = $uibModal.open({
+        animation: true,
+        template: require('./modals/confirm.html'),
+        backdrop: false,
+        controller: ["$scope", function ($scope) {
+            this.header = header;
+            this.text = text;
+        }],
+        controllerAs: "confirmCtrl"
+    });
+    return modal.result;
+}  
