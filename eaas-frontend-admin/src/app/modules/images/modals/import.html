@@ -9,13 +9,13 @@
             <div class="panel-heading">Add Disk Media</div>
             <div class="panel-body">
                 <div class="form-group" ng-if="importDlgCtrl.mode !== 'runtime'"> 
-                    <label>Disk image label: </label>
-                    <input class="form-control" type="text" ng-model="importDlgCtrl.label">
+                    <label for="_label">Disk image label: </label>
+                    <input class="form-control" type="text" ng-model="importDlgCtrl.label" id="_label">
                 </div>
                 <hr>
 
                 <div class="form-group">
-                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="create" > <label>Create new image</label>
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="create" id="_create"> <label for="_create">Create new image</label>
                 </div>
 
                 <div class="form-group" ng-if="importDlgCtrl.mode === 'create'">
@@ -29,7 +29,7 @@
                 <hr>
 
                 <div class="form-group">
-                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="upload"> <label>Import image</label>
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="upload" id="_upload"> <label for="_upload">Import image</label>
                 </div>
                 <div class="form-group" ng-if="importDlgCtrl.mode === 'upload'">
                     Supported disk image formats:<br>
@@ -41,23 +41,23 @@
                         <li>Expert Witness Format (EnCase) EWF</li>
                         <li>Qemu QCOW2</li>
                     </ul>
-                    <label>
+                    <label for="_hdurl">
                         <!--<input type="radio" ng-model="newImageCtrl.hdtype" value="url">-->
                         <span>{{'SW_NEW_IMAGE_HD_URL_LBL' | translate}}</span>
                     </label>
-                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.hdurl"
+                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.hdurl" id="_hdurl"
                         ng-disabled="importDlgCtrl.mode !== 'upload'"
                         ng-required="importDlgCtrl.mode == 'upload'" />
                 </div>
                 <hr>
                 <div class="form-group">
-                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="rom"> <label>Import ROM</label>
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="rom" id="_rom"> <label for="_rom">Import ROM</label>
                 </div>
                 <div class="form-group" ng-if="importDlgCtrl.mode === 'rom'">
-                    <label>
+                    <label for="_romurl">
                         <span>Upload ROM image</span>
                     </label>
-                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.romurl"
+                    <input placeholder="http://" type="text" class="form-control" ng-model="importDlgCtrl.romurl" id="_romurl"
                         ng-disabled="importDlgCtrl.mode !== 'rom'"
                         ng-required="importDlgCtrl.mode == 'rom'"/>
                 </div>
