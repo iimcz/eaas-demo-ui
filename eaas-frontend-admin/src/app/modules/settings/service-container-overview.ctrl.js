@@ -49,7 +49,7 @@ module.exports = ['$http', '$state', 'growl', 'localConfig', 'containerList', '$
             containerBuilder.setInputFolder(container.imageInput);
             containerBuilder.setOutputFolder(container.imageOutput);
             containerBuilder.setEnableNetwork(true);
-            containerBuilder.setServiceContainer(true);
+            containerBuilder.setServiceContainerId(container.selectedContainer.id);
 
             try {
                 let _result = await containerBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));

@@ -17,6 +17,7 @@ export class ContainerBuilder {
         this.runtimeId = undefined;
         this.serviceContainer = false;
         this.enableNetwork = false;
+        this.serviceContainerId = undefined;
     }
 
     setName(n) {
@@ -68,8 +69,15 @@ export class ContainerBuilder {
         this.enableNetwork = b;
     }
 
-    setServiceContainer(b) {
-        this.serviceContainer = b;
+    setServiceContainerId(name) {
+        if(name) {
+            this.serviceContainer = true;
+            this.serviceContainerId = name;
+        }
+        else {
+            this.serviceContainer = false;
+            this.serviceContainerId = undefined;
+        }
     }
 
     async build(api, idToken = null) 

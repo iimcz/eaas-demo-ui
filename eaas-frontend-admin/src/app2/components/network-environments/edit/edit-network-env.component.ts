@@ -5,6 +5,8 @@ import {NetworkEnvironmentView} from "EaasLibs/network-environments/networking-e
 import {NgForm} from "@angular/forms";
 import * as uuid from "uuid";
 import {saveNetworkEnv} from "EaasLibs/network-environments/network-environment-saver.ts";
+import {NetworkBuilder} from "../../../../../../eaas-client/lib/networkBuilder.js";
+import { AuthService } from '../../../auth/auth.service.ts';
 
 @Component({
     selector: 'edit-network-environment',
@@ -24,10 +26,12 @@ export class EditNetworkComponent implements AfterViewInit {
                 @Inject('$state') private $state: any,
                 @Inject('REST_URLS') private REST_URLS: any,
                 @Inject('localConfig') private localConfig: any,
-                @Inject('growl') private growl: any) {
+                @Inject('growl') private growl: any,
+                public auth: AuthService) {
     };
 
     ngOnInit() {
+        console.log(this.selectedNetworkEnvironment);
         this.networkingConfig = {
             serverMode: this.selectedNetworkEnvironment.networking.serverMode,
             isDHCPenabled: this.selectedNetworkEnvironment.networking.isDHCPenabled,
@@ -44,10 +48,15 @@ export class EditNetworkComponent implements AfterViewInit {
             upstream_dns: this.selectedNetworkEnvironment.upstream_dns,
             dnsServiceEnvId: this.selectedNetworkEnvironment.dnsServiceEnvId,
             smbServiceEnvId: this.selectedNetworkEnvironment.smbServiceEnvId,
+            linuxArchiveProxyEnvId: this.selectedNetworkEnvironment.linuxArchiveProxyEnvId,
             startupEnvId: this.selectedNetworkEnvironment.startupEnvId,
             isShared: !!this.selectedNetworkEnvironment.startupEnvId,
             description: this.selectedNetworkEnvironment.description,
         };
+        this.networkingConfig.linuxArchiveProxyEnvId = this.selectedNetworkEnvironment.linuxArchiveProxyEnvId;
+        console.log(this.selectedNetworkEnvironment.linuxArchiveProxyEnvId);
+        console.log(this.networkingConfig);
+        console.log(Object.getOwnPropertyDescriptor(this.networkingConfig, "linuxArchiveProxyEnvId"))
         // enrich chosenEnvs with title and implicit id
 
         if (this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
@@ -67,13 +76,21 @@ export class EditNetworkComponent implements AfterViewInit {
                     `${this.localConfig.data.eaasBackendURL}${this.REST_URLS.networkEnvironmentUrl}`,
                     this.networkEnvironmentView,
                     this.selectedNetworkEnvironment.envId)
-                    .subscribe((reply: any) => {
+                    .subscribe(async (reply: any) => {
                         if (reply.status == "0") {
                             this.growl.success("Done");
                             if(!run)
                                 this.$state.go('admin.networking', {}, {reload: true});
                             else
-                                this.$state.go('admin.emulator', {envId: this.selectedNetworkEnvironment.envId, isNetworkEnvironment: true}, {reload: true}); 
+                            {
+                                let networkBuilder = new NetworkBuilder(this.localConfig.data.eaasBackendURL, this.auth.getToken());
+                                let networkEnvironment = await networkBuilder.getNetworkEnvironmentById(this.selectedNetworkEnvironment.envId);
+                                await networkBuilder.loadNetworkEnvironment(networkEnvironment);
+                                this.$state.go("admin.emuView",  {
+                                    components: networkBuilder.getComponents(), 
+                                    clientOptions: networkBuilder.getClientOptions()
+                                }, {});  
+                            }
                         } else {
                             this.growl.error("Saved failed! ", reply);
                             console.log(reply);
