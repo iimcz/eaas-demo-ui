@@ -36,7 +36,7 @@
 </div>
 
 <div style="display:inline-block">
-    <button (click)="addEnv()" [disabled]="!(envLabel && selectedEnv && selectedEnv.title)" mat-raised-button color="primary">
+    <button (click)="addEnv()" [disabled]="!(envLabel && selectedEnv && selectedEnv.title)" mat-raised-button color="primary" id="_add_environment">
         {{ 'ADDENV_L' | translate }}
     </button>
 </div>
@@ -76,9 +76,9 @@
 <!--Bottom buttons-->
 <br>
 <div mat-dialog-actions align="end">
-    <button type="submit" value="submit" [disabled]="f.invalid" mat-raised-button style="margin-right:5px;" color="primary"
+    <button type="submit" value="submit" [disabled]="f.invalid" mat-raised-button style="margin-right:5px;" color="primary" id="_save_run"
             (click)="submitForm(f, true)">Save & Run</button>
-    <button type="submit" value="submit" [disabled]="!f.valid" mat-raised-button style="margin-right:5px;" color="primary"
+    <button type="submit" value="submit" [disabled]="!f.valid" mat-raised-button style="margin-right:5px;" color="primary" id="_save"
             (click)="submitForm(f)">{{"CHAR_SAVE" | translate}}</button>
     <button mat-stroked-button (click)="$state.go('admin.networking', {}, {reload: true})">{{"ADDENV_CANCEL" | translate}}</button>
 </div>
