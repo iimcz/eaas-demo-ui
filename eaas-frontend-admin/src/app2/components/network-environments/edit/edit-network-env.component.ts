@@ -31,7 +31,6 @@ export class EditNetworkComponent implements AfterViewInit {
     };
 
     ngOnInit() {
-        console.log(this.selectedNetworkEnvironment);
         this.networkingConfig = {
             serverMode: this.selectedNetworkEnvironment.networking.serverMode,
             isDHCPenabled: this.selectedNetworkEnvironment.networking.isDHCPenabled,
@@ -53,10 +52,6 @@ export class EditNetworkComponent implements AfterViewInit {
             isShared: !!this.selectedNetworkEnvironment.startupEnvId,
             description: this.selectedNetworkEnvironment.description,
         };
-        this.networkingConfig.linuxArchiveProxyEnvId = this.selectedNetworkEnvironment.linuxArchiveProxyEnvId;
-        console.log(this.selectedNetworkEnvironment.linuxArchiveProxyEnvId);
-        console.log(this.networkingConfig);
-        console.log(Object.getOwnPropertyDescriptor(this.networkingConfig, "linuxArchiveProxyEnvId"))
         // enrich chosenEnvs with title and implicit id
 
         if (this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
