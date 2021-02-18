@@ -1,28 +1,40 @@
 import {_fetch} from './utils.js';
 
 export class ContainerBuilder {
-    constructor(imageSource, urlString) {
+    constructor(imageSource, urlString, metadata) {
         this.imageUrl = urlString;
         this.name = undefined;
         this.processArgs = null;
         this.processEnvs = null;
-        this.inputFolder = null;
-        this.outputFolder = null;
+        this.inputFolder = "/input";
+        this.outputFolder = "/output";
         this.imageType = imageSource;
         this.title = null;
         this.description = null;
         this.author = null;
         this.guiRequired = undefined;
-        this.customSubdir = false;
+        this.customSubdir = undefined;
         this.runtimeId = undefined;
         this.serviceContainer = false;
         this.enableNetwork = false;
         this.serviceContainerId = undefined;
+        this.workingDir = null;
+
+        if(metadata)
+        {
+            this.configureProcess(metadata.entryProcesses, metadata.envVariables);
+            this.setWorkDirectory(metadata.workingDir);
+        }
     }
 
     setName(n) {
         this.name = n;
     }
+
+    setWorkDirectory(d)
+    {
+        this.workingDir = d;
+    } 
 
     configureProcess(args, envs)
     {
