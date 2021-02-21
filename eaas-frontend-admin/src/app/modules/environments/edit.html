@@ -194,15 +194,18 @@
         </div>
 
         <hr>
+        <!-- Include networking template
+           NOTE: you will find networkingTemplate in app.js-->
+           <div ng-if="!editEnvCtrl.linuxRuntime" class="topSkip">
+            <networking-Template networking=editEnvCtrl.networking></networking-Template>
+        </div>
+
+        <hr>
         <h4>Drive Settings</h4>
         <drives-overview drives="editEnvCtrl.drives.getList()" render="editEnvCtrl.guessBinding(index)"
             select="editEnvCtrl.selectMedium(index)"></drives-overview>
 
-        <!-- Include networking template
-           NOTE: you will find networkingTemplate in app.js-->
-        <div ng-if="!editEnvCtrl.linuxRuntime" class="topSkip">
-            <networking-Template networking=editEnvCtrl.networking></networking-Template>
-        </div>
+        
     </div>
 
     <!--

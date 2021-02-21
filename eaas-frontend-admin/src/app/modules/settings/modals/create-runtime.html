@@ -10,6 +10,16 @@
                 <label>Name
                 <input type="text" class="form-control" ng-model="newRuntimeCtrl.label"></input></label>
             </div>
+
+            <h4>Install network services and connect to runtime</h4>
+            
+            <div ng-repeat="serviceContainer in newRuntimeCtrl.containerList">
+                <div class="form-group"> 
+                    <label>     
+                     <input type="checkbox" ng-model="newRuntimeCtrl.selectedServices[serviceContainer.id]">
+                    {{ serviceContainer.title }}</label>
+                </div>
+            </div>
         </div>
     </div>
 </div>

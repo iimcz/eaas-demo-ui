@@ -3,6 +3,7 @@ import {
 } from '../../lib/machineBuilder.js'
 
 import {Drives} from '../../lib/drives.js'
+import { size } from 'lodash';
 
 module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "os", "Objects", "Images",
     function ($http,  $state, systemList, softwareList, localConfig, $uibModal, os, Objects, Images) {
@@ -71,11 +72,11 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm.guessBinding = function(index)
         {
             return vm.drives.renderBinding(index, vm.imageList, vm.softwareList, vm.objectList);
-        }
+        };
 
         vm.selectMedium = function (index) {
             vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, $uibModal);
-        }
+        };
 
         vm.onSelectSystem = function (item) {
             vm.selectedOs = item;
@@ -115,10 +116,10 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 confStr += " -m " + vm.config.template_params.memory;
 
             if (vm.config.template_params.pointer === 'usb')
-                confStr += " -usb -usbdevice tablet"
+                confStr += " -usb -usbdevice tablet";
 
             if (vm.config.template_params.kvm_enabled)
-                confStr += " -enable-kvm"
+                confStr += " -enable-kvm";
 
             if (confStr.startsWith(" "))
                 confStr = confStr.substring(1);
@@ -127,11 +128,32 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
 
         vm.updateQemu = function () {
             vm.native_config = updateNativeConfig();
-        }
+        };
 
         vm.updateMacemu = function () {
             vm.native_config = "rom rom://" + vm.config.template_params.rom.imageId;
-        }
+        };
+
+        vm.updateBrowser = function() {
+
+            let native_config = "--disable-background-mode --always-authorize-plugins --allow-outdated-plugins --proxy-server=socks5://127.0.0.1:8090";
+
+            if(vm.config.template_params.size) {
+                native_config += " --window-size=" + vm.config.template_params.size;
+            }
+
+            if(vm.config.template_params.fullscreen && vm.config.template_params.url)
+            {
+                native_config += " --app=" + vm.config.template_params.url;
+            }
+            else if(vm.config.template_params.url)
+            {
+                native_config += " " + vm.config.template_params.url;
+            }
+
+            vm.native_config = native_config;
+
+        };
 
         vm.updateAmiga = function () {
             vm.native_config = "";

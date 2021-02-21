@@ -246,6 +246,21 @@
       }
     },
     {
+      "id":"os:other:chrome-53", 
+      "puids" : [],
+      "label" : "Browser Chrome 53 (Flash)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "",
+      "template" : "browser",
+      "template_params" : 
+      {
+        "url" : null,
+        "fullscreen" : false,
+        "size" : "1024,768"
+      }
+    },
+    {
       "id":"os:linux:cent:77", 
       "puids": [{"puid": "fmt/689"}, {"puid": "fmt/795"}, {"puid": "fmt/794"}, {"puid": "fmt/793"} ],
       "label": "CentOS",

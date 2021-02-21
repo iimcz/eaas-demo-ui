@@ -1,7 +1,7 @@
 import {stopClient} from "./utils/stop-client";
 import {WaitModal} from "../../lib/task.js";
 import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
-import {sendCtrlAltDel, sendEsc} from "EaasClient/eaas-client";
+import {sendCtrlAltDel, sendEsc, SnapshotRequestBuilder} from "EaasClient/eaas-client";
 
 module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'eaasClient',
@@ -44,29 +44,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     vm.enableSaveEnvironment = (chosenEnv == null);
     vm.isKVM = false;
     vm.waitModal = new WaitModal($uibModal);
-    if (chosenEnv)
-    {
-        console.log(chosenEnv);
-
-        vm.enablePrinting = chosenEnv.enablePrinting;
-        vm.shutdownByOs = chosenEnv.shutdownByOs;
-        if(chosenEnv.nativeConfig)
-            vm.isKVM = chosenEnv.nativeConfig.includes('-enable-kvm');
-
-        if(chosenEnv.drives)
-        {
-            for(let d of chosenEnv.drives)
-            {
-                if(d.type === 'disk')
-                    vm.enableSaveEnvironment = true;
-            }
-        }
-        else if(chosenEnv.linuxRuntime)
-            vm.enableSaveEnvironment = false;
-        else
-            vm.enableSaveEnvironment = true; // fallback to old metadata
-    }
-
+    
     /*
     if(vm.enablePrinting) {
         $rootScope.$on('emulatorStart', function(event, args) {
@@ -101,7 +79,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         if(!vm.showKeys) {
             $("#emulator-keys").show();
             $("emulator-kbd").show();
-            var elem = document.querySelector('#emulator-kbd');
+            let elem = document.querySelector('#emulator-kbd');
             console.log(elem);
             elem.style.visibility = 'visible';
 
@@ -110,12 +88,12 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         else {
             $("#emulator-keys").hide();
             $("emulator-kbd").hide();
-            var elem = document.querySelector('#emulator-kbd');
+            let elem = document.querySelector('#emulator-kbd');
             console.log(elem);
             elem.style.visibility = 'hidden';
             vm.showKeys = false;
         }
-    }
+    };
 
     vm.openPrintDialog = async function () {
         try {
@@ -133,7 +111,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         });
                         const pdfBlob = await pdf.blob();
                         window.open(URL.createObjectURL(pdfBlob));
-                    }
+                    };
                 }],
                 controllerAs: "openPrintDialogCtrl"
             });
@@ -171,7 +149,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         $state.go('admin.standard-envs-overview', {}, { reload: true });
     };
 
-    vm.openChangeEnvDialog = function() {
+    vm.openChangeEnvDialog = async function() {
         $uibModal.open({
             animation: true,
             template: require('./modals/choose-env-dialog.html'),
@@ -179,18 +157,28 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                 this.custom_env = null;
                 this.environments = vm.objEnvironments;
 
-                this.changeEnv= function()
+                this.changeEnv = async function()
                 {
                     eaasClient.release();
-                    let data = {envId: this.custom_env.id};
+                    
+                    let components = [];
+                    let machine = EaasClientHelper.createMachine(this.custom_env.id);
+                    components.push(machine);
 
                     if($stateParams.uvi)
                     {
-                        data.enableDownload = $stateParams.enableDownload,
-                        data.uvi = $stateParams.uvi
+                        console.log("- - - FIX ME - - -");
+
+                 //       data.enableDownload = $stateParams.enableDownload,
+                 //       data.uvi = $stateParams.uvi
                     }
-                    $state.go('admin.emulator', data, {reload: true});
-                };
+
+                    let clientOptions = await EaasClientHelper.clientOptions(env.envId);
+                $state.go("admin.emuView",  {
+                    components: components, 
+                    clientOptions: clientOptions
+                }, {}); 
+               };
             }],
             controllerAs: "changeEnvDialogCtrl"
         });
@@ -218,7 +206,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         }
     };
 
-    var eaasClientReadyTimer = function() {
+    var eaasClientReadyTimer = async function() {
         if (eaasClient && eaasClient.getActiveSession()) {
             if(eaasClient.getActiveSession().getRemovableMediaList()) {
                 vm.removableMediaList = eaasClient.getActiveSession().getRemovableMediaList();
@@ -230,25 +218,24 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         let mediaItem = {};
                         let element = vm.removableMediaList[i];
                         mediaItem.driveId = element.driveIndex;
-                        Objects.get({archiveId: element.archive, objectId: element.id}).$promise.then(function(response) {
-                            mediaItem.mediaCollection = response.mediaItems;
-                            mediaItem.objectId = element.id;
-                            mediaItem.archive = element.archive;
-                            if(mediaItem.mediaCollection) 
+                        let response = await Objects.get({archiveId: element.archive, objectId: element.id}).$promise;
+                        mediaItem.mediaCollection = response.mediaItems;
+                        mediaItem.objectId = element.id;
+                        mediaItem.archive = element.archive;
+                        if(mediaItem.mediaCollection) 
+                        {
+                            mediaItem.currentMediumLabel = mediaItem.mediaCollection.file.length > 0 ? mediaItem.mediaCollection.file[0].localAlias : null;
+                            mediaItem.chosen_medium_label = mediaItem.currentMediumLabel;
+                            mediaItem.media = mediaItem.mediaCollection.file;
+                            mediaItem.mediumTypes = [];
+                            for(let j = 0; j < mediaItem.media.length; j++)
                             {
-                                mediaItem.currentMediumLabel = mediaItem.mediaCollection.file.length > 0 ? mediaItem.mediaCollection.file[0].localAlias : null;
-                                mediaItem.chosen_medium_label = mediaItem.currentMediumLabel;
-                                mediaItem.media = mediaItem.mediaCollection.file;
-                                mediaItem.mediumTypes = [];
-                                for(var i = 0; i < mediaItem.media.length; i++)
+                                if(!mediaItem.mediumTypes.includes(mediaItem.media[j].type))
                                 {
-                                    if(!mediaItem.mediumTypes.includes(mediaItem.media[i].type))
-                                    {
-                                        mediaItem.mediumTypes.push(mediaItem.media[i].type);
-                                    }
+                                    mediaItem.mediumTypes.push(mediaItem.media[j].type);
                                 }
                             }
-                        });
+                        }
                         vm.mediaList.push(mediaItem);
                     }
                 }
@@ -279,7 +266,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                              result.push(mediaItem.media[_i]);
                     }
                     return result;
-                }
+                };
                     
                 this.isChangeMediaSubmitting = false;
                 console.log("opened change media dialog, ok " + this.isChangeMediaSubmitting);
@@ -352,7 +339,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                 $state.go('error', { errorMsg: { title: "Emulation Error", message: details } });
                 eaasClient.release();
             }       
-        }
+        };
 
         vm.switchEmulators = async function (component) {
            
@@ -456,26 +443,21 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         this.isSavingEnvironment = true;
                         window.onbeforeunload = null;
 
-                        var postReq = {};
-                        postReq.type = this.type;
-//                        if(postReq.type === 'objectEnvironment')
-//                            postReq.embeddedObject = true;
-                        // postReq.envId = (eaasClient.realEnvId) ? eaasClient.realEnvId : vm.envId;
-                        postReq.message = this.envDescription;
-                        postReq.title = this.envName;
-                        postReq.softwareId = $stateParams.softwareId;
-                        postReq.objectId = $stateParams.objectId;
-                        postReq.userId = $stateParams.userId;
-                        postReq.isRelativeMouse = this.isRelativeMouse;
-                        postReq.cleanRemovableDrives = !this.cleanRemovableDrives;
+
+                        let snapshotRequest = new SnapshotRequestBuilder(this.type);
+                        snapshotRequest.setTitle(this.envName);
+                        snapshotRequest.setMessage(this.envDescription);
+                        snapshotRequest.enableRelativeMouse(this.isRelativeMouse);
+                        snapshotRequest.removeVolatileDrives(!this.cleanRemovableDrives);
 
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
-                            let result = await eaasClient.getActiveSession().snapshot(postReq, vm.isNetworkEnvironment ? vm.envId : undefined); 
+                            let result = await eaasClient.getActiveSession().snapshot(snapshotRequest, vm.isNetworkEnvironment ? vm.envId : undefined); 
                             // console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
                             growl.error(e.name, {title: 'Error ' + e.message});
+                            vm.waitModal.hide();
                         }
                         finally {
                             vm.waitModal.hide();
@@ -486,7 +468,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                             else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
                                 $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
                             else
-                                $state.go('admin.standard-envs-overview', {}, {reload: true})
+                                $state.go('admin.standard-envs-overview', {}, {reload: true});
 
                             $scope.$close();
                             window.isSavingEnvironment = false;
@@ -504,6 +486,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         };
 
         $('#emulator-container').hide();
+
         try {
             await confirmDialog($uibModal, 
                 $translate.instant('CONFIRM_SNAPSHOT_H'), 

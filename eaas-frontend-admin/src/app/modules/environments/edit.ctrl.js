@@ -1,12 +1,15 @@
 import {publisher} from "./templates/publish-environment";
-import {Drives} from "../../lib/drives.js"
-import {getOsById} from '../../lib/os.js'
+import {Drives} from "../../lib/drives.js";
+import {getOsById} from '../../lib/os.js';
+import {NetworkBuilder} from "EaasClient/lib/networkBuilder.js";
+import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
+
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "osList", "softwareList", "$uibModal",
-             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images", "userInfo",
+             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images", "userInfo", "EaasClientHelper",
     function ($http, $rootScope, $scope, $state, $stateParams, Environments, localConfig,
             growl, $translate, objectDependencies, helperFunctions, osList, softwareList, $uibModal,
-            $timeout, nameIndexes, REST_URLS, Objects, Images, userInfo) {
+            $timeout, nameIndexes, REST_URLS, Objects, Images, userInfo, EaasClientHelper) {
 
        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
@@ -88,25 +91,46 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                vm.showDateContextPicker = true;
             }
 
-            vm.run = function()
+            vm.run = async function()
             {
                 if($scope.form.$dirty) {
-                    if (window.confirm("There are unsaved modifications. Proceed anyway?"))
-                    {
-                        $state.go("admin.emulator",  {
-                            envId: vm.env.envId, 
-                            objectId: vm.env.objectId, 
-                            objectArchive: vm.env.objectArchive
-                        }, {});
+                    try {
+                        await confirmDialog($uibModal, "Unsaved settings", `There are unsaved modifications. Proceed anyway?` );
                     }
+                    catch(e)
+                    {
+                        console.log(e);
+                        return;
+                    }
+                }       
+
+                let components, clientOptions;
+                let machine = EaasClientHelper.createMachine(vm.env.envId);
+               
+                if(vm.objectId)
+                    machine.setObject(vm.env.objectId, vm.env.objectArchive);
+
+                if(vm.env.networking.enableInternet){
+                    console.log("starting with internet enabled");
+                    let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
+                    await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
+
+                    networkBuilder.addComponent(machine);
+                    components =  await networkBuilder.getComponents();
+                    clientOptions =  await networkBuilder.getDefaultClientOptions();
                 }
-                else 
-                    $state.go("admin.emulator",  {
-                        envId: vm.env.envId, 
-                        objectId: vm.env.objectId, 
-                        objectArchive: vm.env.objectArchive
-                    }, {});
-            }
+                else
+                {
+                    components = [machine];
+                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
+                }
+               
+                $state.go("admin.emuView",  {
+                    components: components,
+                    clientOptions: clientOptions
+                }, {});
+            };
+
             vm.os = getOsById(osList.operatingSystems, vm.env.os);
             if(localConfig.data.features.handle) {
                 $http.get(localConfig.data.eaasBackendURL + REST_URLS.getHandleList).then(function (response) {

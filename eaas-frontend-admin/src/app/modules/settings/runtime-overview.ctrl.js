@@ -6,21 +6,27 @@ import {
     MachineBuilder
 } from '../../lib/machineBuilder.js';
 
-import { WaitModal } from "../../lib/task.js";
 import {Drives} from '../../lib/drives.js';
 
-module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
-    'localConfig', 'growl', '$translate', 'Environments',
-    '$uibModal', 
-    'REST_URLS', '$timeout', "osList", "systemList",
-    function ($rootScope, $http, $state, $scope, Images,
-        localConfig, growl, $translate, Environments, 
-        $uibModal, 
+import {WaitModal, Task} from "../../lib/task.js";
+import { 
+    ContainerImageBuilder,
+    ContainerBuilder
+ } from "../../lib/containerBuilder.js";
+
+module.exports = ['$rootScope', '$http', '$state', '$scope', 
+    'localConfig', 'growl', '$translate', 'Environments', 'EaasClientHelper', "Images",
+    '$uibModal', 'containerList',
+    'REST_URLS', '$timeout', "osList", "systemList", 
+    function ($rootScope, $http, $state, $scope, 
+        localConfig, growl, $translate, Environments, EaasClientHelper, Images,
+        $uibModal, containerList,
         REST_URLS, $timeout, osList, systemList) {
 
         var vm = this;
         vm.systems = systemList.data;
         vm.config = localConfig.data;
+        vm.containerList = containerList.container;
 
         function updateTableData(rowData) {
             vm.rowCount = rowData.length;
@@ -38,7 +44,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                 vm.rowCount = 0;
                 vm.envs = response;
                 vm.envs.forEach(function (element) {
-                    console.log(element);
+                   
                     if (!element.linuxRuntime)
                         return;
 
@@ -207,7 +213,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
             vm[selected](id);
         }
 
-        vm.run = function (id) {
+        vm.run = async function (id) {
 
             var env = {};
             for (let i = 0; i < vm.envs.length; i++) {
@@ -223,14 +229,18 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                         message: "given envId: " + id + " is not found!"
                     }
                 });
-            $state.go('admin.emulator', {
-                envId: env.envId,
-                objectId: env.objectId,
-                objectArchive: env.objectArchive,
-                isNetworkEnvironment: vm.view === 4
-            }, {
-                reload: true
-            });
+
+            let components = [];
+            let machine = EaasClientHelper.createMachine(env.envId, "public");
+            if(env.objectId)
+                machine.setObject(env.objectId, env.objectArchive);
+            components.push(machine);
+
+            let clientOptions = await EaasClientHelper.clientOptions(env.envId);
+            $state.go("admin.emuView",  {
+                components: components, 
+                clientOptions: clientOptions
+            }, {}); 
         };
 
         vm.edit = function (id) {
@@ -245,6 +255,60 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                 animation: true,
                 template: require('./modals/create-runtime.html'),
                 controller: ["$scope", function($scope) {
+                    this.containerList = vm.containerList;
+                    this.selectedServices = {};
+                    this.waitModal = new WaitModal($uibModal);
+
+                    this.saveImportedContainer = async function (c, containerUrl, runtimeId, containerMetadata) 
+                    {
+                        let containerBuilder = new ContainerBuilder("dockerhub", containerUrl, containerMetadata);
+                        containerBuilder.setTitle(c.title);
+                        containerBuilder.setAuthor("OpenSLX");
+                        containerBuilder.setDescription(c.description);
+                        containerBuilder.setRuntime(runtimeId);
+                        containerBuilder.setName(c.id);
+                        containerBuilder.setInputFolder(c.imageInput);
+                        containerBuilder.setOutputFolder(c.imageOutput);
+                        containerBuilder.setEnableNetwork(true);
+                        containerBuilder.setServiceContainerId(c.id);
+
+                        try {
+                            let _result = await containerBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                            let task = new Task(_result.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                            await task.done;
+                            growl.success("import successful.");
+                            this.waitModal.hide();
+                            return;
+                        }   
+                        catch(e)
+                        {
+                            console.log(e);
+                            this.waitModal.hide();
+                            throw e;
+                        }
+                    };
+
+                    this.import = async function (c, runtimeId) {
+                        let imageBuilder = new ContainerImageBuilder(c.imageUrl, "dockerhub");
+                        imageBuilder.setTag((c.tag) ? container.tag : "latest");
+
+                        this.waitModal.show("Importing service container", "Importing " + c.title);
+                        let imageBuilderTask = await imageBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                        let task = new Task(imageBuilderTask.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                        let buildResult = await task.done;
+
+                        try {
+                            let object = JSON.parse(buildResult.object);
+                            return this.saveImportedContainer(c, object.containerUrl, runtimeId, object.metadata);
+                        }
+                        catch(e)
+                        {
+                            console.log(e);
+                            this.waitModal.hide();
+                            throw e;
+                        }
+                    };
+
                     this.createRuntime = async function() {
 
                         const runtime = "https://gitlab.com/emulation-as-a-service/linux-container-base-image/-/jobs/artifacts/master/raw/disk.img?job=build";
@@ -266,9 +330,9 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                         }
 
                         let drives = new Drives(template.drive);
-                        let waitModal = new WaitModal($uibModal);
+                        
 
-                        waitModal.show("Creating runtime", "Please wait");
+                        this.waitModal.show("Creating runtime", "Please wait");
 
                         let rtImageResult = await Images.import(runtime, `Runtime Image (${shortDate})`, "runtime");
                         let rtCdromResult = await Images.import(cloudInit, `CloudInit (${shortDate})`, "runtime");
@@ -279,7 +343,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                         catch (e)
                         {
                             console.log(e);
-                            waitModal.hide();
+                            this.waitModal.hide();
                             vm.rtModal.close();
                             $state.go('error', {errorMsg: e});
                         }
@@ -290,18 +354,26 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', 'Images',
                         builder.templateId = template.id;
                         builder.setDrives(drives);
 
-                        builder.build().then(() => {
-                            waitModal.hide();
+                        try {
+                            let result = await builder.build(); 
+                            this.waitModal.hide();
                             vm.rtModal.close();
                             vm.updateTable();  
-                        })
-                        .catch((e) => {
+
+                            console.log(this.selectedServices);
+
+                            for (let c of vm.containerList) { 
+                               if(this.selectedServices[c.id])
+                                    await this.import(c, result.id);
+                            }
+                        }  
+                        catch(e)  {
                             console.log(e);
-                            waitModal.close();
-                            vm.rtModal.close();
+                            this.waitModal.hide();
+                            vm.rtModal.clsoe();
                             $state.go('error', {errorMsg: e});
-                        });
-                    }; 
+                        }
+                    };
                 }],
                 controllerAs: "newRuntimeCtrl"
             });

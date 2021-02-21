@@ -1,0 +1,14 @@
+
+<div class="form-group">
+    <label for="_size">Size (e.g. 800,600)</label>
+    <input type="text" class="form-control" ng-model="$ctrl.args.size" id="_size" ng-change="$ctrl.onUpdate()"></input>
+</div>
+<div class="form-group">
+    <input type="checkbox" ng-model="$ctrl.args.fullscreen" id="_fullscreen" ng-change="$ctrl.onUpdate()">
+    <label for="_fullscreen">Fullscreen (kiosk mode)</label>
+<div>
+<div class="form-group">
+    <label for="_url">URL</label>
+    <input type="text" class="form-control" ng-model="$ctrl.args.url" id="_url" ng-change="$ctrl.onUpdate()"></input>
+</div>
+        

@@ -2,18 +2,23 @@
     
 <div class="form-group">
     <div>
-        <input type="checkbox" ng-model="$ctrl.networking.connectEnvs">
-        <label>Enable networking</label>
+        <input type="checkbox" ng-model="$ctrl.networking.connectEnvs" id="_enable_network">
+        <label for="_enable_network">Enable networking</label>
+    </div>
+
+    <div>
+        <input type="checkbox" ng-model="$ctrl.networking.enableInternet" ng-if="$ctrl.networking.connectEnvs" id="_enable_internet">
+        <label for="_enable_internet">Enable internet</label>
     </div>
 
     <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
-        <input type="checkbox" ng-model="$ctrl.networking.isTelnetEnabled">
-        <label>Enable Telnet</label>
+        <input type="checkbox" ng-model="$ctrl.networking.isTelnetEnabled" id="_enable_telnet">
+        <label for="_enable_telnet">Enable Telnet</label>
     </div>
 
     <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">
-        <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled">
-        <label>Enable DHCP</label>
+        <input type="checkbox" ng-model="$ctrl.networking.isDHCPenabled" id="_enable_dhcp">
+        <label for="_enable_dhcp">Enable DHCP</label>
     </div>
 
   <!--    <div class="form-group" ng-if="$ctrl.networking.connectEnvs">-->

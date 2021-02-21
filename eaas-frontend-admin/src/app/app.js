@@ -50,6 +50,7 @@ import uiOptionsTemplate from './modules/environments/templates/ui-options.html'
 import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
 import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
 import amigaOptionsTemplate from './modules/environments/templates/emulators/amiga-options.html';
+import browserOptionsTemplate from './modules/environments/templates/emulators/browser-options.html';
 import drivesOverviewTemplate from './modules/environments/templates/drives/overview.html';
 
 agGrid.initialiseAgGridWithAngular1(angular);
@@ -116,6 +117,7 @@ import {EditNetworkComponent} from "../app2/components/network-environments/edit
 import {StartedNetworkOverview} from "EaasLibs/network-environments/run/started-network-overview.component.ts";
 
 import { osLocalList } from './lib/os.js';
+import { EaasClientHelper } from './lib/eaasClientHelper.js';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
                                    'ui.mask', 'ui.select', 'angular-growl', 'smart-table', 'ng-sortable', 'pascalprecht.translate',
@@ -277,6 +279,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         }
     })
 
+    .component('browserOptions', {
+        template: browserOptionsTemplate,
+        bindings: {
+            args: '=',
+            onUpdate: '&',
+        }
+    })
+
     .component('drivesOverview', {
         template: drivesOverviewTemplate,
         bindings: {
@@ -417,6 +427,10 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 .factory('Images', function(localConfig, authService) {
     return new EaasImages(localConfig.data.eaasBackendURL, () => authService.getToken());
 })
+.factory("EaasClientHelper", function(localConfig) {
+    return new EaasClientHelper(localConfig.data.eaasBackendURL, () => authService.getToken());
+})
+
 .config(['$stateProvider',
         '$urlRouterProvider',
         'growlProvider',
@@ -794,21 +808,24 @@ function($stateProvider,
                 }
             }
         })
-        .state('admin.emulator', {
+        .state('admin.emuView', {
             url: "/emulator",
             resolve: {
                 chosenEnv: function($stateParams, Environments, EmilNetworkEnvironments) {
                     if($stateParams.isNetworkEnvironment){
                         return EmilNetworkEnvironments.get({envId: $stateParams.envId}).$promise;
-                    }
-                    else if($stateParams.envId && !$stateParams.isDetached && $stateParams.type != "saveImport" && $stateParams.type != 'saveCreatedEnvironment')
-                        return Environments.get({envId: $stateParams.envId}).$promise;
+                    }   
                     else
                         return null;
                 },
-                eaasClient: (localConfig, authService) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken())
+                eaasClient: (localConfig, authService, $cookies) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken(), $cookies.getObject('kbLayoutPrefs'))
             },
+           
             params: {
+                components: [],
+                type: 'saveRevision',
+                clientOptions: null
+                 /*
                 envId: null,
                 isNetworkEnvironment: null,                
                 type: 'saveRevision',
@@ -819,7 +836,6 @@ function($stateProvider,
                 userId: null,
                 returnToObjects: false,
                 isStarted: false,
-                isDetached: false,
                 networkInfo: null,
                 containerRuntime: null,
                 uvi: null,
@@ -828,6 +844,7 @@ function($stateProvider,
                 componentId: null,
                 session: null,
                 groupId : null
+                */
             },
             views: {
                 'wizard': {
@@ -847,7 +864,7 @@ function($stateProvider,
                 chosenEnv: function($stateParams, Environments) {
                     return Environments.get({envId: $stateParams.envId}).$promise;
                 },
-                eaasClient: (localConfig, authService) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken())
+                eaasClient: (localConfig, authService, $cookies) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken(), $cookies.getObject('kbLayoutPrefs'))
             },
             params: {
                 envId: null,
@@ -964,6 +981,7 @@ function($stateProvider,
                 systemList: ($http, localConfig)  => {
                     return $http.get(localConfig.data.eaasBackendURL + "environment-repository/templates");
                 },
+                containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
             },
             views: {
                 'wizard': {
@@ -984,20 +1002,6 @@ function($stateProvider,
                 'wizard': {
                     template: require('./modules/settings/default-envs-overview.html'),
                     controller: "DefaultEnvsOverviewCtrl as defaultEnvsOverviewCtrl"
-                }
-            }
-        })
-
-        .state('admin.service-containers', {
-            url: "/service-containers",
-            params: {},
-            resolve: {
-               containerList : () => {return _fetch("serviceContainerList.json", "GET", null);}
-            },
-            views: {
-                'wizard': {
-                    template: require('./modules/settings/service-container-overview.html'),
-                    controller: "ServiceContainerCtrl as serviceContainerCtrl"
                 }
             }
         })

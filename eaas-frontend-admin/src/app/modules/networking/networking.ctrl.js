@@ -1,5 +1,9 @@
-module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '$http', 'Environments', "$translate", "growl", "EmilNetworkEnvironments", 
-    function ($state, $scope, $uibModal, localConfig, REST_URLS, $http, Environments, $translate, growl, EmilNetworkEnvironments) {
+import {NetworkBuilder} from "EaasClient/lib/networkBuilder.js";
+import {ClientError} from "EaasClient/eaas-client.js";
+import { _fetch, confirmDialog } from "../../lib/utils";
+
+module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '$http', 'Environments', "$translate", "growl", "EmilNetworkEnvironments", "authService",
+    function ($state, $scope, $uibModal, localConfig, REST_URLS, $http, Environments, $translate, growl, EmilNetworkEnvironments, authService) {
    
     var vm = this;
     vm.landingPage = localConfig.data.landingPage;
@@ -121,16 +125,16 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
             return environmentRenderer;
     }
 
-    function deleteNetwork(envId, isConfirmed) {
-        let confirmationResult = null;
-        if (typeof isConfirmed != "undefined")
-            confirmationResult = isConfirmed;
-        else {
-            confirmationResult = window.confirm($translate.instant('JS_DELENV_OK'));
-        }
+    async function deleteNetwork(envId) {
 
-        if (!confirmationResult) 
+        try {
+            await confirmDialog($uibModal, "Delete network?", `Please confirm deleting network: ${envId}?` );
+        }
+        catch(e)
+        {
+            console.log(e);
             return;
+        }
         
         let promise = null;
         promise = EmilNetworkEnvironments.delete({envId: envId}).$promise;        
@@ -151,7 +155,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
         });
     }
 
-    function run (id) {
+    async function run (id) {
         var env = {};
         for (let i = 0; i < vm.envs.length; i++) {
             if (id == vm.envs[i].envId) {
@@ -161,7 +165,21 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
         }
         if (typeof env.envId == "undefined")
             $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-        $state.go('admin.emulator', {envId: env.envId, isNetworkEnvironment: true}, {reload: true});
+
+        try {
+            let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
+            let networkEnvironment = await networkBuilder.getNetworkEnvironmentById(env.envId);
+            await networkBuilder.loadNetworkEnvironment(networkEnvironment);
+
+            $state.go("admin.emuView",  {
+                components: networkBuilder.getComponents(), 
+                clientOptions: networkBuilder.getClientOptions()
+            }, {}); 
+        }
+        catch(e) {
+            const details = (e instanceof ClientError) ? e.toJson() : e.toString();
+            $state.go('error', { errorMsg: { title: "EaaS Client Error", message: details } });
+        }
     }
 
     function edit(id) {
@@ -177,14 +195,14 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
         $http.get(localConfig.data.eaasBackendURL + "sessions/" + id).then((response) => {
             response.data.sessionId = id;
             //temporary, until we define which environment we want to visualize first
-            const envIdToInitialize = response.data.components.find(e => {return e.type === "machine"}).environmentId;
-            const componentId = response.data.components.find(e => {return e.type === "machine"}).componentId;
-            $state.go('admin.emulator', {envId: envIdToInitialize, componentId: componentId, session: response.data}, {reload: true});
-        })
+            const componentId = response.data.components.find(e => {return e.type === "machine";}).componentId;
+
+            $state.go('admin.emuView', {componentId: componentId, session: response.data}, {reload: true});
+        });
     }
 
     function openLandingPage(id) {
-        window.open(vm.landingPage + "?sessionId=" + id + "#!/attach-landing-page")
+        window.open(vm.landingPage + "?sessionId=" + id + "#!/attach-landing-page");
     }
     
     function connectEnv(id) {
@@ -206,18 +224,24 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                     },
                     controller: "NetworkGroupManagerCtrl as $ctrl"
                 });
-        })
+        });
     }
 
-    function deleteSession(id) {
-        let confirmationResult = window.confirm("Delete network session?");
-        if (!confirmationResult) 
+    async function deleteSession(id) {
+
+        try {
+            await confirmDialog($uibModal, "End network session?", `Please confirm ending network session: ${id}?` );
+        }
+        catch(e)
+        {
+            console.log(e);
             return;
+        }
         
         $http.delete(localConfig.data.eaasBackendURL + "sessions/" + id).then((response) => {
             console.log(response);
             $state.go('admin.networking', {}, {reload: true});
-        })
+        });
     }
 
     function updateTableData(rowData){
@@ -240,7 +264,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
                     rowData.push({
                         name: element.title,
                         id: element.envId,
-                    })
+                    });
                 });
                 updateTableData(rowData);
             });

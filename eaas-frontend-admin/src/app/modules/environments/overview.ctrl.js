@@ -1,14 +1,15 @@
 import {getOsLabelById} from '../../lib/os.js';
-import { _fetch, confirmDialog } from "../../lib/utils";
+import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
+import {NetworkBuilder} from "EaasClient/lib/networkBuilder.js";
 
 module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams', 
                     'localConfig', 'growl', '$translate', 'Environments', 
-                    '$uibModal', 'softwareList', 
-                    'REST_URLS', '$timeout', "osList", "authService",
+                    '$uibModal', 
+                    'REST_URLS', '$timeout', "osList", "authService", "EaasClientHelper",
     function ($rootScope, $http, $state, $scope, $stateParams,
               localConfig, growl, $translate, Environments, 
-              $uibModal, softwareList,  
-              REST_URLS, $timeout, osList, authService) {
+              $uibModal,  
+              REST_URLS, $timeout, osList, authService, EaasClientHelper) {
         
         var vm = this;
 
@@ -143,7 +144,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                             growl.error("Error exporting image", "tbd.");
                         }
                         );
-                    } 
+                    }; 
                 }],
                 controllerAs: "exportDialogCtrl"
             });
@@ -359,7 +360,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             vm[selected](id, archive);
         }
 
-        vm.run = function (id) {
+        vm.run = async function (id) {
             if (vm.view == 2) {
                 $state.go('admin.container', ({envId: id, modifiedDialog: true}));
                 return;
@@ -374,7 +375,33 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             }
             if (typeof env.envId == "undefined")
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
-            $state.go('admin.emulator', {envId: env.envId, objectId: env.objectId, objectArchive: env.objectArchive, isNetworkEnvironment: vm.view === 4}, {reload: true});
+
+            let components, clientOptions;
+            let machine = EaasClientHelper.createMachine(env.envId);
+            machine.setInteractive(true);
+            
+            if(env.objectId)
+                machine.setObject(env.objectId, env.objectArchive);
+
+            if(env.internetEnabled){
+                console.log("starting with internet enabled");
+                let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
+                await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
+
+                networkBuilder.addComponent(machine);
+                components =  await networkBuilder.getComponents();
+                clientOptions =  await networkBuilder.getDefaultClientOptions();
+            }
+            else
+            {
+                components = [machine];
+                clientOptions = await EaasClientHelper.clientOptions(env.envId);
+            }
+            
+            $state.go("admin.emuView",  {
+                components: components,
+                clientOptions: clientOptions
+            }, {});
         };
 
         vm.edit = function (id) {
@@ -390,7 +417,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
  //           if(vm.view ===4 ){
  //               window.open(vm.landingPage + "?id=" + id + "&isNetworkEnvironment=" + "true");
  //           } else
-                window.open("/landing-page" + "?id=" + id)
+                window.open("/landing-page" + "?id=" + id);
         };
 
         $scope.onPageSizeChanged = function() {
