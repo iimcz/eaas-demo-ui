@@ -1,4 +1,3 @@
-import {startNetworkEnvironment} from "EaasLibs/javascript-libs/network-environment-utils/start-network-environment.js";
 import {showErrorIfNull} from "EaasLibs/javascript-libs/show-error-if-null.js";
 import {MachineComponentBuilder} from "EaasClient/lib/componentBuilder";
 import {ClientOptions, TcpGatewayConfig} from "EaasClient/lib/clientOptions";
@@ -255,13 +254,13 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                     component.setInteractive(true);
                     components.push(component);
                }
-               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : eaasClient[startFunction](components, clientOptions)).then(function () {
-                let sessionToInitialize = undefined;
-                if(vm.componentIdToInitialize){
-                   sessionToInitialize = eaasClient.getSession(vm.componentIdToInitialize);
-                }
 
-                eaasClient.connect($("#emulator-container")[0], sessionToInitialize).then(function () {
+               // broken
+               (isNetworkEnvironment ? startNetworkEnvironment(vm, eaasClient, vm.env, Environments, $http, $uibModal, localConfig) : 
+               eaasClient[startFunction](components, clientOptions)).then(function () {
+                
+
+                eaasClient.connect($("#emulator-container")[0]).then(function () {
                     window.onbeforeunload = function (e) {
                         var dialogText = $translate.instant('MESSAGE_QUIT');
                         e.returnValue = dialogText;
