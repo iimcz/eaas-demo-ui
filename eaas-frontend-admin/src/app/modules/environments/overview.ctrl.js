@@ -386,11 +386,13 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             if(env.internetEnabled){
                 console.log("starting with internet enabled");
                 let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
-                await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
+                // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
 
                 networkBuilder.addComponent(machine);
                 components =  await networkBuilder.getComponents();
                 clientOptions =  await networkBuilder.getDefaultClientOptions();
+                clientOptions.getNetworkConfig().enableInternet(true);
+                clientOptions.getNetworkConfig().enableSlirpDhcp(true);
             }
             else
             {

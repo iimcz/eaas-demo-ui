@@ -1,9 +1,8 @@
 import {
     MachineBuilder
-} from '../../lib/machineBuilder.js'
+} from '../../lib/machineBuilder.js';
 
-import {Drives} from '../../lib/drives.js'
-import { size } from 'lodash';
+import {Drives} from '../../lib/drives.js';
 
 module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig", "$uibModal", "os", "Objects", "Images",
     function ($http,  $state, systemList, softwareList, localConfig, $uibModal, os, Objects, Images) {
@@ -51,7 +50,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 kvm_available: false,
                 kvm_enabled: false,
                 template: undefined,
-            }
+            };
         }
 
         vm.getOsPresets = function()
@@ -86,6 +85,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             
             vm.osId = vm.selectedOs.id;
             vm.template = vm.systems.find(o => o.id === vm.selectedOs.template);
+            vm.uiOptions = vm.selectedOs.uiOptions ? vm.selectedOs.uiOptions : {};
 
             if(!vm.template) {
                 console.log(item);

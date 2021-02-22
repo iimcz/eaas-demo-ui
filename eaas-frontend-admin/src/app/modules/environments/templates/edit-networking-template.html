@@ -5,10 +5,10 @@
         <input type="checkbox" ng-model="$ctrl.networking.connectEnvs" id="_enable_network">
         <label for="_enable_network">Enable networking</label>
     </div>
-
+    
     <div>
         <input type="checkbox" ng-model="$ctrl.networking.enableInternet" ng-if="$ctrl.networking.connectEnvs" id="_enable_internet">
-        <label for="_enable_internet">Enable internet</label>
+        <label ng-if="$ctrl.networking.connectEnvs" for="_enable_internet">Enable internet</label>
     </div>
 
     <div ng-if="$ctrl.networking.connectEnvs && $ctrl.isContainer">

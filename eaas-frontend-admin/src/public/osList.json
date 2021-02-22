@@ -253,6 +253,11 @@
       "qid" : "",
       "disk" : "",
       "template" : "browser",
+      "uiOptions" : {
+        "useXpra" : true,
+        "xpraEncoding" : "jpeg",
+        "useWebRTC" : true
+      },
       "template_params" : 
       {
         "url" : null,
