@@ -311,11 +311,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             vm.waitModal.show("Creating checkpoint. This might take some time...");
             
             try { 
-                let newEnvId = await eaasClient.checkpoint({
-                    type: "newEnvironment",
-                    envId: vm.envId,
-                });
-                
+                let newEnvId = await eaasClient.checkpoint();
                 vm.waitModal.hide();
 
                 if (!newEnvId) {
