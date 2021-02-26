@@ -110,7 +110,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                 if(vm.objectId)
                     machine.setObject(vm.env.objectId, vm.env.objectArchive);
 
-                if(vm.env.networking.enableInternet){
+                if(vm.env.networking && vm.env.networking.enableInternet) {
                     console.log("starting with internet enabled");
                     let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
                     // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
