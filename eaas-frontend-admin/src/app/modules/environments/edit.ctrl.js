@@ -107,7 +107,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                 let components, clientOptions;
                 let machine = EaasClientHelper.createMachine(vm.env.envId);
                
-                if(vm.objectId)
+                if(vm.env.objectId)
                     machine.setObject(vm.env.objectId, vm.env.objectArchive);
 
                 if(vm.env.networking && vm.env.networking.enableInternet) {
@@ -174,44 +174,78 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
         vm.guessBinding = function(index)
         {
             return vm.drives.renderBinding(index, vm.imageList, vm.softwareList, vm.objectList);
-        }
+        };
 
         vm.selectMedium = function (index) {
             vm.drives.selectMedia(index, vm.imageList, vm.softwareList, vm.objectList, $uibModal);
-        }
-            vm.getNameIndexObj = function(key, name, version){
-                  return {
-                      key: key,
-                      value: {
-                          name: name,
-                          version: version
-                      }
-                  }
-            };
+        };
+
+        vm.getNameIndexObj = function(key, name, version){
+                return {
+                    key: key,
+                    value: {
+                        name: name,
+                        version: version
+                    }
+                };
+        };
 
            vm.createHandle = function () {
-                    jQuery.when(
-                        $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
-                            handle: handlePrefix + vm.env.envId,
-                            value: vm.landingPage + "?id=" + vm.env.envId
-                        })
-                    ).then(function (response) {
-                        if (response.status === 200) {
-                            vm.handle = handlePrefix + vm.env.envId;
-                        } else {
-                            growl.error('Handle is not defined!!');
-                        }
-                    });
+                jQuery.when(
+                    $http.post(localConfig.data.eaasBackendURL + REST_URLS.postHandleValue, {
+                        handle: handlePrefix + vm.env.envId,
+                        value: vm.landingPage + "?id=" + vm.env.envId
+                    })
+                ).then(function (response) {
+                    if (response.status === 200) {
+                        vm.handle = handlePrefix + vm.env.envId;
+                    } else {
+                        growl.error('Handle is not defined!!');
+                    }
+                });
            };
 
-           vm.addSoftware = function(envId) {
-                 $uibModal.open({
+           vm.addSoftware = function() {
+                 let modal = $uibModal.open({
                      animation: true,
                      template: require('./modals/select-sw.html'),
                      controller: ["$scope", function($scope) {
-                         this.envId = envId;
+                         this.envId = vm.env.envId;
                          this.software = softwareList.data.descriptions;
                          this.returnToObjects = $stateParams.showObjects;
+
+                         this.runWithSoftware = async function()
+                         {
+                            let components, clientOptions;
+                            let machine = EaasClientHelper.createMachine(vm.env.envId);
+                           
+                            console.log(this.selected_sw);
+                            machine.setSoftware(this.selected_sw.id, this.selected_sw.archiveId);
+            
+                            if(vm.env.networking && vm.env.networking.enableInternet) {
+                                console.log("starting with internet enabled");
+                                let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
+                                // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
+            
+                                networkBuilder.addComponent(machine);
+                                components =  await networkBuilder.getComponents();
+                                clientOptions =  await networkBuilder.getDefaultClientOptions();
+                                clientOptions.getNetworkConfig().enableInternet(true);
+                                clientOptions.getNetworkConfig().enableSlirpDhcp(true);
+                            }
+                            else
+                            {
+                                components = [machine];
+                                clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
+                            }
+                           
+                            modal.close();
+                            $state.go("admin.emuView",  {
+                                components: components,
+                                clientOptions: clientOptions
+                            }, {});
+                         };
+
                      }],
                      controllerAs: "addSoftwareDialogCtrl"
                  });
