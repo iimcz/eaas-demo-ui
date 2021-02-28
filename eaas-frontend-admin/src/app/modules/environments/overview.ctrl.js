@@ -360,7 +360,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             vm[selected](id, archive);
         }
 
-        vm.run = async function (id) {
+        vm.run = async function (id, archive) {
             if (vm.view == 2) {
                 $state.go('admin.container', ({envId: id, modifiedDialog: true}));
                 return;
@@ -377,7 +377,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
                 $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
 
             let components, clientOptions;
-            let machine = EaasClientHelper.createMachine(env.envId);
+            let machine = EaasClientHelper.createMachine(env.envId, archive);
             machine.setInteractive(true);
             
             if(env.objectId)
