@@ -439,7 +439,6 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         this.isSavingEnvironment = true;
                         window.onbeforeunload = null;
 
-
                         let snapshotRequest = new SnapshotRequestBuilder(this.type);
                         snapshotRequest.setTitle(this.envName);
                         snapshotRequest.setMessage(this.envDescription);
@@ -448,7 +447,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
-                            let result = await eaasClient.getActiveSession().snapshot(snapshotRequest, vm.isNetworkEnvironment ? vm.envId : undefined); 
+                            let result = await eaasClient.getActiveSession().createSnapshot(snapshotRequest, vm.isNetworkEnvironment); 
                             // console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
