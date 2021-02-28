@@ -1,5 +1,7 @@
-module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localConfig", "$timeout", "helperFunctions", "Upload", "REST_URLS", "$uibModal",
-    function($http, $scope, $state, $stateParams, growl, localConfig, $timeout, helperFunctions, Upload, REST_URLS, $uibModal) {
+import {UviMachineComponentBuilder} from "EaasClient/lib/componentBuilder.js";
+
+module.exports = ["$http", "$state", "localConfig", "$timeout", "Upload", "$uibModal", "EaasClientHelper",
+    function($http, $state,  localConfig, $timeout, Upload, $uibModal, EaasClientHelper) {
 
         var vm = this;
         vm.classificationFinished = false;
@@ -12,19 +14,27 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
         /* additional files: url / filename pairs */
         vm.auxFiles = [];
 
-        vm.start = function (envId) {
-            $state.go('admin.emulator', {
-                envId: envId,
-                enableDownload: vm.writeable,
-                uvi: {
-                     url: vm.url,
-                     filename: vm.filename,
-                     writeable: vm.writeable,
-                     environments: vm.environmentList,
-                     auxFiles: vm.auxFiles
-                 }
-            }, {reload: true});
-        }
+        vm.start = async function (envId) {
+
+            let uvi = {
+                url: vm.url,
+                filename: vm.filename,
+                writeable: vm.writeable,
+                environments: vm.environmentList,
+                auxFiles: vm.auxFiles
+            };
+            let uviMachine = new UviMachineComponentBuilder(uvi, envId);
+
+            let components = [uviMachine];
+            let clientOptions = await EaasClientHelper.clientOptions(envId);
+
+           //  enableDownload: vm.writeable,
+
+            $state.go("admin.emuView",  {
+                components: components,
+                clientOptions: clientOptions
+            }, {});
+        };
 
         vm.checkState = function(_taskId, _modal, url, filename)
         {
