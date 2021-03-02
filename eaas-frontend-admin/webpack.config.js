@@ -199,9 +199,13 @@ module.exports = function makeWebpackConfig() {
     // Extract css files
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
-      new CopyWebpackPlugin([{
-          from: '../eaas-client/xpra', to: 'xpra'
-        }])
+      new CopyWebpackPlugin([
+          {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
+          {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/eaas-xpra.js', to: 'xpra' },
+          {from: '../eaas-client/lib', to: 'lib' },
+        ])
   );
 
   // Add build specific plugins
@@ -224,10 +228,14 @@ module.exports = function makeWebpackConfig() {
         new CopyWebpackPlugin([{
             from: __dirname + '/src/public'
         }]),
-        new CopyWebpackPlugin([{
-            from: '../eaas-client/xpra', to: 'xpra'
-          }])
-    )
+        new CopyWebpackPlugin([
+          {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
+          {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/eaas-xpra.js', to: 'xpra' },
+          {from: '../eaas-client/lib', to: 'lib' },
+        ])
+    );
   }
 
   /**
