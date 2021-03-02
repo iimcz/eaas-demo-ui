@@ -818,7 +818,9 @@ function($stateProvider,
                     else
                         return null;
                 },
-                eaasClient: (localConfig, authService, $cookies) => new Client(localConfig.data.eaasBackendURL, () => authService.getToken(), $cookies.getObject('kbLayoutPrefs'))
+                eaasClient: (localConfig, authService, $cookies) => new Client(localConfig.data.eaasBackendURL, 
+                    () => authService.getToken(), 
+                    { kbLayoutPrefs: $cookies.getObject('kbLayoutPrefs')})
             },
            
             params: {
