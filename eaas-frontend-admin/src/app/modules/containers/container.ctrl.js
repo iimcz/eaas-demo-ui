@@ -1,5 +1,7 @@
-module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParams', 'eaasClient', 'Environments', 'chosenEnv', '$translate', 'Upload', 'localConfig', 'growl', '$uibModal',
-    function ($rootScope, $scope, $sce, $state, $http, $stateParams, eaasClient, Environments, chosenEnv, $translate, Upload, localConfig, growl, $uibModal) {
+import {InputBuilder, InputContentBuilder} from "EaasClient/lib/componentBuilder.js";
+
+module.exports = [ '$scope', '$state','$http', '$stateParams', 'eaasClient', 'chosenEnv', '$translate', 'Upload', 'localConfig', '$uibModal', 'EaasClientHelper',
+    function ( $scope, $state, $http, $stateParams, eaasClient, chosenEnv, $translate, Upload, localConfig, $uibModal, EaasClientHelper) {
         var vm = this;
         vm.env = chosenEnv;
 
@@ -53,25 +55,24 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
         };
 
         var confirmStartFn = async function (inputs) {
-            params.input_data = [];
-            var input = {};
-            input.size_mb = 512;
-            input.destination = vm.env.input;
-            input.content = inputs;
-            params.input_data.push(input);
-            console.log("input " , input);
+            let input = new InputBuilder(vm.env.input);
+
+            for(let i of inputs)
+                input.addContent(i);
+            
             if (vm.env.runtimeId) {
-                let machine = EaasClientHelper.createMachine(vm.env.runtimeId);
+                let machine = EaasClientHelper.createMachine(vm.env.runtimeId, "public");
                 machine.setLinuxRuntime({
                     userContainerEnvironment: $stateParams.envId,
                     userContainerArchive: vm.env.archive,
-                    input_data: params.input_data,
                     networking: vm.env.networking
                 });
+                machine.addInputMedia(input);
+
                 let components = [];
                 components.push(machine);
 
-                let clientOptions = await EaasClientHelper.clientOptions(_vm.envId);
+                let clientOptions = await EaasClientHelper.clientOptions(vm.env.runtimeId);
                 $state.go("admin.emuView",  {
                     components: components, 
                     clientOptions: clientOptions
@@ -141,11 +142,12 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                             }).then(function (resp) {
                                 // Push the uploaded file to the input list
                                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-                                $scope.runContainerDlgCtrl.inputs.push({
-                                    url: resp.data.uploads[0],
-                                    name: resp.config.destination,
-                                    action: resp.config.action
-                                });
+                                
+                                let contentBuilder = new InputContentBuilder(resp.data.uploads[0]);
+                                contentBuilder.setName(resp.config.destination);
+                                contentBuilder.setAction(resp.config.action);
+                                $scope.runContainerDlgCtrl.inputs.push(contentBuilder);
+
                                 $scope.runContainerDlgCtrl.uploadFiles = [];
                             }, function (resp) {
                                 console.log('Error status: ' + resp.status);
@@ -308,6 +310,7 @@ module.exports = ['$rootScope', '$scope', '$sce', '$state','$http', '$stateParam
                         "pride": false,
                         "uniprot": false
                     };
+
                     this.inputs = [];
                     this.newInputUrl = "";
                     this.newInputName = "";

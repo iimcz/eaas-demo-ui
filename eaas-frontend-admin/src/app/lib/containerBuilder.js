@@ -19,6 +19,7 @@ export class ContainerBuilder {
         this.enableNetwork = false;
         this.serviceContainerId = undefined;
         this.workingDir = null;
+        this.archive = "default";
 
         if(metadata)
         {
@@ -79,6 +80,10 @@ export class ContainerBuilder {
 
     setEnableNetwork(b) {
         this.enableNetwork = b;
+    }
+    
+    setArchive(a) {
+        this.archive = a;
     }
 
     setServiceContainerId(name) {

@@ -137,7 +137,9 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
                 container.waitModal.show("Importing container as EaaS image");
                 let _result = await containerBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
                 let task = new Task(_result.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
-                await task.done;
+                let buildResult = await task.done;
+                container.id = buildResult.userData.environmentId;
+                console.log(buildResult);
                 growl.success("import successful.");
                 container.waitModal.hide();
                 WizardHandler.wizard('containerImportWizard').next();
