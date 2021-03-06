@@ -13,6 +13,7 @@ import {
     ContainerImageBuilder,
     ContainerBuilder
  } from "../../lib/containerBuilder.js";
+ import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
 
 module.exports = ['$rootScope', '$http', '$state', '$scope', 
     'localConfig', 'growl', '$translate', 'Environments', 'EaasClientHelper', "Images",
@@ -200,7 +201,6 @@ module.exports = ['$rootScope', '$http', '$state', '$scope',
                   <li ng-if="data.archive !='remote'" role="menuitem dropdown-content">
                         <a class="dropdown-content" ng-click="switchAction(data.id, \'run\')">{{\'CHOOSE_ENV_PROPOSAL\'| translate}}</a>
                   </li>
-                  
                   <li role="menuitem"><a class="dropdown-content" ng-click="switchAction(data.id, \'edit\')">{{\'CHOOSE_ENV_EDIT\'| translate}}</a></li>
                   <li role="menuitem"><a ng-if="data.archive == 'default'"  class="dropdown-content" ng-click="switchAction(data.id, \'deleteEnvironment\')">{{\'CHOOSE_ENV_DEL\'| translate}}</a></li>
                 </ul>
@@ -271,6 +271,8 @@ module.exports = ['$rootScope', '$http', '$state', '$scope',
                         containerBuilder.setOutputFolder(c.imageOutput);
                         containerBuilder.setEnableNetwork(true);
                         containerBuilder.setServiceContainerId(c.id);
+                        containerBuilder.setArchive("public");
+                        containerBuilder.setInputFolder("/input");
 
                         try {
                             let _result = await containerBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
@@ -299,7 +301,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope',
 
                         try {
                             let object = JSON.parse(buildResult.object);
-                            return this.saveImportedContainer(c, object.containerUrl, runtimeId, object.metadata);
+                            return await this.saveImportedContainer(c, object.containerUrl, runtimeId, object.metadata);
                         }
                         catch(e)
                         {
@@ -370,7 +372,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope',
                         catch(e)  {
                             console.log(e);
                             this.waitModal.hide();
-                            vm.rtModal.clsoe();
+                            vm.rtModal.close();
                             $state.go('error', {errorMsg: e});
                         }
                     };
