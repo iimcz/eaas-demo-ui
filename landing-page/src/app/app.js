@@ -47,9 +47,6 @@ const appendScript = function(scriptText) {
     document.body.appendChild(script);
 };
 
-import guacamolejs from 'raw-loader!../../../eaas-client/guacamole/guacamole.js';
-appendScript(guacamolejs);
-
 import {Client, hideCursor, showCursor, requestPointerLock} from '../../../eaas-client/eaas-client.js';
 import {textAngularComponent} from 'EaasLibs/javascript-libs/text-angularjs.component.js';
 
@@ -75,7 +72,6 @@ import 'bootstrap/dist/css/bootstrap-theme.css';
 import 'ui-select/dist/select.css';
 import 'angular-growl-v2/build/angular-growl.css';
 import 'angular-loading-bar/build/loading-bar.css';
-import '../../../eaas-client/guacamole/guacamole.css';
 import '../../../eaas-client/eaas-client.css';
 import './app.scss';
 
