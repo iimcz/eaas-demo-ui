@@ -10,33 +10,45 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
 
     vm.updateTable = function(index, archive)
     {
-        if ($scope.gridOptions && $scope.gridOptions.api)
-            $scope.gridOptions.api.setRowData(null);
+        if (vm.gridOptions && vm.gridOptions.api)
+            vm.gridOptions.api.setRowData(null);
         vm.objectList = Objects.query({archiveId: archive}).$promise.then(function(response) {
             vm.objectList = response;
-            vm.updateData();
+
+            let rowData = [];
+
+            vm.objectList.forEach(function (element) {
+                rowData.push({
+                    id: element.id,
+                    title: element.title,
+                    objectArchive: element.archiveId
+                });
+            });
+
+            vm.updateData(rowData);
         });
         vm.activeView = index;
     };
     vm.updateTable(0, vm.archives[0]);
 
-    vm.updateData = function () {
+    vm.updateData = function (rowData) {
         console.log("view: " + vm.viewArchive);
-        if ($scope.gridOptions.api != null) {
-            $scope.gridOptions.api.setRowData(vm.objectList);
-            $scope.gridOptions.api.setColumnDefs(vm.initColumnDefs());
-            $scope.gridOptions.api.sizeColumnsToFit();
+        if (vm.gridOptions.api != null) {
+            vm.gridOptions.api.setRowData(rowData);
+            vm.gridOptions.api.setColumnDefs(vm.initColumnDefs());
+            vm.gridOptions.api.sizeColumnsToFit();
         }
     };
 
-    $scope.onPageSizeChanged = function () {
-        $scope.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
+    vm.onPageSizeChanged = function () {
+        vm.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
     };
 
     vm.initColumnDefs = function () {
         return [
             {
-                headerName: "Object", field: "object", sort: "asc", cellRenderer: userObjectRenderer, width: 700,
+                headerName: "Object", field: "title", sort: "asc", cellRenderer: userObjectRenderer, 
+                    width: 700, sortable: true, filter: true, resizable: true
             },
             {
                 headerName: "", field: "edit", cellRenderer: editBtnRenderer, suppressSorting: true,
@@ -109,23 +121,20 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
             return item;
     }
 
-    $scope.gridOptions = {
+    vm.gridOptions = {
         columnDefs: vm.initColumnDefs(),
         rowHeight: 75,
         groupUseEntireRow: true,
         rowSelection: 'multiple',
         angularCompileRows: true,
         rowMultiSelectWithClick: true,
-        enableColResize: true,
-        enableSorting: true,
-        enableFilter: true,
         enableCellChangeFlash: true,
         suppressRowClickSelection: true,
         domLayout: 'autoHeight',
         suppressHorizontalScroll: true,
         animateRows: true,
         onGridReady: function (params) {
-            $scope.gridOptions.api.sizeColumnsToFit();      
+            vm.gridOptions.api.sizeColumnsToFit();      
         },
         pagination: true,
         paginationPageSize: Number(vm.pageSize),
@@ -138,6 +147,6 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     document.addEventListener('DOMContentLoaded', function () {
         var gridDiv = document.querySelector('#myGrid');
         new agGrid.Grid(gridDiv, gridOptions);
-        gridOptions.api.sizeColumnsToFit();
+        vm.gridOptions.api.sizeColumnsToFit();
     });
 }];
