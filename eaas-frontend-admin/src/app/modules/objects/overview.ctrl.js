@@ -80,11 +80,11 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
                 <ul class="dropdown-menu" id="dropdowm{{data.id}}" uib-dropdown-menu role="menu" aria-labelledby="single-button">
                   <li role="menuitem">
                     <a class="dropdown-content"
-                         ui-sref="admin.edit-object-characterization({objectId: data.id, objectArchive: data.archiveId, userDescription: data.description})">{{'OBJECTS_DETAILS'| translate}}</a>
+                         ui-sref="admin.edit-object-characterization({objectId: data.id, objectArchive: data.objectArchive, userDescription: data.description})">{{'OBJECTS_DETAILS'| translate}}</a>
                   </li>
                   <li role="menuitem">
                     <a class="dropdown-content"
-                        ng-click="ctrl._delete(data.archiveId, data.id)">Delete</a></li>
+                        ng-click="ctrl._delete(data.objectArchive, data.id)">Delete</a></li>
                 </ul>
              </div>`;
 
