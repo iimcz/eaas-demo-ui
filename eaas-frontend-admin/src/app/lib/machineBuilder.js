@@ -20,6 +20,7 @@ export class MachineBuilder {
         };
         this.rom = undefined;
         this.romLabel = undefined;
+        this.enableNetwork = undefined;
     }
 
     setDrives(drives)
@@ -47,6 +48,7 @@ export class MachineBuilder {
                 operatingSystemId : this.operatingSystemId,
                 romId: this.rom,
                 romLabel: this.romLabel,
+                enableNetwork: this.enableNetwork,
                 
                 enablePrinting : this.uiOptions.enablePrinting,
                 enableRelativeMouse: this.uiOptions.enableRelativeMouse,

@@ -278,6 +278,12 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .component('browserOptions', {
         template: browserOptionsTemplate,
+        controller: function() {
+            let vm = this;
+            vm.$onInit = function() {
+                vm.onUpdate();
+            };
+        },
         bindings: {
             args: '=',
             onUpdate: '&',

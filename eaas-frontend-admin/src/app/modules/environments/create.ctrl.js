@@ -24,6 +24,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
         vm._preSelectedSystem = undefined;
         vm.selectedOs = undefined;
         vm.imageList = [];
+        vm.enableNetwork = false;
 
         vm.builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
 
@@ -38,7 +39,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             memory: undefined,
             kvm_available: false,
             kvm_enabled: false,
-        }
+        };
 
         vm.preSelectedSystem = function(os)
         {
@@ -152,7 +153,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             }
 
             vm.native_config = native_config;
-
+            vm.enableNetwork = true;
         };
 
         vm.updateAmiga = function () {
@@ -167,7 +168,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             {
                 vm.native_config += "--amiga_model=" + vm.config.template_params.model;
             }
-        }
+        };
 
         vm.save = function () {
             try {
@@ -177,6 +178,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 vm.builder.operatingSystemId = vm.osId;
                 vm.builder.uiOptions = vm.uiOptions;
                 vm.builder.setDrives(vm.drives);
+                vm.builder.enableNetwork = vm.enableNetwork;
 
                 if(vm.config.template_params.rom)
                 {
