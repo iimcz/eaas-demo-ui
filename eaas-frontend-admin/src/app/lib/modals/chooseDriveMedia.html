@@ -13,7 +13,7 @@
                     </div>
                     <hr ng-if="editDriveCtrl.driveLabel">
 
-                    <div class="form-group" ng-if="editDriveCtrl.drive.type === 'disk'">
+                    <div class="form-group" ng-if="editDriveCtrl.drive.type === 'disk' || editDriveCtrl.drive.type === 'floppy'">
                         <input type="radio" ng-model="editDriveCtrl.diskType" value="image" id="_disk"> 
                             <label for="_disk">Select from disk image library</label>
                         <ui-select ng-model="editDriveCtrl.selectedImage" theme="bootstrap"
