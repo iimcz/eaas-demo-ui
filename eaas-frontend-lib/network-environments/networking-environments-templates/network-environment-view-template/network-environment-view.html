@@ -6,20 +6,8 @@
     </mat-form-field>
 
 
-    <!--Networking Checkboxes sections-->
-    <network-config-template
-        [(networkingConfig)]="networkingConfig"
-        [isDisabled]="false"
-        [environments]="environments"
-        [containerList] = "containerList"
-    ></network-config-template>
-<br>
-<div class="borderAround tekst">
-    <mat-divider></mat-divider>
-</div>
-<br>
 <!--Add new environments section-->
-<h4>Add Environment</h4>
+<h4>Add Machines to the Network</h4>
 <mat-form-field style="display:inline-block;margin-right:15px; width:40%;">
     <mat-label>{{"CHOOSE_ENV_SEARCH_NETWORK" | translate}}</mat-label>
     <mat-select [(value)]="selectedEnv">
@@ -73,6 +61,20 @@
 <div class="borderAround tekst">
     <mat-divider></mat-divider>
 </div>
+
+<!--Networking Checkboxes sections-->
+<network-config-template
+[(networkingConfig)]="networkingConfig"
+[isDisabled]="false"
+[environments]="environments"
+[containerList] = "containerList"
+></network-config-template>
+<br>
+<div class="borderAround tekst">
+    <mat-divider></mat-divider>
+</div>
+
+
 <!--Bottom buttons-->
 <br>
 <div mat-dialog-actions align="end">
