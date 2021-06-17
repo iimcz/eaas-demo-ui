@@ -1,16 +1,28 @@
+import { _fetch, ClientError, confirmDialog } from "../../../lib/utils.js";
+
 export function publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions) {
-    function replicateImage(envId, replicationType) {
+    async function replicateImage(envId, replicationType) {
         if (replicationType === "import") {
-            if (!window.confirm(`Replication will copy environment data to local storage. Environments copied from the EaaSI Network cannot be deleted from storage once replicated.
-
-Do you want to replicate this environment from the Network.`))
+            try {
+                await confirmDialog($uibModal, "Replicate Image", `Replication will copy environment data to local storage. Environments copied from the EaaSI Network cannot be deleted from storage once replicated. 
+                Do you want to replicate this environment from the network?`);
+            }
+            catch(e)
+            {
                 return false;
-        } else {
-            if (!window.confirm(`Resources published to the EaaSI network cannot be easily removed.
-Do not share software or environments with existing access or license restrictions.
-
-Do you want to publish this environment to the network?`))
+            }
+        }
+        else {
+            try {
+                await confirmDialog($uibModal, "Publish Image", `Resources published to the EaaSI network cannot be easily removed.
+                Do not share software or environments with existing access or license restrictions.
+                
+                Do you want to publish this environment to the network?`);
+            }
+            catch(e)
+            {
                 return false;
+            }
         }
 
         console.log("replicating " + envId);
