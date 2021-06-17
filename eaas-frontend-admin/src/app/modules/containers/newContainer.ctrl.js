@@ -219,12 +219,12 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
             let imageBuilder = new ContainerImageBuilder(container.imageUrl, container.imageType);
             imageBuilder.setTag(container.tag);
 
-            container.waitModal.show("Preparing container");
-            let imageBuilderTask = await imageBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
-            let task = new Task(imageBuilderTask.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
-            let buildResult = await task.done;
-
             try {
+                container.waitModal.show("Preparing container");
+                let imageBuilderTask = await imageBuilder.build(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                let task = new Task(imageBuilderTask.taskId, localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
+                let buildResult = await task.done;
+
                 let object = JSON.parse(buildResult.object);
                 container.imageResult = object;
                 
