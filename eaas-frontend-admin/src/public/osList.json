@@ -335,6 +335,19 @@
         "memory" : "2048",
         "pointer" : "usb"
       }
+    },
+    {
+      "id":"os:other:runc2",
+      "puids": [],
+      "label": "Generic Emulator (runc2) (Beta)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "",
+      "template" : "runc2",
+      "runtime" : false,
+      "template_params" :
+      {
+      }
     }
   ]
 }
