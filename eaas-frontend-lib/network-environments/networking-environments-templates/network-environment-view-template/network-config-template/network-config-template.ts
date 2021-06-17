@@ -29,9 +29,19 @@ export class NetworkConfigTemplate {
         this.isSmbAvailable = false;
         this.isLinuxArchiveProxyAvailable = false;
         
+        if(!this.networkingConfig.network)
+            this.networkingConfig.network = "10.0.0.0/24";
+
+        if(!this.networkingConfig.gateway)
+            this.networkingConfig.gateway = "10.0.0.1";
+
         if(this.containerList.container.find((container => container.id === 'service-dns')))
         {
             this.isDnsAvailable = true;
+
+            if(!this.networkingConfig.dhcpNetworkAddress)
+                this.networkingConfig.dhcpNetworkAddress = "10.0.0.2";
+
             if(!this.networkingConfig.upstream_dns)
                 this.networkingConfig.upstream_dns = "1.0.0.1";
         }
