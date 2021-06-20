@@ -19,6 +19,7 @@ export class NetworkEnvironmentView {
     @Input() chosenEnvs: any[] = [];
     @Input() networkingConfig: any;
     @Input() networkEnvironmentTitle: string;
+    @Input() networkEnvironmentId: string;
     @Input() containerList: any;
 
     @ViewChild(NetworkConfigTemplate, {static: false})

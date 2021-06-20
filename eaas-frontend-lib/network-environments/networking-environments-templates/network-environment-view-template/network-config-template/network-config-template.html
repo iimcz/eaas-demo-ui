@@ -1,10 +1,4 @@
-<!--
-<description-text [disabled]="isDisabled" [description]="networkingConfig.description"
-    (updateDescription)="updateNetworkDescription($event)">
-</description-text>
--->
 
-<br>
 <mat-form-field class="full-width tekstMore">
 
     <mat-label>Network (e.g., 10.0.0.0/24)</mat-label>
@@ -109,3 +103,10 @@
         </mat-option>
     </mat-select>
 </mat-form-field>
+
+<p></p>
+
+<h4>Description</h4>
+<description-text [disabled]="isDisabled" [description]="networkingConfig.description"
+    (updateDescription)="updateNetworkDescription($event)">
+</description-text>
