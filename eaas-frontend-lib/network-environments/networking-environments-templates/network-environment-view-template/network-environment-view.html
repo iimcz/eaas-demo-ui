@@ -1,7 +1,7 @@
 <form method="post" #f="ngForm" name="network-env-form" id="network-env-form">
 
     <div *ngIf="networkEnvironmentId">
-        <mat-label>Network ID:</mat-label> {{ networkEnvironmentId }}
+        <mat-label>Network ID:</mat-label> <span style="user-select: all">{{ networkEnvironmentId }}</span> 
     </div>
 
     <br>
