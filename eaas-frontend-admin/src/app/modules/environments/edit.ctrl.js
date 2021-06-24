@@ -282,8 +282,8 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    nativeConfig: this.nativeConfig,
                    processAdditionalFiles : vm.canProcessAdditionalFiles,
                    networking : vm.networking,
-                   containerEmulatorName : vm.emulatorContainer.value.name,
-                   containerEmulatorVersion : vm.emulatorContainer.value.version,
+                   containerEmulatorName : vm.emulatorContainer ? vm.emulatorContainer.value.name: null,
+                   containerEmulatorVersion : vm.emulatorContainer ? vm.emulatorContainer.value.version: null,
                    xpraEncoding: vm.uiOptions.xpraEncoding,
                    drives : vm.drives.getList(),
                    linuxRuntime : vm.linuxRuntime,
@@ -385,7 +385,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
            };
 
         vm.replicateImage = function (envId, replicationType) {
-            replicateImage(envId, replicationType)
+            replicateImage(envId, replicationType);
         };
 
           var confirmDeleteFn = function(envId)
