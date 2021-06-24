@@ -34,10 +34,10 @@ module.exports = ['$scope' , '$state', '$http', 'localConfig', 'growl', 'current
         */
         vm.refreshList = function()
         {
-            $http.post(localConfig.data.eaasBackendURL + "operator/api/v1/channels/" +  vm.currentChannel + "/releases/" + releaseEntry.version, null).then( function(response) {
+            $http.post(localConfig.data.eaasBackendURL + "operator/api/v1/channels/" +  vm.currentChannel, null).then( function(response) {
                 vm.load();
             });
-        }
+        };
 
         /*
         ### Update to release
@@ -49,7 +49,7 @@ module.exports = ['$scope' , '$state', '$http', 'localConfig', 'growl', 'current
             $http.post(localConfig.data.eaasBackendURL + "operator/api/v1/channels/" +  vm.currentChannel + "/releases/" + releaseEntry.version, null).then(
 
             );
-        }
+        };
 
         vm.load();
     }];
