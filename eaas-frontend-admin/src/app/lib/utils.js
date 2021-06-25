@@ -37,3 +37,12 @@ export function confirmDialog($uibModal, header, text)
     });
     return modal.result;
 }  
+
+export async function checkOnlineStatus ()  {
+    try {
+        const online = await fetch("/admin");
+        return online.status >= 200 && online.status < 300; // either true or false
+    } catch (err) {
+        return false; // definitely offline
+    }
+}
