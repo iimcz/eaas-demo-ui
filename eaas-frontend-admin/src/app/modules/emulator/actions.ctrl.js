@@ -1,7 +1,7 @@
 import {stopClient} from "./utils/stop-client";
 import {WaitModal} from "../../lib/task.js";
 import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
-import {sendCtrlAltDel, sendEsc, SnapshotRequestBuilder} from "EaasClient/eaas-client";
+import {sendCtrlAltDel, sendEsc, SnapshotRequestBuilder, requestPointerLock} from "EaasClient/eaas-client";
 
 module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams', 'growl', 'localConfig', 'Objects',
                         '$timeout', '$translate', 'chosenEnv', 'eaasClient',
@@ -368,7 +368,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
             if (eaasClient.params.pointerLock === "true") {
                 growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                BWFLA.requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
             }
 
             // Fix to close emulator on page leave
