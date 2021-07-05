@@ -26,40 +26,9 @@ function($uibModal, $state, $scope, $rootScope, localConfig, kbLayouts, buildInf
     vm.uiCommitHash = __UI_COMMIT_HASH__;
     vm.userInfo = userInfo.data;
 
-    vm.showSettingsDialog = function() {
-        $uibModal.open({
-            animation: false,
-            template: require('./modals/settings.html'),
-            resolve: {
-                localConfig: function () {
-                    return localConfig;
-                },
-                kbLayouts: function () {
-                    return kbLayouts;
-                }
-            },
-            controller: "SettingsDialogController as settingsDialogCtrl"
-        });
-    };
-
     vm.logout = function()
     {
         authService.logout();
     };
 
-    vm.showAdvancedDialog = function() {
-        $uibModal.open({
-            animation: false,
-            template: require('./modals/advancedDialog.html'),
-            resolve: {
-                localConfig: function () {
-                    return localConfig;
-                },
-                kbLayouts: function () {
-                    return kbLayouts;
-                }
-            },
-            controller: "AdvancedDialogController as advancedDialogCtrl"
-        });
-    };
 }];

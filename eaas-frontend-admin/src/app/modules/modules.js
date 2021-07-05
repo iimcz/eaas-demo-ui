@@ -4,9 +4,6 @@ const emilUIModule = angular.module('emilAdminUI.modules', []);
 
 // base
 emilUIModule.controller('BaseController', require('./base/base.ctrl.js'));
-emilUIModule.controller('SettingsDialogController', require('./base/settingsDialog.ctrl.js'));
-emilUIModule.controller('AdvancedDialogController', require('./base/advancedDialog.ctrl.js'));
-emilUIModule.controller('SetKeyboardLayoutDialogController', require('./base/setKeyboardLayoutDialog.ctrl.js'));
 
 // characterization
 emilUIModule.controller('EditObjectCharacterizationController', require('./characterization/editObjectCharacterization.ctrl.js'));
