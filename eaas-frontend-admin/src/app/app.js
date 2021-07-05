@@ -72,15 +72,6 @@ const appendScript = function(scriptText) {
     document.body.appendChild(script);
 };
 
-// a list of supported emulators (advanced-dialog, emulators overview)
-Object.defineProperty(window, "EMULATORS_LIST", {
-    value: ["qemu-system", "basiliskII", "beebem", "hatari", "kegs-sdl", "pce",
-            "sheepshaver", "vice-sdl", "fs-uae", "contralto", "visualboyadvance", "linapple", "vmacmini", "previous", "runc2" ],
-    writable: false,
-    enumerable: true,
-    configurable: true
-});
-
 import {Client, hideCursor, showCursor, requestPointerLock} from '../../../eaas-client/eaas-client.js';
 import {textAngularComponent} from 'EaasLibs/javascript-libs/text-angularjs.component.js';
 /*

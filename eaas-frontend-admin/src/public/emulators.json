@@ -1,0 +1,73 @@
+{
+    "emulators": [
+        {
+            "eaasId" : "qemu-system",
+            "repositoryUrl" : "",
+            "repositoryName" : "eaas/qemu-eaas",
+            "versions" : ["latest"]
+        },
+        {
+            "eaasId" : "basiliskII",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
+            "repositoryName" : "macemu-eaas-basilisk2",
+            "versions" : ["latest"]
+        },
+        {
+            "eaasId" : "beebem",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "hatari",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "kegs-sdl",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "pce",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "sheepshaver",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
+            "repositoryName" : "macemu-eaas-sheepshaver",
+            "versions" : ["latest"]
+        },
+        {
+            "eaasId" : "vice-sdl",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
+            "repositoryName" : "vice-eaas",
+            "versions" : ["latest"]
+        },
+        {
+            "eaasId" : "fs-uae",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
+            "repositoryName" : "fs-uae-eaas",
+            "versions" : ["latest"]
+        },
+        {
+            "eaasId" : "contralto",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "visualboyadvance",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "linapple",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "vmacmini",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "previous",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        },
+        {
+            "eaasId" : "runc2",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/"
+        }]
+}

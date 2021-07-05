@@ -6,6 +6,9 @@ import {
     WaitModal,
     Task
 } from "../../lib/task.js";
+import {
+    emulatorsList
+} from "../../lib/emulators.js";
 
 module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'growl', '$translate', '$timeout', '$uibModalStack',
     '$uibModal', 'helperFunctions', 'nameIndexes', 'REST_URLS',
@@ -13,27 +16,31 @@ module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'g
         localConfig, growl, $translate, $timeout, $uibModalStack, $uibModal, helperFunctions, nameIndexes, REST_URLS) {
         var vm = this;
         vm.nameIndexes = nameIndexes.data;
-        vm.emulators = window.EMULATORS_LIST;
-        vm.initRowData = function () {
+        
+        const updateTable = async function () {
+            let emulatorList = await emulatorsList();
             let rowData = [];
-            for (let i = 0; i < window.EMULATORS_LIST.length; i++) {
+            for (let i = 0; i < emulatorList.emulators.length; i++) {
                 let rowElement = {};
                 rowElement.entries = [];
-                rowElement.name = window.EMULATORS_LIST[i];
+                rowElement.name = emulatorList.emulators[i].eaasId;
+                rowElement.emulatorInfo = emulatorList.emulators[i];
+                console.log(rowElement.emulatorInfo);
                 if (vm.nameIndexes.entries.entry) {
                     vm.nameIndexes.entries.entry.forEach(
                         (element) => {
-                            if (element.key.indexOf(window.EMULATORS_LIST[i]) !== -1) {
+                            if (element.key.indexOf(emulatorList.emulators[i].eaasId) !== -1) {
                                 rowElement.entries.push(element);
                             }
                         }
                     );
                 }
                 rowData.push(rowElement);
-
             }
-            return rowData;
+            $scope.gridOptions.api.setRowData(rowData);
         };
+
+        updateTable();
 
         function editBtnRenderer(params) {
             params.$scope.selected = $scope.selected;
@@ -41,6 +48,55 @@ module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'g
                   {{'EMULATORS_DETAILS'| translate}}
                 </button>`;
         }
+
+        function editBtnRenderer2(params) {
+            params.$scope.selected = $scope.selected;
+            params.$scope.importLatest = importLatest;
+            return `<div ng-if="data.emulatorInfo.repositoryName"> <a href="" ng-click="importLatest(data.emulatorInfo)">install latest</a></div>
+                    <div ng-if="!data.emulatorInfo.repositoryName">not avialable</div>
+            `;
+        }
+
+        const importLatest = async(emulatorInfo) =>
+        {
+            const url = `${emulatorInfo.repositoryUrl}${emulatorInfo.repositoryName}`;
+            importEmulatorFromRegistry(url, null);
+        };
+
+        const importEmulatorFromRegistry = async (url, tag) =>
+        {
+            const api = localConfig.data.eaasBackendURL;
+            const idToken = localStorage.getItem('id_token');
+            try {
+                const modal = $uibModal.open({
+                    backdrop: 'static',
+                    animation: true,
+                    templateUrl: 'partials/wait.html'
+                });
+
+                let imageBuilder = new ContainerImageBuilder(url, "dockerhub");
+                imageBuilder.setTag((tag) ? tag : "latest");
+                let imageBuilderResult = await imageBuilder.build(api, idToken);
+                let task = new Task(imageBuilderResult.taskId, api, idToken);
+
+                let buildResult = await task.done;
+                let object = JSON.parse(buildResult.object);
+
+                let emulatorBuilder = new EmulatorBuilder(object.containerUrl, object.metadata);
+                let importResult = await emulatorBuilder.build(api, idToken);
+                task = new Task(importResult.taskId, api, idToken);
+                await task.done;
+                $uibModalStack.dismissAll();
+            } catch (e) {
+                console.log(e);
+                $state.go('error', {
+                    errorMsg: {
+                        title: e
+                    }
+                });
+                $uibModalStack.dismissAll();
+            }
+        };
 
         vm.import = function () {
             $uibModal.open({
@@ -53,35 +109,7 @@ module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'g
                         const api = localConfig.data.eaasBackendURL;
                         const idToken = localStorage.getItem('id_token');
                         if (_vm.imageUrl) {
-                            try {
-                                _vm.modal = $uibModal.open({
-                                    backdrop: 'static',
-                                    animation: true,
-                                    templateUrl: 'partials/wait.html'
-                                });
-                                let imageBuilder = new ContainerImageBuilder(_vm.imageUrl, "dockerhub");
-                                imageBuilder.setTag((_vm.tag) ? _vm.tag : "latest");
-                                let imageBuilderResult = await imageBuilder.build(api, idToken);
-                                let task = new Task(imageBuilderResult.taskId, api, idToken);
-
-                                let buildResult = await task.done;
-                                let object = JSON.parse(buildResult.object);
-                                console.log(object);
-
-                                let emulatorBuilder = new EmulatorBuilder(object.containerUrl, object.metadata);
-                                let importResult = await emulatorBuilder.build(api, idToken);
-                                task = new Task(importResult.taskId, api, idToken);
-                                await task.done;
-                                $uibModalStack.dismissAll();
-                            } catch (e) {
-                                console.log(e);
-                                $state.go('error', {
-                                    errorMsg: {
-                                        title: e
-                                    }
-                                });
-                                $uibModalStack.dismissAll();
-                            }
+                            importEmulatorFromRegistry(_vm.imageUrl, _vm.tag);
                         } else {
                             try {
                                 _vm.modal = $uibModal.open({
@@ -124,17 +152,24 @@ module.exports = ['$http', '$state', '$scope', '$stateParams', 'localConfig', 'g
                 },
                 {
                     headerName: "",
+                    field: "quickAction",
+                    cellRenderer: editBtnRenderer2,
+                    suppressSorting: true,
+                    suppressMenu: true
+                },
+                {
+                    headerName: "",
                     field: "edit",
                     cellRenderer: editBtnRenderer,
                     suppressSorting: true,
                     suppressMenu: true
-                }
+                },
+
             ];
         };
 
         $scope.gridOptions = {
             columnDefs: vm.initColumnDefs(),
-            rowData: vm.initRowData(),
             rowHeight: 31,
             groupUseEntireRow: true,
             rowSelection: 'multiple',
