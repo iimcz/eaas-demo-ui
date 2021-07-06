@@ -178,7 +178,8 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 vm.builder.operatingSystemId = vm.osId;
                 vm.builder.uiOptions = vm.uiOptions;
                 vm.builder.setDrives(vm.drives);
-                vm.builder.enableNetwork = vm.enableNetwork;
+                vm.builder.enableNetwork = vm.networking.connectEnvs;
+                vm.builder.enableInternet = vm.networking.enableInternet;
 
                 if(vm.config.template_params.rom)
                 {

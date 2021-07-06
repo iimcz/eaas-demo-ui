@@ -49,7 +49,8 @@ export class MachineBuilder {
                 romId: this.rom,
                 romLabel: this.romLabel,
                 enableNetwork: this.enableNetwork,
-                
+                enableInternet: this.enableInternet,
+            
                 enablePrinting : this.uiOptions.enablePrinting,
                 enableRelativeMouse: this.uiOptions.enableRelativeMouse,
                 useWebRTC: this.uiOptions.useWebRTC,
