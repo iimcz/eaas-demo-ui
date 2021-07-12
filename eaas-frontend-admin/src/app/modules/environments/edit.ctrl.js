@@ -120,7 +120,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
                     networkBuilder.addComponent(machine);
                     components =  await networkBuilder.getComponents();
-                    clientOptions =  await networkBuilder.getDefaultClientOptions();
+                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
                     clientOptions.getNetworkConfig().enableInternet(true);
                     clientOptions.getNetworkConfig().enableSlirpDhcp(true);
                 }
