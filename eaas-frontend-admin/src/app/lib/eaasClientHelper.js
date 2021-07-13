@@ -194,11 +194,11 @@ export class EaasClientHelper
     }
 
 
-    async clientOptions(envId)
+    async clientOptions(envId, token)
     {
         try { 
             let clientOptions = new ClientOptions();
-            let emilEnvironment = await _fetch(`${this.API_URL}environment-repository/environments/${envId}`);
+            let emilEnvironment = await _fetch(`${this.API_URL}environment-repository/environments/${envId}`, "GET", null, token);
             if (emilEnvironment.networking) {
                 if (emilEnvironment.networking.connectEnvs)
                     clientOptions.enableNetworking();

@@ -127,7 +127,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                 else
                 {
                     components = [machine];
-                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
+                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId, () => authService.getToken());
                 }
                
                 $state.go("admin.emuView",  {
