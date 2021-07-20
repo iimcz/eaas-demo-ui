@@ -166,7 +166,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
         if (typeof env.envId == "undefined")
             $state.go('error', {errorMsg: {title: "Error ", message: "given envId: " + id + " is not found!"}});
 
-        try {
+       try {
             let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
             let networkEnvironment = await networkBuilder.getNetworkEnvironmentById(env.envId);
             await networkBuilder.loadNetworkEnvironment(networkEnvironment);
@@ -178,6 +178,7 @@ module.exports = ['$state', '$scope', '$uibModal', 'localConfig', 'REST_URLS', '
         }
         catch(e) {
             const details = (e instanceof ClientError) ? e.toJson() : e.toString();
+            console.trace();
             $state.go('error', { errorMsg: { title: "EaaS Client Error", message: details } });
         }
     }

@@ -34,6 +34,8 @@ export class EaasClientHelper
             // do nothing
         }
 
+        if(!networkEnvironment.emilEnvironments )
+            networkEnvironment.emilEnvironments = [];
         for (const networkElement of networkEnvironment.emilEnvironments) {
             let env = await Environments.get({envId: networkElement.envId}).$promise;
             let component;

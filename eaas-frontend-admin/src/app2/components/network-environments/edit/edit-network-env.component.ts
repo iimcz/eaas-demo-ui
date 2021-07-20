@@ -53,8 +53,9 @@ export class EditNetworkComponent implements AfterViewInit {
             description: this.selectedNetworkEnvironment.description,
         };
         // enrich chosenEnvs with title and implicit id
+    
 
-        if (this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
+        if (this.selectedNetworkEnvironment && this.selectedNetworkEnvironment.emilEnvironments && this.selectedNetworkEnvironment.emilEnvironments.length > 0) {
             this.selectedNetworkEnvironment.emilEnvironments.forEach(networkElement => {
                     networkElement.uiID = uuid.v4();
                 }
