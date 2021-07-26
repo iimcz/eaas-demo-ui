@@ -30,6 +30,7 @@ export class NetworkEnvironmentView {
     displayedColumns: string[] = ['environment', 'label', "actions"];
     @ViewChild(MatTable, <any>{}) table: MatTable<any>;
     localServerMode: boolean;
+    availableEnvironments: any;
 
     constructor(public dialog: MatDialog,
                 private http: HttpClient,
@@ -49,6 +50,8 @@ export class NetworkEnvironmentView {
         }
         else
             this.networkingConfig = {};
+
+        this.availableEnvironments = this.environments.filter(env => !env.serviceContainer);
     }
 
     private addEnv() {
