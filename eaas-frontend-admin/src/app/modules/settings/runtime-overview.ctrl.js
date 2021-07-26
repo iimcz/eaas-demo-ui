@@ -352,7 +352,7 @@ module.exports = ['$rootScope', '$http', '$state', '$scope',
 
                         let builder = new MachineBuilder(localConfig.data.eaasBackendURL, localStorage.getItem('id_token'));
                         builder.label = this.label;
-                        builder.nativeConfig = "-smp 1 -net nic,model=e1000 -m 2048 -usb -usbdevice tablet";
+                        builder.nativeConfig = "-smp 1 -net nic,model=e1000 -m 512 -enable-kvm";
                         builder.templateId = template.id;
                         builder.setDrives(drives);
 
