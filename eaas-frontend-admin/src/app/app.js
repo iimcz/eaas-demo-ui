@@ -1074,6 +1074,8 @@ function($stateProvider,
                             $state.go("admin.standard-envs-overview", {}, {reload: true});
                         }
                         $scope.selectedNetworkEnvironment = $stateParams.selectedNetworkEnvironment;
+                        if(!$scope.selectedNetworkEnvironment.emilEnvironments)
+                            $scope.selectedNetworkEnvironment.emilEnvironments = [];
                         $scope.containerList = containerList;
                     }]
                 }
