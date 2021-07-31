@@ -1,5 +1,6 @@
 import {stopClient} from "./utils/stop-client";
 import {WaitModal} from "../../lib/task.js";
+import { saveAs } from 'file-saver';
 import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
 import {sendCtrlAltDel, sendEsc, SnapshotRequestBuilder, requestPointerLock} from "EaasClient/eaas-client";
 
