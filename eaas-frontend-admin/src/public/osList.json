@@ -248,7 +248,7 @@
     {
       "id":"os:other:chrome-53", 
       "puids" : [],
-      "label" : "Browser Chrome 53 (Flash)",
+      "label" : "Browser Chrome 53 (Flash-enabled)",
       "kvm_available" : false,
       "qid" : "",
       "disk" : "",
@@ -262,6 +262,26 @@
       {
         "url" : null,
         "fullscreen" : false,
+        "size" : "1024,768"
+      }
+    },
+    {
+      "id":"os:other:chrome-53-fullscreen", 
+      "puids" : [],
+      "label" : "Browser Chrome 53 (fullscreen-optimized)",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "",
+      "template" : "browser",
+      "uiOptions" : {
+        "useXpra" : true,
+        "xpraEncoding" : "jpeg",
+        "useWebRTC" : true
+      },
+      "template_params" : 
+      {
+        "url" : null,
+        "fullscreen" : true,
         "size" : "1024,768"
       }
     },
