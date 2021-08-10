@@ -7,6 +7,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 var WriteFilePlugin = require ('write-file-webpack-plugin');
 var path = require('path');
 
@@ -32,6 +33,13 @@ module.exports = function makeWebpackConfig() {
    * This is the object where all configuration gets set
    */
   var config = {};
+
+  config.optimization = {
+    minimize: true,
+    splitChunks: {
+       chunks: 'all',
+    },
+  };
 
   /**
    * Entry
@@ -69,7 +77,7 @@ module.exports = function makeWebpackConfig() {
    * Type of sourcemap to use per build type
    */
   if (isProd) {
-    config.devtool = 'source-map';
+   // config.devtool = 'source-map';
   }
   else {
     config.devtool = 'source-map';
@@ -92,28 +100,12 @@ module.exports = function makeWebpackConfig() {
       test: /\.js$/,
       loader: 'babel-loader',
       exclude: /node_modules/
-    }, {
-      // CSS LOADER
-      // Reference: https://github.com/webpack/css-loader
-      // Allow loading css through js
-      //
-      // Reference: https://github.com/postcss/postcss-loader
-      // Postprocess your css with PostCSS plugins
+    }, 
+    {
       test: /\.css$/,
-      // Reference: https://github.com/webpack/extract-text-webpack-plugin
-      // Extract css files in production builds
-      //
-      // Reference: https://github.com/webpack/style-loader
-      // Use style-loader in development.
-
-      loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: [
-          {loader: 'css-loader', query: {sourceMap: true}},
-          {loader: 'postcss-loader', query: { config: './postcss.config.js' }}
-        ],
-      })
-    }, {
+      use: ['style-loader', 'css-loader'],
+    },
+    {
       test: /\.scss$/,
         use: [
             {
@@ -199,7 +191,7 @@ module.exports = function makeWebpackConfig() {
     // Extract css files
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
-      new CopyWebpackPlugin([
+      new CopyWebpackPlugin({patterns: [
           {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
           {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
@@ -208,7 +200,7 @@ module.exports = function makeWebpackConfig() {
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/', to: 'guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css' },
-        ])
+        ]})
   );
 
   // Add build specific plugins
@@ -220,18 +212,22 @@ module.exports = function makeWebpackConfig() {
 
       // Reference: https://webpack.js.org/plugins/uglifyjs-webpack-plugin/
       // Minify all javascript, disable renaming/mangling
-      /* new UglifyJSPlugin({
+     
+      /*
+      new UglifyJSPlugin({
         uglifyOptions: {
-		  // mangle: false
+		        mangle: false
 		    }
-      }), */
+      }),
+      */ 
+	
 
       // Copy assets from the public folder
       // Reference: https://github.com/kevlened/copy-webpack-plugin
-        new CopyWebpackPlugin([{
+        new CopyWebpackPlugin({patterns: [{
             from: __dirname + '/src/public'
-        }]),
-        new CopyWebpackPlugin([
+        }]}),
+        new CopyWebpackPlugin({patterns: [
           {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
           {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
@@ -240,7 +236,7 @@ module.exports = function makeWebpackConfig() {
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/', to: 'guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css' },
-        ])
+        ]})
     );
   }
 
