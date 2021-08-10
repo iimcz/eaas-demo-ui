@@ -46,26 +46,17 @@
     "angular-ui-router": "1.0.22",
     "angular-wizard": "0.8.0",
     "auth0-js": "^9.6.1",
-<<<<<<< Updated upstream
-    "babel-polyfill": "^6.26.0",
-=======
-    "aws-sdk": "^2.731.0",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
->>>>>>> Stashed changes
     "bootstrap": "3.4.1",
     "bootstrap-ui-datetime-picker": "2.5.4",
     "chart.js": "2.6.0",
     "copy-webpack-plugin": "^6.4.1",
     "core-js": "^2.4.1",
-<<<<<<< Updated upstream
-=======
     "datatables.net": "^1.10.21",
     "datatables.net-dt": "^1.10.21",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^6.2.0",
->>>>>>> Stashed changes
     "file-saver": "^2.0.2",
     "font-awesome": "4.6.3",
     "hammerjs": "^2.0.8",
@@ -73,19 +64,10 @@
     "jquery": "^3.6.0",
     "jquery.json-viewer": "^1.1.0",
     "ng-file-upload": "12.2.3",
-<<<<<<< Updated upstream
-    "ngx-translate-multi-http-loader": "^3.0.0",
-    "popper.js": "1.14.3",
-    "rxjs": "6.5.2",
-=======
-    "ng2-file-upload": "^1.4.0",
-    "ngx-cookie-service": "^2.0.4",
     "ngx-translate-multi-http-loader": "^3.0.0",
     "popper.js": "1.14.3",
     "rxjs": "6.5.2",
     "sass": "^1.37.5",
-    "simple-keyboard": "^2.27.20",
->>>>>>> Stashed changes
     "sortablejs": "1.4.2",
     "systemjs": "0.19.40",
     "textangular": "1.5.3",

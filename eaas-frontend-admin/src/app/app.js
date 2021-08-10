@@ -304,7 +304,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
         };
     })
 
-.run(async function($rootScope, $state, $http, authService, localConfig) {
+.run(function($rootScope, $state, $http, authService, localConfig) {
 
     $rootScope.emulator = {
         state : '',
