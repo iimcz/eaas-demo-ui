@@ -35,7 +35,7 @@ module.exports = function makeWebpackConfig() {
   var config = {};
 
   config.optimization = {
-    minimize: true,
+    minimize: false,
     splitChunks: {
        chunks: 'all',
     },
@@ -196,6 +196,7 @@ module.exports = function makeWebpackConfig() {
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
           {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
           {from: '../eaas-client/xpra/eaas-xpra.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/eaas-xpra.css', to: 'xpra' },
           {from: '../eaas-client/lib', to: 'lib' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/', to: 'guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css' },
@@ -232,6 +233,7 @@ module.exports = function makeWebpackConfig() {
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
           {from: '../eaas-client/xpra/xpraWrapper.js', to: 'xpra' },
           {from: '../eaas-client/xpra/eaas-xpra.js', to: 'xpra' },
+          {from: '../eaas-client/xpra/eaas-xpra.css', to: 'xpra' },
           {from: '../eaas-client/lib', to: 'lib' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/', to: 'guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css' },
