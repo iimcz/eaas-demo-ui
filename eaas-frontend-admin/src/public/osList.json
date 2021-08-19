@@ -368,6 +368,19 @@
       "template_params" :
       {
       }
+    },
+    {
+      "id":"os:other:pcem",
+      "puids": [],
+      "label": "PCem",
+      "kvm_available" : false,
+      "qid" : "",
+      "disk" : "",
+      "template" : "pcem",
+      "runtime" : false,
+      "template_params" :
+      {
+      }
     }
   ]
 }
