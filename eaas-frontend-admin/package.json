@@ -45,7 +45,7 @@
     "angular-ui-mask": "1.8.7",
     "angular-ui-router": "1.0.22",
     "angular-wizard": "0.8.0",
-    "auth0-js": "^9.6.1",
+    "auth0-js": "^9.14.3",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "3.4.1",
