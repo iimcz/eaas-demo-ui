@@ -73,6 +73,24 @@
       }
     },
     {
+      "id":"os:windows:2000", 
+      "puids": [{"puid": "x-fmt/410"}, {"puid": "x-fmt/409"}, {"puid": "x-fmt/411"}, {"puid": "fmt/899"}],
+      "label" : "Windows 2000",
+      "kvm_available" : true,
+      "qid" : "",
+      "disk" : "40G",
+      "template" : "qemu-x86",
+      "template_params" : 
+      {
+        "vga" : "cirrus",
+        "cpu" : "2",
+        "net" : "rtl8139",
+        "audio" : "sb16",
+        "memory" : "128",
+        "pointer" : "usb"
+      }
+    },
+    {
       "id":"os:windows:server:2008", 
       "puids" : [ {"puid": "x-fmt/411"}, {"puid": "fmt/899"}, {"puid": "fmt/900"}],
       "label" : "Windows Server 2008",
