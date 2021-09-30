@@ -23,12 +23,9 @@
         <input type="checkbox" ng-model="$ctrl.uiOptions.useXpra">
         <label>{{'EDITENV_XPRA' | translate}}</label>
         <select ng-if="$ctrl.uiOptions.useXpra" ng-model="$ctrl.uiOptions.xpraEncoding">
-            <option value="jpeg">jpeg</option>
             <option value="png">png</option>
-            <option value="rgb24">rgb24</option>
-            <option value="rgb32">rgb32</option>
-            <option value="h264">h264</option>
-            <option value="auto">auto</option>
+            <option value="jpeg">jpeg</option>
+            <option value="">auto</option>
         </select>
     </div>
 
