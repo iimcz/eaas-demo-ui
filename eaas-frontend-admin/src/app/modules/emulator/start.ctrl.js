@@ -49,7 +49,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$stateParams', '$translate'
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
-                };
+                }
                 f();
             };
 

@@ -768,7 +768,7 @@ function($stateProvider,
             }
         })
         .state('admin.edit-env', {
-            url: "/edit-env",
+            url: "/environment?envId",
             params: {
                 envId: null,
                 objEnv: false

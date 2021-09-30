@@ -275,11 +275,13 @@
 </uib-tab>
 <uib-tab index="1" ng-click="" heading="Revisions">
     <h4>{{'EDITENV_REV_HISTORY' | translate}}</h4>
-    <div class="form-group" ng-show="editEnvCtrl.env.revisions.length > 0">
+    <div class="form-group">
         <p>
             <label>{{'EDITENV_REVS' | translate}}:</label>
         </p>
         <ul id="editEnvSoftwareList">
+            <li>current version <a href="#" ng-click="editEnvCtrl.fork(editEnvCtrl.env.envId)"> [ fork ] </a></li>
+
             <li ng-repeat="revision in editEnvCtrl.env.revisions">
                 <ng-bind-html ng-bind-html="revision.text">
                 </ng-bind-html>
@@ -291,11 +293,6 @@
 
             </li>
         </ul>
-    </div>
-    <div ng-show="!editEnvCtrl.env.revisions.length">
-        <p>
-            <label>{{'EDITENV_NO_REVS' | translate }}</label>
-        </p>
     </div>
 </uib-tab>
 </uib-tabset>

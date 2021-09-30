@@ -304,12 +304,10 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                    id: revId
                }).then(function(response) {
                    if (response.data.status === "0") {
-                       growl.success($translate.instant('JS_ENV_UPDATE'));
-                       $state.go('admin.standard-envs-overview', {}, {reload: true});
+                       $state.go('admin.edit-env', {envId: response.data.envId});
                    } else {
                        growl.error(response.data.message, {title: 'Error ' + response.data.status});
                    }
-                   $state.go('admin.standard-envs-overview', {}, {reload: true});
                });
            };
 
@@ -374,7 +372,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                        text: 'Schließen'
                    },
                    cancel: {}
-               }
+               };
            }
 
            vm.openCalendar = function(e) {
