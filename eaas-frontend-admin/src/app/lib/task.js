@@ -50,6 +50,8 @@ export class WaitModal {
     show(title, message) {
         this.modal = this.uibModal.open({
             animation: true,
+            backdrop  : 'static',
+            keyboard  : false,
             template: require ('./templates/waitModal.html'),
             controller: ["$scope", function($scope) {
                 $scope.title = title;

@@ -62,11 +62,11 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                         modal.close();
                         $state.reload();
                     }
-                }
+                };
             }],
             controllerAs: "patchDlgCtrl"
         });
-    }
+    };
 
     vm.importDlg = function () {
         let modal = $uibModal.open({
@@ -103,7 +103,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                     
                     let waitModal = new WaitModal($uibModal);
                     waitModal.show("Import", "Please wait");
-                    let result = undefined;
+                    let result;
                     try {
                         if(this.mode ==='create')
                             result = await Images.createEmpty(this.hdsize, this.label);
@@ -127,7 +127,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
             }],
             controllerAs: "importDlgCtrl"
         });
-    }
+    };
 
     $scope.onPageSizeChanged = function () {
         vm.gridOptions.api.paginationSetPageSize(Number(vm.pageSize));
