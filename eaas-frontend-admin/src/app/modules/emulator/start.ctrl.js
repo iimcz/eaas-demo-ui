@@ -49,7 +49,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$stateParams', '$translate'
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
-                }
+                };
                 f();
             };
 
@@ -111,9 +111,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$stateParams', '$translate'
                 $("#emulator-container").show();
                 $rootScope.emulator.mode = eaasClient.mode;
                 $rootScope.emulator.state = 'STARTED';
-                if (eaasClient.params.pointerLock === "true") {
-                    growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                    requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+                if (eaasClient.getActiveSession() && eaasClient.getActiveSession().hasPointerLock()) {
+                    eaasClient.getActiveSession().setPointerLock();
                 }
                 $scope.$apply();
                 $rootScope.$broadcast("emulatorStart", "success");

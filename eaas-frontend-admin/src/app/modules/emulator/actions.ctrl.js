@@ -10,7 +10,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         $timeout, $translate, chosenEnv, eaasClient) {
     var vm = this;
     vm.isNetworkEnvironment = $stateParams.isNetworkEnvironment;
-    vm.envId = $stateParams.envId;
+    
     vm.config = localConfig.data;
     vm.type = $stateParams.type;
     vm.emulator = $rootScope.emulator;
@@ -195,10 +195,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
             $('#emulator-stopped-container').show();
 
-            if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
-            else
-                $state.go('admin.standard-envs-overview', {}, {reload: true});
+            $state.go('admin.edit-env', {envId: eaasClient.getActiveSession() ? eaasClient.getActiveSession().getId(): undefined});
         }
         catch(e)
         {
@@ -323,7 +320,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                 {
                     console.log("Checkpointed environment saved as: " + newEnvId);
                     growl.success(status, { title: "New snapshot created." });
-                    $state.go('admin.edit-env', { envId: newEnvId, objEnv: $stateParams.returnToObjects }, { reload: true });    
+                    $state.go('admin.edit-env', { envId: newEnvId }, { reload: true });    
                 }
                 eaasClient.release();
             }
@@ -367,9 +364,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
             //                    );
             //                })();
 
-            if (eaasClient.params.pointerLock === "true") {
-                growl.info($translate.instant('EMU_POINTER_LOCK_AVAILABLE'));
-                requestPointerLock(eaasClient.guac.getDisplay().getElement(), 'click');
+            if (eaasClient.getActiveSession() && eaasClient.getActiveSession().hasPointerLock()) {
+                eaasClient.getActiveSession().setPointerLock();
             }
 
             // Fix to close emulator on page leave
@@ -446,10 +442,11 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                         snapshotRequest.enableRelativeMouse(this.isRelativeMouse);
                         snapshotRequest.removeVolatileDrives(!this.cleanRemovableDrives);
 
+                        let result;
                         vm.waitModal.show("Saving... ", "Please wait while session data is stored. This may take a while...");
                         try {
-                            let result = await eaasClient.getActiveSession().createSnapshot(snapshotRequest, vm.isNetworkEnvironment); 
-                            // console.log(result);
+                            result = await eaasClient.getActiveSession().createSnapshot(snapshotRequest, vm.isNetworkEnvironment); 
+                            console.log(result);
                         } catch(e) {
                             console.log("given error: " + e.message);
                             growl.error(e.name, {title: 'Error ' + e.message});
@@ -461,10 +458,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
                             if(vm.isNetworkEnvironment)
                                 $state.go('admin.networking', {}, {reload: true});
-                            else if ($stateParams.isNewObjectEnv || $stateParams.returnToObjects)
-                                $state.go('admin.standard-envs-overview', {showObjects: true}, {reload: true});
-                            else
-                                $state.go('admin.standard-envs-overview', {}, {reload: true});
+                            else 
+                                $state.go('admin.edit-env', { envId: result}, { reload: true });   
 
                             $scope.$close();
                             window.isSavingEnvironment = false;
