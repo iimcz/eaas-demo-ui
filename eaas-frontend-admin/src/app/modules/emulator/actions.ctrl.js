@@ -191,7 +191,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
                 $translate.instant('CONFIRM_STOP_H'), 
                 $translate.instant('CONFIRM_STOP_T'));
            
-            let envId = eaasClient.getActiveSession() ? eaasClient.getActiveSession().getId(): undefined;
+            let envId = eaasClient.getActiveSession() ? eaasClient.getActiveSession().environmentId : undefined;
             window.onbeforeunload = null;
             await stopClient($uibModal, $stateParams.enableDownload, eaasClient);
             $('#emulator-stopped-container').show();
