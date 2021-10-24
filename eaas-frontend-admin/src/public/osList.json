@@ -398,7 +398,21 @@
       "runtime" : false,
       "template_params" :
       {
+      }    
+    },
+      {
+        "id":"os:other:c64",
+        "puids": [],
+        "label": "C64 (Vice)",
+        "kvm_available" : false,
+        "qid" : "",
+        "disk" : "",
+        "template" : "c64-vice",
+        "runtime" : false,
+        "template_params" :
+        {
+        }
       }
-    }
+
   ]
 }

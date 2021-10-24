@@ -21,11 +21,9 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
        vm.objectList = [];
        let userArchiveId = "zero conf";
-
-       /*
+       
        if(userInfo.data && userInfo.data.userId)
           userArchiveId = "user_archive" + userInfo.data.userId;
-        */
 
        Objects.query({archiveId: userArchiveId}).$promise.then(function(response) {
             vm.objectList = response;
