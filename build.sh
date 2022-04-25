@@ -1,6 +1,6 @@
 #!/bin/sh
 
-npm install
+npm ci
 
 cd eaas-client
 git submodule init
