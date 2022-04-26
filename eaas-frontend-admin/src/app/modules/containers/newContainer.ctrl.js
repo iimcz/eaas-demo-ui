@@ -52,11 +52,6 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
                 return false;
             }
 
-            if (container.runtime !== "2" && container.runtime !== "1" && container.args.length === 0) {
-                growl.error("process is required");
-                return false;
-            }
-
             if (container.tag === "" && container.runtime == 1) {
                 growl.error("container tag is required");
                 return false;
@@ -93,6 +88,11 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
             //     growl.error("Author is required");
             //     return false;
             // }
+
+            if (container.runtime !== "2" && container.runtime !== "1" && container.args.length === 0) {
+                growl.error("process is required");
+                return false;
+            }
 
             return true;
         };
@@ -230,8 +230,8 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
                 
                 if(object.metadata)
                 {
-                    container.args = object.metadata.entryProcesses;
-                    container.env = object.metadata.envVariables;
+                    container.args = object.metadata.entryProcesses || [];
+                    container.env = object.metadata.envVariables || [];
                 }
                 container.waitModal.hide();
                 WizardHandler.wizard('containerImportWizard').next();
