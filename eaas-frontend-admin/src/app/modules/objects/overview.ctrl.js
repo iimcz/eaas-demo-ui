@@ -115,8 +115,8 @@ module.exports = ['$state', '$scope', '$stateParams', 'Objects', 'localConfig', 
     {
         if(item === 'zero conf')
             return 'Local Object Archive';
-        else if(item.startsWith("user_archive"))
-            return item.substring('user_archive'.length);
+        else if(item.startsWith("user-"))
+            return item.substring('user-'.length);
         else
             return item;
     }
