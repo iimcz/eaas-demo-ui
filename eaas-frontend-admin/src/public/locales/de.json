@@ -42,7 +42,7 @@
   "ACTIONS_CTRLALTDEL" : "Ctr-Alt-Del",
   "ACTIONS_ESC" : "Esc",
   "ACTIONS_SAVESESSION_HELP" : "Die Sitzung kann erst gespeichert werden, wenn das Betriebssystem der Bereitstellungs-Sitzung heruntergefahren wurde. Eine Anleitung zum Herunterfahren finden Sie in der 'Hilfe zur Bereitstellungsumgebung'",
-  "ACTIONS_SNAPSHOT": "Snapshot",
+  "ACTIONS_CHECKPOINT": "Checkpoint",
   "ACTIONS_PRINT_READY" : "Druckauftrag ist fertig",
   "ACTIONS_PRINT_FAILED" : "Druckauftrag ist fehlgeschlagen",
 
