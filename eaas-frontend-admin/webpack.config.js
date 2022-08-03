@@ -9,6 +9,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var WriteFilePlugin = require ('write-file-webpack-plugin');
 var path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * Env
@@ -190,6 +191,10 @@ module.exports = function makeWebpackConfig() {
     // Extract css files
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
+      { apply(compiler) { compiler.hooks.beforeCompile.tap("eaas-client", () => {
+          execSync("../eaas-client/delete-unneeded-files.sh");
+          execSync("../eaas-client/write-version-json.sh");
+      })}},
       new CopyWebpackPlugin({patterns: [
           {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
@@ -200,7 +205,14 @@ module.exports = function makeWebpackConfig() {
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/', to: 'guacamole/guacamole-client-eaas/guacamole-common-js/src/main/webapp/modules/' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/client/styles/keyboard.css' },
           {from: '../eaas-client/guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css', to: 'guacamole/guacamole-client-eaas/guacamole/src/main/webapp/app/osk/styles/osk.css' },
-        ]})
+        ]}),
+      new CopyWebpackPlugin({patterns: [{
+         from: '../eaas-client', to: 'eaas-client',
+         globOptions: {
+            dot: false,
+            ignore: ["**/*.html"],
+         },
+      }]}),
   );
 
   // Add build specific plugins
