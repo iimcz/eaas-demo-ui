@@ -2,8 +2,8 @@
     "emulators": [
         {
             "eaasId" : "qemu-system",
-            "repositoryUrl" : "",
-            "repositoryName" : "eaas/qemu-eaas",
+            "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
+            "repositoryName" : "qemu-eaas",
             "versions" : ["latest"]
         },
         {
