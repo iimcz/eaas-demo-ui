@@ -9,7 +9,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var WriteFilePlugin = require ('write-file-webpack-plugin');
 var path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 /**
  * Env
@@ -192,8 +192,8 @@ module.exports = function makeWebpackConfig() {
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
       { apply(compiler) { compiler.hooks.beforeCompile.tap("eaas-client", () => {
-          execSync("../eaas-client/delete-unneeded-files.sh");
-          execSync("../eaas-client/write-version-json.sh");
+          execFileSync("bash", ["-c", "exec ../eaas-client/delete-unneeded-files.sh"]);
+          execFileSync("bash", ["-c", "exec ../eaas-client/write-version-json.sh"]);
       })}},
       new CopyWebpackPlugin({patterns: [
           {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
