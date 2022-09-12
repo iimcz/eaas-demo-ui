@@ -191,10 +191,10 @@ module.exports = function makeWebpackConfig() {
     // Extract css files
     // Disabled when in test mode or not in build mode
       new ExtractTextPlugin({filename: 'css/[name].css', disable: !isProd, allChunks: true}),
-      { apply(compiler) { compiler.hooks.beforeCompile.tap("eaas-client", () => {
+      ... isProd ? [{ apply(compiler) { compiler.hooks.beforeCompile.tap("eaas-client", () => {
           execFileSync("bash", ["-c", "exec ../eaas-client/delete-unneeded-files.sh"]);
           execFileSync("bash", ["-c", "exec ../eaas-client/write-version-json.sh"]);
-      })}},
+      })}}] : [],
       new CopyWebpackPlugin({patterns: [
           {from: '../eaas-client/xpra/xpra-html5/html5', to: 'xpra/xpra-html5/html5/' },
           {from: '../eaas-client/xpra/eaas-xpra-worker.js', to: 'xpra' },
