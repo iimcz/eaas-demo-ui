@@ -264,6 +264,11 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
                this.env.title = this.envTitle;
                this.env.description = this.envDescription;
+
+               if (!vm.networking.connectEnvs){
+                   vm.networking.enableInternet = false
+               }
+
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
                    envId: $stateParams.envId,
                    title: this.envTitle,

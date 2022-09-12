@@ -101,8 +101,8 @@ module.exports = ['$rootScope', '$scope', '$state', '$stateParams', '$translate'
                     await eaasClient.attachNewEnv(networkSessionId, $("#emulator-container")[0], component);
                     vm.started = true;
                 } else {
-                    console.log($stateParams.components);
-                    console.log($stateParams.clientOptions);
+                    console.log("Components:", $stateParams.components);
+                    console.log("ClientOptions:", $stateParams.clientOptions);
                     await eaasClient.start($stateParams.components, $stateParams.clientOptions);
                     await eaasClient.connect($("#emulator-container")[0]);
                 }

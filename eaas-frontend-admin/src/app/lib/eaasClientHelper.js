@@ -201,10 +201,12 @@ export class EaasClientHelper
         try { 
             let clientOptions = new ClientOptions();
             let emilEnvironment = await _fetch(`${this.API_URL}environment-repository/environments/${envId}`, "GET", null, token);
-            if (emilEnvironment.networking) {
-                if (emilEnvironment.networking.connectEnvs)
-                    clientOptions.enableNetworking();
 
+            if (emilEnvironment.networking.connectEnvs) {
+                console.log("Enabling Networking!")
+                clientOptions.enableNetworking();
+
+                console.log("Enable Internet", emilEnvironment.networking.enableInternet);
                 clientOptions.getNetworkConfig().enableInternet(emilEnvironment.networking.enableInternet);
                 try {
                     let tcpGatewayConfig = new TcpGatewayConfig(emilEnvironment.networking.serverIp, emilEnvironment.networking.serverPort);
