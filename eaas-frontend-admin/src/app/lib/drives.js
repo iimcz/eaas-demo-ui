@@ -92,10 +92,11 @@ export class Drives
             id = drive.data;
 
         id = this.getBindingId(id);
-    
+
         let found = imageList.find((element) => {
-            if(element.imageId === id)
+            if(element.imageId === id){
                 return element;
+            }
         });
 
         if(found && found.label) { 
@@ -103,9 +104,9 @@ export class Drives
         }
     
         found = softwareList.find((element) => {
-            if(element.id.startsWith(id))
+            if(id.startsWith(element.id))
             {
-            return element;
+                return element;
             }
         });
 
@@ -117,16 +118,16 @@ export class Drives
                 return "<br><b>Software: </b>" + found.label;
             }
         }
-       
+
         found = objectList.find((element) => {
-            if(element.id.startsWith(id))
+            if(id.startsWith(element.id))
             {
                 return element;
             }
         });
 
         if(found)
-            return "User object: " + found.title;
+            return "<br><b>User object: </b>" + found.title;
 
         return "<br><b>Media ID: </b>" + id;
     }
