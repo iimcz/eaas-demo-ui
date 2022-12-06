@@ -28,7 +28,21 @@
             <b>Object ID:</b> {{editObjectCharacterizationCtrl.metadata.id}}
         </p>
         <p>
-            <b>Object Label:</b> {{editObjectCharacterizationCtrl.metadata.title}}
+            <!-- <b>Object Label:</b> {{editObjectCharacterizationCtrl.metadata.title}} -->
+            <div class="input-group">
+                <label> Label: </label>
+                <span ng-if="!editObjectCharacterizationCtrl.editName">{{editObjectCharacterizationCtrl.metadata.title}}
+                    <a href=""
+                      ng-click="editObjectCharacterizationCtrl.editName=true"><i class="glyphicon glyphicon-pencil"></i></a></span>
+                <span ng-if="editObjectCharacterizationCtrl.editName === true" class="input-group">
+                            <input type="text" class="form-control" ng-model="editObjectCharacterizationCtrl.metadata.title"
+                                   placeholder="Label">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"
+                                        ng-click="editObjectCharacterizationCtrl.confirmLabelChange()">Done</button>
+                            </span>
+                        </span>
+            </div>
         </p>
 
         <p ng-bind-html="editObjectCharacterizationCtrl.metadata.summary"></p>

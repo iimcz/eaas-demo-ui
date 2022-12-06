@@ -12,15 +12,25 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      vm.osList = osList;
      vm.objEnvironments = [];
 
+     vm.editName = false;
+     vm.labelChanged = false;
+
+
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
         vm.response = response;
         vm.objEnvironments = response.objectEnvironments.environmentList;
+
      });
 
     Environments.query().$promise.then(function(response) {
         vm.environmentList = response;
     });
+
+     vm.confirmLabelChange = function(){
+         vm.editName = false;
+         vm.labelChanged = true;
+     }
 
      vm.description = $stateParams.userDescription;
 
@@ -149,7 +159,10 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
     }
 
      vm.saveCharacterization = function() {
-             console.log("vm.description " , vm.description);
+
+         vm.updateLabelIfChanged()
+
+         console.log("vm.description " , vm.description);
          $http.post(localConfig.data.eaasBackendURL + REST_URLS.overrideObjectCharacterizationUrl, {
              objectId: $stateParams.objectId,
              objectArchive: $stateParams.objectArchive,
@@ -161,6 +174,9 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      };
 
      vm.saveSoftware = function() {
+
+         vm.updateLabelIfChanged()
+
         vm.softwareObj.objectId = $stateParams.objectId;
         if(vm.metadata)
             vm.softwareObj.label = vm.metadata.title;
@@ -188,4 +204,21 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
            }
      });
    };
+
+   vm.updateLabelIfChanged = function(){
+        if(vm.labelChanged){
+            console.log("Updating label")
+            let url = `${localConfig.data.eaasBackendURL}objects/${$stateParams.objectArchive}/${$stateParams.objectId}/label`
+            $http.put(url, {"label" : vm.metadata.title})
+                .then(function (response){
+                    console.log("got: ", response)
+                    if (response.status !== 200) {
+                        growl.error('Error setting new label');
+                    }
+            });
+        }
+        else{
+            console.log("Label did not change")
+        }
+      }
  }];
