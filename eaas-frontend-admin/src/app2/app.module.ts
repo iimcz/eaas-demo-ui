@@ -36,7 +36,7 @@ import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 
 export function createTranslateLoader(http: HttpClient) {
-    return new TranslateHttpLoader(http, '/admin/locales/', '.json');
+    return new TranslateHttpLoader(http, './locales/', '.json');
 }
 
 @NgModule({

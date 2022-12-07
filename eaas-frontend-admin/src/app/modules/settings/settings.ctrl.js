@@ -5,8 +5,10 @@ module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbL
 
         var vm = this;
 
-        if(localConfig.data.auth0Config)
+        if(localConfig.data.auth0Config) {
             vm.oidcClientId = localConfig.data.auth0Config.CLIENT_ID;
+            vm.oidcIssuer = localConfig.data.auth0Config.issuer;
+        }
             
         vm.userInfo = userInfo.data;
         if(!vm.userInfo || !vm.userInfo.role)
