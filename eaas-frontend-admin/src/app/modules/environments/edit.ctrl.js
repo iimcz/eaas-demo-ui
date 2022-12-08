@@ -6,10 +6,10 @@ import { _fetch, ClientError, confirmDialog } from "../../lib/utils";
 
 module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "Environments", "localConfig",
             "growl", "$translate", "objectDependencies", "helperFunctions", "osList", "softwareList", "$uibModal",
-             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images", "userInfo", "EaasClientHelper",
+             "$timeout", "nameIndexes", "REST_URLS", "Objects", "Images", "userInfo", "authService", "EaasClientHelper",
     function ($http, $rootScope, $scope, $state, $stateParams, Environments, localConfig,
             growl, $translate, objectDependencies, helperFunctions, osList, softwareList, $uibModal,
-            $timeout, nameIndexes, REST_URLS, Objects, Images, userInfo, EaasClientHelper) {
+            $timeout, nameIndexes, REST_URLS, Objects, Images, userInfo, authService, EaasClientHelper) {
 
        const replicateImage = publisher($http, $uibModal, $state, $timeout, growl, localConfig, REST_URLS, helperFunctions);
        let handlePrefix = "11270/";
@@ -105,33 +105,12 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                     }
                 }       
 
-                let components, clientOptions;
                 let machine = EaasClientHelper.createMachine(vm.env.envId);
                
                 if(vm.env.objectId)
                     machine.setObject(vm.env.objectId, vm.env.objectArchive);
 
-                if(vm.env.networking && vm.env.networking.enableInternet) {
-                    console.log("starting with internet enabled");
-                    let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
-                    // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
-
-                    networkBuilder.addComponent(machine);
-                    components =  await networkBuilder.getComponents();
-                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
-                    clientOptions.getNetworkConfig().enableInternet(true);
-                    clientOptions.getNetworkConfig().enableSlirpDhcp(true);
-                }
-                else
-                {
-                    components = [machine];
-                    clientOptions = await EaasClientHelper.clientOptions(vm.env.envId, () => authService.getToken());
-                }
-               
-                $state.go("admin.emuView",  {
-                    components: components,
-                    clientOptions: clientOptions
-                }, {});
+                vm.startComponent(machine);
             };
 
             vm.os = getOsById(osList.operatingSystems, vm.env.os);
@@ -217,34 +196,14 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
                          this.runWithSoftware = async function()
                          {
-                            let components, clientOptions;
                             let machine = EaasClientHelper.createMachine(vm.env.envId);
                            
                             console.log(this.selected_sw);
                             machine.setSoftware(this.selected_sw.id, this.selected_sw.archiveId);
-            
-                            if(vm.env.networking && vm.env.networking.enableInternet) {
-                                console.log("starting with internet enabled");
-                                let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
-                                // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
-            
-                                networkBuilder.addComponent(machine);
-                                components =  await networkBuilder.getComponents();
-                                clientOptions =  await networkBuilder.getDefaultClientOptions();
-                                clientOptions.getNetworkConfig().enableInternet(true);
-                                clientOptions.getNetworkConfig().enableSlirpDhcp(true);
-                            }
-                            else
-                            {
-                                components = [machine];
-                                clientOptions = await EaasClientHelper.clientOptions(vm.env.envId);
-                            }
-                           
+
                             modal.close();
-                            $state.go("admin.emuView",  {
-                                components: components,
-                                clientOptions: clientOptions
-                            }, {});
+
+                            vm.startComponent(machine);
                          };
 
                      }],
@@ -266,7 +225,7 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                this.env.description = this.envDescription;
 
                if (!vm.networking.connectEnvs){
-                   vm.networking.enableInternet = false
+                   vm.networking.enableInternet = false;
                }
 
                $http.post(localConfig.data.eaasBackendURL + REST_URLS.updateDescriptionUrl, {
@@ -329,6 +288,32 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
                        $state.go('admin.standard-envs-overview', {}, {reload: true});
                    });
                }
+           };
+
+           vm.startComponent = async function (machine){
+               let components, clientOptions;
+
+               if(vm.env.networking && vm.env.networking.enableInternet) {
+                   console.log("Starting with internet enabled (from edit)!");
+                   let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
+                   // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
+
+                   networkBuilder.addComponent(machine);
+                   components =  await networkBuilder.getComponents();
+                   clientOptions =  await EaasClientHelper.clientOptions(vm.env.envId, () => authService.getToken());
+                   clientOptions.getNetworkConfig().enableSlirpDhcp(true);
+               }
+               else
+               {
+                   console.log("Starting without internet (from edit)!");
+                   components = [machine];
+                   clientOptions = await EaasClientHelper.clientOptions(vm.env.envId, () => authService.getToken());
+               }
+
+               $state.go("admin.emuView",  {
+                   components: components,
+                   clientOptions: clientOptions
+               }, {});
            };
 
            vm.isOpen = false;

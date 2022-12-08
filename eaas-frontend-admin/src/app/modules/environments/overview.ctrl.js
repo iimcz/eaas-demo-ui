@@ -385,21 +385,22 @@ module.exports = ['$rootScope', '$http', '$state', '$scope', '$stateParams',
             if(env.objectId)
                 machine.setObject(env.objectId, env.objectArchive);
 
-            if(env.connectEnvs && env.internetEnabled){
-                console.log("Starting with internet enabled");
+            if(env.networkEnabled && env.internetEnabled){
+                console.log("Starting with internet enabled (from overview)!");
                 let networkBuilder = new NetworkBuilder(localConfig.data.eaasBackendURL, () => authService.getToken());
                 // await networkBuilder.enableDhcpService(networkBuilder.getNetworkConfig());
 
                 networkBuilder.addComponent(machine);
                 components =  await networkBuilder.getComponents();
-                clientOptions = await EaasClientHelper.clientOptions(env.envId);
-                clientOptions.getNetworkConfig().enableInternet(true);
+                clientOptions = await EaasClientHelper.clientOptions(env.envId, () => authService.getToken());
                 clientOptions.getNetworkConfig().enableSlirpDhcp(true);
             }
             else
             {
+                console.log("Starting without internet (from overview)!");
+
                 components = [machine];
-                clientOptions = await EaasClientHelper.clientOptions(env.envId);
+                clientOptions = await EaasClientHelper.clientOptions(env.envId, () => authService.getToken());
             }
             
             $state.go("admin.emuView",  {

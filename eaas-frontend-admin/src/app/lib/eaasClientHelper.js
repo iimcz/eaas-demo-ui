@@ -200,19 +200,36 @@ export class EaasClientHelper
     {
         try { 
             let clientOptions = new ClientOptions();
-            let emilEnvironment = await _fetch(`${this.API_URL}environment-repository/environments/${envId}`, "GET", null, token);
+
+            console.log("Setting up clientOptions for env with id:", envId);
+            if(token == null){
+                console.log("No auth token was provided to clientOptions! This might lead to failure when retrieving environment information!");
+            }
+
+            let emilEnvironment = {};
+            try{
+                let url = `${this.API_URL}environment-repository/environments/${envId}`;
+                console.log("Getting environment information for url ", url);
+                emilEnvironment = await _fetch(url, "GET", null, token);
+                console.log("Got environment information:", emilEnvironment);
+            }
+            catch (e){
+                console.log("Could not retrieve environment information! ClientOption won't be set up properly!", e);
+            }
 
             if (emilEnvironment.networking.connectEnvs) {
-                console.log("Enabling Networking!")
+                console.log("Enabling Networking...");
                 clientOptions.enableNetworking();
 
-                console.log("Enable Internet", emilEnvironment.networking.enableInternet);
+                console.log(emilEnvironment.networking.enableInternet ? "Enabling Internet..." : "Internet is not Enabled for this Environment...");
                 clientOptions.getNetworkConfig().enableInternet(emilEnvironment.networking.enableInternet);
                 try {
+                    console.log("Setting up TcpGatewayConfig...");
                     let tcpGatewayConfig = new TcpGatewayConfig(emilEnvironment.networking.serverIp, emilEnvironment.networking.serverPort);
                     tcpGatewayConfig.enableSocks(emilEnvironment.networking.enableSocks);
                     tcpGatewayConfig.enableLocalMode(emilEnvironment.networking.localServerMode);
                     clientOptions.getNetworkConfig().setTcpGatewayConfig(tcpGatewayConfig);
+                    console.log("Successfully set up TcpGatewayConfig");
                 }
                 catch(e)
                 {
@@ -220,6 +237,7 @@ export class EaasClientHelper
                 }
             }
             clientOptions.setXpraEncoding(emilEnvironment.xpraEncoding);
+            console.log("Successfully configured clientOptions!");
             return clientOptions;
         }
         catch(e) {
