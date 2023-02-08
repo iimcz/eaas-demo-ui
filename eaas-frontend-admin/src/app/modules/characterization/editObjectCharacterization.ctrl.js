@@ -3,11 +3,13 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
                       function ($scope, $state, $stateParams, $uibModal, $http, Objects, softwareObj, osList,
                       localConfig, Environments, growl, $translate, helperFunctions, REST_URLS, $timeout, EaasClientHelper) {
      var vm = this;
-    console.log("$stateParams.userDescription", $stateParams.userDescription);
+
+    console.log("State Params: ", $stateParams);
 
      vm.objectId = $stateParams.objectId;
-     vm.objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : null;
+     vm.objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
      vm.isSoftware = !($stateParams.swId === "-1");
+     vm.isPublic = $stateParams.isPublic;
      vm.softwareObj = softwareObj.data;
      vm.osList = osList;
      vm.objEnvironments = [];
@@ -215,7 +217,7 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
    vm.updateLabelIfChanged = function(){
         if(vm.labelChanged){
             console.log("Updating label")
-            let url = `${localConfig.data.eaasBackendURL}objects/${$stateParams.objectArchive}/${$stateParams.objectId}/label`
+            let url = `${localConfig.data.eaasBackendURL}objects/${vm.objectArchive}/${$stateParams.objectId}/label`
             $http.put(url, {"label" : vm.metadata.title})
                 .then(function (response){
                     console.log("got: ", response)

@@ -891,7 +891,7 @@ function($stateProvider,
         })
         .state('admin.edit-object-characterization', {
             url: "/edit-object-characterization?objectId&objectArchive",
-            params: {userDescription: null, swId: "-1"},
+            params: {userDescription: null, swId: "-1", isPublic: null},
             resolve: {
                 osList : () => osLocalList(),
                 softwareObj: function($stateParams, $http, localConfig, helperFunctions, REST_URLS) {
