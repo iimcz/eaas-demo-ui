@@ -17,6 +17,10 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
      vm.editName = false;
      vm.labelChanged = false;
 
+     // backend "default" archive is zero conf and not "default" - "default" will use the user archive if it exists!
+     if(vm.isPublic){
+         vm.objectArchive = "zero conf"
+     }
 
      Objects.get({archiveId: vm.objectArchive, objectId: vm.objectId}).$promise.then(function(response) {
         vm.metadata = response.metadata;
