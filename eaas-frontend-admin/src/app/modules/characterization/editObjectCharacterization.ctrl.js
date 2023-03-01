@@ -53,13 +53,12 @@ module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Obj
                         console.log("Classification result:", classificationResult)
                         vm.suggested = classificationResult.suggested;
                         vm.fileFormatMap = classificationResult.fileFormatMap;
-                        classificationResult.environmentList.forEach( entry => {
-                            let ids = vm.objEnvironments.map(env => env.id);
-                            if  (ids.includes(entry.id)){
-                                growl.success("Added environment " + entry.label + " to rendering environments!")
-                            }
-                        })
-                        vm.objEnvironments.push.apply(vm.objEnvironments, classificationResult.environmentList);
+
+                        let ids = vm.objEnvironments.map(env => env.id);
+
+                        let newEnvs = classificationResult.environmentList.filter(env => !ids.includes(env.id));
+                        newEnvs.forEach( entry => growl.success("Added environment " + entry.label + " to rendering environments!"))
+                        vm.objEnvironments.push.apply(vm.objEnvironments, newEnvs);
                     }
                 }
                 else
