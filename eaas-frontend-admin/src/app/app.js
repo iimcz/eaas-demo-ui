@@ -104,7 +104,6 @@ import {AddNetworkComponent} from '../app2/components/network-environments/add/a
 import {EditNetworkComponent} from "../app2/components/network-environments/edit/edit-network-env.component.ts";
 import {StartedNetworkOverview} from "EaasLibs/network-environments/run/started-network-overview.component.ts";
 
-import { osLocalList } from './lib/os.js';
 import { EaasClientHelper } from './lib/eaasClientHelper.js';
 
 export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize', 'ngAnimate', 'ngCookies', 'ngResource', 'ui.router', 'ui.bootstrap',
@@ -665,8 +664,7 @@ function($stateProvider,
                 },
                 patches: function($http, localConfig, REST_URLS) {
                     return $http.get(localConfig.data.eaasBackendURL + REST_URLS.getPatches);
-                },
-                os: () => osLocalList(),
+                }
             },
             views: {
                 'wizard': {
