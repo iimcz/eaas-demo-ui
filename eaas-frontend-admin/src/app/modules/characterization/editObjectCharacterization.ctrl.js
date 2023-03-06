@@ -1,17 +1,18 @@
-module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Objects', 'softwareObj', 'osList',
-                     'localConfig', 'Environments', 'growl', '$translate', 'helperFunctions', 'REST_URLS', '$timeout', 'EaasClientHelper',
-                      function ($scope, $state, $stateParams, $uibModal, $http, Objects, softwareObj, osList,
-                      localConfig, Environments, growl, $translate, helperFunctions, REST_URLS, $timeout, EaasClientHelper) {
+module.exports = ['$scope', '$state', '$stateParams', '$uibModal', '$http', 'Objects', 'softwareObj',
+                     'localConfig', 'Environments', 'growl', '$translate', 'helperFunctions', 'REST_URLS', '$timeout', 'EaasClientHelper', 'operatingSystemsMetadata',
+                      function ($scope, $state, $stateParams, $uibModal, $http, Objects, softwareObj,
+                      localConfig, Environments, growl, $translate, helperFunctions, REST_URLS, $timeout, EaasClientHelper, operatingSystemsMetadata) {
      var vm = this;
 
     console.log("State Params: ", $stateParams);
+    console.log("OS Metadata:", operatingSystemsMetadata)
 
      vm.objectId = $stateParams.objectId;
      vm.objectArchive = $stateParams.objectArchive ? $stateParams.objectArchive : "default";
      vm.isSoftware = !($stateParams.swId === "-1");
      vm.isPublic = $stateParams.isPublic;
      vm.softwareObj = softwareObj.data;
-     vm.osList = osList;
+     vm.osList = operatingSystemsMetadata.data.operatingSystemInformations;
      vm.objEnvironments = [];
 
      vm.editName = false;
