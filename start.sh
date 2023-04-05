@@ -9,6 +9,15 @@ echoexec() {
   "$@"
 }
 
+# HACK: Work around https://github.com/webpack/webpack/issues/14532 for Node.js >= 17
+# See: https://gitlab.com/emulation-as-a-service/demo-ui/-/issues/4
+node_version="$(node --version)"
+node_version="${node_version#v}"
+node_version="${node_version%%.*}"
+if test "$node_version" -ge 17; then
+    export NODE_OPTIONS=--openssl-legacy-provider
+fi
+
 if ! test "$CONFIG_JSON_URL" && ! test -e eaas-frontend-admin/src/public/config.json; then
   printf "URL of instance (will be used to get config.json): "
   read -r CONFIG_JSON_URL
