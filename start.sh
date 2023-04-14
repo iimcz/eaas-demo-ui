@@ -18,6 +18,11 @@ if test "$node_version" -ge 17; then
     export NODE_OPTIONS=--openssl-legacy-provider
 fi
 
+cat << EOF
+http://localhost:8080/admin/
+
+EOF
+
 if ! test "$CONFIG_JSON_URL" && ! test -e eaas-frontend-admin/src/public/config.json; then
   printf "URL of instance (will be used to get config.json): "
   read -r CONFIG_JSON_URL
