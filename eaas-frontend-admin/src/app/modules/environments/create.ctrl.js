@@ -82,7 +82,7 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
             vm.selectedOs = item;
             vm.config.kvm_available = vm.selectedOs.kvm_available;
             vm.config.template = vm.selectedOs.template;
-            vm.config.template_params = vm.selectedOs.template_params;
+            vm.config.template_params = vm.selectedOs.templateParameters;
             
             vm.osId = vm.selectedOs.id;
             vm.template = vm.systems.find(o => o.id === vm.selectedOs.template);
