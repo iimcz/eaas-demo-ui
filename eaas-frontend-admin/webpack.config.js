@@ -78,7 +78,7 @@ module.exports = function makeWebpackConfig() {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                exclude: [/guacamole\/*/, /xpra\/xpra-html5\/*/]
+                exclude: [/guacamole\/*/, /xpra\/xpra-html5\/*/, /contrib\/*/]
             }),
         ],
        splitChunks: {
