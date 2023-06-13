@@ -94,9 +94,9 @@ module.exports = ["$http", "$rootScope", "$scope", "$state", "$stateParams", "En
 
             vm.run = async function()
             {
-                if($scope.form.$dirty) {
+                if($scope.form.$dirty || vm.drives._dirty) {
                     try {
-                        await confirmDialog($uibModal, "Unsaved settings", `There are unsaved modifications. Proceed anyway?` );
+                        await confirmDialog($uibModal, "Unsaved settings", `There are unsaved modifications, which will be discarded. Proceed anyway?` );
                     }
                     catch(e)
                     {
