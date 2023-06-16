@@ -23,6 +23,8 @@ http://localhost:8080/admin/
 
 EOF
 
+mkdir -p eaas-frontend-admin/src/public/admin
+
 if ! test "$CONFIG_JSON_URL" && ! test -e eaas-frontend-admin/src/public/config.json; then
   printf "URL of instance (will be used to get config.json): "
   read -r CONFIG_JSON_URL
