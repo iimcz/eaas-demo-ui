@@ -262,8 +262,8 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div >
-                    <span ng-if="!editEnvCtrl.editConfig">{{editEnvCtrl.nativeConfig}} <a href="" ng-click="editEnvCtrl.editConfig=true"><i
-                        class="glyphicon glyphicon-pencil"></i></a></span>
+                    <pre ng-if="!editEnvCtrl.editConfig">{{editEnvCtrl.nativeConfig}} <a href="" ng-click="editEnvCtrl.editConfig=true"><i
+                        class="glyphicon glyphicon-pencil"></i></a></pre>
                 </div>
                 <textarea ng-if="editEnvCtrl.editConfig" type="text" class="form-control"
                     ng-model="editEnvCtrl.nativeConfig"></textarea>

@@ -44,7 +44,7 @@ module.exports = ['softwareList', '$scope', '$http', '$state', "localConfig", "$
               </li>
               <li role="menuitem">
                 <a class="dropdown-content" 
-                    ng-click="switchAction(data.id, \'delete\')">delete</a>
+                    ng-click="switchAction(data.id, \'delete\')">Delete</a>
                 </li>
             </ul>
             
