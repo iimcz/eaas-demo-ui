@@ -61,7 +61,21 @@
                         ng-disabled="importDlgCtrl.mode !== 'rom'"
                         ng-required="importDlgCtrl.mode == 'rom'"/>
                 </div>
-            
+                <hr>
+                <div class="form-group">
+                    <input type="radio" name="mode" ng-model="importDlgCtrl.mode" value="local" id="_local"> <label for="_upload">Upload Image</label>
+                </div>
+
+                <div class="form-group" ng-if="importDlgCtrl.mode === 'local'">
+                <button type="button" class="btn btn-default"
+                        ngf-select="importDlgCtrl.test()"
+                        ng-model="importDlgCtrl.localFile" ngf-multiple="false">
+                    Select Image File
+                </button>
+                <label> File name: {{importDlgCtrl.localFile.name}} </label>
+                </div>
+
+
             </div>
         </div>
 </div>

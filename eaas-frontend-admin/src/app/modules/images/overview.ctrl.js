@@ -4,8 +4,8 @@ import {
     MachineBuilder
 } from '../../lib/machineBuilder.js';
 
-module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'growl',
-    function ($state, $scope, localConfig, $uibModal, Images, growl)
+module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'growl', 'Upload',
+    function ($state, $scope, localConfig, $uibModal, Images, growl, Upload)
 {
     var vm = this;
     vm.config = localConfig.data;
@@ -105,14 +105,38 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                     waitModal.show("Import", "Please wait");
                     let result;
                     try {
-                        if(this.mode ==='create')
+                        if(this.mode ==='create'){
                             result = await Images.createEmpty(this.hdsize, this.label);
-                        else if(this.mode === "rom")
-                        {
+                        }
+                        else if(this.mode === "rom"){
                             result = await Images.import(this.romurl, this.label, "roms");
                         }
-                        else
+                        else if(this.mode === "local"){
+                            if(!this.localFile){
+                                window.alert("Please select a file!");
+                            }
+
+                            let label = this.label;
+
+                            let resp = await Upload.http({
+                                url: localConfig.data.eaasBackendURL + "upload",
+                                headers : {
+                                    'content-type': "application/octet-stream",
+                                    'x-eaas-filename': this.localFile.name,
+                                },
+                                data: this.localFile
+                            });
+
+                            console.log('Single Upload Response: ', resp.data.uploads[0]);
+                            let imageUrl = resp.data.uploads[0];
+
+                            result = await Images.import(imageUrl, label);
+                            console.log("Got result", result)
+
+                        }
+                        else {
                             result = await Images.import(this.hdurl, this.label);
+                        }
                     }
                     catch(e)
                     {
@@ -120,6 +144,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                         growl.error(e.name + ': ' + e.message);
                     }
                     finally {
+                        console.log("Done with import!")
                         waitModal.hide();
                         $state.reload();
                     }
