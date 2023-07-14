@@ -132,11 +132,6 @@ module.exports = [ '$scope', '$state','$http', '$stateParams', 'eaasClient', 'ch
                                 return;
                             }
 
-                            // Have to remember the chosen destination and action for the file
-                            let destination = this.uploadFiles[i].destination;
-                            let action = this.uploadFiles[i].action;
-                            let name = this.uploadFiles[i].filename;
-
                             //TODO not selecting runtime -> cant store env, needs popup
                             Upload.http({
                                 url: localConfig.data.eaasBackendURL + "upload",
@@ -144,14 +139,19 @@ module.exports = [ '$scope', '$state','$http', '$stateParams', 'eaasClient', 'ch
                                     'content-type': "application/octet-stream",
                                     'x-eaas-filename': this.uploadFiles[i].file.name,
                                 },
-                                data: this.uploadFiles[i].file
+                                data: this.uploadFiles[i].file,
+                                // Have to remember the chosen destination and action for the file
+                                destination : this.uploadFiles[i].destination,
+                                action : this.uploadFiles[i].action,
+                                name : this.uploadFiles[i].filename
+
                             }).then(function (resp) {
                                 // Push the uploaded file to the input list
-                                console.log('Success ' + name + 'uploaded. Response: ' + resp.data);
+                                console.log('Success ' + name + 'uploaded. Response: ', resp);
 
                                 let contentBuilder = new InputContentBuilder(resp.data.uploads[0]);
-                                contentBuilder.setName(destination);
-                                contentBuilder.setAction(action);
+                                contentBuilder.setName(resp.config.destination);
+                                contentBuilder.setAction(resp.config.action);
                                 $scope.runContainerDlgCtrl.inputs.push(contentBuilder);
 
                                 $scope.runContainerDlgCtrl.uploadFiles = [];
