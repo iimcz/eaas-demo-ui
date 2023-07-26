@@ -171,15 +171,19 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
             // The user chose files to upload
             // Initialize the uploadFiles list with meaningful values for destination and action.
             // Those are displayed in the view and can be changed by the user
-            Upload.upload({
+            Upload.http({
                 url: localConfig.data.eaasBackendURL + "upload",
+                headers : {
+                    'content-type': "application/octet-stream",
+                    'x-eaas-filename': file.filename,
+                },
                 name: file.filename,
                 destination: file.destination,
                 action: "copy",
-                data: {file: file}
+                data: file
             }).then(function (resp) {
                 // Push the uploaded file to the input list
-                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                console.log('Success ' + resp.config.data.name + 'uploaded. Response: ' + resp.data);
                 container.imageUrl = resp.data.uploads[0];
 
             }, function (resp) {
@@ -192,7 +196,7 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
                 });
             }, function (evt) {
                 var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.name);
             });
         };
 

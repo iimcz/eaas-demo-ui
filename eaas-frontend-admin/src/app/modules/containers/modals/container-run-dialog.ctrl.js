@@ -47,15 +47,15 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$uibModalInstance',
                 }
 
                 // Have to remember the chosen destination and action for the file
-                Upload.upload({
+                Upload.http({
                     url: localConfig.data.eaasBackendURL + "upload",
                     name: this.uploadFiles[i].filename,
                     destination: this.uploadFiles[i].destination,
                     action: this.uploadFiles[i].action,
-                    data: {file: this.uploadFiles[i].file}
+                    data: this.uploadFiles[i].file
                 }).then(function (resp) {
                     // Push the uploaded file to the input list
-                    console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                    console.log('Success ' + resp.config.data.name + 'uploaded. Response: ' + resp.data);
                     $scope.runContainerDlgCtrl.inputs.push({
                         url: resp.data.uploads[0],
                         name: resp.config.destination,
@@ -72,7 +72,7 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$uibModalInstance',
                     });
                 }, function (evt) {
                     var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                    console.log('progress: ' + progressPercentage + '% ' + evt.config.data.name);
                 });
             }
         };
