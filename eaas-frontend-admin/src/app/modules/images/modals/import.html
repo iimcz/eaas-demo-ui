@@ -70,9 +70,9 @@
                 <button type="button" class="btn btn-default"
                         ngf-select=""
                         ng-model="importDlgCtrl.localFile" ngf-multiple="false">
-                    Select Image File
+                    Choose
                 </button>
-                <label> File name: {{importDlgCtrl.localFile.name}} </label>
+                <label ng-if="importDlgCtrl.localFile"> File: {{importDlgCtrl.localFile.name}} </label>
                 </div>
 
 
