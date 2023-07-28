@@ -118,11 +118,14 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
 
                             let label = this.label;
 
+                            const sparams = new URLSearchParams({
+                                'filename': this.localFile.name,
+                            });
+
                             let resp = await Upload.http({
-                                url: localConfig.data.eaasBackendURL + "upload",
+                                url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                                 headers : {
                                     'content-type': "application/octet-stream",
-                                    'x-eaas-filename': this.localFile.name,
                                 },
                                 data: this.localFile
                             });

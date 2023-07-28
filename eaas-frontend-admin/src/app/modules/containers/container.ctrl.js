@@ -133,11 +133,15 @@ module.exports = [ '$scope', '$state','$http', '$stateParams', 'eaasClient', 'ch
                             }
 
                             //TODO not selecting runtime -> cant store env, needs popup
+
+                            const sparams = new URLSearchParams({
+                                'filename': this.uploadFiles[i].file.name,
+                            });
+
                             Upload.http({
-                                url: localConfig.data.eaasBackendURL + "upload",
+                                url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                                 headers : {
                                     'content-type': "application/octet-stream",
-                                    'x-eaas-filename': this.uploadFiles[i].file.name,
                                 },
                                 data: this.uploadFiles[i].file,
                                 // Have to remember the chosen destination and action for the file

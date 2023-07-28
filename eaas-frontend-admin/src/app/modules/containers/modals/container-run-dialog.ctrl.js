@@ -46,9 +46,13 @@ module.exports = ['$state', '$http', '$scope', '$uibModal', '$uibModalInstance',
                     return;
                 }
 
+                const sparams = new URLSearchParams({
+                    'filename': this.uploadFiles[i].file.name,
+                });
+
                 // Have to remember the chosen destination and action for the file
                 Upload.http({
-                    url: localConfig.data.eaasBackendURL + "upload",
+                    url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                     name: this.uploadFiles[i].filename,
                     destination: this.uploadFiles[i].destination,
                     action: this.uploadFiles[i].action,

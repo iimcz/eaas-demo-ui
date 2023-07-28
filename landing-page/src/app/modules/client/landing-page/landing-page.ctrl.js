@@ -375,12 +375,15 @@ module.exports = ['$state', '$sce', '$http', '$stateParams', '$translate', '$uib
                         return;
                     }
 
+                    const sparams = new URLSearchParams({
+                        'filename': vm.uploadFiles[i].filename,
+                    });
+
                     // Have to remember the chosen destination and action for the file
                     Upload.http({
-                        url: localConfig.data.eaasBackendURL + "upload",
+                        url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                         headers : {
                             'content-type': "application/octet-stream",
-                            'x-eaas-filename': vm.uploadFiles[i].filename,
                         },
                         name: vm.uploadFiles[i].filename,
                         destination: vm.uploadFiles[i].destination,

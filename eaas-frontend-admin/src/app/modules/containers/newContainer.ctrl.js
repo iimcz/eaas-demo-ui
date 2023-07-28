@@ -171,11 +171,15 @@ module.exports = ['$http', '$state', 'runtimeList', 'growl', 'Upload', 'localCon
             // The user chose files to upload
             // Initialize the uploadFiles list with meaningful values for destination and action.
             // Those are displayed in the view and can be changed by the user
+
+            const sparams = new URLSearchParams({
+                'filename': file.filename,
+            });
+
             Upload.http({
-                url: localConfig.data.eaasBackendURL + "upload",
+                url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                 headers : {
                     'content-type': "application/octet-stream",
-                    'x-eaas-filename': file.filename,
                 },
                 name: file.filename,
                 destination: file.destination,

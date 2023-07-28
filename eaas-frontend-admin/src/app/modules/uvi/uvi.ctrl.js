@@ -131,8 +131,12 @@ module.exports = ["$http", "$state", "localConfig", "$timeout", "Upload", "$uibM
     vm.uploadJob = function(_filename, _uploadInfo)
     {
         let promise = new Promise(function(resolve, reject) {
+            const sparams = new URLSearchParams({
+                'filename': _filename.name,
+            });
+
             Upload.http({
-                url: localConfig.data.eaasBackendURL + "upload",
+                url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                 data: _filename,
                 headers : {
                     'content-type': "application/octet-stream",

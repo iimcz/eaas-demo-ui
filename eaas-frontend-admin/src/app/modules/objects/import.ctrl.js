@@ -176,11 +176,15 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
                var uploadCnt = 0;
                for (var i = 0; i < vm.selectedFiles.length; i++) {
                  uploadCnt++;
+
+                 const sparams = new URLSearchParams({
+                   'filename': vm.selectedFiles[i].file.name,
+                 });
+
                  Upload.http({
-                   url: localConfig.data.eaasBackendURL + "upload",
+                   url: localConfig.data.eaasBackendURL + "upload?" + sparams,
                    headers : {
                      'content-type': "application/octet-stream",
-                     'x-eaas-filename': vm.selectedFiles[i].file.name,
                    },
                    data: vm.selectedFiles[i].file
                    })
