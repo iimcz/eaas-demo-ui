@@ -88,7 +88,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                         return;
                     } 
 
-                    if(this.mode === "upload" && !this.hdurl)
+                    if(this.mode === "import" && !this.hdurl)
                     {
                         window.alert("Please set image url");
                         return;
@@ -99,6 +99,12 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                         window.alert("Please set ROM url");
                         return;
                     }
+
+                    if(this.mode === "upload" && !this.localFile){
+                        window.alert("Please select a file!");
+                        return;
+                    }
+
                     modal.close();
                     
                     let waitModal = new WaitModal($uibModal);
@@ -111,11 +117,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                         else if(this.mode === "rom"){
                             result = await Images.import(this.romurl, this.label, "roms");
                         }
-                        else if(this.mode === "local"){
-                            if(!this.localFile){
-                                window.alert("Please select a file!");
-                            }
-
+                        else if(this.mode === "upload"){
                             let label = this.label;
 
                             const sparams = new URLSearchParams({
