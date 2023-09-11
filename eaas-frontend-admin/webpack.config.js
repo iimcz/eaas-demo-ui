@@ -70,9 +70,7 @@ module.exports = function makeWebpackConfig() {
      * Reference: http://webpack.github.io/docs/configuration.html#devtool
      * Type of sourcemap to use per build type
      */
-    if (!isProd) {
-        config.devtool = 'source-map';
-    }
+    config.devtool = 'source-map';
 
     config.optimization = {
         minimize: true,
