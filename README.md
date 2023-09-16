@@ -1,4 +1,4 @@
-![test status](https://github.com/emulation-as-a-service/demo-ui/actions/workflows/test.yml/badge.svg)
+[![Playwright tests](https://github.com/emulation-as-a-service/demo-ui/actions/workflows/test.yml/badge.svg)](https://github.com/emulation-as-a-service/demo-ui/actions/workflows/test.yml)
 
 # Quick start
 0) Create config.json from config.json.template
