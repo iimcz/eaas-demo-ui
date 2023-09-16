@@ -1,3 +1,5 @@
+![test status](https://github.com/emulation-as-a-service/demo-ui/actions/workflows/test.yml/badge.svg)
+
 # Quick start
 0) Create config.json from config.json.template
 

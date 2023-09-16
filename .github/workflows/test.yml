@@ -2,6 +2,8 @@ name: Playwright tests
 on:
   - push
   - workflow_dispatch
+  - schedule:
+      - cron: 30 03 * * *
 
 jobs:
   test:
