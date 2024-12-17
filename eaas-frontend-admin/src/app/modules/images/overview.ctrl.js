@@ -35,7 +35,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
             animation: true,
             template: require ('./modals/patch.html'),
             resolve: {
-                patchList : ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "/environment-repository/patches"),
+                patchList : ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "environment-repository/patches"),
             },
             controller: ["$scope", "localConfig", "patchList", function($scope, localConfig, patchList) {
                 $scope.patchList = patchList.data;
@@ -51,7 +51,7 @@ module.exports = ['$state', '$scope', 'localConfig', '$uibModal', 'Images', 'gro
                     try {
                         waitModal = new WaitModal($uibModal);
                         waitModal.show("Patching disk image", "Please wait");
-                        await _fetch(`${localConfig.data.eaasBackendURL}/environment-repository/patches/${$scope.selected.patch.name}`, "POST", req, localStorage.getItem('id_token'));
+                        await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/patches/${$scope.selected.patch.name}`, "POST", req, localStorage.getItem('id_token'));
                     }
                     catch(e)
                     {

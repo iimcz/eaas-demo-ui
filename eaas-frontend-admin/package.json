@@ -4,7 +4,7 @@
   "description": "Admin web frontend for the EAAS REST backend",
   "scripts": {
     "build": "rimraf dist && webpack --progress",
-    "server": "webpack serve --progress",
+    "server": "webpack serve --progress --port 8081",
     "start": "npm run server"
   },
   "dependencies": {

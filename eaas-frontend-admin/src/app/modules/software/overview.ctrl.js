@@ -63,7 +63,7 @@ module.exports = ['softwareList', '$scope', '$http', '$state', "localConfig", "$
             template: require('./modals/confirm-delete.html'),
             controller: ["$scope", function ($scope) {
                 this.confirmed = () => {
-                    $http.delete(localConfig.data.eaasBackendURL + "/software-repository/packages/" + id).then((response) => {
+                    $http.delete(localConfig.data.eaasBackendURL + "software-repository/packages/" + id).then((response) => {
                         $state.go('admin.sw-overview', {}, {reload: true});
                     });
                 };

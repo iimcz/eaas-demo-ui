@@ -61,7 +61,7 @@ module.exports = ['$state', '$http', '$scope',  'localConfig', '$uibModal', 'kbL
 
         vm.migrateDb = async function () {
             try {
-                let result = await _fetch(`${localConfig.data.eaasBackendURL}/environment-repository/db-migration`, "GET", 
+                let result = await _fetch(`${localConfig.data.eaasBackendURL}environment-repository/db-migration`, "GET", 
                     null, localStorage.getItem('id_token'));
                 console.log(result);
             }

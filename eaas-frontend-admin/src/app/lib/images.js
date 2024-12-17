@@ -10,7 +10,7 @@ export class EaasImages
 
     async listRaw()
     {
-        let list = await _fetch(`${this.api}/environment-repository/images-index`, "GET", null, this.idToken);
+        let list = await _fetch(`${this.api}environment-repository/images-index`, "GET", null, this.idToken);
         if(!list.entries.entry)
             return [];
         return list.entries.entry;

@@ -140,7 +140,7 @@ module.exports = ["$http", "$scope", "$state", "$stateParams", "growl", "localCo
 
         vm.importMetaData = function(modal, metaData)
         {
-            $http.post(localConfig.data.eaasBackendURL + "/objects/import", {
+            $http.post(localConfig.data.eaasBackendURL + "objects/import", {
                 label: vm.objectLabel,
                 files: metaData.files
             }).then(function(response) {

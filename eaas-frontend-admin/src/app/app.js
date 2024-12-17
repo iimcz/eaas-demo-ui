@@ -48,6 +48,7 @@ import {_fetch} from './lib/utils.js';
 import networkingTemplate from './modules/environments/templates/edit-networking-template.html';
 import uiOptionsTemplate from './modules/environments/templates/ui-options.html';
 import qemuOptionsTemplate from './modules/environments/templates/emulators/qemu-options.html';
+import qemuGpuOptionsTemplate from './modules/environments/templates/emulators/qemu-gpu-options.html';
 import macemuOptionsTemplate from './modules/environments/templates/emulators/macemu-options.html';
 import amigaOptionsTemplate from './modules/environments/templates/emulators/amiga-options.html';
 import browserOptionsTemplate from './modules/environments/templates/emulators/browser-options.html';
@@ -222,6 +223,14 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 
     .component('qemuOptions', {
         template: qemuOptionsTemplate,
+        bindings: {
+            args: '=',
+            onUpdate: '&'
+        }
+    })
+
+    .component('qemuGpuOptions', {
+        template: qemuGpuOptionsTemplate,
         bindings: {
             args: '=',
             onUpdate: '&'
@@ -412,7 +421,7 @@ export default angular.module('emilAdminUI', ['angular-loading-bar','ngSanitize'
 })
 
 .factory('Environments', function($http, $resource, localConfig) {
-   return $resource(localConfig.data.eaasBackendURL + '/environment-repository/environments/:envId');
+   return $resource(localConfig.data.eaasBackendURL + 'environment-repository/environments/:envId');
 })
 .factory('EmilNetworkEnvironments', function($http, $resource, localConfig) {
     return $resource(localConfig.data.eaasBackendURL + 'network-environments/:envId');
@@ -614,7 +623,7 @@ function($stateProvider,
             url: "/admin",
             template: require('./modules/base/base.html'),
             resolve: {
-                init: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "/admin/init"),
+                init: ($http, localConfig) => $http.get(localConfig.data.eaasBackendURL + "admin/init"),
                 buildInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.buildVersionUrl),
                 kbLayouts: ($http) => $http.get("kbLayouts.json"),
                 softwareList: function($http, localConfig, REST_URLS) {
@@ -622,7 +631,7 @@ function($stateProvider,
                 },
                 userInfo: ($http, localConfig, REST_URLS) => $http.get(localConfig.data.eaasBackendURL + REST_URLS.getUserInfo),
                 operatingSystemsMetadata : ($http, localConfig) =>
-                        $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/os-metadata`),
+                        $http.get(`${localConfig.data.eaasBackendURL}environment-repository/os-metadata`),
 
             },
             controller: "BaseController as baseCtrl"
@@ -983,7 +992,7 @@ function($stateProvider,
             url: "/defaults",
             params: {},
             resolve: {
-                defaultEnvironments: ($http, localConfig ) => $http.get(`${localConfig.data.eaasBackendURL}/environment-repository/default-environments`)
+                defaultEnvironments: ($http, localConfig ) => $http.get(`${localConfig.data.eaasBackendURL}environment-repository/default-environments`)
             },
             views: {
                 'wizard': {

@@ -111,6 +111,15 @@
                 </li>
             </ul>
         </button>
+
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.connectKeyboard()"
+                ng-if="actionsCtrl.showQemu">Connect Keyboard</button>
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.disconnectKeyboard()"
+                ng-if="actionsCtrl.showQemu">Disconnect Keyboard</button>
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.connectMouse()"
+                ng-if="actionsCtrl.showQemu">Connect Mouse</button>
+        <button type="submit" class="btn btn-default" ng-click="actionsCtrl.disconnectMouse()"
+                ng-if="actionsCtrl.showQemu">Disconnect Mouse</button>
     </div>
 </div>
 

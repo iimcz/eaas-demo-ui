@@ -126,9 +126,44 @@ module.exports = ["$http", "$state", "systemList", "softwareList", "localConfig"
                 confStr = confStr.substring(1);
             return confStr;
         }
+        
+        function updateNativeConfigGpu() {
+            let confStr = "";
+
+            // Prepare for passthrough - disable display and VGA
+            confStr += " -vga " + "none";
+            confStr += " -display " + "none";
+
+            if (vm.config.template_params.cpu)
+                confStr += " -smp " + vm.config.template_params.cpu;
+
+            if (vm.config.template_params.net)
+                confStr += " -net nic,model=" + vm.config.template_params.net;
+
+            if (vm.config.template_params.audio)
+                confStr += " -soundhw " + vm.config.template_params.audio;
+
+            if (vm.config.template_params.memory)
+                confStr += " -m " + vm.config.template_params.memory;
+
+            if (vm.config.template_params.pointer === 'usb')
+                confStr += " -usb -usbdevice tablet";
+
+            // Force kvm
+            confStr += " -enable-kvm";
+            confStr += " -cpu host";
+
+            if (confStr.startsWith(" "))
+                confStr = confStr.substring(1);
+            return confStr;
+        }
 
         vm.updateQemu = function () {
             vm.native_config = updateNativeConfig();
+        };
+
+        vm.updateQemuGpu = function () {
+            vm.native_config = updateNativeConfigGpu();
         };
 
         vm.updateMacemu = function () {

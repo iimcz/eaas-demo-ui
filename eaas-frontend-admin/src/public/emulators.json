@@ -7,6 +7,12 @@
             "versions" : ["latest"]
         },
         {
+            "eaasId" : "qemu-gpu-system",
+            "repositoryUrl" : "ghcr.io/iimcz/",
+            "repositoryName" : "eaas-qemu-gpu",
+            "versions" : ["latest"]
+        },
+        {
             "eaasId" : "basiliskII",
             "repositoryUrl" : "registry.gitlab.com/emulation-as-a-service/emulators/",
             "repositoryName" : "macemu-eaas-basilisk2",

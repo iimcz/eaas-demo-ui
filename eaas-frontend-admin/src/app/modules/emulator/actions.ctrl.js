@@ -17,6 +17,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
     $rootScope.chosenEnv = chosenEnv;
     vm.printJobsAvailable = false;
     vm.showKeys = false;
+    vm.showQemu = false;
 
     vm.mediaList = [];
     vm.removableMediaList = [];
@@ -206,6 +207,7 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
 
     var eaasClientReadyTimer = async function() {
         if (eaasClient && eaasClient.getActiveSession()) {
+            vm.showQemu = eaasClient.getActiveSession().hasQemuControl();
             if(eaasClient.getActiveSession().getRemovableMediaList()) {
                 vm.removableMediaList = eaasClient.getActiveSession().getRemovableMediaList();
                 vm.mediaList = [];
@@ -515,4 +517,20 @@ module.exports = ['$rootScope', '$scope', '$state', '$uibModal', '$stateParams',
         deregisterOnPageBlurred();
     });
     */
+
+    vm.connectKeyboard = async function() {
+        await eaasClient.getActiveSession().connectKeyboard();
+    }
+
+    vm.disconnectKeyboard = async function() {
+        await eaasClient.getActiveSession().disconnectKeyboard();
+    }
+
+    vm.connectMouse = async function() {
+        await eaasClient.getActiveSession().connectMouse();
+    }
+
+    vm.disconnectMouse = async function() {
+        await eaasClient.getActiveSession().disconnectMouse();
+    }
 }];

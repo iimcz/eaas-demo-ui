@@ -79,6 +79,9 @@
                 <qemu-options args="newImageCtrl.config.template_params" on-update="newImageCtrl.updateQemu()"
                     ng-if="newImageCtrl.config.template === 'qemu-x86'"></qemu-options>
 
+                <qemu-gpu-options args="newImageCtrl.config.template_params" on-update="newImageCtrl.updateQemuGpu()"
+                    ng-if="newImageCtrl.config.template === 'qemu-gpu-x86'"></qemu-gpu-options>
+
                 <macemu-options args="newImageCtrl.config.template_params" on-update="newImageCtrl.updateMacemu()" 
                     ng-if="newImageCtrl.config.template === 'sheepshaver' || newImageCtrl.config.template === 'basiliskII'"></macemu-options>
     
